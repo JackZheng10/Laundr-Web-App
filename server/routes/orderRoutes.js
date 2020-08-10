@@ -12,6 +12,7 @@ const {
   router = express.Router();
 
 //todo: middleware for finding order like in driver + washer
+//todo: error handling for when stuff doesnt exist when querying? like in findOrder @ driver
 
 router.post("/placeOrder", checkExistingOrder, countOrders, placeOrder);
 router.post("/fetchOrders", fetchOrders);

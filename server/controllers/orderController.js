@@ -147,7 +147,7 @@ const fetchOrders = async (req, res) => {
 };
 
 const getExistingOrder = async (req, res) => {
-  //find the order that isn't cancelled or done, should only ever be one. if more than one, undefined behavior since findOne returns only one
+  //find the order that isn't cancelled or confirmed received by user, should only ever be one. if more than one, undefined behavior since findOne returns only one
   try {
     const order = await Order.findOne({
       "userInfo.email": req.query.email,
@@ -229,6 +229,29 @@ const setDropoff = async (req, res) => {
   }
 };
 
+const confirmReceived = async (req, res) => {
+  try {
+    const order = await Order.findOne({
+      "orderInfo.orderID": req.body.orderID,
+    });
+
+    order.orderInfo.status = 8;
+
+    await order.save();
+
+    return res.json({
+      success: true,
+      message: "User successfully confirmed delivery.",
+    });
+  } catch (error) {
+    showConsoleError("user confirming delivery", error, 99);
+    return res.json({
+      success: false,
+      message: caughtError("user confirming delivery", error, 99),
+    });
+  }
+};
+
 module.exports = {
   checkExistingOrder,
   countOrders,
@@ -237,4 +260,5 @@ module.exports = {
   getExistingOrder,
   cancelOrder,
   setDropoff,
+  confirmReceived,
 };

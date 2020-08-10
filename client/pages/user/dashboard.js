@@ -48,6 +48,7 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 
 //todo: fix white line appearing when small mobile
 //todo: implement admin stuff...later
+//handle student subscription
 //todo: research efficient querying, maybe better to sort in the query rather than grab all orders?
 //todo: maybe move logout button since if on mobile hitting sidebar button is close
 //todo: add isUser? maybe when im less lazy
@@ -59,6 +60,12 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //todo: move moment to higher level package.json
 //todo: add button styling to ALL dialogs
 //todo: add progress circle to buttons for submission actions
+
+//notes:
+/*
+-sometime use zapier with wordpress 
+doing .add(something) changes the object itself with moment
+*/
 
 class Dashboard extends Component {
   static contextType = MainAppContext;
@@ -160,7 +167,7 @@ class Dashboard extends Component {
           spacing={0}
           direction="column"
           justify="center"
-          alignItems="center" /*main page column*/
+          alignItems="center"
         >
           <Grid item>{this.state.orderComponent}</Grid>
         </Grid>

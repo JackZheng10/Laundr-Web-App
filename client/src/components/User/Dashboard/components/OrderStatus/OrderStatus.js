@@ -122,24 +122,22 @@ class OrderStatus extends Component {
 
   handleSetDropoffTime = async (order) => {
     if (this.handleTimeCheck(order.orderInfo.weight, order.pickupInfo)) {
-      console.log("dropoff valid");
-      //comment out for now while testing
-      // try {
-      //   const response = await axios.put(`${baseURL}/order/setDropoff`, {
-      //     orderID: order.orderInfo.orderID,
-      //     date: this.state.date,
-      //     time: this.state.formattedTime,
-      //   });
-      //   this.setState({ showDropoffDialog: false }, () => {
-      //     this.context.showAlert(
-      //       response.data.message,
-      //       this.props.fetchOrderInfo
-      //     );
-      //   });
-      // } catch (error) {
-      //   showConsoleError("setting dropoff", error);
-      //   this.context.showAlert(caughtError("setting dropoff", error, 99));
-      // }
+      try {
+        const response = await axios.put(`${baseURL}/order/setDropoff`, {
+          orderID: order.orderInfo.orderID,
+          date: this.state.date,
+          time: this.state.formattedTime,
+        });
+        this.setState({ showDropoffDialog: false }, () => {
+          this.context.showAlert(
+            response.data.message,
+            this.props.fetchOrderInfo
+          );
+        });
+      } catch (error) {
+        showConsoleError("setting dropoff", error);
+        this.context.showAlert(caughtError("setting dropoff", error, 99));
+      }
     }
   };
 
@@ -161,12 +159,8 @@ class OrderStatus extends Component {
       "MM/DD/YYYY LT"
     );
     const pickupDate = moment(pickupInfo.date, "MM/DD/YYYY");
-    const pickupTime = moment(pickupInfo.time, "LT");
     const dropoffDate = moment(this.state.date, "MM/DD/YYYY");
     const dropoffTime = moment(this.state.formattedTime, "LT");
-
-    console.log("pickup: " + `${pickupInfo.date} ${pickupInfo.time}`);
-    console.log("dropoff: " + `${this.state.date} ${this.state.formattedTime}`);
 
     if (!this.state.todaySelected && !this.state.tomorrowSelected) {
       //if no date selected
@@ -251,6 +245,23 @@ class OrderStatus extends Component {
     return canNext;
   };
 
+  handleConfirmReceived = async (order) => {
+    try {
+      const response = await axios.put(`${baseURL}/order/confirmReceived`, {
+        orderID: order.orderInfo.orderID,
+      });
+
+      if (response.data.success) {
+        await this.props.fetchOrderInfo();
+      } else {
+        this.context.showAlert(response.data.message);
+      }
+    } catch (error) {
+      showConsoleError("setting dropoff", error);
+      this.context.showAlert(caughtError("setting dropoff", error, 99));
+    }
+  };
+
   toggleDropoffDialog = () => {
     this.setState({ showDropoffDialog: !this.state.showDropoffDialog });
   };
@@ -288,6 +299,55 @@ class OrderStatus extends Component {
     }
   };
 
+  renderCardContent = (order, classes) => {
+    //if order is done, show it
+    if (order.orderInfo.status === 6) {
+      return (
+        <Typography variant="body1" style={{ fontWeight: 500, fontSize: 20 }}>
+          Your order was delivered!
+        </Typography>
+      );
+    } else {
+      return (
+        <React.Fragment>
+          <Typography variant="body1" style={{ fontWeight: 500 }}>
+            <HomeRoundedIcon fontSize="small" style={{ marginBottom: -4 }} />{" "}
+            Address
+          </Typography>
+          <Typography variant="body1" color="textSecondary">
+            {order.orderInfo.address}
+          </Typography>
+          <Typography variant="body1" style={{ fontWeight: 500 }}>
+            <QueryBuilderIcon fontSize="small" style={{ marginBottom: -4 }} />{" "}
+            Pickup
+          </Typography>
+          <Typography variant="body1" color="textSecondary">
+            {order.pickupInfo.date} @ {order.pickupInfo.time}
+          </Typography>
+          <Typography variant="body1" style={{ fontWeight: 500 }}>
+            <QueryBuilderIcon fontSize="small" style={{ marginBottom: -4 }} />{" "}
+            Dropoff
+          </Typography>
+          {this.renderDropoffComponent(classes, order)}
+          <Typography variant="body1" style={{ fontWeight: 500 }}>
+            <LocalMallIcon fontSize="small" style={{ marginBottom: -4 }} />{" "}
+            Weight
+          </Typography>
+          <Typography variant="body1" color="textSecondary">
+            {order.orderInfo.weight === "N/A"
+              ? "TBD"
+              : `${order.orderInfo.weight} lbs`}
+          </Typography>
+          <Typography variant="h5" style={{ marginBottom: -10 }}>
+            {order.orderInfo.cost === -1
+              ? "Price: TBD"
+              : `Price: $${order.orderInfo.cost}`}
+          </Typography>
+        </React.Fragment>
+      );
+    }
+  };
+
   render() {
     const { classes, order } = this.props;
 
@@ -295,6 +355,7 @@ class OrderStatus extends Component {
       <React.Fragment>
         <div className={classes.layout}>
           <div className={classes.root}>
+            {/*ORDER CANCELLING*/}
             <Dialog
               open={this.state.showCancelDialog}
               onClose={this.toggleCancelDialog}
@@ -419,14 +480,13 @@ class OrderStatus extends Component {
                 </Button>
               </DialogActions>
             </Dialog>
-            <CardContent>
+            <CardContent id="orderStatusContainer">
               <ProgressBar status={order.orderInfo.status} />
               <Grid
                 container
                 direction="row"
                 alignItems="center"
                 justify="center"
-                id="orderStatusContainer"
                 style={{ position: "relative" }}
               >
                 <Grid item>
@@ -443,51 +503,7 @@ class OrderStatus extends Component {
                     />
                     <Divider />
                     <CardContent>
-                      <Typography variant="body1" style={{ fontWeight: 500 }}>
-                        <HomeRoundedIcon
-                          fontSize="small"
-                          style={{ marginBottom: -4 }}
-                        />{" "}
-                        Address
-                      </Typography>
-                      <Typography variant="body1" color="textSecondary">
-                        {order.orderInfo.address}
-                      </Typography>
-                      <Typography variant="body1" style={{ fontWeight: 500 }}>
-                        <QueryBuilderIcon
-                          fontSize="small"
-                          style={{ marginBottom: -4 }}
-                        />{" "}
-                        Pickup
-                      </Typography>
-                      <Typography variant="body1" color="textSecondary">
-                        {order.pickupInfo.date} @ {order.pickupInfo.time}
-                      </Typography>
-                      <Typography variant="body1" style={{ fontWeight: 500 }}>
-                        <QueryBuilderIcon
-                          fontSize="small"
-                          style={{ marginBottom: -4 }}
-                        />{" "}
-                        Dropoff
-                      </Typography>
-                      {this.renderDropoffComponent(classes, order)}
-                      <Typography variant="body1" style={{ fontWeight: 500 }}>
-                        <LocalMallIcon
-                          fontSize="small"
-                          style={{ marginBottom: -4 }}
-                        />{" "}
-                        Weight
-                      </Typography>
-                      <Typography variant="body1" color="textSecondary">
-                        {order.orderInfo.weight === "N/A"
-                          ? "TBD"
-                          : `${order.orderInfo.weight} lbs`}
-                      </Typography>
-                      <Typography variant="h5" style={{ marginBottom: -10 }}>
-                        {order.orderInfo.cost === -1
-                          ? "Price: TBD"
-                          : `Price: $${order.orderInfo.cost}`}
-                      </Typography>
+                      {this.renderCardContent(order, classes)}
                     </CardContent>
                     <Divider />
                     <CardActions className={classes.cardFooter}>
@@ -495,9 +511,13 @@ class OrderStatus extends Component {
                         size="small"
                         variant="contained"
                         className={classes.secondaryButton}
-                        onClick={this.toggleCancelDialog}
+                        onClick={() => {
+                          order.orderInfo.status === 6
+                            ? this.handleConfirmReceived(order)
+                            : this.toggleCancelDialog();
+                        }}
                       >
-                        Cancel
+                        {order.orderInfo.status === 6 ? "New Order" : "Cancel"}
                       </Button>
                     </CardActions>
                   </Card>

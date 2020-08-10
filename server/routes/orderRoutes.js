@@ -6,6 +6,7 @@ const {
     getExistingOrder,
     cancelOrder,
     setDropoff,
+    confirmReceived,
   } = require("../controllers/orderController"),
   express = require("express"),
   router = express.Router();
@@ -17,5 +18,6 @@ router.post("/fetchOrders", fetchOrders);
 router.get("/getExistingOrder", getExistingOrder);
 router.delete("/cancelOrder", cancelOrder);
 router.put("/setDropoff", setDropoff);
+router.put("/confirmReceived", confirmReceived);
 
 module.exports = router;

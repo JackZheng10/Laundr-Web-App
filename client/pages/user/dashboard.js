@@ -42,7 +42,7 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //-imports (use index.js) from root for images, styles, deep components, etc.
 //-styles restructure folders and change file names, also restructure components folder
 //fix MUI grid spacing causing negative margin (horizontal scrollbar), explicit spacing={0} or none? see GH issues.
-//standardize space between title and waves on pages
+//standardize space between title and waves on pages, also from top
 //errors: caught (use showConsole and this.context.showAlert(caughtError(stuff))), res.data.success=false (use this.context.showalert(res.data.message))
 
 //FLOW: close dialog before showing success/error of successful request to backend, keep it open if its a caught error on frontend
@@ -52,13 +52,15 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //todo: implement admin stuff...later
 //handle student subscription
 //handle special cases for pricing
+//add error message to enable cookies (and therefore localstorage) to laundr shi
+//store token in cookies
+//make it expire and stuff.
 //todo: research efficient querying. look into usestaticquery
 //todo: maybe move logout button since if on mobile hitting sidebar button is close
 //todo: add isUser? maybe when im less lazy
 //todo: stripe self-serve portal handles all the payment info stuff??
 //todo: maybe just store their payment id, check if it exists every time a on-demand charge is made, use the id to modify method. sub is separate card?
 //todo: !!!cannot edit card #, so if user updates payment method then delete the old one and add the new one, also updating the user property id
-//todo: 10lb minimum on orders - so if you send one sock you get charged 10 lbs. (add to new order notes)
 //todo: sort out customer email thing (different: login vs stripe - can be changed with checkout session)
 //todo: move moment to higher level package.json
 //todo: add button styling to ALL dialogs
@@ -136,7 +138,7 @@ class Dashboard extends Component {
           direction="column"
           justify="center"
           alignItems="center" /*main page column*/
-          style={{ backgroundColor: "#01C9E1", paddingTop: 8 }}
+          style={{ backgroundColor: "#01C9E1", paddingTop: 10 }}
         >
           <Grid item>
             <Paper elevation={3} className={classes.welcomeCard}>

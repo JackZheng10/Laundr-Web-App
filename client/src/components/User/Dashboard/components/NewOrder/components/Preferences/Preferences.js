@@ -4,6 +4,8 @@ import PropTypes from "prop-types";
 import preferencesStyles from "../../../../../../../styles/User/Dashboard/components/NewOrder/components/Preferences/preferencesStyles";
 import PreferenceCard from "./components/PreferenceCard";
 
+//todo: make the damn cards center. redo the layouts of everything based on how i would do it (ie personal site)
+
 class Preferences extends Component {
   state = {
     charCount: 0,

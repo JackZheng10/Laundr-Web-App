@@ -7,13 +7,20 @@ import {
   Typography,
   Paper,
 } from "@material-ui/core";
+import {
+  TopBorderDarkPurple,
+  BottomBorderDarkPurple,
+  TopBorderLightPurple,
+  TopBorderBlue,
+  BottomBorderBlue,
+} from "../../src/utility/borders";
 import { getCurrentUser, updateToken } from "../../src/helpers/session";
 import { showConsoleError, caughtError } from "../../src/helpers/errors";
 import { Layout } from "../../src/layouts";
 import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
-import OrderTable from "../../src/components/Driver/components/OrderTable";
+import OrderTable from "../../src/components/Driver/components/OrderTable/OrderTable";
 import baseURL from "../../src/baseURL";
 import availableDashboardStyles from "../../src/styles/Driver/AvailableDashboard/availableDashboardStyles";
 
@@ -112,18 +119,22 @@ class AvailableDashboard extends Component {
       <Layout>
         <Grid
           container
-          spacing={2}
+          spacing={0}
           direction="column"
           justify="center"
           alignItems="center" /*main page column*/
           style={{
             paddingTop: 8,
-            backgroundColor: "#21d0e5",
+            backgroundColor: "#01C9E1",
           }}
         >
           <Grid item>
             <Paper elevation={3} className={classes.welcomeCard}>
-              <Typography variant="h3" className={classes.welcomeText}>
+              <Typography
+                variant="h3"
+                className={classes.welcomeText}
+                gutterBottom
+              >
                 {`Welcome, ${this.state.userFname}`}
               </Typography>
             </Paper>
@@ -134,30 +145,28 @@ class AvailableDashboard extends Component {
             </Typography>
           </Grid>
         </Grid>
+        <div style={{ position: "relative", marginBottom: 70 }}>
+          <BottomBorderBlue />
+        </div>
         <Grid
           container
-          spacing={2}
+          spacing={0}
           direction="column"
           justify="center"
           alignItems="center" /*main page column*/
         >
-          <img
-            src="/images/UserDashboard/sectionBorder.png"
-            style={{
-              width: "100%",
-              height: "100%",
-              paddingTop: 8,
-              paddingBottom: 15,
-            }}
-            alt="Section border"
-          />
+          <Grid
+            item
+            style={{ width: "100%", paddingLeft: 10, paddingRight: 10 }}
+          >
+            <OrderTable
+              orders={this.state.orders}
+              fetchOrders={this.fetchOrders}
+              handlePickupAccept={this.handlePickupAccept}
+              handleDropoffAccept={this.handleDropoffAccept}
+            />
+          </Grid>
         </Grid>
-        <OrderTable
-          orders={this.state.orders}
-          fetchOrders={this.fetchOrders}
-          handlePickupAccept={this.handlePickupAccept}
-          handleDropoffAccept={this.handleDropoffAccept}
-        />
       </Layout>
     );
   }

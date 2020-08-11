@@ -80,7 +80,7 @@ const MyApp = (props) => {
         {/*todo: make zindex of this high enough to be able to click out of it if youre also in the middle of loading, also maybe center it inside the component (for sidebar stuff) */}
         {/*also change zindex so scrollbar doesnt disappear */}
         {/*try to center properly, ex: cancel confirmation dialog vs this*/}
-        {/*add more configsl like title, buttons, to replace order cancel dialog*/}
+        {/*add more configsl like title, buttons, to replace order cancel dialog for example*/}
         {/*ALERT DIALOG*/}
         <Dialog
           open={showAlertDialog}

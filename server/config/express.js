@@ -50,16 +50,7 @@ module.exports.init = () => {
   app.use("/api/washer", washerRoutes);
   app.use("/api/stripe", stripeRoutes);
 
-  //for production build
-  if (process.env.NODE_ENV === "production") {
-    //Serve any static files
-    app.use(express.static(path.join(__dirname, "../../client/build")));
-
-    //Handle React routing, return all requests to React app
-    app.get("*", function (req, res) {
-      res.sendFile(path.join(__dirname, "../../client/build", "index.html"));
-    });
-  }
+  //todo: add change stream to move order to proper collection if you change the status manually - maybe not necessary if done through admin panel
 
   return app;
 };

@@ -70,7 +70,7 @@ class History extends Component {
           justify="center"
           alignItems="center" /*main page column*/
           style={{
-            paddingTop: 8,
+            paddingTop: 10,
             backgroundColor: "#01C9E1",
           }}
         >

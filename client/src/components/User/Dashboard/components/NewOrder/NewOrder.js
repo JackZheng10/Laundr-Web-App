@@ -370,7 +370,14 @@ class NewOrder extends Component {
       <React.Fragment>
         <div className={classes.layout}>
           <div className={classes.root}>
-            <CardContent id="newOrderContainer">
+            <CardContent
+              id="newOrderContainer"
+              // style={{
+              //   backgroundColor: "white",
+              //   boxShadow: "0 0 10px",
+              //   borderRadius: 20,
+              // }}
+            >
               <ProgressBar step={this.state.activeStep} />
               <React.Fragment>
                 {this.state.activeStep === steps.length ? (

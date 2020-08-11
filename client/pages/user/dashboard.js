@@ -41,7 +41,8 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //-fix places autocomplete on address
 //-imports (use index.js) from root for images, styles, deep components, etc.
 //-styles restructure folders and change file names, also restructure components folder
-//fix MUI grid spacing causing negative margin (horizontal scrollbar)
+//fix MUI grid spacing causing negative margin (horizontal scrollbar), explicit spacing={0} or none? see GH issues.
+//standardize space between title and waves on pages
 //errors: caught (use showConsole and this.context.showAlert(caughtError(stuff))), res.data.success=false (use this.context.showalert(res.data.message))
 
 //FLOW: close dialog before showing success/error of successful request to backend, keep it open if its a caught error on frontend
@@ -50,7 +51,8 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //todo: fix white line appearing when small mobile
 //todo: implement admin stuff...later
 //handle student subscription
-//todo: research efficient querying, maybe better to sort in the query rather than grab all orders?
+//handle special cases for pricing
+//todo: research efficient querying. look into usestaticquery
 //todo: maybe move logout button since if on mobile hitting sidebar button is close
 //todo: add isUser? maybe when im less lazy
 //todo: stripe self-serve portal handles all the payment info stuff??
@@ -61,6 +63,7 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //todo: move moment to higher level package.json
 //todo: add button styling to ALL dialogs
 //todo: add progress circle to buttons for submission actions
+//pagination
 
 //notes:
 /*

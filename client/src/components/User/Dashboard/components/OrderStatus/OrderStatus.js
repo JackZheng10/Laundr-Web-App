@@ -59,16 +59,17 @@ class OrderStatus extends Component {
   constructor() {
     super();
 
-    this.now = moment();
-    this.today = this.now.format("MM/DD/YYYY");
-    this.tomorrow = this.now.add(1, "days").format("MM/DD/YYYY");
-    this.nowFormattedTime = moment(this.now, "HH:mm:ss").format("LT");
+    //moment(stuff) to construct objects used for comparison, before, etc.
+    //.format called on moment obj for raw strings to display or pass in for parsing to construct moment obj
+
+    this.today = moment().format("MM/DD/YYYY");
+    this.tomorrow = moment().add(1, "days").format("MM/DD/YYYY");
 
     this.state = {
       showCancelDialog: false,
       showDropoffDialog: false,
       rawTime: new Date(),
-      formattedTime: this.nowFormattedTime,
+      formattedTime: moment().format("LT"),
       date: "N/A",
       todaySelected: false,
       tomorrowSelected: false,
@@ -121,24 +122,26 @@ class OrderStatus extends Component {
   };
 
   handleSetDropoffTime = async (order) => {
-    if (this.handleTimeCheck(order.orderInfo.weight, order.pickupInfo)) {
-      try {
-        const response = await axios.put(`${baseURL}/order/setDropoff`, {
-          orderID: order.orderInfo.orderID,
-          date: this.state.date,
-          time: this.state.formattedTime,
-        });
-        this.setState({ showDropoffDialog: false }, () => {
-          this.context.showAlert(
-            response.data.message,
-            this.props.fetchOrderInfo
-          );
-        });
-      } catch (error) {
-        showConsoleError("setting dropoff", error);
-        this.context.showAlert(caughtError("setting dropoff", error, 99));
-      }
-    }
+    console.log(this.state.formattedTime);
+    console.log(this.state.rawTime);
+    // if (this.handleTimeCheck(order.orderInfo.weight, order.pickupInfo)) {
+    //   try {
+    //     const response = await axios.put(`${baseURL}/order/setDropoff`, {
+    //       orderID: order.orderInfo.orderID,
+    //       date: this.state.date,
+    //       time: this.state.formattedTime,
+    //     });
+    //     this.setState({ showDropoffDialog: false }, () => {
+    //       this.context.showAlert(
+    //         response.data.message,
+    //         this.props.fetchOrderInfo
+    //       );
+    //     });
+    //   } catch (error) {
+    //     showConsoleError("setting dropoff", error);
+    //     this.context.showAlert(caughtError("setting dropoff", error, 99));
+    //   }
+    // }
   };
 
   //todo: test
@@ -263,7 +266,17 @@ class OrderStatus extends Component {
   };
 
   toggleDropoffDialog = () => {
-    this.setState({ showDropoffDialog: !this.state.showDropoffDialog });
+    if (this.state.showDropoffDialog) {
+      this.setState({
+        todaySelected: false,
+        tomorrowSelected: false,
+        rawTime: new Date(),
+        formattedTime: moment(moment(), "HH:mm:ss").format("LT"),
+        showDropoffDialog: !this.state.showDropoffDialog,
+      });
+    } else {
+      this.setState({ showDropoffDialog: !this.state.showDropoffDialog });
+    }
   };
 
   toggleCancelDialog = () => {

@@ -1,11 +1,12 @@
 const { showConsoleError, caughtError } = require("../helpers/errors");
-const Order = require("../models/Order");
+const { PendingOrder, CompletedOrder } = require("../models/Order");
 
 //change to fetchorder
 const checkExistingOrder = async (req, res, next) => {
   try {
     //find an order that isn't cancelled or confirmed finished
-    const order = await Order.findOne({
+    //filter statuses 7 and 8 in case one is in the wrong collection. ideally no need for it
+    const order = await PendingOrder.findOne({
       "userInfo.email": req.body.email,
       "orderInfo.status": { $nin: [7, 8] },
     });
@@ -28,15 +29,14 @@ const checkExistingOrder = async (req, res, next) => {
   }
 };
 
+//todo: test with existing pending AND completed orders
 const countOrders = async (req, res, next) => {
   try {
-    const count = await Order.countDocuments();
+    const pendingCount = await PendingOrder.countDocuments();
+    const completedCount = await CompletedOrder.countDocuments();
+    const totalCount = (pendingCount || 0) + (completedCount || 0);
 
-    if (count) {
-      res.locals.count = count;
-    } else {
-      res.locals.count = 0;
-    }
+    res.locals.count = totalCount;
 
     next();
   } catch (error) {
@@ -52,7 +52,7 @@ const placeOrder = async (req, res) => {
   try {
     const orderCount = res.locals.count;
 
-    const order = await Order.create({
+    const order = await PendingOrder.create({
       userInfo: {
         email: req.body.email,
         phone: req.body.phone,
@@ -111,7 +111,9 @@ const fetchOrders = async (req, res) => {
     const statuses = req.body.statuses;
     const filter = req.body.filter;
 
-    let orders = await Order.find().where("orderInfo.status").in(statuses);
+    let orders = await PendingOrder.find()
+      .where("orderInfo.status")
+      .in(statuses);
 
     //if any filtering by email needs to be applied
     if (filter) {
@@ -149,7 +151,7 @@ const fetchOrders = async (req, res) => {
 const getExistingOrder = async (req, res) => {
   //find the order that isn't cancelled or confirmed received by user, should only ever be one. if more than one, undefined behavior since findOne returns only one
   try {
-    const order = await Order.findOne({
+    const order = await PendingOrder.findOne({
       "userInfo.email": req.query.email,
       "orderInfo.status": { $nin: [7, 8] },
     });
@@ -176,7 +178,7 @@ const getExistingOrder = async (req, res) => {
 
 const cancelOrder = async (req, res) => {
   try {
-    const order = await Order.findOne({
+    const order = await PendingOrder.findOne({
       "orderInfo.orderID": req.query.orderID,
     });
 
@@ -190,7 +192,11 @@ const cancelOrder = async (req, res) => {
 
     order.orderInfo.status = 7;
 
-    await order.save();
+    //transfer from pending orders to completed orders
+    const completedOrder = new CompletedOrder(order);
+    completedOrder.isNew = true;
+    await completedOrder.save();
+    await order.remove();
 
     return res.json({
       success: true,
@@ -207,7 +213,7 @@ const cancelOrder = async (req, res) => {
 
 const setDropoff = async (req, res) => {
   try {
-    const order = await Order.findOne({
+    const order = await PendingOrder.findOne({
       "orderInfo.orderID": req.body.orderID,
     });
 
@@ -231,13 +237,17 @@ const setDropoff = async (req, res) => {
 
 const confirmReceived = async (req, res) => {
   try {
-    const order = await Order.findOne({
+    const order = await PendingOrder.findOne({
       "orderInfo.orderID": req.body.orderID,
     });
 
     order.orderInfo.status = 8;
 
-    await order.save();
+    //transfer from pending orders to completed orders
+    const completedOrder = new CompletedOrder(order);
+    completedOrder.isNew = true;
+    await completedOrder.save();
+    await order.remove();
 
     return res.json({
       success: true,

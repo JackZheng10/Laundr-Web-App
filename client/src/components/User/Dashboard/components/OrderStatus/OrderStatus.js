@@ -122,26 +122,24 @@ class OrderStatus extends Component {
   };
 
   handleSetDropoffTime = async (order) => {
-    console.log(this.state.formattedTime);
-    console.log(this.state.rawTime);
-    // if (this.handleTimeCheck(order.orderInfo.weight, order.pickupInfo)) {
-    //   try {
-    //     const response = await axios.put(`${baseURL}/order/setDropoff`, {
-    //       orderID: order.orderInfo.orderID,
-    //       date: this.state.date,
-    //       time: this.state.formattedTime,
-    //     });
-    //     this.setState({ showDropoffDialog: false }, () => {
-    //       this.context.showAlert(
-    //         response.data.message,
-    //         this.props.fetchOrderInfo
-    //       );
-    //     });
-    //   } catch (error) {
-    //     showConsoleError("setting dropoff", error);
-    //     this.context.showAlert(caughtError("setting dropoff", error, 99));
-    //   }
-    // }
+    if (this.handleTimeCheck(order.orderInfo.weight, order.pickupInfo)) {
+      try {
+        const response = await axios.put(`${baseURL}/order/setDropoff`, {
+          orderID: order.orderInfo.orderID,
+          date: this.state.date,
+          time: this.state.formattedTime,
+        });
+        this.setState({ showDropoffDialog: false }, () => {
+          this.context.showAlert(
+            response.data.message,
+            this.props.fetchOrderInfo
+          );
+        });
+      } catch (error) {
+        showConsoleError("setting dropoff", error);
+        this.context.showAlert(caughtError("setting dropoff", error, 99));
+      }
+    }
   };
 
   //todo: test

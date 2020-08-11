@@ -30,6 +30,7 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //const vs let
 //backtick for variable + text stuff
 //styling errors like: prefs not centering when small, review page bleeds when small, etc.
+//authorization for either pages/routes/both
 
 //method for loading: do all data fetching in main parent component, apply loading bool
 //hold child components that rely on loaded data in state as null first, then change after gathered loaded data

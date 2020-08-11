@@ -1,12 +1,12 @@
 const { showConsoleError, caughtError } = require("../helpers/errors");
-const Order = require("../models/Order");
+const { PendingOrder, CompletedOrder } = require("../models/Order");
 
 //RETURNS ONLY TERMINATE THE CURRENT FUNCTION YOU DUMMY: aka the .then, catc, etc.
 //awaiting on a promise guarantees the .then is executed right after
 
 const findOrder = async (req, res, next) => {
   try {
-    const order = await Order.findOne({
+    const order = await PendingOrder.findOne({
       "orderInfo.orderID": req.body.orderID,
     });
 

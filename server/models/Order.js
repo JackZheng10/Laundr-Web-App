@@ -144,6 +144,7 @@ const OrderSchema = new mongoose.Schema({
   },
 });
 
-const Order = mongoose.model("Order", OrderSchema);
+const PendingOrder = mongoose.model("PendingOrder", OrderSchema);
+const CompletedOrder = mongoose.model("CompletedOrder", OrderSchema);
 
-module.exports = Order;
+module.exports = { PendingOrder, CompletedOrder };

@@ -10,20 +10,17 @@ import {
   Divider,
 } from "@material-ui/core";
 import { loadStripe } from "@stripe/stripe-js";
-import { getCurrentUser, updateToken } from "../../../../../../helpers/session";
-import {
-  caughtError,
-  showConsoleError,
-} from "../../../../../../helpers/errors";
+import { getCurrentUser, updateToken } from "../../../../../helpers/session";
+import { caughtError, showConsoleError } from "../../../../../helpers/errors";
 import PropTypes from "prop-types";
 import axios from "axios";
-import MainAppContext from "../../../../../../contexts/MainAppContext";
-import baseURL from "../../../../../../baseURL";
-import subscriptionCardStyles from "../../../../../../styles/User/Subscription/components/SubscriptionBoxes/components/subscriptionCardStyles";
+import MainAppContext from "../../../../../contexts/MainAppContext";
+import baseURL from "../../../../../baseURL";
+import subscriptionCardStyles from "../../../../../styles/User/Subscription/components/SubscriptionBoxes/components/subscriptionCardStyles";
 
 const stripeKEY =
   process.env.STRIPE_PUBLISHABLE_KEY ||
-  require("../../../../../../config").stripe.publishableKEY;
+  require("../../../../../config").stripe.publishableKEY;
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.

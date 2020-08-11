@@ -10,11 +10,11 @@ import {
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import PlacesAutocomplete from "./components/PlacesAutocomplete";
 import PropTypes from "prop-types";
-import addressStyles from "../../../../../../../styles/User/Dashboard/components/NewOrder/components/addressStyles";
+import addressStyles from "../../../../../../styles/User/Dashboard/components/NewOrder/components/addressStyles";
 
 const apiKEY =
   process.env.GOOGLE_MAPS_API_KEY ||
-  require("../../../../../../../config").google.mapsKEY;
+  require("../../../../../../config").google.mapsKEY;
 
 const libraries = ["places"];
 

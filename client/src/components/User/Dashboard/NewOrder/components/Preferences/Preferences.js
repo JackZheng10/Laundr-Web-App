@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Grid, Typography, TextField, withStyles } from "@material-ui/core";
 import PropTypes from "prop-types";
-import preferencesStyles from "../../../../../../../styles/User/Dashboard/components/NewOrder/components/Preferences/preferencesStyles";
+import preferencesStyles from "../../../../../../styles/User/Dashboard/components/NewOrder/components/Preferences/preferencesStyles";
 import PreferenceCard from "./components/PreferenceCard";
 
 //todo: make the damn cards center. redo the layouts of everything based on how i would do it (ie personal site)

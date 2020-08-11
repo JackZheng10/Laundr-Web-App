@@ -6,8 +6,8 @@ import PropTypes from "prop-types";
 import jwtDecode from "jwt-decode";
 import baseURL from "../../src/baseURL";
 import axios from "axios";
-import SubscriptionBoxes from "../../src/components/User/Subscription/components/SubscriptionBoxes/SubscriptionBoxes";
-import SubscriptionStatus from "../../src/components/User/Subscription/components/SubscriptionStatus/SubscriptionStatus";
+import SubscriptionBoxes from "../../src/components/User/Subscription/SubscriptionBoxes/SubscriptionBoxes";
+import SubscriptionStatus from "../../src/components/User/Subscription/SubscriptionStatus/SubscriptionStatus";
 import subscriptionStyles from "../../src/styles/User/Subscription/subscriptionStyles";
 
 //todo: add card header and divider to review page, similar to order status

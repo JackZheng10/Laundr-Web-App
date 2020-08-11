@@ -5,7 +5,7 @@ import { MuiPickersUtilsProvider, TimePicker } from "@material-ui/pickers";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import DateFnsUtils from "@date-io/date-fns";
-import schedulingStyles from "../../../../../../styles/User/Dashboard/components/NewOrder/components/schedulingStyles";
+import schedulingStyles from "../../../../../styles/User/Dashboard/components/NewOrder/components/schedulingStyles";
 
 const timeTheme = createMuiTheme({
   // overrides: {

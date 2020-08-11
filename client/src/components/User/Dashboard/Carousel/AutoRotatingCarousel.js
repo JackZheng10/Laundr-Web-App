@@ -14,7 +14,7 @@ import Dots from "material-ui-dots";
 import classNames from "classnames";
 import Carousel from "./SwipableCarouselView";
 import { modulo } from "./util";
-import carouselStyles from "../../../../../styles/User/Dashboard/components/Carousel/carouselStyles";
+import carouselStyles from "../../../../styles/User/Dashboard/components/Carousel/carouselStyles";
 
 class AutoRotatingCarousel extends Component {
   state = {

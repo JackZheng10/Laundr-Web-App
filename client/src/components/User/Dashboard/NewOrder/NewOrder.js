@@ -6,26 +6,26 @@ import {
   Fade,
   CardContent,
 } from "@material-ui/core";
-import { getCurrentUser } from "../../../../../helpers/session";
-import { caughtError, showConsoleError } from "../../../../../helpers/errors";
+import { getCurrentUser } from "../../../../helpers/session";
+import { caughtError, showConsoleError } from "../../../../helpers/errors";
 import PropTypes from "prop-types";
 import Geocode from "react-geocode";
 import axios from "axios";
-import MainAppContext from "../../../../../contexts/MainAppContext";
+import MainAppContext from "../../../../contexts/MainAppContext";
 import Scheduling from "./components/Scheduling";
 import Preferences from "./components/Preferences/Preferences";
 import Address from "./components/Address/Address";
 import Pricing from "./components/Pricing";
 import Review from "./components/Review";
 import ProgressBar from "./components/ProgressBar";
-import newOrderStyles from "../../../../../styles/User/Dashboard/components/NewOrder/newOrderStyles";
-import baseURL from "../../../../../baseURL";
+import newOrderStyles from "../../../../styles/User/Dashboard/components/NewOrder/newOrderStyles";
+import baseURL from "../../../../baseURL";
 
 const moment = require("moment");
 const geolib = require("geolib");
 const apiKEY =
   process.env.GOOGLE_MAPS_API_KEY ||
-  require("../../../../../config").google.mapsKEY;
+  require("../../../../config").google.mapsKEY;
 
 //todo: maybe scroll to top at advancing? or make size of pages same
 //todo: no new order when payment method not added yet

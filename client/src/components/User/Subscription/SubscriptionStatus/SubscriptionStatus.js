@@ -10,16 +10,16 @@ import {
   CardContent,
   CardActions,
 } from "@material-ui/core";
-import { getCurrentUser, updateToken } from "../../../../../helpers/session";
-import { caughtError, showConsoleError } from "../../../../../helpers/errors";
+import { getCurrentUser, updateToken } from "../../../../helpers/session";
+import { caughtError, showConsoleError } from "../../../../helpers/errors";
 import PropTypes from "prop-types";
 import axios from "axios";
 import ReactScoreIndicator from "react-score-indicator";
 import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
-import MainAppContext from "../../../../../contexts/MainAppContext";
-import baseURL from "../../../../../baseURL";
-import subscriptionStatusStyles from "../../../../../styles/User/Subscription/components/SubscriptionStatus/subscriptionStatusStyles";
+import MainAppContext from "../../../../contexts/MainAppContext";
+import baseURL from "../../../../baseURL";
+import subscriptionStatusStyles from "../../../../styles/User/Subscription/components/SubscriptionStatus/subscriptionStatusStyles";
 
 const moment = require("moment");
 

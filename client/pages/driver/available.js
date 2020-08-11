@@ -20,7 +20,7 @@ import { Layout } from "../../src/layouts";
 import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
-import OrderTable from "../../src/components/Driver/components/OrderTable/OrderTable";
+import OrderTable from "../../src/components/Driver/OrderTable/OrderTable";
 import baseURL from "../../src/baseURL";
 import availableDashboardStyles from "../../src/styles/Driver/AvailableDashboard/availableDashboardStyles";
 

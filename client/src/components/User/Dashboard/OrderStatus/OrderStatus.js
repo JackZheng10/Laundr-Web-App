@@ -16,19 +16,19 @@ import {
   CardActions,
 } from "@material-ui/core";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
-import { getCurrentUser } from "../../../../../helpers/session";
-import { caughtError, showConsoleError } from "../../../../../helpers/errors";
+import { getCurrentUser } from "../../../../helpers/session";
+import { caughtError, showConsoleError } from "../../../../helpers/errors";
 import { MuiPickersUtilsProvider, TimePicker } from "@material-ui/pickers";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import DateFnsUtils from "@date-io/date-fns";
 import axios from "axios";
-import MainAppContext from "../../../../../contexts/MainAppContext";
-import baseURL from "../../../../../baseURL";
+import MainAppContext from "../../../../contexts/MainAppContext";
+import baseURL from "../../../../baseURL";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
 import QueryBuilderIcon from "@material-ui/icons/QueryBuilder";
 import LocalMallIcon from "@material-ui/icons/LocalMall";
 import ProgressBar from "./components/ProgressBar";
-import orderStatusStyles from "../../../../../styles/User/Dashboard/components/OrderStatus/orderStatusStyles";
+import orderStatusStyles from "../../../../styles/User/Dashboard/components/OrderStatus/orderStatusStyles";
 
 //0: order just placed
 //1: order accepted by driver to be picked up from user

@@ -27,7 +27,7 @@ import {
 import PropTypes from "prop-types";
 import TooltipButton from "./components/TooltipButton";
 import Close from "@material-ui/icons/Close";
-import orderTableStyles from "../../../../styles/Driver/components/orderTableStyles";
+import orderTableStyles from "../../../styles/Driver/components/orderTableStyles";
 
 //todo: change snackbars to https://github.com/iamhosseindhv/notistack to make it prettier
 //todo: textalign center on snackbar text in case its scrunched

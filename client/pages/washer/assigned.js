@@ -13,7 +13,7 @@ import { Layout } from "../../src/layouts";
 import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
-import OrderTable from "../../src/components/Washer/AssignedDashboard/components/OrderTable";
+import OrderTable from "../../src/components/Washer/OrderTable/OrderTable";
 import baseURL from "../../src/baseURL";
 import assignedDashboardStyles from "../../src/styles/Washer/AssignedDashboard/assignedDashboardStyles";
 

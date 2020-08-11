@@ -11,12 +11,12 @@ import {
   Typography,
 } from "@material-ui/core";
 import clsx from "clsx";
-import DateRangeIcon from "@material-ui/icons/DateRange";
-import SettingsIcon from "@material-ui/icons/Settings";
-import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
-import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
-import RateReviewIcon from "@material-ui/icons/RateReview";
-import progressBarStyles from "../../../../../../styles/User/Dashboard/components/OrderStatus/components/progressBarStyles";
+import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
+import DirectionsCarIcon from "@material-ui/icons/DirectionsCar";
+import CheckIcon from "@material-ui/icons/Check";
+import RoomIcon from "@material-ui/icons/Room";
+import LocalDrinkIcon from "@material-ui/icons/LocalDrink";
+import progressBarStyles from "../../../../../styles/User/Dashboard/components/OrderStatus/components/progressBarStyles";
 
 const ColorlibConnector = withStyles({
   alternativeLabel: {
@@ -74,11 +74,12 @@ const ColorlibStepIcon = (props) => {
   const { active, completed } = props;
 
   const icons = {
-    1: <DateRangeIcon />,
-    2: <SettingsIcon />,
-    3: <HomeRoundedIcon />,
-    4: <AttachMoneyIcon />,
-    5: <RateReviewIcon />,
+    1: <AssignmentTurnedInIcon />,
+    2: <DirectionsCarIcon />,
+    3: <RoomIcon />,
+    4: <LocalDrinkIcon />,
+    5: <DirectionsCarIcon />,
+    6: <CheckIcon />,
   };
 
   return (
@@ -108,18 +109,33 @@ ColorlibStepIcon.propTypes = {
   icon: PropTypes.node,
 };
 
-const steps = ["Scheduling", "Preferences", "Address", "Pricing", "Review"];
+const steps = [
+  "Order placed",
+  "Picked up by driver",
+  "Dropped off to washer",
+  "Done washing",
+  "Picked up from washer",
+  "Delivered",
+];
 
 class ProgressBar extends Component {
+  renderStep = (status) => {
+    if (status === 0 || status === 1) {
+      return 0;
+    } else {
+      return status - 1;
+    }
+  };
+
   render() {
-    const classes = this.props.classes;
+    const { classes, status } = this.props;
 
     return (
       <React.Fragment>
         <div className={classes.root}>
           <Stepper
             alternativeLabel
-            activeStep={this.props.step}
+            activeStep={this.renderStep(status)}
             connector={<ColorlibConnector />}
             style={{ backgroundColor: "transparent" }}
           >
@@ -132,12 +148,7 @@ class ProgressBar extends Component {
             ))}
           </Stepper>
         </div>
-        <div
-          className={classes.secondaryStepper}
-          style={{
-            display: this.props.step === steps.length ? "none" : "",
-          }}
-        >
+        <div className={classes.secondaryStepper}>
           <Grid
             container
             direction="column"
@@ -145,11 +156,11 @@ class ProgressBar extends Component {
             alignItems="center"
           >
             <Grid item>
-              <ColorlibStepIcon active icon={this.props.step + 1} />
+              <ColorlibStepIcon active icon={this.renderStep(status) + 1} />
             </Grid>
             <Grid item>
               <Typography variant="h4" className={classes.secondaryStepText}>
-                {steps[this.props.step]}
+                {steps[this.renderStep(status)]}
               </Typography>
             </Grid>
           </Grid>

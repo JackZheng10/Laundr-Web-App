@@ -12,7 +12,7 @@ import {
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import InfoIcon from "@material-ui/icons/Info";
-import preferenceCardStyles from "../../../../../../../../styles/User/Dashboard/components/NewOrder/components/Preferences/components/preferenceCardStyles";
+import preferenceCardStyles from "../../../../../../../styles/User/Dashboard/components/NewOrder/components/Preferences/components/preferenceCardStyles";
 
 const LightTooltip = withStyles((theme) => ({
   tooltip: {

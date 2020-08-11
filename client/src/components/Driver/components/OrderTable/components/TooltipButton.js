@@ -24,7 +24,7 @@ class PopoverButton extends Component {
   };
 
   render() {
-    const { className, text } = this.props;
+    const { className, text, buttonText } = this.props;
 
     return (
       <React.Fragment>
@@ -43,7 +43,7 @@ class PopoverButton extends Component {
             className={className}
             onClick={this.togglePopover}
           >
-            View
+            {buttonText}
           </Button>
         </LightTooltip>
       </React.Fragment>

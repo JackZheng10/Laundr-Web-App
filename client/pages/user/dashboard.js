@@ -44,6 +44,7 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //fix MUI grid spacing causing negative margin (horizontal scrollbar), explicit spacing={0} or none? see GH issues.
 //standardize space between title and waves on pages, also from top
 //errors: caught (use showConsole and this.context.showAlert(caughtError(stuff))), res.data.success=false (use this.context.showalert(res.data.message))
+//overhaul styles (destructure into components when available, remove unecessary styles, style structure like personal site)
 
 //FLOW: close dialog before showing success/error of successful request to backend, keep it open if its a caught error on frontend
 //make sure this is established for everything.

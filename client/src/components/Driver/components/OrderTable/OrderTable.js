@@ -466,10 +466,9 @@ class OrderTable extends Component {
                     <Typography variant="body1" style={{ fontWeight: 600 }}>
                       User:&nbsp;
                     </Typography>
-                    <Typography
-                      variant="body1"
-                      style={{ textAlign: "center" }}
-                    >{` ${order.orderInfo.address}`}</Typography>
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
+                      {order.orderInfo.address}
+                    </Typography>
                   </div>
                 </Paper>
               </Grid>
@@ -480,7 +479,7 @@ class OrderTable extends Component {
                       Washer:&nbsp;
                     </Typography>
                     <Typography variant="body1" style={{ textAlign: "center" }}>
-                      {` ${order.washerInfo.address}`}
+                      {order.washerInfo.address}
                     </Typography>
                   </div>
                 </Paper>
@@ -525,10 +524,15 @@ class OrderTable extends Component {
             <TooltipButton
               text={order.pickupInfo.prefs}
               className={classes.secondaryButton}
+              buttonText={"View"}
             />
           </TableCell>
           <TableCell>placeholder</TableCell>
-          <TableCell>{this.renderStage(order.orderInfo.status)}</TableCell>
+          <TableCell>
+            <Typography variant="body1" style={{ textAlign: "center" }}>
+              {this.renderStage(order.orderInfo.status)}
+            </Typography>
+          </TableCell>
           <TableCell>
             <Button
               variant="contained"
@@ -559,20 +563,163 @@ class OrderTable extends Component {
                 }}
                 className={classes.cardHeader}
               />
-              <CardContent className={classes.cardContent}>
-                <Typography variant="body1" className={classes.contentText}>
-                  "test"
-                </Typography>
+              <CardContent>
+                <Grid
+                  container
+                  direction="column"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <Grid item>
+                    <div className={classes.inlineText}>
+                      <Typography
+                        variant="body1"
+                        style={{ fontWeight: 600, color: "#01C9E1" }}
+                        gutterBottom
+                      >
+                        Stage:&nbsp;
+                      </Typography>
+                      <Typography variant="body1" gutterBottom>
+                        {this.renderStage(order.orderInfo.status)}
+                      </Typography>
+                    </div>
+                  </Grid>
+                  <Grid item>
+                    <div className={classes.inlineText}>
+                      <Typography
+                        variant="body1"
+                        style={{ fontWeight: 600, color: "#01C9E1" }}
+                        gutterBottom
+                      >
+                        Load Size:&nbsp;
+                      </Typography>
+                      <Typography variant="body1" gutterBottom>
+                        placeholder
+                      </Typography>
+                    </div>
+                  </Grid>
+                  <Grid item>
+                    <Paper
+                      elevation={1}
+                      style={{
+                        padding: 5,
+                        marginBottom: 10,
+                      }}
+                    >
+                      <Typography
+                        style={{
+                          fontWeight: 600,
+                          color: "#01C9E1",
+                          textAlign: "center",
+                        }}
+                      >
+                        Date/Time
+                      </Typography>
+                      {/* <div className={classes.inlineText}> */}
+                      <Grid container justify="center">
+                        <Typography variant="body1" style={{ fontWeight: 600 }}>
+                          Pickup:&nbsp;
+                        </Typography>
+                        <Typography style={{ textAlign: "center" }}>
+                          {` ${order.pickupInfo.date} @ ${order.pickupInfo.time}`}
+                        </Typography>
+                      </Grid>
+                      <Grid container justify="center">
+                        <Typography variant="body1" style={{ fontWeight: 600 }}>
+                          Dropoff:&nbsp;
+                        </Typography>
+                        <Typography style={{ textAlign: "center" }}>
+                          {` ${order.dropoffInfo.date} @ ${order.dropoffInfo.time}`}
+                        </Typography>
+                      </Grid>
+                    </Paper>
+                  </Grid>
+                  <Grid item>
+                    <Paper
+                      elevation={1}
+                      style={{
+                        padding: 5,
+                        marginBottom: 10,
+                      }}
+                    >
+                      <Typography
+                        style={{
+                          fontWeight: 600,
+                          color: "#01C9E1",
+                          textAlign: "center",
+                        }}
+                      >
+                        Address
+                      </Typography>
+                      <Grid container justify="center">
+                        <Typography variant="body1" style={{ fontWeight: 600 }}>
+                          User:&nbsp;
+                        </Typography>
+                        <Typography style={{ textAlign: "center" }}>
+                          {order.orderInfo.address}
+                        </Typography>
+                      </Grid>
+                      <Grid container justify="center">
+                        <Typography variant="body1" style={{ fontWeight: 600 }}>
+                          Washer:&nbsp;
+                        </Typography>
+                        <Typography style={{ textAlign: "center" }}>
+                          {order.washerInfo.address}
+                        </Typography>
+                      </Grid>
+                    </Paper>
+                  </Grid>
+                  <Grid item>
+                    <Paper
+                      elevation={1}
+                      style={{
+                        padding: 5,
+                        marginBottom: 10,
+                        textAlign: "center",
+                      }}
+                    >
+                      <Typography style={{ fontWeight: 600, color: "#01C9E1" }}>
+                        Phone
+                      </Typography>
+                      <Grid container justify="center">
+                        <Typography variant="body1" style={{ fontWeight: 600 }}>
+                          User:&nbsp;
+                        </Typography>
+                        <Typography style={{ textAlign: "center" }}>
+                          {order.userInfo.phone}
+                        </Typography>
+                      </Grid>
+                      <Grid container justify="center">
+                        <Typography variant="body1" style={{ fontWeight: 600 }}>
+                          Washer:&nbsp;
+                        </Typography>
+                        <Typography style={{ textAlign: "center" }}>
+                          {order.washerInfo.phone}
+                        </Typography>
+                      </Grid>
+                    </Paper>
+                  </Grid>
+                  <Grid item>
+                    <TooltipButton
+                      text={order.pickupInfo.prefs}
+                      className={classes.secondaryButton}
+                      buttonText={"View Instructions"}
+                    />
+                  </Grid>
+                </Grid>
               </CardContent>
               <CardActions className={classes.cardActions}>
                 <Grid container justify="center">
-                  <Grid item className={classes.buttonContainer}>
+                  <Grid item>
                     <Button
                       variant="contained"
                       size="large"
                       className={classes.mainButton}
+                      onClick={() => {
+                        this.handleActionClicked(order.orderInfo.status, order);
+                      }}
                     >
-                      Source Code
+                      {this.renderActions(order.orderInfo.status)}
                     </Button>
                   </Grid>
                 </Grid>

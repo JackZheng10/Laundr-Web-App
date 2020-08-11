@@ -9,12 +9,6 @@ const orderTableStyles = (theme) => ({
     display: "flex",
     alignItems: "center",
   },
-  avatar: {
-    marginRight: theme.spacing(2),
-  },
-  actions: {
-    justifyContent: "flex-end",
-  },
   gradient: {
     backgroundImage:
       "linear-gradient( 136deg, rgb(1, 201, 226) 15%, rgb(0, 153, 255) 50%, rgb(1, 201, 226) 100%)",
@@ -55,6 +49,14 @@ const orderTableStyles = (theme) => ({
   },
   title: {
     color: "white",
+  },
+  cardActions: {
+    backgroundColor: "#01C9E1",
+  },
+  inlineText: {
+    display: "flex",
+    alignItems: "center",
+    textAlign: "center",
   },
 });
 

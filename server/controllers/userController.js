@@ -1,5 +1,5 @@
 const { showConsoleError, caughtError } = require("../helpers/errors");
-const { signToken } = require("../helpers/auth");
+const { signToken } = require("../helpers/authorization");
 const User = require("../models/User");
 
 const stripeSECRET =

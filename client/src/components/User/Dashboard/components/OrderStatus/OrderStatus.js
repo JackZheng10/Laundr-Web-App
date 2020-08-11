@@ -416,7 +416,11 @@ class OrderStatus extends Component {
                         this.handleInputChange("today");
                       }}
                       variant="contained"
-                      className={classes.gradient}
+                      style={
+                        this.state.todaySelected
+                          ? { backgroundColor: "#01c9e1", color: "white" }
+                          : { backgroundColor: "white", color: "#01c9e1" }
+                      }
                       fullWidth
                       size="large"
                       startIcon={<CalendarTodayIcon />}
@@ -431,7 +435,11 @@ class OrderStatus extends Component {
                         this.handleInputChange("tomorrow");
                       }}
                       variant="contained"
-                      className={classes.gradient}
+                      style={
+                        this.state.tomorrowSelected
+                          ? { backgroundColor: "#01c9e1", color: "white" }
+                          : { backgroundColor: "white", color: "#01c9e1" }
+                      }
                       fullWidth
                       size="large"
                       startIcon={<CalendarTodayIcon />}

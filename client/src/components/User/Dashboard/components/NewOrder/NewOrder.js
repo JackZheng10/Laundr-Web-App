@@ -10,7 +10,6 @@ import { getCurrentUser } from "../../../../../helpers/session";
 import { caughtError, showConsoleError } from "../../../../../helpers/errors";
 import PropTypes from "prop-types";
 import Geocode from "react-geocode";
-import jwtDecode from "jwt-decode";
 import axios from "axios";
 import MainAppContext from "../../../../../contexts/MainAppContext";
 import Scheduling from "./components/Scheduling";
@@ -79,18 +78,9 @@ class NewOrder extends Component {
         break;
 
       case 1:
-        console.log("scented: " + this.state.scented);
-        console.log("delicates: " + this.state.delicates);
-        console.log("separate: " + this.state.separate);
-        console.log("towels and sheets: " + this.state.towelsSheets);
-        console.log("washer preferences: " + this.state.washerPreferences);
-        console.log("====================================");
         break;
 
       case 2:
-        console.log("address: " + this.state.address);
-        console.log("driver instructions: " + this.state.addressPreferences);
-        console.log("====================================");
         if (this.evaluateWhitespace(this.state.address) === "N/A") {
           this.context.showAlert("Please enter an address.");
           canNext = false;
@@ -119,9 +109,6 @@ class NewOrder extends Component {
           { latitude: addressCords.lat, longitude: addressCords.lng },
           { latitude: 29.6499, longitude: -82.3486 }
         );
-
-        console.log("lat: " + addressCords.lat);
-        console.log("lng: " + addressCords.lng);
 
         if (distance > 16094) {
           this.context.showAlert(
@@ -403,7 +390,7 @@ class NewOrder extends Component {
                         <Button
                           color="primary"
                           onClick={this.handleDone}
-                          className={classes.button}
+                          className={classes.mainButton}
                         >
                           Okay
                         </Button>
@@ -522,7 +509,7 @@ class NewOrder extends Component {
                         <Button
                           variant="contained"
                           onClick={this.handleBack}
-                          className={classes.button}
+                          className={classes.secondaryButton}
                         >
                           Back
                         </Button>
@@ -530,7 +517,7 @@ class NewOrder extends Component {
                       <Button
                         variant="contained"
                         onClick={this.handleNext}
-                        className={classes.button}
+                        className={classes.mainButton}
                       >
                         {this.state.activeStep === steps.length - 1
                           ? "Place order"

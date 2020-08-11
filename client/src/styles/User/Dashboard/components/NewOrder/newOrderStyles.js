@@ -30,6 +30,18 @@ const newOrderStyles = (theme) => ({
       "linear-gradient( 136deg, rgb(1, 201, 226) 15%, rgb(0, 153, 255) 50%, rgb(1, 201, 226) 100%)",
     color: "white",
   },
+  secondaryButton: {
+    marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(1),
+    color: "white",
+    backgroundColor: "#01c9e1",
+  },
+  mainButton: {
+    marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(1),
+    color: "white",
+    backgroundColor: "#FFB600",
+  },
 });
 
 export default newOrderStyles;

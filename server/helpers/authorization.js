@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken"),
   User = require("../models/User.js"),
   jwt_secret = process.env.secret || require("../config/config.js").secret,
-  { showConsoleError, caughtError } = require("../helpers/errors");
+  { showConsoleError, caughtError } = require("./errors");
 
 // function to create tokens, access time is 24 hrs by default
 const signToken = (user) => {

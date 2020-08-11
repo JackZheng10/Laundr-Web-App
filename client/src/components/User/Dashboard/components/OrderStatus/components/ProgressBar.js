@@ -137,6 +137,7 @@ class ProgressBar extends Component {
             alternativeLabel
             activeStep={this.renderStep(status)}
             connector={<ColorlibConnector />}
+            style={{ backgroundColor: "transparent" }}
           >
             {steps.map((label) => (
               <Step key={label}>

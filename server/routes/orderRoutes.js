@@ -13,6 +13,7 @@ const {
 
 //todo: middleware for finding order like in driver + washer
 //todo: error handling for when stuff doesnt exist when querying? like in findOrder @ driver
+//todo: const x, y, z like in auth.js
 
 router.post("/placeOrder", checkExistingOrder, countOrders, placeOrder);
 router.post("/fetchOrders", fetchOrders);

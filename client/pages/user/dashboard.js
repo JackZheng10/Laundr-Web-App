@@ -132,10 +132,7 @@ class Dashboard extends Component {
           direction="column"
           justify="center"
           alignItems="center" /*main page column*/
-          style={{
-            paddingTop: 8,
-            backgroundImage: "linear-gradient(#4231fd, #0b0833)",
-          }}
+          style={{ backgroundColor: "#01C9E1", paddingTop: 8 }}
         >
           <Grid item>
             <Paper elevation={3} className={classes.welcomeCard}>
@@ -159,7 +156,7 @@ class Dashboard extends Component {
           </Grid>
         </Grid>
         <div style={{ position: "relative", marginBottom: 50 }}>
-          <BottomBorderDarkPurple />
+          <BottomBorderBlue />
         </div>
         {/* </Grid> */}
         <Grid
@@ -168,6 +165,7 @@ class Dashboard extends Component {
           direction="column"
           justify="center"
           alignItems="center"
+          // style={{ backgroundImage: `url("/images/space.png")` }}
         >
           <Grid item>{this.state.orderComponent}</Grid>
         </Grid>

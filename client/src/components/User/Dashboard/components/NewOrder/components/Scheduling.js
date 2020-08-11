@@ -49,7 +49,11 @@ class Scheduling extends Component {
                 handleInputChange("today");
               }}
               variant="contained"
-              className={classes.gradient}
+              style={
+                todaySelected
+                  ? { backgroundColor: "#01c9e1", color: "white" }
+                  : { backgroundColor: "white", color: "#01c9e1" }
+              }
               fullWidth
               size="large"
               startIcon={<CalendarTodayIcon />}
@@ -64,7 +68,11 @@ class Scheduling extends Component {
                 handleInputChange("tomorrow");
               }}
               variant="contained"
-              className={classes.gradient}
+              style={
+                tomorrowSelected
+                  ? { backgroundColor: "#01c9e1", color: "white" }
+                  : { backgroundColor: "white", color: "#01c9e1" }
+              }
               fullWidth
               size="large"
               startIcon={<CalendarTodayIcon />}

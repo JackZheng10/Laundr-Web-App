@@ -1,7 +1,6 @@
 /* eslint-disable react/no-multi-comp */
 /* eslint-disable react/display-name */
 import React, { forwardRef } from "react";
-// import { NavLink as RouterLink } from "react-router-dom";
 import clsx from "clsx";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
@@ -39,14 +38,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// const CustomRouterLink = forwardRef((props, ref) => (
-//   <div ref={ref} style={{ flexGrow: 1 }}>
-//     <RouterLink {...props} />
-//   </div>
-// ));
-
-//todo: get active color to show properly
-
 const SidebarNav = (props) => {
   const { pages, className, ...rest } = props;
 
@@ -69,11 +60,8 @@ const SidebarNav = (props) => {
         <ListItem className={classes.item} disableGutters key={index}>
           <Link href={page.href}>
             <Button
-              // activeClassName={classes.active}
               className={classes.button}
               style={{ color: evaluateActive(page.href) }}
-              // component={Link}
-              // to={page.href}
             >
               <div
                 className={classes.icon}

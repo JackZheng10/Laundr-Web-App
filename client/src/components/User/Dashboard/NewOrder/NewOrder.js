@@ -29,6 +29,7 @@ const apiKEY =
 
 //todo: maybe scroll to top at advancing? or make size of pages same
 //todo: no new order when payment method not added yet
+//todo: refactoring styling/layout like i would do now. same as others. center everything?
 
 const steps = ["Scheduling", "Preferences", "Address", "Pricing", "Review"];
 
@@ -62,6 +63,7 @@ class NewOrder extends Component {
       address: "",
       renderMarker: false,
       addressPreferences: "",
+      loads: 0.5, //pricing
       orderID: -1, //done screen
     };
   }
@@ -415,7 +417,8 @@ class NewOrder extends Component {
                       }}
                     >
                       <div>
-                        <Scheduling
+                        <Pricing loads={this.state.loads} />
+                        {/* <Scheduling
                           today={this.today}
                           tomorrow={this.tomorrow}
                           todaySelected={this.state.todaySelected}
@@ -423,7 +426,7 @@ class NewOrder extends Component {
                           formattedTime={this.state.formattedTime}
                           rawTime={this.state.rawTime}
                           handleInputChange={this.handleInputChange}
-                        />
+                        /> */}
                       </div>
                     </Fade>
                     <Fade
@@ -481,9 +484,7 @@ class NewOrder extends Component {
                           this.state.activeStep === 3 ? "500ms" : "0ms",
                       }}
                     >
-                      <div>
-                        <Pricing />
-                      </div>
+                      <div>{/* <Pricing /> */}</div>
                     </Fade>
                     <Fade
                       in={this.state.activeStep === 4}

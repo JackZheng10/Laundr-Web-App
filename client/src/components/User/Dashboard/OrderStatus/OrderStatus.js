@@ -520,11 +520,11 @@ class OrderStatus extends Component {
                       }}
                       className={classes.cardHeader}
                     />
-                    <Divider />
+                    {/* <Divider /> */}
                     <CardContent>
                       {this.renderCardContent(order, classes)}
                     </CardContent>
-                    <Divider />
+                    {/* <Divider /> */}
                     <CardActions className={classes.cardFooter}>
                       <Button
                         size="small"

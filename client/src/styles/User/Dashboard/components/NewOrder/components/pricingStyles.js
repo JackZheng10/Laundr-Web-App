@@ -15,8 +15,7 @@ const pricingStyles = (theme) => ({
     },
   },
   cardContent: {
-    textAlign: "center",
-    backgroundColor: "#01C9E1",
+    backgroundColor: "white",
   },
   title: {
     color: "white",

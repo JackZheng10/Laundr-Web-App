@@ -26,12 +26,14 @@ class Pricing extends Component {
           valueLabelDisplay="auto"
           step={0.5}
           marks
-          min={0.5}
+          min={1}
           max={5}
-          style={{ width: 300 }}
+
+          // style={{ width: 300 }}
           /*onChange and value from NewOrder*/
         />
-        <div className={classes.layout}>
+        {/*card for change based on load size, prob will be unused in favor of different graphic*/}
+        {/* <div className={classes.layout}>
           <Card className={classes.root} elevation={10}>
             <CardContent className={classes.cardContent}>
               <Grid container justify="center">
@@ -42,7 +44,7 @@ class Pricing extends Component {
               </Grid>
             </CardContent>
           </Card>
-        </div>
+        </div> */}
       </React.Fragment>
     );
   }

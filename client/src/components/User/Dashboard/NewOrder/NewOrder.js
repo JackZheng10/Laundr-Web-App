@@ -63,7 +63,7 @@ class NewOrder extends Component {
       address: "",
       renderMarker: false,
       addressPreferences: "",
-      loads: 0.5, //pricing
+      loads: 1, //pricing
       orderID: -1, //done screen
     };
   }

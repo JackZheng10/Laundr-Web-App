@@ -265,42 +265,56 @@ class OrderTable extends Component {
           }}
         />
         {/*table*/}
-        <div>
-          {/*regular table view*/}
-          <Hidden only={["md", "sm", "xs"]}>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell align="left">Date/Time</TableCell>
-                    <TableCell align="left">User Phone</TableCell>
-                    <TableCell align="left">Instructions</TableCell>
-                    <TableCell align="left">Preferences</TableCell>
-                    <TableCell align="left">Load Size</TableCell>
-                    <TableCell align="left">Stage</TableCell>
-                    <TableCell align="left">Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>{this.renderOrderCells(orders)}</TableBody>
-              </Table>
-            </TableContainer>
-          </Hidden>
-          {/*card view*/}
-          <Hidden only={["xl", "lg"]}>
-            <div style={{ padding: 16 }}>
-              <Grid
-                container
-                spacing={4}
-                direction="row"
-                justify="center"
-                alignItems="center"
-              >
-                {this.renderOrderCards(orders)}
-              </Grid>
-            </div>
-          </Hidden>
-        </div>
+        {/*regular table view*/}
+        <Hidden only={["md", "sm", "xs"]}>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell align="left" className={classes.tableHeader}>
+                    Name
+                  </TableCell>
+                  <TableCell align="left" className={classes.tableHeader}>
+                    Date/Time
+                  </TableCell>
+                  <TableCell align="left" className={classes.tableHeader}>
+                    User Phone
+                  </TableCell>
+                  <TableCell align="left" className={classes.tableHeader}>
+                    Instructions
+                  </TableCell>
+                  <TableCell align="left" className={classes.tableHeader}>
+                    Preferences
+                  </TableCell>
+                  <TableCell align="left" className={classes.tableHeader}>
+                    Load Size
+                  </TableCell>
+                  <TableCell align="left" className={classes.tableHeader}>
+                    Stage
+                  </TableCell>
+                  <TableCell align="left" className={classes.tableHeader}>
+                    Actions
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>{this.renderOrderCells(orders)}</TableBody>
+            </Table>
+          </TableContainer>
+        </Hidden>
+        {/*card view*/}
+        <Hidden only={["xl", "lg"]}>
+          <div style={{ padding: 16 }}>
+            <Grid
+              container
+              spacing={4}
+              direction="row"
+              justify="center"
+              alignItems="center"
+            >
+              {this.renderOrderCards(orders)}
+            </Grid>
+          </div>
+        </Hidden>
       </React.Fragment>
     );
   }

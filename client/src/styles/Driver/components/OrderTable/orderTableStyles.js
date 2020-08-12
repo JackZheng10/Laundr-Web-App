@@ -22,6 +22,10 @@ const orderTableStyles = (theme) => ({
     color: "white",
     backgroundColor: "#01c9e1",
   },
+  tableHeader: {
+    backgroundColor: "#01c9e1",
+    color: "white",
+  },
 });
 
 export default orderTableStyles;

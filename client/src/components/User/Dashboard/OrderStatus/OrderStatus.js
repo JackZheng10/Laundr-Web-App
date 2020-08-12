@@ -529,7 +529,12 @@ class OrderStatus extends Component {
                       <Button
                         size="small"
                         variant="contained"
-                        className={classes.secondaryButton}
+                        className={
+                          order.orderInfo.status < 2 &&
+                          order.dropoffInfo.time === "N/A"
+                            ? classes.mainButton
+                            : classes.secondaryButton
+                        }
                         onClick={() => {
                           order.orderInfo.status === 6
                             ? this.handleConfirmReceived(order)

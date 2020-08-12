@@ -21,9 +21,12 @@ import {
   Grid,
   Paper,
   TableContainer,
+  Hidden,
 } from "@material-ui/core";
 import Close from "@material-ui/icons/Close";
-import orderTableStyles from "../../../styles/Washer/components/OrderTable/orderTableStyles";
+import OrderCell from "./components/OrderCell";
+import OrderCard from "./components/OrderCard";
+import orderTableStyles from "../../../styles/Driver/components/OrderTable/orderTableStyles";
 
 class OrderTable extends Component {
   state = {
@@ -55,6 +58,42 @@ class OrderTable extends Component {
           actionDialogTitle: "Confirmation",
         });
       }
+    });
+  };
+
+  renderOrderCells = (orders) => {
+    return orders.map((order, index) => {
+      return (
+        <OrderCell
+          order={order}
+          actionText={this.renderActions(order.orderInfo.status)}
+          action={() => {
+            this.handleActionClicked(order.orderInfo.status, order);
+          }}
+          stage={this.renderStage(order.orderInfo.status)}
+          prefs={this.renderWasherPrefs(order)}
+          key={index}
+        />
+      );
+    });
+  };
+
+  renderOrderCards = (orders) => {
+    return orders.map((order, index) => {
+      return (
+        <Grid item>
+          <OrderCard
+            order={order}
+            actionText={this.renderActions(order.orderInfo.status)}
+            action={() => {
+              this.handleActionClicked(order.orderInfo.status, order);
+            }}
+            stage={this.renderStage(order.orderInfo.status)}
+            prefs={this.renderWasherPrefs(order)}
+            key={index}
+          />
+        </Grid>
+      );
     });
   };
 
@@ -93,9 +132,8 @@ class OrderTable extends Component {
           <React.Fragment>
             <Button
               onClick={this.handleDialogClose}
-              color="primary"
               variant="contained"
-              className={classes.gradient}
+              className={classes.secondaryButton}
             >
               Cancel
             </Button>
@@ -106,9 +144,8 @@ class OrderTable extends Component {
                 );
                 this.showNotification(response.message, response.success);
               }}
-              color="primary"
               variant="contained"
-              className={classes.gradient}
+              className={classes.mainButton}
             >
               Confirm
             </Button>
@@ -181,155 +218,90 @@ class OrderTable extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, orders } = this.props;
 
     return (
-      <Card>
-        <CardContent className={classes.noPaddingCard}>
-          <PerfectScrollbar>
-            <React.Fragment>
-              <Dialog
-                open={this.state.showActionDialog}
-                onClose={this.handleDialogClose}
-              >
-                <DialogTitle>{this.state.actionDialogTitle}</DialogTitle>
-                <DialogContent>{this.renderDialogContent()}</DialogContent>
-                <DialogActions>
-                  {this.renderDialogActions(classes)}
-                </DialogActions>
-              </Dialog>
-            </React.Fragment>
-            <div className={classes.inner}>
-              <TableContainer component={Paper}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Name</TableCell>
-                      <TableCell align="left">Date/Time</TableCell>
-                      <TableCell align="left">User Phone</TableCell>
-                      <TableCell align="left">Instructions</TableCell>
-                      <TableCell align="left">Preferences</TableCell>
-                      <TableCell align="left">Load Size</TableCell>
-                      <TableCell align="left">Stage</TableCell>
-                      <TableCell align="left">Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {this.props.orders.map((order) => (
-                      <TableRow key={order.orderInfo.orderID}>
-                        <TableCell>
-                          <div className={classes.nameContainer}>
-                            <Typography variant="body1">
-                              {`${order.userInfo.fname} ${order.userInfo.lname}`}
-                            </Typography>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Grid
-                            container
-                            direction="column"
-                            justify="center"
-                            alignItems="flex-start"
-                            spacing={1}
-                          >
-                            <Grid item>
-                              <Paper elevation={1}>
-                                <div className={classes.cardCell}>
-                                  <Typography
-                                    variant="body1"
-                                    style={{ fontWeight: 600 }}
-                                  >
-                                    Pickup:&nbsp;
-                                  </Typography>
-                                  <Typography variant="body1">{` ${order.pickupInfo.date} @ ${order.pickupInfo.time}`}</Typography>
-                                </div>
-                              </Paper>
-                            </Grid>
-                            <Grid item>
-                              <Paper elevation={1}>
-                                <div className={classes.cardCell}>
-                                  <Typography
-                                    variant="body1"
-                                    style={{ fontWeight: 600 }}
-                                  >
-                                    Dropoff:&nbsp;
-                                  </Typography>
-                                  <Typography variant="body1">
-                                    {` ${order.dropoffInfo.date} @ ${order.dropoffInfo.time}`}
-                                  </Typography>
-                                </div>
-                              </Paper>
-                            </Grid>
-                          </Grid>
-                        </TableCell>
-                        <TableCell>{order.userInfo.phone}</TableCell>
-                        <TableCell>{order.washerInfo.prefs}</TableCell>
-                        <TableCell>{this.renderWasherPrefs(order)}</TableCell>
-                        <TableCell>{420}</TableCell>
-                        <TableCell>
-                          {this.renderStage(order.orderInfo.status)}
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            variant="contained"
-                            className={classes.gradient}
-                            color="primary"
-                            onClick={() => {
-                              this.handleActionClicked(
-                                order.orderInfo.status,
-                                order
-                              );
-                            }}
-                          >
-                            {this.renderActions(order.orderInfo.status)}
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </div>
-          </PerfectScrollbar>
-        </CardContent>
-        <React.Fragment>
-          <Snackbar
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "center",
-            }}
-            open={this.state.showNotification}
-            autoHideDuration={10000}
-            onClose={(event, reason) => {
-              if (reason !== "clickaway") {
-                this.setState({ showNotification: false });
-              }
-            }}
-            message={this.state.notificationMessage}
-            action={
-              <React.Fragment>
-                <IconButton
-                  size="small"
-                  aria-label="close"
-                  color="inherit"
-                  onClick={() => {
-                    this.setState({ showNotification: false });
-                  }}
-                >
-                  <Close fontSize="small" />
-                </IconButton>
-              </React.Fragment>
+      <React.Fragment>
+        {/*actions + notifications*/}
+        <Dialog
+          open={this.state.showActionDialog}
+          onClose={this.handleDialogClose}
+        >
+          <DialogTitle>{this.state.actionDialogTitle}</DialogTitle>
+          <DialogContent>{this.renderDialogContent()}</DialogContent>
+          <DialogActions>{this.renderDialogActions(classes)}</DialogActions>
+        </Dialog>
+        <Snackbar
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+          }}
+          open={this.state.showNotification}
+          autoHideDuration={10000}
+          onClose={(event, reason) => {
+            if (reason !== "clickaway") {
+              this.setState({ showNotification: false });
             }
-            ContentProps={{
-              style: {
-                backgroundColor: this.state.notificationSuccess
-                  ? "green"
-                  : "red",
-              },
-            }}
-          />
-        </React.Fragment>
-      </Card>
+          }}
+          message={this.state.notificationMessage}
+          action={
+            <React.Fragment>
+              <IconButton
+                size="small"
+                aria-label="close"
+                color="inherit"
+                onClick={() => {
+                  this.setState({ showNotification: false });
+                }}
+              >
+                <Close fontSize="small" />
+              </IconButton>
+            </React.Fragment>
+          }
+          ContentProps={{
+            style: {
+              backgroundColor: this.state.notificationSuccess ? "green" : "red",
+            },
+          }}
+        />
+        {/*table*/}
+        <div>
+          {/*regular table view*/}
+          <Hidden only={["md", "sm", "xs"]}>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell align="left">Date/Time</TableCell>
+                    <TableCell align="left">User Phone</TableCell>
+                    <TableCell align="left">Instructions</TableCell>
+                    <TableCell align="left">Preferences</TableCell>
+                    <TableCell align="left">Load Size</TableCell>
+                    <TableCell align="left">Stage</TableCell>
+                    <TableCell align="left">Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{this.renderOrderCells(orders)}</TableBody>
+              </Table>
+            </TableContainer>
+          </Hidden>
+          {/*card view*/}
+          <Hidden only={["xl", "lg"]}>
+            <div style={{ padding: 16 }}>
+              <Grid
+                container
+                spacing={4}
+                direction="row"
+                justify="center"
+                alignItems="center"
+              >
+                {this.renderOrderCards(orders)}
+              </Grid>
+            </div>
+          </Hidden>
+        </div>
+      </React.Fragment>
     );
   }
 }

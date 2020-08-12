@@ -139,8 +139,8 @@ class ProgressBar extends Component {
             connector={<ColorlibConnector />}
             style={{ backgroundColor: "transparent" }}
           >
-            {steps.map((label) => (
-              <Step key={label}>
+            {steps.map((label, index) => (
+              <Step key={index}>
                 <StepLabel StepIconComponent={ColorlibStepIcon}>
                   {label}
                 </StepLabel>

@@ -40,8 +40,13 @@ const OrderCell = (props) => {
           spacing={1}
         >
           <Grid item>
-            <Paper elevation={1}>
-              <div className={classes.cardCell}>
+            <Paper
+              elevation={1}
+              style={{
+                padding: 5,
+              }}
+            >
+              <Grid container justify="center">
                 <Typography variant="body1" style={{ fontWeight: 600 }}>
                   Pickup:&nbsp;
                 </Typography>
@@ -49,19 +54,24 @@ const OrderCell = (props) => {
                   variant="body1"
                   style={{ textAlign: "center" }}
                 >{` ${order.pickupInfo.date} @ ${order.pickupInfo.time}`}</Typography>
-              </div>
+              </Grid>
             </Paper>
           </Grid>
           <Grid item>
-            <Paper elevation={1}>
-              <div className={classes.cardCell}>
+            <Paper
+              elevation={1}
+              style={{
+                padding: 5,
+              }}
+            >
+              <Grid container justify="center">
                 <Typography variant="body1" style={{ fontWeight: 600 }}>
                   Dropoff:&nbsp;
                 </Typography>
                 <Typography variant="body1" style={{ textAlign: "center" }}>
                   {` ${order.dropoffInfo.date} @ ${order.dropoffInfo.time}`}
                 </Typography>
-              </div>
+              </Grid>
             </Paper>
           </Grid>
         </Grid>
@@ -75,27 +85,37 @@ const OrderCell = (props) => {
           spacing={1}
         >
           <Grid item>
-            <Paper elevation={1}>
-              <div className={classes.cardCell}>
+            <Paper
+              elevation={1}
+              style={{
+                padding: 5,
+              }}
+            >
+              <Grid container justify="center">
                 <Typography variant="body1" style={{ fontWeight: 600 }}>
                   User:&nbsp;
                 </Typography>
                 <Typography variant="body1" style={{ textAlign: "center" }}>
                   {order.orderInfo.address}
                 </Typography>
-              </div>
+              </Grid>
             </Paper>
           </Grid>
           <Grid item>
-            <Paper elevation={1}>
-              <div className={classes.cardCell}>
+            <Paper
+              elevation={1}
+              style={{
+                padding: 5,
+              }}
+            >
+              <Grid container justify="center">
                 <Typography variant="body1" style={{ fontWeight: 600 }}>
                   Washer:&nbsp;
                 </Typography>
                 <Typography variant="body1" style={{ textAlign: "center" }}>
                   {order.washerInfo.address}
                 </Typography>
-              </div>
+              </Grid>
             </Paper>
           </Grid>
         </Grid>
@@ -109,27 +129,37 @@ const OrderCell = (props) => {
           spacing={1}
         >
           <Grid item>
-            <Paper elevation={1}>
-              <div className={classes.cardCell}>
+            <Paper
+              elevation={1}
+              style={{
+                padding: 5,
+              }}
+            >
+              <Grid container justify="center">
                 <Typography variant="body1" style={{ fontWeight: 600 }}>
                   User:&nbsp;
                 </Typography>
                 <Typography variant="body1" style={{ textAlign: "center" }}>
                   {order.userInfo.phone}
                 </Typography>
-              </div>
+              </Grid>
             </Paper>
           </Grid>
           <Grid item>
-            <Paper elevation={1}>
-              <div className={classes.cardCell}>
+            <Paper
+              elevation={1}
+              style={{
+                padding: 5,
+              }}
+            >
+              <Grid container justify="center">
                 <Typography variant="body1" style={{ fontWeight: 600 }}>
                   Washer:&nbsp;
                 </Typography>
                 <Typography variant="body1" style={{ textAlign: "center" }}>
                   {order.washerInfo.phone}
                 </Typography>
-              </div>
+              </Grid>
             </Paper>
           </Grid>
         </Grid>

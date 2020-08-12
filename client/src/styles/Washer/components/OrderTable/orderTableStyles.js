@@ -1,3 +1,4 @@
+//unused, same as driver
 const orderTableStyles = (theme) => ({
   root: {},
   inner: {},
@@ -16,11 +17,7 @@ const orderTableStyles = (theme) => ({
       "linear-gradient( 136deg, rgb(1, 201, 226) 15%, rgb(0, 153, 255) 50%, rgb(1, 201, 226) 100%)",
     color: "white",
   },
-  cardCell: {
-    display: "flex",
-    alignItems: "center",
-    padding: 5,
-  },
+
   noPaddingCard: {
     padding: 0,
     "&:last-child": {

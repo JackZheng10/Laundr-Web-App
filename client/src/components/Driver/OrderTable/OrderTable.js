@@ -223,9 +223,8 @@ class OrderTable extends Component {
             <React.Fragment>
               <Button
                 onClick={this.handleDialogClose}
-                color="primary"
                 variant="contained"
-                className={classes.gradient}
+                className={classes.secondaryButton}
               >
                 Cancel
               </Button>
@@ -236,9 +235,8 @@ class OrderTable extends Component {
                   );
                   this.showNotification(response.message, response.success);
                 }}
-                color="primary"
                 variant="contained"
-                className={classes.gradient}
+                className={classes.mainButton}
               >
                 Confirm
               </Button>
@@ -250,17 +248,15 @@ class OrderTable extends Component {
             <React.Fragment>
               <Button
                 onClick={this.handleDialogClose}
-                color="primary"
                 variant="contained"
-                className={classes.gradient}
+                className={classes.secondaryButton}
               >
                 Cancel
               </Button>
               <Button
                 onClick={this.handleWeightEntered}
-                color="primary"
                 variant="contained"
-                className={classes.gradient}
+                className={classes.mainButton}
               >
                 Confirm
               </Button>
@@ -272,9 +268,8 @@ class OrderTable extends Component {
             <React.Fragment>
               <Button
                 onClick={this.handleDialogClose}
-                color="primary"
                 variant="contained"
-                className={classes.gradient}
+                className={classes.secondaryButton}
               >
                 Cancel
               </Button>
@@ -285,9 +280,8 @@ class OrderTable extends Component {
                   );
                   this.showNotification(response.message, response.success);
                 }}
-                color="primary"
                 variant="contained"
-                className={classes.gradient}
+                className={classes.mainButton}
               >
                 Confirm
               </Button>
@@ -299,9 +293,8 @@ class OrderTable extends Component {
             <React.Fragment>
               <Button
                 onClick={this.handleDialogClose}
-                color="primary"
                 variant="contained"
-                className={classes.gradient}
+                className={classes.secondaryButton}
               >
                 Cancel
               </Button>
@@ -312,9 +305,8 @@ class OrderTable extends Component {
                   );
                   this.showNotification(response.message, response.success);
                 }}
-                color="primary"
                 variant="contained"
-                className={classes.gradient}
+                className={classes.mainButton}
               >
                 Confirm
               </Button>
@@ -326,9 +318,8 @@ class OrderTable extends Component {
             <React.Fragment>
               <Button
                 onClick={this.handleDialogClose}
-                color="primary"
                 variant="contained"
-                className={classes.gradient}
+                className={classes.secondaryButton}
               >
                 Cancel
               </Button>
@@ -339,9 +330,8 @@ class OrderTable extends Component {
                   );
                   this.showNotification(response.message, response.success);
                 }}
-                color="primary"
                 variant="contained"
-                className={classes.gradient}
+                className={classes.mainButton}
               >
                 Confirm
               </Button>
@@ -403,8 +393,8 @@ class OrderTable extends Component {
     });
   };
 
-  renderOrderCells = (orders, classes) => {
-    return orders.map((order) => {
+  renderOrderCells = (orders) => {
+    return orders.map((order, index) => {
       return (
         <OrderCell
           order={order}
@@ -413,14 +403,14 @@ class OrderTable extends Component {
             this.handleActionClicked(order.orderInfo.status, order);
           }}
           stage={this.renderStage(order.orderInfo.status)}
-          key={order.orderInfo.orderID}
+          key={index}
         />
       );
     });
   };
 
   renderOrderCards = (orders) => {
-    return orders.map((order) => {
+    return orders.map((order, index) => {
       return (
         <Grid item>
           <OrderCard
@@ -430,7 +420,7 @@ class OrderTable extends Component {
               this.handleActionClicked(order.orderInfo.status, order);
             }}
             stage={this.renderStage(order.orderInfo.status)}
-            key={order.orderInfo.orderID}
+            key={index}
           />
         </Grid>
       );
@@ -502,7 +492,7 @@ class OrderTable extends Component {
                     <TableCell align="left">Actions</TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>{this.renderOrderCells(orders, classes)}</TableBody>
+                <TableBody>{this.renderOrderCells(orders)}</TableBody>
               </Table>
             </TableContainer>
           </Hidden>

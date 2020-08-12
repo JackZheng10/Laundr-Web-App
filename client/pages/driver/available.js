@@ -140,7 +140,11 @@ class AvailableDashboard extends Component {
             </Paper>
           </Grid>
           <Grid item>
-            <Typography variant="h1" className={classes.componentName}>
+            <Typography
+              variant="h1"
+              className={classes.componentName}
+              gutterBottom
+            >
               Available Orders
             </Typography>
           </Grid>

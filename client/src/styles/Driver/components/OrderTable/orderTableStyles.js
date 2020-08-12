@@ -14,11 +14,6 @@ const orderTableStyles = (theme) => ({
       "linear-gradient( 136deg, rgb(1, 201, 226) 15%, rgb(0, 153, 255) 50%, rgb(1, 201, 226) 100%)",
     color: "white",
   },
-  cardCell: {
-    display: "flex",
-    alignItems: "center",
-    padding: 5,
-  },
   mainButton: {
     color: "white",
     backgroundColor: "#FFB600",

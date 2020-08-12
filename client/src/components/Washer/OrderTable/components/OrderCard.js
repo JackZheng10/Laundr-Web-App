@@ -11,11 +11,11 @@ import {
   Grid,
 } from "@material-ui/core";
 import PropTypes from "prop-types";
-import TooltipButton from "./TooltipButton";
+import TooltipButton from "../../../Driver/OrderTable/components/TooltipButton";
 import orderCardStyles from "../../../../styles/Driver/components/OrderTable/components/orderCardStyles";
 
 const OrderCard = (props) => {
-  const { classes, order, actionText, action, stage } = props;
+  const { classes, order, actionText, action, stage, prefs } = props;
 
   return (
     <div className={classes.layout}>
@@ -113,14 +113,14 @@ const OrderCard = (props) => {
                     textAlign: "center",
                   }}
                 >
-                  Address
+                  Phone
                 </Typography>
                 <Grid container justify="center">
                   <Typography variant="body1" style={{ fontWeight: 600 }}>
                     User:&nbsp;
                   </Typography>
                   <Typography style={{ textAlign: "center" }}>
-                    {order.orderInfo.address}
+                    {order.userInfo.phone}
                   </Typography>
                 </Grid>
                 <Grid container justify="center">
@@ -128,7 +128,7 @@ const OrderCard = (props) => {
                     Washer:&nbsp;
                   </Typography>
                   <Typography style={{ textAlign: "center" }}>
-                    {order.washerInfo.address}
+                    {order.washerInfo.phone}
                   </Typography>
                 </Grid>
               </Paper>
@@ -148,22 +148,11 @@ const OrderCard = (props) => {
                     textAlign: "center",
                   }}
                 >
-                  Phone
+                  Preferences
                 </Typography>
                 <Grid container justify="center">
-                  <Typography variant="body1" style={{ fontWeight: 600 }}>
-                    User:&nbsp;
-                  </Typography>
                   <Typography style={{ textAlign: "center" }}>
-                    {order.userInfo.phone}
-                  </Typography>
-                </Grid>
-                <Grid container justify="center">
-                  <Typography variant="body1" style={{ fontWeight: 600 }}>
-                    Washer:&nbsp;
-                  </Typography>
-                  <Typography style={{ textAlign: "center" }}>
-                    {order.washerInfo.phone}
+                    {prefs}
                   </Typography>
                 </Grid>
               </Paper>

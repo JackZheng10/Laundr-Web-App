@@ -23,7 +23,7 @@ import {
   TableContainer,
 } from "@material-ui/core";
 import Close from "@material-ui/icons/Close";
-import orderTableStyles from "../../../styles/Washer/AssignedDashboard/components/orderTableStyles";
+import orderTableStyles from "../../../styles/Washer/components/OrderTable/orderTableStyles";
 
 class OrderTable extends Component {
   state = {

@@ -22,7 +22,7 @@ import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import OrderTable from "../../src/components/Driver/OrderTable/OrderTable";
 import baseURL from "../../src/baseURL";
-import availableDashboardStyles from "../../src/styles/Driver/AvailableDashboard/availableDashboardStyles";
+import availableStyles from "../../src/styles/Driver/Available/availableStyles";
 
 //todo: https://www.npmjs.com/package/react-infinite-scroll-component for orders and stuff
 //also put inside of a scrollview type thing, or pad so table doesnt stretch all the way
@@ -176,4 +176,4 @@ AvailableDashboard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(availableDashboardStyles)(AvailableDashboard);
+export default withStyles(availableStyles)(AvailableDashboard);

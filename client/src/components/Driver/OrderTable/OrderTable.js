@@ -1,9 +1,5 @@
 import React, { Component } from "react";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardActions,
   Table,
   TableBody,
   TableCell,
@@ -25,9 +21,10 @@ import {
   Hidden,
 } from "@material-ui/core";
 import PropTypes from "prop-types";
-import TooltipButton from "./components/TooltipButton";
+import OrderCard from "./components/OrderCard";
+import OrderCell from "./components/OrderCell";
 import Close from "@material-ui/icons/Close";
-import orderTableStyles from "../../../styles/Driver/components/orderTableStyles";
+import orderTableStyles from "../../../styles/Driver/components/OrderTable/orderTableStyles";
 
 //todo: change snackbars to https://github.com/iamhosseindhv/notistack to make it prettier
 //todo: textalign center on snackbar text in case its scrunched
@@ -409,323 +406,32 @@ class OrderTable extends Component {
   renderOrderCells = (orders, classes) => {
     return orders.map((order) => {
       return (
-        <TableRow key={order.orderInfo.orderID}>
-          <TableCell>
-            <div className={classes.nameContainer}>
-              <Typography variant="body1" style={{ textAlign: "center" }}>
-                {`${order.userInfo.fname} ${order.userInfo.lname}`}
-              </Typography>
-            </div>
-          </TableCell>
-          <TableCell>
-            <Grid
-              container
-              direction="column"
-              justify="center"
-              alignItems="flex-start"
-              spacing={1}
-            >
-              <Grid item>
-                <Paper elevation={1}>
-                  <div className={classes.cardCell}>
-                    <Typography variant="body1" style={{ fontWeight: 600 }}>
-                      Pickup:&nbsp;
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      style={{ textAlign: "center" }}
-                    >{` ${order.pickupInfo.date} @ ${order.pickupInfo.time}`}</Typography>
-                  </div>
-                </Paper>
-              </Grid>
-              <Grid item>
-                <Paper elevation={1}>
-                  <div className={classes.cardCell}>
-                    <Typography variant="body1" style={{ fontWeight: 600 }}>
-                      Dropoff:&nbsp;
-                    </Typography>
-                    <Typography variant="body1" style={{ textAlign: "center" }}>
-                      {` ${order.dropoffInfo.date} @ ${order.dropoffInfo.time}`}
-                    </Typography>
-                  </div>
-                </Paper>
-              </Grid>
-            </Grid>
-          </TableCell>
-          <TableCell>
-            <Grid
-              container
-              direction="column"
-              justify="center"
-              alignItems="flex-start"
-              spacing={1}
-            >
-              <Grid item>
-                <Paper elevation={1}>
-                  <div className={classes.cardCell}>
-                    <Typography variant="body1" style={{ fontWeight: 600 }}>
-                      User:&nbsp;
-                    </Typography>
-                    <Typography variant="body1" style={{ textAlign: "center" }}>
-                      {order.orderInfo.address}
-                    </Typography>
-                  </div>
-                </Paper>
-              </Grid>
-              <Grid item>
-                <Paper elevation={1}>
-                  <div className={classes.cardCell}>
-                    <Typography variant="body1" style={{ fontWeight: 600 }}>
-                      Washer:&nbsp;
-                    </Typography>
-                    <Typography variant="body1" style={{ textAlign: "center" }}>
-                      {order.washerInfo.address}
-                    </Typography>
-                  </div>
-                </Paper>
-              </Grid>
-            </Grid>
-          </TableCell>
-          <TableCell>
-            <Grid
-              container
-              direction="column"
-              justify="center"
-              alignItems="flex-start"
-              spacing={1}
-            >
-              <Grid item>
-                <Paper elevation={1}>
-                  <div className={classes.cardCell}>
-                    <Typography variant="body1" style={{ fontWeight: 600 }}>
-                      User:&nbsp;
-                    </Typography>
-                    <Typography variant="body1" style={{ textAlign: "center" }}>
-                      {order.userInfo.phone}
-                    </Typography>
-                  </div>
-                </Paper>
-              </Grid>
-              <Grid item>
-                <Paper elevation={1}>
-                  <div className={classes.cardCell}>
-                    <Typography variant="body1" style={{ fontWeight: 600 }}>
-                      Washer:&nbsp;
-                    </Typography>
-                    <Typography variant="body1" style={{ textAlign: "center" }}>
-                      {order.washerInfo.phone}
-                    </Typography>
-                  </div>
-                </Paper>
-              </Grid>
-            </Grid>
-          </TableCell>
-          <TableCell>
-            <TooltipButton
-              text={order.pickupInfo.prefs}
-              className={classes.secondaryButton}
-              buttonText={"View"}
-            />
-          </TableCell>
-          <TableCell>placeholder</TableCell>
-          <TableCell>
-            <Typography variant="body1" style={{ textAlign: "center" }}>
-              {this.renderStage(order.orderInfo.status)}
-            </Typography>
-          </TableCell>
-          <TableCell>
-            <Button
-              variant="contained"
-              className={classes.mainButton}
-              onClick={() => {
-                this.handleActionClicked(order.orderInfo.status, order);
-              }}
-            >
-              {this.renderActions(order.orderInfo.status)}
-            </Button>
-          </TableCell>
-        </TableRow>
+        <OrderCell
+          order={order}
+          actionText={this.renderActions(order.orderInfo.status)}
+          action={() => {
+            this.handleActionClicked(order.orderInfo.status, order);
+          }}
+          stage={this.renderStage(order.orderInfo.status)}
+          key={order.orderInfo.orderID}
+        />
       );
     });
   };
 
-  renderOrderCards = (orders, classes) => {
+  renderOrderCards = (orders) => {
     return orders.map((order) => {
       return (
-        <Grid item key={order.orderInfo.orderID}>
-          <div className={classes.layout}>
-            <Card className={classes.root} elevation={10}>
-              <CardHeader
-                title={`${order.userInfo.fname} ${order.userInfo.lname}`}
-                titleTypographyProps={{
-                  variant: "h3",
-                  className: classes.title,
-                }}
-                className={classes.cardHeader}
-              />
-              <CardContent>
-                <Grid
-                  container
-                  direction="column"
-                  justify="center"
-                  alignItems="center"
-                >
-                  <Grid item>
-                    <div className={classes.inlineText}>
-                      <Typography
-                        variant="body1"
-                        style={{ fontWeight: 600, color: "#01C9E1" }}
-                        gutterBottom
-                      >
-                        Stage:&nbsp;
-                      </Typography>
-                      <Typography variant="body1" gutterBottom>
-                        {this.renderStage(order.orderInfo.status)}
-                      </Typography>
-                    </div>
-                  </Grid>
-                  <Grid item>
-                    <div className={classes.inlineText}>
-                      <Typography
-                        variant="body1"
-                        style={{ fontWeight: 600, color: "#01C9E1" }}
-                        gutterBottom
-                      >
-                        Load Size:&nbsp;
-                      </Typography>
-                      <Typography variant="body1" gutterBottom>
-                        placeholder
-                      </Typography>
-                    </div>
-                  </Grid>
-                  <Grid item>
-                    <Paper
-                      elevation={1}
-                      style={{
-                        padding: 5,
-                        marginBottom: 10,
-                      }}
-                    >
-                      <Typography
-                        style={{
-                          fontWeight: 600,
-                          color: "#01C9E1",
-                          textAlign: "center",
-                        }}
-                      >
-                        Date/Time
-                      </Typography>
-                      {/* <div className={classes.inlineText}> */}
-                      <Grid container justify="center">
-                        <Typography variant="body1" style={{ fontWeight: 600 }}>
-                          Pickup:&nbsp;
-                        </Typography>
-                        <Typography style={{ textAlign: "center" }}>
-                          {` ${order.pickupInfo.date} @ ${order.pickupInfo.time}`}
-                        </Typography>
-                      </Grid>
-                      <Grid container justify="center">
-                        <Typography variant="body1" style={{ fontWeight: 600 }}>
-                          Dropoff:&nbsp;
-                        </Typography>
-                        <Typography style={{ textAlign: "center" }}>
-                          {` ${order.dropoffInfo.date} @ ${order.dropoffInfo.time}`}
-                        </Typography>
-                      </Grid>
-                    </Paper>
-                  </Grid>
-                  <Grid item>
-                    <Paper
-                      elevation={1}
-                      style={{
-                        padding: 5,
-                        marginBottom: 10,
-                      }}
-                    >
-                      <Typography
-                        style={{
-                          fontWeight: 600,
-                          color: "#01C9E1",
-                          textAlign: "center",
-                        }}
-                      >
-                        Address
-                      </Typography>
-                      <Grid container justify="center">
-                        <Typography variant="body1" style={{ fontWeight: 600 }}>
-                          User:&nbsp;
-                        </Typography>
-                        <Typography style={{ textAlign: "center" }}>
-                          {order.orderInfo.address}
-                        </Typography>
-                      </Grid>
-                      <Grid container justify="center">
-                        <Typography variant="body1" style={{ fontWeight: 600 }}>
-                          Washer:&nbsp;
-                        </Typography>
-                        <Typography style={{ textAlign: "center" }}>
-                          {order.washerInfo.address}
-                        </Typography>
-                      </Grid>
-                    </Paper>
-                  </Grid>
-                  <Grid item>
-                    <Paper
-                      elevation={1}
-                      style={{
-                        padding: 5,
-                        marginBottom: 10,
-                        textAlign: "center",
-                      }}
-                    >
-                      <Typography style={{ fontWeight: 600, color: "#01C9E1" }}>
-                        Phone
-                      </Typography>
-                      <Grid container justify="center">
-                        <Typography variant="body1" style={{ fontWeight: 600 }}>
-                          User:&nbsp;
-                        </Typography>
-                        <Typography style={{ textAlign: "center" }}>
-                          {order.userInfo.phone}
-                        </Typography>
-                      </Grid>
-                      <Grid container justify="center">
-                        <Typography variant="body1" style={{ fontWeight: 600 }}>
-                          Washer:&nbsp;
-                        </Typography>
-                        <Typography style={{ textAlign: "center" }}>
-                          {order.washerInfo.phone}
-                        </Typography>
-                      </Grid>
-                    </Paper>
-                  </Grid>
-                  <Grid item>
-                    <TooltipButton
-                      text={order.pickupInfo.prefs}
-                      className={classes.secondaryButton}
-                      buttonText={"View Instructions"}
-                    />
-                  </Grid>
-                </Grid>
-              </CardContent>
-              <CardActions className={classes.cardActions}>
-                <Grid container justify="center">
-                  <Grid item>
-                    <Button
-                      variant="contained"
-                      size="large"
-                      className={classes.mainButton}
-                      onClick={() => {
-                        this.handleActionClicked(order.orderInfo.status, order);
-                      }}
-                    >
-                      {this.renderActions(order.orderInfo.status)}
-                    </Button>
-                  </Grid>
-                </Grid>
-              </CardActions>
-            </Card>
-          </div>
+        <Grid item>
+          <OrderCard
+            order={order}
+            actionText={this.renderActions(order.orderInfo.status)}
+            action={() => {
+              this.handleActionClicked(order.orderInfo.status, order);
+            }}
+            stage={this.renderStage(order.orderInfo.status)}
+            key={order.orderInfo.orderID}
+          />
         </Grid>
       );
     });
@@ -810,7 +516,7 @@ class OrderTable extends Component {
                 justify="center"
                 alignItems="center"
               >
-                {this.renderOrderCards(orders, classes)}
+                {this.renderOrderCards(orders)}
               </Grid>
             </div>
           </Hidden>

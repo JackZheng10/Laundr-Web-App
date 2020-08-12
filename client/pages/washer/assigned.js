@@ -15,7 +15,7 @@ import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import OrderTable from "../../src/components/Washer/OrderTable/OrderTable";
 import baseURL from "../../src/baseURL";
-import assignedDashboardStyles from "../../src/styles/Washer/AssignedDashboard/assignedDashboardStyles";
+import assignedStyles from "../../src/styles/Washer/Assigned/assignedStyles";
 
 //0: order just placed
 //1: order accepted by driver to be picked up from user
@@ -140,4 +140,4 @@ AssignedDashboard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(assignedDashboardStyles)(AssignedDashboard);
+export default withStyles(assignedStyles)(AssignedDashboard);

@@ -12,9 +12,9 @@ import { Layout } from "../../src/layouts";
 import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
-import OrderTable from "../../src/components/Driver/components/OrderTable";
+import OrderTable from "../../src/components/Driver/OrderTable/OrderTable";
 import baseURL from "../../src/baseURL";
-import acceptedDashboardStyles from "../../src/styles/Driver/AcceptedDashboard/acceptedDashboardStyles";
+import acceptedStyles from "../../src/styles/Driver/Accepted/acceptedStyles";
 
 //todo: refresh list after completing an action, and THEN show the snackbar?
 
@@ -233,4 +233,4 @@ AcceptedDashboard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(acceptedDashboardStyles)(AcceptedDashboard);
+export default withStyles(acceptedStyles)(AcceptedDashboard);

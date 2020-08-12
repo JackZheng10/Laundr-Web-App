@@ -20,7 +20,7 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import baseURL from "../../src/baseURL";
-import historyStyles from "../../src/styles/User/Account/components/historyStyles";
+import historyStyles from "../../src/styles/User/Account/historyStyles";
 
 //0: order just placed
 //1: order accepted by driver to be picked up from user

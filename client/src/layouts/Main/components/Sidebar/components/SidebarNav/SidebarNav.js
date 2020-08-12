@@ -16,7 +16,6 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: 0,
   },
   button: {
-    color: colors.blueGrey[800],
     padding: "10px 8px",
     justifyContent: "flex-start",
     textTransform: "none",
@@ -25,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: theme.typography.fontWeightMedium,
   },
   icon: {
-    color: theme.palette.icon,
     width: 24,
     height: 24,
     display: "flex",
@@ -54,18 +52,35 @@ const SidebarNav = (props) => {
 
   const classes = useStyles();
 
+  const evaluateActive = (href) => {
+    if (typeof window !== "undefined") {
+      const path = window.location.href.split("/");
+      if (`/${path[3]}/${path[4]}` === href) {
+        return "#01c9e1";
+      }
+    }
+
+    return "#6b6b6b";
+  };
+
   return (
     <List {...rest} className={clsx(classes.root, className)}>
       {pages.map((page, index) => (
         <ListItem className={classes.item} disableGutters key={index}>
           <Link href={page.href}>
             <Button
-              activeClassName={classes.active}
+              // activeClassName={classes.active}
               className={classes.button}
+              style={{ color: evaluateActive(page.href) }}
               // component={Link}
-              to={page.href}
+              // to={page.href}
             >
-              <div className={classes.icon}>{page.icon}</div>
+              <div
+                className={classes.icon}
+                style={{ color: evaluateActive(page.href) }}
+              >
+                {page.icon}
+              </div>
               {page.title}
             </Button>
           </Link>

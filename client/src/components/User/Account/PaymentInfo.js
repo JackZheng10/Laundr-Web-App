@@ -18,13 +18,13 @@ import {
   ElementsConsumer,
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { getCurrentUser, updateToken } from "../../../../helpers/session";
-import { caughtError, showConsoleError } from "../../../../helpers/errors";
+import { getCurrentUser, updateToken } from "../../../helpers/session";
+import { caughtError, showConsoleError } from "../../../helpers/errors";
 import PropTypes from "prop-types";
 import axios from "axios";
-import MainAppContext from "../../../../contexts/MainAppContext";
-import baseURL from "../../../../baseURL";
-import paymentInfoStyles from "../../../../styles/User/Account/components/paymentInfoStyles";
+import MainAppContext from "../../../contexts/MainAppContext";
+import baseURL from "../../../baseURL";
+import paymentInfoStyles from "../../../styles/User/Account/components/paymentInfoStyles";
 
 //todo: maybe use the red/green for other confirms/cancels
 //todo: rerender after stored card (updating child state does not rerender parent)
@@ -32,7 +32,7 @@ import paymentInfoStyles from "../../../../styles/User/Account/components/paymen
 
 const stripeKEY =
   process.env.STRIPE_PUBLISHABLE_KEY ||
-  require("../../../../config").stripe.publishableKEY;
+  require("../../../config").stripe.publishableKEY;
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.

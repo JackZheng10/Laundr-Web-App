@@ -12,7 +12,7 @@ import {
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import jwtDecode from "jwt-decode";
-import accountInfoStyles from "../../../../styles/User/Account/components/accountInfoStyles";
+import accountInfoStyles from "../../../styles/User/Account/components/accountInfoStyles";
 
 class AccountInfo extends Component {
   render() {

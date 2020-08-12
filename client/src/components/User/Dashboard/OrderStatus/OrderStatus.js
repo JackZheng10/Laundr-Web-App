@@ -41,7 +41,7 @@ import orderStatusStyles from "../../../../styles/User/Dashboard/components/Orde
 //8: fulfilled (user confirmed theyve seen the status on it)
 
 //todo: fix time picker dialog positioning for this and scheduling?
-//todo: status 8 for when user confirms receipt
+//todo: design like card for driver/washer or vice versa?
 
 const moment = require("moment");
 
@@ -509,7 +509,7 @@ class OrderStatus extends Component {
                 style={{ position: "relative" }}
               >
                 <Grid item>
-                  <Card className={classes.infoCard}>
+                  <Card className={classes.infoCard} elevation={10}>
                     <CardHeader
                       title={`Order ID: #${order.orderInfo.orderID}`}
                       titleTypographyProps={{

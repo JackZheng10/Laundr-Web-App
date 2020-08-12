@@ -5,11 +5,11 @@ import { getCurrentUser, updateToken } from "../../src/helpers/session";
 import PropTypes from "prop-types";
 import AccountInfo from "../../src/components/User/Account/AccountInfo";
 import PaymentInfo from "../../src/components/User/Account/PaymentInfo";
-import accountStyles from "../../src/styles/User/Account/accountStyles";
+import detailsStyles from "../../src/styles/User/Account/detailsStyles";
 
 //todo: revise data fetching flow here
 
-class Account extends Component {
+class Details extends Component {
   state = {
     user: null,
     accountInfoComponent: null,
@@ -84,8 +84,8 @@ class Account extends Component {
   }
 }
 
-Account.propTypes = {
+Details.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(accountStyles)(Account);
+export default withStyles(detailsStyles)(Details);

@@ -121,6 +121,11 @@ const OrderSchema = new mongoose.Schema({
       required: true,
       unique: false,
     },
+    loads: {
+      type: Number,
+      required: true,
+      unique: false,
+    },
     cost: {
       type: Number,
       required: true,

@@ -82,7 +82,7 @@ const OrderCell = (props) => {
         />
       </TableCell>
       <TableCell>{prefs}</TableCell>
-      <TableCell>placeholder</TableCell>
+      <TableCell>{order.orderInfo.weight} lbs</TableCell>
       <TableCell>{stage}</TableCell>
       <TableCell>
         <Button

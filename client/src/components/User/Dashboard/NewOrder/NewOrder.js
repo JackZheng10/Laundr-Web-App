@@ -177,6 +177,7 @@ class NewOrder extends Component {
         washerPrefs: this.evaluateWhitespace(this.state.washerPreferences),
         address: this.state.address,
         addressPrefs: this.evaluateWhitespace(this.state.addressPreferences),
+        loads: this.state.loads,
         pickupDate: this.state.date,
         pickupTime: this.state.formattedTime,
         created: new Date(),
@@ -423,7 +424,7 @@ class NewOrder extends Component {
                       }}
                     >
                       <div>
-                        {/* <Scheduling
+                        <Scheduling
                           today={this.today}
                           tomorrow={this.tomorrow}
                           todaySelected={this.state.todaySelected}
@@ -431,8 +432,8 @@ class NewOrder extends Component {
                           formattedTime={this.state.formattedTime}
                           rawTime={this.state.rawTime}
                           handleInputChange={this.handleInputChange}
-                        /> */}
-                        <Review
+                        />
+                        {/* <Review
                           address={this.state.address}
                           addressPreferences={this.state.addressPreferences}
                           scented={this.state.scented}
@@ -443,7 +444,7 @@ class NewOrder extends Component {
                           pickupDate={this.state.date}
                           pickupTime={this.state.formattedTime}
                           loads={this.state.loads}
-                        />
+                        /> */}
                       </div>
                     </Fade>
                     <Fade
@@ -519,7 +520,7 @@ class NewOrder extends Component {
                       }}
                     >
                       <div>
-                        {/* <Review
+                        <Review
                           address={this.state.address}
                           addressPreferences={this.state.addressPreferences}
                           scented={this.state.scented}
@@ -530,7 +531,7 @@ class NewOrder extends Component {
                           pickupDate={this.state.date}
                           pickupTime={this.state.formattedTime}
                           loads={this.state.loads}
-                        /> */}
+                        />
                       </div>
                     </Fade>
                     <div className={classes.buttons}>

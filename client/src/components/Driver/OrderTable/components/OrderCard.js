@@ -59,7 +59,7 @@ const OrderCard = (props) => {
                   Load Size:&nbsp;
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                  placeholder
+                  {order.orderInfo.loads}
                 </Typography>
               </div>
             </Grid>

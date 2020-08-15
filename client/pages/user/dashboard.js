@@ -31,7 +31,9 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //styling errors like: prefs not centering when small, review page bleeds when small, etc.
 //get rid of xs={12} sm={6} stuff maybe (basically applies to cards and input fields), get rid of card variant="outlined", standard elevation
 //standard typography sizes/color/boldness (default color is grey, prob located in theme somewhere) (maybe take a look at the order table card vs review cards vs order status card)...standardize cards
+//standard btn sizes
 //authorization for either pages/routes/both
+//make sure loads show for driver, cost is updated when charged. show weight for washer?
 
 //method for loading: do all data fetching in main parent component, apply loading bool
 //hold child components that rely on loaded data in state as null first, then change after gathered loaded data

@@ -171,7 +171,7 @@ const OrderCell = (props) => {
           buttonText={"View"}
         />
       </TableCell>
-      <TableCell>placeholder</TableCell>
+      <TableCell>{order.orderInfo.loads}</TableCell>
       <TableCell>
         <Typography variant="body1" style={{ textAlign: "center" }}>
           {stage}

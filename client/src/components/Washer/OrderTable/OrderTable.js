@@ -287,7 +287,7 @@ class OrderTable extends Component {
                     Preferences
                   </TableCell>
                   <TableCell align="left" className={classes.tableHeader}>
-                    Load Size
+                    Weight
                   </TableCell>
                   <TableCell align="left" className={classes.tableHeader}>
                     Stage

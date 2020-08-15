@@ -65,9 +65,9 @@ class PreferenceCard extends Component {
         <CardHeader
           action={
             <Checkbox
-              color="primary"
               inputProps={{ "aria-label": "secondary checkbox" }}
               onClick={this.handleSelect}
+              /*todo: change color to dat blue*/
             />
           }
           title={
@@ -78,12 +78,13 @@ class PreferenceCard extends Component {
         />
         <CardMedia className={classes.media} image={this.state.currentImage} />
         <CardActions disableSpacing style={{ justifyContent: "center" }}>
+          {/*todo: change arrow color to "#01c9e1"*/}
           <LightTooltip title={info} TransitionComponent={Fade} arrow>
             <InfoIcon
               color="primary"
               style={{
                 cursor: "pointer",
-                color: "rgb(0, 153, 255)",
+                color: "#01c9e1",
               }}
             />
           </LightTooltip>

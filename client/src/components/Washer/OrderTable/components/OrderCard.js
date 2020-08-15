@@ -56,10 +56,10 @@ const OrderCard = (props) => {
                   style={{ fontWeight: 600, color: "#01C9E1" }}
                   gutterBottom
                 >
-                  Load Size:&nbsp;
+                  Weight:&nbsp;
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                  placeholder
+                  {order.orderInfo.weight} lbs
                 </Typography>
               </div>
             </Grid>
@@ -171,7 +171,7 @@ const OrderCard = (props) => {
             <Grid item>
               <Button
                 variant="contained"
-                size="large"
+                size="medium"
                 className={classes.mainButton}
                 onClick={action}
               >

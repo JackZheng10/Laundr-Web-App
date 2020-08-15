@@ -136,7 +136,7 @@ class Review extends Component {
                   />
                   <CardContent>
                     <Typography style={{ textAlign: "center", color: "black" }}>
-                      123 street street
+                      {address}
                     </Typography>
                   </CardContent>
                   <CardActions className={classes.cardFooter}>
@@ -351,7 +351,7 @@ class Review extends Component {
                   <CardActions className={classes.cardFooter}>
                     <TooltipButton
                       text={
-                        this.evaluateWhitespace(addressPreferences)
+                        this.evaluateWhitespace(washerPreferences)
                           ? "N/A"
                           : washerPreferences
                       }

@@ -109,6 +109,8 @@ const placeOrder = async (req, res) => {
 //for specific order fetching depending on user/use-case
 //keep in mind theres a collection for pending and a collection for completed orders
 //todo: figure out how to use $or for filtering without .filter, matching this or that
+//todo: efficient querying https://stackoverflow.com/questions/49886279/mongo-query-take-a-long-time-how-make-it-more-fast
+//https://docs.mongodb.com/manual/tutorial/optimize-query-performance-with-indexes-and-projections/
 const fetchOrders = async (req, res) => {
   try {
     //statuses are for non-filtered
@@ -175,10 +177,10 @@ const fetchOrders = async (req, res) => {
         orders = [...ordersOne, ...ordersTwo];
         break;
 
-      case "orderHistoryAdmin":
+      case "orderHistoryUser":
         return res.json({ success: false, message: "Not handled yet." });
 
-      case "orderHistoryUser":
+      case "orderHistoryAdmin":
         return res.json({ success: false, message: "Not handled yet." });
     }
 

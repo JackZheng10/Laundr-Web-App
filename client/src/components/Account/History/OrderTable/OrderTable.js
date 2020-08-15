@@ -75,7 +75,7 @@ class OrderTable extends Component {
               Instructions
             </TableCell>
             <TableCell align="left" className={classes.tableHeader}>
-              Load Size
+              Weight
             </TableCell>
             <TableCell align="left" className={classes.tableHeader}>
               Price
@@ -90,7 +90,7 @@ class OrderTable extends Component {
         return (
           <React.Fragment>
             <TableCell align="left" className={classes.tableHeader}>
-              Name
+              Date/Time
             </TableCell>
             <TableCell align="left" className={classes.tableHeader}>
               Preferences

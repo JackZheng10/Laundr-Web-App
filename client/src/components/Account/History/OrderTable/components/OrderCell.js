@@ -259,7 +259,7 @@ const OrderCell = (props) => {
             {DateTimeCell(order)}
             {AddressCell(order)}
             {TooltipCell(order.pickupInfo.prefs, classes)}
-            {LoadCell(order)}
+            {WeightCell(order)}
             {PriceCell(order)}
             <TableCell>
               <Typography variant="body1">{getDriverStages(order)}</Typography>
@@ -274,7 +274,7 @@ const OrderCell = (props) => {
             <TableCell>
               <Typography variant="body1">{order.orderInfo.orderID}</Typography>
             </TableCell>
-            {NameCell(order)}
+            {DateTimeCell(order)}
             {PreferencesCell(order)}
             {TooltipCell(order.washerInfo.prefs, classes)}
             {WeightCell(order)}

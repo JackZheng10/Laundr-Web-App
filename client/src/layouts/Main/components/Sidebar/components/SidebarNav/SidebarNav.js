@@ -1,6 +1,6 @@
 /* eslint-disable react/no-multi-comp */
 /* eslint-disable react/display-name */
-import React, { forwardRef } from "react";
+import React, { useState } from "react";
 import clsx from "clsx";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
@@ -38,12 +38,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+//todo: active works on refresh now, maybe do something for the loading? should be fast enough tho
 const SidebarNav = (props) => {
   const { pages, className, ...rest } = props;
 
   const classes = useStyles();
+  const [loading, setLoading] = useState(true);
 
-  //todo: not active initially/on refresh, so throw in a useeffect (cdidmount) probably
+  React.useEffect(() => {
+    setLoading(false);
+  }, []);
+
   const evaluateActive = (href) => {
     if (typeof window !== "undefined") {
       const path = window.location.href.split("/");
@@ -55,7 +60,7 @@ const SidebarNav = (props) => {
     return "#6b6b6b";
   };
 
-  return (
+  return loading ? null : (
     <List {...rest} className={clsx(classes.root, className)}>
       {pages.map((page, index) => (
         <ListItem className={classes.item} disableGutters key={index}>

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 //todo: sort out what is a string and what isnt
+//todo: maybe format created, also for subs too
 const OrderSchema = new mongoose.Schema({
   userInfo: {
     email: {

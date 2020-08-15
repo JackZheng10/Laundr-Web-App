@@ -5,6 +5,13 @@ import {
   CircularProgress,
   Grid,
   Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Paper,
+  TableContainer,
 } from "@material-ui/core";
 import {
   TopBorderDarkPurple,
@@ -34,30 +41,33 @@ import historyStyles from "../../src/styles/User/Account/historyStyles";
 class History extends Component {
   static contextType = MainAppContext;
 
+  state = { orders: [] };
+
   // componentDidMount = async () => {
   //   await this.fetchOrders();
   // };
 
-  // fetchOrders = async () => {
-  //   try {
-  //     const currentUser = getCurrentUser();
-  //     const response = await axios.post(baseURL + "/order/fetchOrders", {
-  //       statuses: [1, 2, 5],
-  //       filter: true,
-  //       filterConfig: "driverAccepted",
-  //       filterEmail: currentUser.email,
-  //     });
+  fetchOrders = async () => {
+    //todo: figure out better way for filtering
+    try {
+      const currentUser = getCurrentUser();
+      const response = await axios.post(baseURL + "/order/fetchOrders", {
+        statuses: [7, 8],
+        filter: true,
+        filterConfig: "orderHistory",
+        filterEmail: currentUser.email,
+      });
 
-  //     if (response.data.success) {
-  //       this.setState({ orders: response.data.message });
-  //     } else {
-  //       this.context.showAlert(response.data.message);
-  //     }
-  //   } catch (error) {
-  //     showConsoleError("getting orders", error);
-  //     this.context.showAlert(caughtError("fetching orders", error, 99));
-  //   }
-  // };
+      if (response.data.success) {
+        this.setState({ orders: response.data.message });
+      } else {
+        this.context.showAlert(response.data.message);
+      }
+    } catch (error) {
+      showConsoleError("getting orders", error);
+      this.context.showAlert(caughtError("fetching orders", error, 99));
+    }
+  };
 
   render() {
     const { classes } = this.props;
@@ -88,7 +98,45 @@ class History extends Component {
           <BottomBorderBlue />
         </div>
         <Grid container direction="column" justify="center" alignItems="center">
-          <h1>table</h1>
+          <h1>either include weight OR price, pick</h1>
+          <Grid
+            item
+            style={{ width: "100%", paddingLeft: 10, paddingRight: 10 }}
+          >
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="left" className={classes.tableHeader}>
+                      ID
+                    </TableCell>
+                    <TableCell align="left" className={classes.tableHeader}>
+                      Date/Time
+                    </TableCell>
+                    <TableCell align="left" className={classes.tableHeader}>
+                      Address
+                    </TableCell>
+                    <TableCell align="left" className={classes.tableHeader}>
+                      Instructions
+                    </TableCell>
+                    <TableCell align="left" className={classes.tableHeader}>
+                      Load Size
+                    </TableCell>
+                    <TableCell align="left" className={classes.tableHeader}>
+                      Price
+                    </TableCell>
+                    <TableCell align="left" className={classes.tableHeader}>
+                      Coupon
+                    </TableCell>
+                    <TableCell align="left" className={classes.tableHeader}>
+                      Status
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody></TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
         </Grid>
       </Layout>
     );

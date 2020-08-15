@@ -316,6 +316,12 @@ class NewOrder extends Component {
           zoom: value.zoom,
         });
         break;
+
+      case "loads":
+        this.setState({
+          loads: value,
+        });
+        break;
     }
   };
 
@@ -417,8 +423,7 @@ class NewOrder extends Component {
                       }}
                     >
                       <div>
-                        <Pricing loads={this.state.loads} />
-                        {/* <Scheduling
+                        <Scheduling
                           today={this.today}
                           tomorrow={this.tomorrow}
                           todaySelected={this.state.todaySelected}
@@ -426,7 +431,7 @@ class NewOrder extends Component {
                           formattedTime={this.state.formattedTime}
                           rawTime={this.state.rawTime}
                           handleInputChange={this.handleInputChange}
-                        /> */}
+                        />
                       </div>
                     </Fade>
                     <Fade
@@ -484,7 +489,12 @@ class NewOrder extends Component {
                           this.state.activeStep === 3 ? "500ms" : "0ms",
                       }}
                     >
-                      <div>{/* <Pricing /> */}</div>
+                      <div>
+                        <Pricing
+                          loads={this.state.loads}
+                          handleInputChange={this.handleInputChange}
+                        />
+                      </div>
                     </Fade>
                     <Fade
                       in={this.state.activeStep === 4}
@@ -507,6 +517,7 @@ class NewOrder extends Component {
                           washerPreferences={this.state.washerPreferences}
                           pickupDate={this.state.date}
                           pickupTime={this.state.formattedTime}
+                          loads={this.state.loads}
                         />
                       </div>
                     </Fade>

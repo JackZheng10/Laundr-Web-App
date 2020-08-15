@@ -43,6 +43,7 @@ const SidebarNav = (props) => {
 
   const classes = useStyles();
 
+  //todo: not active initially, so throw in a useeffect (cdidmount) probably
   const evaluateActive = (href) => {
     if (typeof window !== "undefined") {
       const path = window.location.href.split("/");

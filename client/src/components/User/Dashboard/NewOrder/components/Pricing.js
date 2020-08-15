@@ -12,25 +12,94 @@ import {
 import PropTypes from "prop-types";
 import pricingStyles from "../../../../../styles/User/Dashboard/components/NewOrder/components/pricingStyles";
 
+const CustomSlider = withStyles({
+  root: {
+    color: "#01c9e1",
+    height: 8,
+  },
+  thumb: {
+    height: 24,
+    width: 24,
+    backgroundColor: "#fff",
+    border: "2px solid currentColor",
+    marginTop: -8,
+    marginLeft: -12,
+    "&:focus, &:hover, &$active": {
+      boxShadow: "inherit",
+    },
+  },
+  track: {
+    height: 8,
+    borderRadius: 2,
+  },
+  rail: {
+    height: 8,
+    borderRadius: 2,
+    paddingRight: 2,
+  },
+  markLabel: {
+    marginTop: 5,
+  },
+})(Slider);
+
+const marks = [
+  {
+    value: 1,
+    label: "1",
+  },
+  {
+    value: 1.5,
+    label: "1.5",
+  },
+  {
+    value: 2,
+    label: "2",
+  },
+  {
+    value: 2.5,
+    label: "2.5",
+  },
+  {
+    value: 3,
+    label: "3",
+  },
+  {
+    value: 3.5,
+    label: "3.5",
+  },
+  {
+    value: 4,
+    label: "4",
+  },
+  {
+    value: 4.5,
+    label: "4.5",
+  },
+  {
+    value: 5,
+    label: "5",
+  },
+];
+
 class Pricing extends Component {
   render() {
-    const { classes, loads } = this.props;
+    const { classes, loads, handleInputChange } = this.props;
 
     return (
       <React.Fragment>
         <Typography component="h1" variant="h6" gutterBottom>
           About how many loads of laundry do you have?
         </Typography>
-        <Slider
+        <CustomSlider
           defaultValue={loads}
-          valueLabelDisplay="auto"
+          valueLabelDisplay="off"
           step={0.5}
-          marks
           min={1}
           max={5}
-
-          // style={{ width: 300 }}
-          /*onChange and value from NewOrder*/
+          marks={marks}
+          onChange={(event, value) => {
+            handleInputChange("loads", value);
+          }}
         />
         {/*card for change based on load size, prob will be unused in favor of different graphic*/}
         {/* <div className={classes.layout}>

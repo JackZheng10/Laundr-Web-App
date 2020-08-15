@@ -22,7 +22,7 @@ const studentAPI_ID =
 
 //todo: use webhooks to handle email change in chckout
 //todo: along w/restructuring get/post/put/etc., also: https://www.google.com/search?ei=y3QFX9veN-uxgge4qZ3oAQ&q=stripe+error+handling+node&oq=stripe+error+handling+node&gs_lcp=CgZwc3ktYWIQAzICCAAyAggAOgUIABCRAjoECAAQQzoICAAQsQMQgwE6BQgAELEDOgcIABCxAxBDOgsIABCxAxCDARCRAjoECAAQCjoGCAAQFhAeUMcTWK8uYI4vaABwAHgAgAFciAGPD5IBAjI2mAEAoAEBqgEHZ3dzLXdpeg&sclient=psy-ab&ved=0ahUKEwib8LGLkL3qAhXrmOAKHbhUBx0Q4dUDCAw&uact=5
-//todo: maybe change other stuff to try/catch too
+//todo: caughtError inclusion
 
 const handleWebhook = async (req, res) => {
   let event;

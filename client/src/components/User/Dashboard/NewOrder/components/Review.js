@@ -88,6 +88,7 @@ class Review extends Component {
       delicates,
       separate,
       towelsSheets,
+      loads,
     } = this.props;
 
     return (
@@ -354,10 +355,7 @@ class Review extends Component {
                   <div style={{ display: "flex", alignItems: "center" }}>
                     <Typography>Estimated cost:&nbsp;</Typography>
                     <Typography> </Typography>
-                    <Typography variant="h5">
-                      $placeholder{" "}
-                      {/*todo: to be changed when functionality added*/}
-                    </Typography>
+                    <Typography variant="h5">Loads: {loads}</Typography>
                   </div>
                 </CardContent>
               </Card>

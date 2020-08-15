@@ -26,6 +26,7 @@ import { Layout } from "../../src/layouts";
 import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
+import OrderTable from "../../src/components/Account/History/OrderTable/OrderTable";
 import baseURL from "../../src/baseURL";
 import historyStyles from "../../src/styles/User/Account/historyStyles";
 
@@ -38,34 +39,54 @@ import historyStyles from "../../src/styles/User/Account/historyStyles";
 //6: order delivered to user
 //7: canceled
 
+//configure for user, driver, washer
+//driver first
+//since this depends on current user, in ordercell and order card, render null until config passed in isnt "none"
+
 class History extends Component {
   static contextType = MainAppContext;
 
-  state = { orders: [] };
+  state = { currentUser: null, orders: [] };
 
-  // componentDidMount = async () => {
-  //   await this.fetchOrders();
-  // };
+  componentDidMount = async () => {
+    await this.fetchOrders();
+  };
 
   fetchOrders = async () => {
-    //todo: figure out better way for filtering
     try {
       const currentUser = getCurrentUser();
       const response = await axios.post(baseURL + "/order/fetchOrders", {
-        statuses: [7, 8],
-        filter: true,
-        filterConfig: "orderHistory",
+        filter: this.getFilterConfig(currentUser),
         filterEmail: currentUser.email,
       });
 
       if (response.data.success) {
-        this.setState({ orders: response.data.message });
+        this.setState({
+          orders: response.data.message,
+          currentUser: currentUser,
+        });
       } else {
         this.context.showAlert(response.data.message);
       }
     } catch (error) {
       showConsoleError("getting orders", error);
       this.context.showAlert(caughtError("fetching orders", error, 99));
+    }
+  };
+
+  //null check for the table rendered, not the backend req
+  getFilterConfig = (user) => {
+    if (!user) {
+      return "none";
+    } else if (user.isDriver) {
+      return "orderHistoryDriver";
+    } else if (user.isWasher) {
+      return "orderHistoryWasher";
+    } else if (user.isAdmin) {
+      //todo: handle when making admin stuff
+      return "orderHistoryAdmin";
+    } else {
+      return "orderHistoryUser";
     }
   };
 
@@ -94,48 +115,18 @@ class History extends Component {
             </Typography>
           </Grid>
         </Grid>
-        <div style={{ position: "relative", marginBottom: 50 }}>
+        <div style={{ position: "relative", marginBottom: 70 }}>
           <BottomBorderBlue />
         </div>
         <Grid container direction="column" justify="center" alignItems="center">
-          <h1>either include weight OR price, pick</h1>
           <Grid
             item
             style={{ width: "100%", paddingLeft: 10, paddingRight: 10 }}
           >
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="left" className={classes.tableHeader}>
-                      ID
-                    </TableCell>
-                    <TableCell align="left" className={classes.tableHeader}>
-                      Date/Time
-                    </TableCell>
-                    <TableCell align="left" className={classes.tableHeader}>
-                      Address
-                    </TableCell>
-                    <TableCell align="left" className={classes.tableHeader}>
-                      Instructions
-                    </TableCell>
-                    <TableCell align="left" className={classes.tableHeader}>
-                      Load Size
-                    </TableCell>
-                    <TableCell align="left" className={classes.tableHeader}>
-                      Price
-                    </TableCell>
-                    <TableCell align="left" className={classes.tableHeader}>
-                      Coupon
-                    </TableCell>
-                    <TableCell align="left" className={classes.tableHeader}>
-                      Status
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody></TableBody>
-              </Table>
-            </TableContainer>
+            <OrderTable
+              orders={this.state.orders}
+              config={this.getFilterConfig(this.state.currentUser)}
+            />
           </Grid>
         </Grid>
       </Layout>

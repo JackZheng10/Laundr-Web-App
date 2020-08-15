@@ -23,13 +23,11 @@ const OrderCell = (props) => {
   const { classes, order, actionText, action, stage } = props;
 
   return (
-    <TableRow key={order.orderInfo.orderID}>
+    <TableRow>
       <TableCell>
-        <div className={classes.nameContainer}>
-          <Typography variant="body1" style={{ textAlign: "center" }}>
-            {`${order.userInfo.fname} ${order.userInfo.lname}`}
-          </Typography>
-        </div>
+        <Typography variant="body1" style={{ textAlign: "center" }}>
+          {`${order.userInfo.fname} ${order.userInfo.lname}`}
+        </Typography>
       </TableCell>
       <TableCell>
         <Grid

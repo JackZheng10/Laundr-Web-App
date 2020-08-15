@@ -35,6 +35,8 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //authorization for either pages/routes/both
 //make sure loads show for driver, cost is updated when charged. show weight for washer?
 //error when: drop both order collections, place new order, cancel? doesnt cancel? check
+//configure: account, history, for washer/driver
+//for order tables, left align the cells, not center
 
 //method for loading: do all data fetching in main parent component, apply loading bool
 //hold child components that rely on loaded data in state as null first, then change after gathered loaded data

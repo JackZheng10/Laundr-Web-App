@@ -1,11 +1,5 @@
 //unused, same as driver
 const orderTableStyles = (theme) => ({
-  root: {},
-  inner: {},
-  nameContainer: {
-    display: "flex",
-    alignItems: "center",
-  },
   avatar: {
     marginRight: theme.spacing(2),
   },

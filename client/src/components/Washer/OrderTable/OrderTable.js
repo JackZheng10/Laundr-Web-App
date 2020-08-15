@@ -190,6 +190,7 @@ class OrderTable extends Component {
       prefs += "Towels and Sheets,";
     }
 
+    //todo: test this, forget what it does lol
     if (towelsSheets) {
       prefs = prefs.slice(0, prefs.length - 1);
     } else {

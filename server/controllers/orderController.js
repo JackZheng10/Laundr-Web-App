@@ -106,37 +106,68 @@ const placeOrder = async (req, res) => {
   }
 };
 
+//for specific order fetching depending on user/use-case
+//keep in mind theres a collection for pending and a collection for completed orders
 const fetchOrders = async (req, res) => {
-  //filter by email here so other info not leaked
   try {
+    //statuses are for non-filtered
     const statuses = req.body.statuses;
     const filter = req.body.filter;
+    let orders;
 
-    let orders = await PendingOrder.find()
-      .where("orderInfo.status")
-      .in(statuses);
+    switch (filter) {
+      case "none":
+        orders = await PendingOrder.find()
+          .where("orderInfo.status")
+          .in(statuses);
+        break;
 
-    //if any filtering by email needs to be applied
-    if (filter) {
-      const filterConfig = req.body.filterConfig;
-      const filterEmail = req.body.filterEmail;
+      case "driverAccepted":
+        orders = await PendingOrder.find()
+          .where("orderInfo.status")
+          .in([1, 2, 5]);
+        orders = orders.filter((order) => {
+          return (
+            order.pickupInfo.driverEmail === req.body.filterEmail ||
+            order.dropoffInfo.driverEmail === req.body.filterEmail
+          );
+        });
+        break;
 
-      switch (filterConfig) {
-        case "driverAccepted":
-          orders = orders.filter((order) => {
-            return (
-              order.pickupInfo.driverEmail === filterEmail ||
-              order.dropoffInfo.driverEmail === filterEmail
-            );
-          });
-          break;
+      case "washerAssigned":
+        orders = await PendingOrder.find().where("orderInfo.status").in([3]);
+        orders = orders.filter((order) => {
+          return order.washerInfo.email === req.body.filterEmail;
+        });
+        break;
 
-        case "washerAssigned":
-          orders = orders.filter((order) => {
-            return order.washerInfo.email === filterEmail;
-          });
-          break;
-      }
+      case "orderHistoryDriver":
+        //send driver delivered, cancelled, and completed (user acknowledged) orders
+        ordersOne = await CompletedOrder.find()
+          .where("orderInfo.status")
+          .in([6, 7, 8]);
+        ordersTwo = await PendingOrder.find()
+          .where("orderInfo.status")
+          .in([6, 7, 8]);
+
+        orders = [...ordersOne, ...ordersTwo];
+
+        orders = orders.filter((order) => {
+          return (
+            order.pickupInfo.driverEmail === req.body.filterEmail ||
+            order.dropoffInfo.driverEmail === req.body.filterEmail
+          );
+        });
+        break;
+
+      case "orderHistoryWasher":
+        return res.json({ success: false, message: "Not handled yet." });
+
+      case "orderHistoryAdmin":
+        return res.json({ success: false, message: "Not handled yet." });
+
+      case "orderHistoryUser":
+        return res.json({ success: false, message: "Not handled yet." });
     }
 
     return res.json({ success: true, message: orders });

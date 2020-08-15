@@ -25,11 +25,9 @@ const OrderCell = (props) => {
   return (
     <TableRow>
       <TableCell>
-        <div className={classes.nameContainer}>
-          <Typography variant="body1">
-            {`${order.userInfo.fname} ${order.userInfo.lname}`}
-          </Typography>
-        </div>
+        <Typography variant="body1">
+          {`${order.userInfo.fname} ${order.userInfo.lname}`}
+        </Typography>
       </TableCell>
       <TableCell>
         <Grid

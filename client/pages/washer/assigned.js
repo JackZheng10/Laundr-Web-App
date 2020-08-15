@@ -48,9 +48,7 @@ class AssignedDashboard extends Component {
     try {
       const currentUser = getCurrentUser();
       const response = await axios.post(baseURL + "/order/fetchOrders", {
-        statuses: [3],
-        filter: true,
-        filterConfig: "washerAssigned",
+        filter: "washerAssigned",
         filterEmail: currentUser.email,
       });
 

@@ -85,6 +85,24 @@ class OrderTable extends Component {
             </TableCell>
           </React.Fragment>
         );
+
+      case "orderHistoryWasher":
+        return (
+          <React.Fragment>
+            <TableCell align="left" className={classes.tableHeader}>
+              Name
+            </TableCell>
+            <TableCell align="left" className={classes.tableHeader}>
+              Preferences
+            </TableCell>
+            <TableCell align="left" className={classes.tableHeader}>
+              Instructions
+            </TableCell>
+            <TableCell align="left" className={classes.tableHeader}>
+              Weight
+            </TableCell>
+          </React.Fragment>
+        );
     }
   };
 

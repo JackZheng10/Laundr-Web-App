@@ -108,6 +108,7 @@ const placeOrder = async (req, res) => {
 
 //for specific order fetching depending on user/use-case
 //keep in mind theres a collection for pending and a collection for completed orders
+//todo: figure out how to use $or for filtering without .filter, matching this or that
 const fetchOrders = async (req, res) => {
   try {
     //statuses are for non-filtered
@@ -161,7 +162,18 @@ const fetchOrders = async (req, res) => {
         break;
 
       case "orderHistoryWasher":
-        return res.json({ success: false, message: "Not handled yet." });
+        //send all orders with a status greater than or equal to 4 and matching the washer email, which means its already been done by washer or cancelled
+        ordersOne = await CompletedOrder.find({
+          "washerInfo.email": req.body.filterEmail,
+          "orderInfo.status": { $gte: 4 },
+        });
+        ordersTwo = await PendingOrder.find({
+          "washerInfo.email": req.body.filterEmail,
+          "orderInfo.status": { $gte: 4 },
+        });
+
+        orders = [...ordersOne, ...ordersTwo];
+        break;
 
       case "orderHistoryAdmin":
         return res.json({ success: false, message: "Not handled yet." });

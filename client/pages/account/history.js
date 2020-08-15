@@ -42,6 +42,7 @@ import historyStyles from "../../src/styles/User/Account/historyStyles";
 //configure for user, driver, washer
 //driver first
 //since this depends on current user, in ordercell and order card, render null until config passed in isnt "none"
+//todo: configure loading...make sure it makes sense
 
 class History extends Component {
   static contextType = MainAppContext;

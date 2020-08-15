@@ -1,18 +1,10 @@
 import React, { Component } from "react";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardActions,
   Typography,
   withStyles,
-  Button,
   Paper,
   Grid,
-  Table,
-  TableBody,
   TableCell,
-  TableHead,
   TableRow,
 } from "@material-ui/core";
 import PropTypes from "prop-types";
@@ -145,6 +137,10 @@ const LoadCell = (order) => {
   return <TableCell>{order.orderInfo.loads}</TableCell>;
 };
 
+const WeightCell = (order) => {
+  return <TableCell>{order.orderInfo.weight} lbs</TableCell>;
+};
+
 const PriceCell = (order) => {
   return (
     <TableCell>
@@ -153,17 +149,59 @@ const PriceCell = (order) => {
   );
 };
 
-const StatusCell = (order) => {
+const PreferencesCell = (order) => {
+  return (
+    <TableCell>
+      <Typography variant="body1">{renderWasherPrefs(order)}</Typography>
+    </TableCell>
+  );
+};
+
+const renderWasherPrefs = (order) => {
+  const scented = order.washerInfo.scented;
+  const delicates = order.washerInfo.delicates;
+  const separate = order.washerInfo.separate;
+  const towelsSheets = order.washerInfo.towelsSheets;
+
+  let prefs = "";
+
+  if (scented) {
+    prefs += "Scented, ";
+  }
+
+  if (delicates) {
+    prefs += "Delicates, ";
+  }
+
+  if (separate) {
+    prefs += "Separate, ";
+  }
+
+  if (towelsSheets) {
+    prefs += "Towels and Sheets,";
+  }
+
+  //todo: test this, forget what it does lol
+  if (towelsSheets) {
+    prefs = prefs.slice(0, prefs.length - 1);
+  } else {
+    prefs = prefs.slice(0, prefs.length - 2);
+  }
+
+  return prefs;
+};
+
+const StatusCellDriver = (order) => {
   return (
     <TableCell>
       <Typography variant="body1">
-        {getStatus(order.orderInfo.status)}
+        {renderStatusDriver(order.orderInfo.status)}
       </Typography>
     </TableCell>
   );
 };
 
-const getStatus = (status) => {
+const renderStatusDriver = (status) => {
   switch (status) {
     case 6:
       return "Delivered";
@@ -172,6 +210,16 @@ const getStatus = (status) => {
     case 8:
       return "Completed";
   }
+};
+
+const StatusCellWasher = (order) => {
+  return (
+    <TableCell>
+      <Typography variant="body1">
+        {order.orderInfo.status === 7 ? "Cancelled" : "Washed"}
+      </Typography>
+    </TableCell>
+  );
 };
 
 const getDriverStages = (order) => {
@@ -216,7 +264,21 @@ const OrderCell = (props) => {
             <TableCell>
               <Typography variant="body1">{getDriverStages(order)}</Typography>
             </TableCell>
-            {StatusCell(order)}
+            {StatusCellDriver(order)}
+          </React.Fragment>
+        );
+
+      case "orderHistoryWasher":
+        return (
+          <React.Fragment>
+            <TableCell>
+              <Typography variant="body1">{order.orderInfo.orderID}</Typography>
+            </TableCell>
+            {NameCell(order)}
+            {PreferencesCell(order)}
+            {TooltipCell(order.washerInfo.prefs, classes)}
+            {WeightCell(order)}
+            {StatusCellWasher(order)}
           </React.Fragment>
         );
     }

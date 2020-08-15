@@ -10,6 +10,8 @@ import {
   Divider,
   Card,
   CardContent,
+  CardHeader,
+  CardActions,
   Button,
   Tooltip,
   ListItemSecondaryAction,
@@ -17,8 +19,10 @@ import {
   Avatar,
   Fade,
 } from "@material-ui/core";
+import TooltipButton from "../../../../Driver/OrderTable/components/TooltipButton";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
 import CreateIcon from "@material-ui/icons/Create";
+import ConfirmationNumberIcon from "@material-ui/icons/ConfirmationNumber";
 import SettingsIcon from "@material-ui/icons/Settings";
 import NotInterestedIcon from "@material-ui/icons/NotInterested";
 import QueryBuilderIcon from "@material-ui/icons/QueryBuilder";
@@ -93,7 +97,7 @@ class Review extends Component {
 
     return (
       <React.Fragment>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h5" gutterBottom>
           Summary
         </Typography>
         <Grid
@@ -103,84 +107,94 @@ class Review extends Component {
           alignItems="center"
           justify="space-evenly"
         >
-          <Grid item xs={12} sm={6}>
+          <Grid item>
             <Grid
               container
               spacing={1}
               direction="column"
-              justify="space-evenly"
-              alignItems="stretch"
+              justify="center"
+              alignItems="center"
             >
-              <Grid item xs={12} sm={6}>
-                <Card className={classes.root} variant="outlined">
-                  <CardContent className={classes.removePadding}>
-                    <Typography>
+              <Grid item>
+                <Card className={classes.root} elevation={5}>
+                  <CardHeader
+                    avatar={
                       <HomeRoundedIcon
                         fontSize="small"
                         style={{ marginBottom: -4 }}
-                      />{" "}
-                      Address
+                        htmlColor="white"
+                      />
+                    }
+                    title="Address"
+                    titleTypographyProps={{
+                      variant: "h5",
+                      style: {
+                        color: "white",
+                      },
+                    }}
+                    className={classes.cardHeader}
+                  />
+                  <CardContent>
+                    <Typography style={{ textAlign: "center", color: "black" }}>
+                      123 street street
                     </Typography>
-                    <Typography color="textSecondary" gutterBottom>
-                      {address}
-                    </Typography>
-                    <Grid
-                      container
-                      direction="row"
-                      justify="center"
-                      alignItems="center"
-                    >
-                      <LightTooltip
-                        title={
-                          this.evaluateWhitespace(addressPreferences)
-                            ? "N/A"
-                            : addressPreferences
-                        }
-                        open={this.state.openAddressPrefs}
-                        placement="left"
-                        TransitionComponent={Fade}
-                        onClose={this.handleAddressPrefsClose}
-                        onOpen={this.handleAddressPrefsOpen}
-                        arrow
-                      >
-                        <Button
-                          style={{ textTransform: "none" }}
-                          variant="outlined"
-                          disableTouchRipple
-                        >
-                          <CreateIcon fontSize="small" />
-                          <Typography>&nbsp;View Instructions</Typography>
-                        </Button>
-                      </LightTooltip>
-                    </Grid>
                   </CardContent>
+                  <CardActions className={classes.cardFooter}>
+                    <TooltipButton
+                      text={
+                        this.evaluateWhitespace(addressPreferences)
+                          ? "N/A"
+                          : addressPreferences
+                      }
+                      className={classes.secondaryButton}
+                      buttonText={"View Instructions"}
+                      size="small"
+                    />
+                  </CardActions>
                 </Card>
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <Card className={classes.root} variant="outlined">
-                  <CardContent className={classes.removePadding}>
-                    <Typography>
-                      <DateRangeIcon
-                        fontSize="small"
-                        style={{ marginBottom: -4 }}
-                      />{" "}
-                      Pickup Date
-                    </Typography>
-                    <Typography color="textSecondary">{pickupDate}</Typography>
-                    <Typography>
+              <Grid item>
+                <Card className={classes.root} elevation={5}>
+                  <CardHeader
+                    avatar={
                       <QueryBuilderIcon
                         fontSize="small"
                         style={{ marginBottom: -4 }}
-                      />{" "}
-                      Pickup Time
-                    </Typography>
-                    <Typography color="textSecondary">{pickupTime}</Typography>
+                        htmlColor="white"
+                      />
+                    }
+                    title="Pickup Info"
+                    titleTypographyProps={{
+                      variant: "h5",
+                      style: {
+                        color: "white",
+                      },
+                    }}
+                    className={classes.cardHeader}
+                  />
+                  <CardContent className={classes.removePadding}>
+                    <Grid container justify="center">
+                      <Typography variant="body1" style={{ fontWeight: 600 }}>
+                        Date:&nbsp;
+                      </Typography>
+                      <Typography style={{ textAlign: "center" }}>
+                        {pickupDate}
+                      </Typography>
+                    </Grid>
+                    <Grid container justify="center">
+                      <Typography variant="body1" style={{ fontWeight: 600 }}>
+                        Time:&nbsp;
+                      </Typography>
+                      <Typography style={{ textAlign: "center" }}>
+                        {pickupTime}
+                      </Typography>
+                    </Grid>
                   </CardContent>
                 </Card>
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item>
             <Grid
               container
               spacing={1}
@@ -188,16 +202,26 @@ class Review extends Component {
               justify="space-evenly"
               alignItems="stretch"
             >
-              <Grid item xs={12} sm={6}>
-                <Card className={classes.root} variant="outlined">
-                  <CardContent className={classes.removePadding}>
-                    <Typography gutterBottom>
+              <Grid item>
+                <Card className={classes.root} elevation={5}>
+                  <CardHeader
+                    avatar={
                       <SettingsIcon
                         fontSize="small"
                         style={{ marginBottom: -4 }}
-                      />{" "}
-                      Preferences
-                    </Typography>
+                        htmlColor="white"
+                      />
+                    }
+                    title="Preferences"
+                    titleTypographyProps={{
+                      variant: "h5",
+                      style: {
+                        color: "white",
+                      },
+                    }}
+                    className={classes.cardHeader}
+                  />
+                  <CardContent className={classes.removePadding}>
                     <List dense className={classes.listRoot}>
                       <ListItem>
                         <ListItemAvatar>
@@ -207,10 +231,17 @@ class Review extends Component {
                                 ? "/images/NewOrder/ScentedSelectedCircle.png"
                                 : "/images/NewOrder/ScentedUnselectedCircle.png"
                             }
-                            imgProps={{}}
                           />
                         </ListItemAvatar>
-                        <ListItemText primary="Scented" />
+                        <ListItemText
+                          primary="Scented"
+                          primaryTypographyProps={{
+                            style: {
+                              color: scented ? "black" : "grey",
+                            },
+                            variant: "body1",
+                          }}
+                        />
                         <ListItemSecondaryAction>
                           {scented ? (
                             <CheckCircleOutlineIcon
@@ -233,7 +264,15 @@ class Review extends Component {
                             }
                           />
                         </ListItemAvatar>
-                        <ListItemText primary="Delicates" />
+                        <ListItemText
+                          primary="Delicates"
+                          primaryTypographyProps={{
+                            style: {
+                              color: delicates ? "black" : "grey",
+                            },
+                            variant: "body1",
+                          }}
+                        />
                         <ListItemSecondaryAction>
                           {delicates ? (
                             <CheckCircleOutlineIcon
@@ -256,7 +295,15 @@ class Review extends Component {
                             }
                           />
                         </ListItemAvatar>
-                        <ListItemText primary="Separate" />
+                        <ListItemText
+                          primary="Separate"
+                          primaryTypographyProps={{
+                            style: {
+                              color: separate ? "black" : "grey",
+                            },
+                            variant: "body1",
+                          }}
+                        />
                         <ListItemSecondaryAction>
                           {separate ? (
                             <CheckCircleOutlineIcon
@@ -279,7 +326,15 @@ class Review extends Component {
                             }
                           />
                         </ListItemAvatar>
-                        <ListItemText primary="Towels and Sheets" />
+                        <ListItemText
+                          primary="Towels and Sheets"
+                          primaryTypographyProps={{
+                            style: {
+                              color: towelsSheets ? "black" : "grey",
+                            },
+                            variant: "body1",
+                          }}
+                        />
                         <ListItemSecondaryAction>
                           {towelsSheets ? (
                             <CheckCircleOutlineIcon
@@ -292,71 +347,78 @@ class Review extends Component {
                         </ListItemSecondaryAction>
                       </ListItem>
                     </List>
-                    <Grid
-                      container
-                      direction="row"
-                      justify="center"
-                      alignItems="center"
-                    >
-                      <LightTooltip
-                        title={
-                          this.evaluateWhitespace(washerPreferences)
-                            ? "N/A"
-                            : washerPreferences
-                        }
-                        open={this.state.openWasherPrefs}
-                        placement="right"
-                        TransitionComponent={Fade}
-                        onClose={this.handleWasherPrefsClose}
-                        onOpen={this.handleWasherPrefsOpen}
-                        arrow
-                      >
-                        <Button
-                          style={{ textTransform: "none" }}
-                          variant="outlined"
-                          disableTouchRipple
-                        >
-                          <CreateIcon fontSize="small" />
-                          <Typography>&nbsp;View Instructions</Typography>
-                        </Button>
-                      </LightTooltip>
-                    </Grid>
                   </CardContent>
+                  <CardActions className={classes.cardFooter}>
+                    <TooltipButton
+                      text={
+                        this.evaluateWhitespace(addressPreferences)
+                          ? "N/A"
+                          : washerPreferences
+                      }
+                      className={classes.secondaryButton}
+                      buttonText={"View Instructions"}
+                      size="small"
+                    />
+                  </CardActions>
                 </Card>
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item>
             <Grid
               container
               direction="row"
               justify="center"
               alignItems="center"
             >
-              <Card className={classes.root} variant="outlined">
+              <Card className={classes.root} elevation={5}>
+                <CardHeader
+                  avatar={
+                    <ConfirmationNumberIcon
+                      fontSize="small"
+                      style={{ marginBottom: -4 }}
+                      htmlColor="white"
+                    />
+                  }
+                  title="Coupon Code"
+                  titleTypographyProps={{
+                    variant: "h5",
+                    style: {
+                      color: "white",
+                    },
+                  }}
+                  className={classes.cardHeader}
+                />
                 <CardContent className={classes.removePadding}>
                   <div style={{ display: "flex" }}>
-                    <TextField
-                      label="Coupon Code"
-                      variant="outlined"
-                      size="small"
-                    />
+                    <TextField label="Code" variant="outlined" size="small" />
                     {/*todo: to be changed when functionality added, typing in something atm breaks it*/}
                     <Button
-                      style={{ textTransform: "none" }}
-                      variant="outlined"
+                      className={classes.secondaryButton}
+                      variant="contained"
                       onClick={() => {
-                        alert("Coupon applied (test)");
+                        alert("clicked");
                       }}
+                      style={{ marginLeft: 10 }}
                     >
                       Apply
                     </Button>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <Typography>Estimated cost:&nbsp;</Typography>
-                    <Typography> </Typography>
-                    <Typography variant="h5">Loads: {loads}</Typography>
-                  </div>
+                  <Grid container justify="center">
+                    <Typography
+                      variant="h4"
+                      style={{ fontWeight: 600, marginTop: 10 }}
+                    >
+                      Estimated cost:&nbsp;
+                    </Typography>
+                    {/*todo: factor in sub stuff + overage stuff etc?*/}
+                    <Typography
+                      variant="h4"
+                      style={{ textAlign: "center", marginTop: 10 }}
+                    >
+                      ${loads * 12 * 1.5}.00
+                    </Typography>
+                  </Grid>
                 </CardContent>
               </Card>
             </Grid>

@@ -38,7 +38,7 @@ class Scheduling extends Component {
 
     return (
       <React.Fragment>
-        <Typography component="h1" variant="h6" gutterBottom>
+        <Typography variant="h5" gutterBottom>
           What day would you like your order to be picked up?
         </Typography>
         <Grid container spacing={3} className={classes.container}>
@@ -81,7 +81,7 @@ class Scheduling extends Component {
             </Button>
           </Grid>
         </Grid>
-        <Typography component="h1" variant="h6" className={classes.title}>
+        <Typography variant="h5" className={classes.title}>
           What's your preferred pickup time?
         </Typography>
         <Grid container spacing={3}>

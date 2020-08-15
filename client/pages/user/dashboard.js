@@ -26,10 +26,11 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //^^ figure out, also use getstaticprops for fetching something like orders? keep loading until everything is fetched, so if theres an error the loading stays
 //^^also, loading on only main pages (after logged in, before main component rendered aka sidebar and topbar are there tho)? or different loading for individual components/fullscreen (like from login)
 //findOneAndUpdate where possible,
-//use cardheader for titles of various cards, color, etc.
 //const vs let
 //backtick for variable + text stuff
 //styling errors like: prefs not centering when small, review page bleeds when small, etc.
+//get rid of xs={12} sm={6} stuff maybe (basically applies to cards and input fields), get rid of card variant="outlined", standard elevation
+//standard typography sizes/color/boldness (default color is grey, prob located in theme somewhere) (maybe take a look at the order table card vs review cards vs order status card)...standardize cards
 //authorization for either pages/routes/both
 
 //method for loading: do all data fetching in main parent component, apply loading bool
@@ -49,7 +50,7 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //FLOW: close dialog before showing success/error of successful request to backend, keep it open if its a caught error on frontend
 //make sure this is established for everything.
 
-//todo: fix white line appearing when small mobile
+//todo: fix white line appearing when small mobile for border
 //todo: implement admin stuff...later
 //handle student subscription
 //handle special cases for pricing
@@ -61,11 +62,9 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //todo: add isUser? maybe when im less lazy
 //todo: stripe self-serve portal handles all the payment info stuff??
 //todo: maybe just store their payment id, check if it exists every time a on-demand charge is made, use the id to modify method. sub is separate card?
-//todo: !!!cannot edit card #, so if user updates payment method then delete the old one and add the new one, also updating the user property id
 //todo: sort out customer email thing (different: login vs stripe - can be changed with checkout session)
 //todo: move moment to higher level package.json
-//todo: add button styling to ALL dialogs
-//todo: add progress circle to buttons for submission actions
+//todo: add progress circle to buttons for submission actions? or reg loading
 //pagination
 
 //notes:

@@ -423,7 +423,7 @@ class NewOrder extends Component {
                       }}
                     >
                       <div>
-                        <Scheduling
+                        {/* <Scheduling
                           today={this.today}
                           tomorrow={this.tomorrow}
                           todaySelected={this.state.todaySelected}
@@ -431,6 +431,18 @@ class NewOrder extends Component {
                           formattedTime={this.state.formattedTime}
                           rawTime={this.state.rawTime}
                           handleInputChange={this.handleInputChange}
+                        /> */}
+                        <Review
+                          address={this.state.address}
+                          addressPreferences={this.state.addressPreferences}
+                          scented={this.state.scented}
+                          delicates={this.state.delicates}
+                          separate={this.state.separate}
+                          towelsSheets={this.state.towelsSheets}
+                          washerPreferences={this.state.washerPreferences}
+                          pickupDate={this.state.date}
+                          pickupTime={this.state.formattedTime}
+                          loads={this.state.loads}
                         />
                       </div>
                     </Fade>
@@ -507,7 +519,7 @@ class NewOrder extends Component {
                       }}
                     >
                       <div>
-                        <Review
+                        {/* <Review
                           address={this.state.address}
                           addressPreferences={this.state.addressPreferences}
                           scented={this.state.scented}
@@ -518,7 +530,7 @@ class NewOrder extends Component {
                           pickupDate={this.state.date}
                           pickupTime={this.state.formattedTime}
                           loads={this.state.loads}
-                        />
+                        /> */}
                       </div>
                     </Fade>
                     <div className={classes.buttons}>

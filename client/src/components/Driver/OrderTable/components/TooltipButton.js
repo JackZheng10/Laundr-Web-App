@@ -24,7 +24,7 @@ class PopoverButton extends Component {
   };
 
   render() {
-    const { className, text, buttonText } = this.props;
+    const { className, text, buttonText, size } = this.props;
 
     return (
       <React.Fragment>
@@ -42,6 +42,7 @@ class PopoverButton extends Component {
             variant="contained"
             className={className}
             onClick={this.togglePopover}
+            size={size || "medium"}
           >
             {buttonText}
           </Button>

@@ -69,7 +69,7 @@ class Address extends Component {
 
     return (
       <React.Fragment>
-        <Typography component="h1" variant="h6" gutterBottom>
+        <Typography variant="h5" gutterBottom>
           What's your address?
         </Typography>
         <LoadScript googleMapsApiKey={apiKEY} libraries={libraries}>
@@ -98,12 +98,7 @@ class Address extends Component {
               </div>
             </Grid>
           </Grid>
-          <Typography
-            component="h1"
-            variant="h6"
-            gutterBottom
-            className={classes.title}
-          >
+          <Typography variant="h5" gutterBottom className={classes.title}>
             Do you have any special instructions for our drivers? (ex: building
             number, unit, directions, etc.)
           </Typography>

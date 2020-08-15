@@ -39,6 +39,7 @@ const CustomSlider = withStyles({
   },
   markLabel: {
     marginTop: 5,
+    fontWeight: "bold",
   },
 })(Slider);
 
@@ -87,7 +88,7 @@ class Pricing extends Component {
 
     return (
       <React.Fragment>
-        <Typography component="h1" variant="h6" gutterBottom>
+        <Typography variant="h5" gutterBottom>
           About how many loads of laundry do you have?
         </Typography>
         <CustomSlider

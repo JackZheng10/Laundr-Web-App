@@ -29,7 +29,7 @@ class Preferences extends Component {
 
     return (
       <React.Fragment>
-        <Typography component="h1" variant="h6" gutterBottom>
+        <Typography variant="h5" gutterBottom>
           Would you like any of these options?
         </Typography>
         <Grid container spacing={3}>
@@ -78,12 +78,7 @@ class Preferences extends Component {
             />
           </Grid>
         </Grid>
-        <Typography
-          component="h1"
-          variant="h6"
-          gutterBottom
-          className={classes.title}
-        >
+        <Typography variant="h5" gutterBottom className={classes.title}>
           Do you have any special instructions for our washers?
         </Typography>
         <Grid container spacing={3}>

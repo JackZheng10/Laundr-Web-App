@@ -178,10 +178,18 @@ const fetchOrders = async (req, res) => {
         break;
 
       case "orderHistoryUser":
-        return res.json({ success: false, message: "Not handled yet." });
+        //send all orders with a status greater than or equal to 6 and matching the washer email, which means its already been delivered or cancelled
+        ordersOne = await CompletedOrder.find({
+          "userInfo.email": req.body.filterEmail,
+          "orderInfo.status": { $gte: 6 },
+        });
+        ordersTwo = await PendingOrder.find({
+          "userInfo.email": req.body.filterEmail,
+          "orderInfo.status": { $gte: 6 },
+        });
 
-      case "orderHistoryAdmin":
-        return res.json({ success: false, message: "Not handled yet." });
+        orders = [...ordersOne, ...ordersTwo];
+        break;
     }
 
     return res.json({ success: true, message: orders });

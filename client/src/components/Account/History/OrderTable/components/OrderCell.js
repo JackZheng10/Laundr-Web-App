@@ -111,6 +111,14 @@ const AddressCell = (order) => {
   );
 };
 
+const IDCell = (order) => {
+  return (
+    <TableCell>
+      <Typography variant="body1">{order.orderInfo.orderID}</Typography>
+    </TableCell>
+  );
+};
+
 const NameCell = (order) => {
   return (
     <TableCell>
@@ -144,7 +152,9 @@ const WeightCell = (order) => {
 const PriceCell = (order) => {
   return (
     <TableCell>
-      <Typography variant="body1">${order.orderInfo.cost}</Typography>
+      <Typography variant="body1">
+        {order.orderInfo.cost === -1 ? "N/A" : `$${order.orderInfo.cost}`}
+      </Typography>
     </TableCell>
   );
 };
@@ -252,15 +262,12 @@ const OrderCell = (props) => {
       case "orderHistoryDriver":
         return (
           <React.Fragment>
-            <TableCell>
-              <Typography variant="body1">{order.orderInfo.orderID}</Typography>
-            </TableCell>
+            {IDCell(order)}
             {NameCell(order)}
             {DateTimeCell(order)}
             {AddressCell(order)}
             {TooltipCell(order.pickupInfo.prefs, classes)}
             {WeightCell(order)}
-            {PriceCell(order)}
             <TableCell>
               <Typography variant="body1">{getDriverStages(order)}</Typography>
             </TableCell>
@@ -271,14 +278,39 @@ const OrderCell = (props) => {
       case "orderHistoryWasher":
         return (
           <React.Fragment>
-            <TableCell>
-              <Typography variant="body1">{order.orderInfo.orderID}</Typography>
-            </TableCell>
+            {IDCell(order)}
             {DateTimeCell(order)}
             {PreferencesCell(order)}
             {TooltipCell(order.washerInfo.prefs, classes)}
             {WeightCell(order)}
             {StatusCellWasher(order)}
+          </React.Fragment>
+        );
+
+      case "orderHistoryUser":
+        return (
+          <React.Fragment>
+            {IDCell(order)}
+            {DateTimeCell(order)}
+            <TableCell>
+              <Typography variant="body1">{order.orderInfo.address}</Typography>
+            </TableCell>
+            <TableCell>
+              <TooltipButton
+                text={order.pickupInfo.prefs}
+                className={classes.secondaryButton}
+                buttonText={"Driver"}
+              />
+              {"               "}
+              <TooltipButton
+                text={order.washerInfo.prefs}
+                className={classes.secondaryButton}
+                buttonText={"Washer"}
+              />
+            </TableCell>
+            {WeightCell(order)}
+            {PriceCell(order)}
+            {StatusCellDriver(order)}
           </React.Fragment>
         );
     }

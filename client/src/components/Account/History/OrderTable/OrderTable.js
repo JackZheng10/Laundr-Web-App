@@ -78,9 +78,6 @@ class OrderTable extends Component {
               Weight
             </TableCell>
             <TableCell align="left" className={classes.tableHeader}>
-              Price
-            </TableCell>
-            <TableCell align="left" className={classes.tableHeader}>
               Stage
             </TableCell>
           </React.Fragment>
@@ -100,6 +97,27 @@ class OrderTable extends Component {
             </TableCell>
             <TableCell align="left" className={classes.tableHeader}>
               Weight
+            </TableCell>
+          </React.Fragment>
+        );
+
+      case "orderHistoryUser":
+        return (
+          <React.Fragment>
+            <TableCell align="left" className={classes.tableHeader}>
+              Date/Time
+            </TableCell>
+            <TableCell align="left" className={classes.tableHeader}>
+              Address
+            </TableCell>
+            <TableCell align="left" className={classes.tableHeader}>
+              Instructions
+            </TableCell>
+            <TableCell align="left" className={classes.tableHeader}>
+              Weight
+            </TableCell>
+            <TableCell align="left" className={classes.tableHeader}>
+              Price
             </TableCell>
           </React.Fragment>
         );

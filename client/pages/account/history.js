@@ -43,6 +43,7 @@ import historyStyles from "../../src/styles/User/Account/historyStyles";
 //driver first
 //since this depends on current user, in ordercell and order card, render null until config passed in isnt "none"
 //todo: configure loading...make sure it makes sense
+//todo: test thoroughly
 
 class History extends Component {
   static contextType = MainAppContext;
@@ -83,9 +84,6 @@ class History extends Component {
       return "orderHistoryDriver";
     } else if (user.isWasher) {
       return "orderHistoryWasher";
-    } else if (user.isAdmin) {
-      //todo: handle when making admin stuff
-      return "orderHistoryAdmin";
     } else {
       return "orderHistoryUser";
     }

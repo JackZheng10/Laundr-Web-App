@@ -289,6 +289,7 @@ class Register extends Component {
     return valid;
   };
 
+  //todo: limit character inputs. you dont want 1000 character names mayn.
   handleInputChange = (property, value) => {
     const nameRegex = /^[a-zA-Z][a-zA-Z\s]*$/;
     const phoneRegex = /^[0-9\b]+$/;

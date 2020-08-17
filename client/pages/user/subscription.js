@@ -97,7 +97,7 @@ class Subscription extends Component {
         >
           <Grid item>
             <Typography variant="h1" className={classes.componentName}>
-              Subscription
+              Subscription (WIP)
             </Typography>
           </Grid>
         </Grid>

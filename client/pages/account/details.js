@@ -47,7 +47,7 @@ class Details extends Component {
         >
           <Grid item>
             <Typography variant="h1" className={classes.componentName}>
-              Account
+              Account (WIP)
             </Typography>
           </Grid>
         </Grid>

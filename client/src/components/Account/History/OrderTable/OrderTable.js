@@ -12,9 +12,11 @@ import {
   TableRow,
   Paper,
   TableContainer,
+  Hidden,
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import OrderCell from "./components/OrderCell";
+import OrderCard from "./components/OrderCard";
 import orderTableStyles from "../../../../styles/Driver/components/OrderTable/orderTableStyles";
 
 //0: order just placed
@@ -36,23 +38,15 @@ class OrderTable extends Component {
     });
   };
 
-  // renderOrderCards = (orders) => {
-  //   return orders.map((order, index) => {
-  //     return (
-  //       <Grid item>
-  //         <OrderCard
-  //           order={order}
-  //           actionText={this.renderActions(order.orderInfo.status)}
-  //           action={() => {
-  //             this.handleActionClicked(order.orderInfo.status, order);
-  //           }}
-  //           stage={this.renderStage(order.orderInfo.status)}
-  //           key={index}
-  //         />
-  //       </Grid>
-  //     );
-  //   });
-  // };
+  renderOrderCards = (orders, config) => {
+    return orders.map((order, index) => {
+      return (
+        <Grid item>
+          <OrderCard order={order} config={config} key={index} />
+        </Grid>
+      );
+    });
+  };
 
   renderTableHeader = (config, classes) => {
     switch (config) {
@@ -128,22 +122,39 @@ class OrderTable extends Component {
     const { classes, orders, config } = this.props;
 
     return (
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell align="left" className={classes.tableHeader}>
-                ID
-              </TableCell>
-              {this.renderTableHeader(config, classes)}
-              <TableCell align="left" className={classes.tableHeader}>
-                Status
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>{this.renderOrderCells(orders, config)}</TableBody>
-        </Table>
-      </TableContainer>
+      <React.Fragment>
+        <Hidden only={["md", "sm", "xs"]}>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell align="left" className={classes.tableHeader}>
+                    ID
+                  </TableCell>
+                  {this.renderTableHeader(config, classes)}
+                  <TableCell align="left" className={classes.tableHeader}>
+                    Status
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>{this.renderOrderCells(orders, config)}</TableBody>
+            </Table>
+          </TableContainer>
+        </Hidden>
+        <Hidden only={["xl", "lg"]}>
+          <div style={{ padding: 16 }}>
+            <Grid
+              container
+              spacing={4}
+              direction="row"
+              justify="center"
+              alignItems="center"
+            >
+              {this.renderOrderCards(orders, config)}
+            </Grid>
+          </div>
+        </Hidden>
+      </React.Fragment>
     );
   }
 }

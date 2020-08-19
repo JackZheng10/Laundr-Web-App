@@ -141,12 +141,14 @@ const TooltipCell = (text, classes) => {
   );
 };
 
-const LoadCell = (order) => {
-  return <TableCell>{order.orderInfo.loads}</TableCell>;
-};
-
 const WeightCell = (order) => {
-  return <TableCell>{order.orderInfo.weight} lbs</TableCell>;
+  return (
+    <TableCell>
+      {order.orderInfo.weight === "N/A"
+        ? "N/A"
+        : `${order.orderInfo.weight} lbs`}
+    </TableCell>
+  );
 };
 
 const PriceCell = (order) => {

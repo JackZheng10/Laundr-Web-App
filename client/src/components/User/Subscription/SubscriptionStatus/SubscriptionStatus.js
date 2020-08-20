@@ -10,11 +10,11 @@ import {
   CardContent,
   CardActions,
 } from "@material-ui/core";
+import { PieChart, Pie, Sector, Cell } from "recharts";
 import { getCurrentUser, updateToken } from "../../../../helpers/session";
 import { caughtError, showConsoleError } from "../../../../helpers/errors";
 import PropTypes from "prop-types";
 import axios from "axios";
-import ReactScoreIndicator from "react-score-indicator";
 import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import MainAppContext from "../../../../contexts/MainAppContext";
@@ -23,38 +23,8 @@ import subscriptionStatusStyles from "../../../../styles/User/Subscription/compo
 
 const moment = require("moment");
 
-const doughnutColors = [
-  "#01c9e2",
-  "#01c9e2",
-  "#01c9e2",
-  "#01c9e2",
-  "#01c9e2",
-  "#01c9e2",
-  "#01c9e2",
-  "#01c9e2",
-];
-
 class SubscriptionStatus extends Component {
   static contextType = MainAppContext;
-
-  renderMaxLbs = () => {
-    switch (this.props.subscription.plan) {
-      case "Student":
-        return 40;
-
-      case "Standard":
-        return 48;
-
-      case "Plus":
-        return 66;
-
-      case "Family":
-        return 84;
-
-      default:
-        return 0;
-    }
-  };
 
   renderPeriod = (date) => {
     if (date === "N/A") {
@@ -85,12 +55,41 @@ class SubscriptionStatus extends Component {
     }
   };
 
+  getMaxLbs = (subscription) => {
+    switch (subscription.plan) {
+      case "Student":
+        return 40;
+
+      case "Standard":
+        return 48;
+
+      case "Plus":
+        return 66;
+
+      case "Family":
+        return 84;
+
+      default:
+        return 0;
+    }
+  };
+
+  getLbsData = (subscription) => {
+    const maxLbs = this.getMaxLbs(subscription);
+    const lbsLeft = subscription.lbsLeft;
+
+    return [
+      { value: lbsLeft, color: "#01c9e1", opacity: 1 },
+      { value: maxLbs, color: "#828282", opacity: 0.2 },
+    ];
+  };
+
   render() {
     const { classes, subscription } = this.props;
 
     return (
       <React.Fragment>
-        <Grid item style={{ marginBottom: 20 }}>
+        <Grid item style={{ marginBottom: 10 }}>
           <div className={classes.infoCard}>
             <CardHeader
               title={`Current Plan: ${subscription.plan}`}
@@ -105,17 +104,27 @@ class SubscriptionStatus extends Component {
               style={{
                 display: "flex",
                 justifyContent: "center",
+                marginTop: -60,
               }}
             >
-              <ReactScoreIndicator
-                value={subscription.lbsLeft}
-                maxValue={this.renderMaxLbs()}
-                width={290}
-                lineGap={1}
-                lineWidth={15}
-                fadedOpacity={20}
-                stepsColors={doughnutColors}
-              />
+              <PieChart width={310} height={400}>
+                <Pie
+                  data={this.getLbsData(subscription)}
+                  innerRadius={130}
+                  outerRadius={150}
+                  paddingAngle={1}
+                  startAngle={180}
+                  endAngle={-180}
+                >
+                  {this.getLbsData(subscription).map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={entry.color}
+                      style={{ opacity: entry.opacity }}
+                    />
+                  ))}
+                </Pie>
+              </PieChart>
               <div
                 style={{
                   position: "relative",
@@ -123,8 +132,8 @@ class SubscriptionStatus extends Component {
               >
                 <div
                   style={{
-                    top: 175,
-                    left: -210,
+                    top: 215,
+                    left: -220,
                     position: "absolute",
                   }}
                 >
@@ -132,8 +141,8 @@ class SubscriptionStatus extends Component {
                 </div>
                 <div
                   style={{
-                    top: 40,
-                    left: -250,
+                    top: 80,
+                    left: -260,
                     position: "absolute",
                   }}
                 >
@@ -142,6 +151,18 @@ class SubscriptionStatus extends Component {
                     src="/images/Subscription/Box.png"
                     alt="Box"
                   />
+                </div>
+                <div
+                  style={{
+                    top: 260,
+                    left: -190,
+                    position: "absolute",
+                  }}
+                >
+                  <Typography variant="h1" style={{ color: "#01c9e1" }}>
+                    {/*todo: fix centering of this based on the number*/}
+                    {`${subscription.lbsLeft}/${this.getMaxLbs(subscription)}`}
+                  </Typography>
                 </div>
               </div>
             </CardContent>

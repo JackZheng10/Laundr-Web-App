@@ -8,6 +8,7 @@ import {
   CardMedia,
   Button,
   Divider,
+  CardHeader,
 } from "@material-ui/core";
 import { loadStripe } from "@stripe/stripe-js";
 import { getCurrentUser, updateToken } from "../../../../../helpers/session";
@@ -74,12 +75,20 @@ class SubscriptionCard extends Component {
     return (
       <React.Fragment>
         <Card className={classes.root}>
+          <CardHeader
+            title={planName}
+            titleTypographyProps={{
+              variant: "h4",
+              style: {
+                color: "white",
+                textAlign: "center",
+              },
+            }}
+            className={classes.cardHeader}
+          />
           <CardMedia className={classes.media} image={image} />
           <CardContent style={{ textAlign: "center" }}>
-            <Typography gutterBottom variant="h3">
-              {planName}
-            </Typography>
-            <Typography variant="h4" color="textSecondary" gutterBottom>
+            <Typography variant="h4" gutterBottom>
               {priceText}
             </Typography>
             <Typography variant="body1" color="textSecondary">
@@ -87,11 +96,14 @@ class SubscriptionCard extends Component {
             </Typography>
           </CardContent>
           <Divider />
-          <CardActions style={{ justifyContent: "center" }}>
+          <CardActions
+            style={{ justifyContent: "center" }}
+            className={classes.cardHeader}
+          >
             <Button
-              size="small"
+              size="medium"
               variant="contained"
-              className={classes.gradientButton}
+              className={classes.mainButton}
               onClick={this.handlePurchase}
             >
               Purchase

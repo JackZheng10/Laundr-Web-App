@@ -21,6 +21,8 @@ import MainAppContext from "../../../../contexts/MainAppContext";
 import baseURL from "../../../../baseURL";
 import subscriptionStatusStyles from "../../../../styles/User/Subscription/components/SubscriptionStatus/subscriptionStatusStyles";
 
+//todo: responsive
+
 const moment = require("moment");
 
 class SubscriptionStatus extends Component {

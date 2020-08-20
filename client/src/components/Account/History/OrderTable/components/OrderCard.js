@@ -17,7 +17,6 @@ import TooltipButton from "../../../../Driver/OrderTable/components/TooltipButto
 import orderCardStyles from "../../../../../styles/Driver/components/OrderTable/components/orderCardStyles";
 import { getCurrentUser } from "../../../../../helpers/session";
 
-//id
 const NameCard = (order) => {
   return (
     <Grid item>
@@ -36,8 +35,6 @@ const NameCard = (order) => {
     </Grid>
   );
 };
-
-//name
 
 //date time
 const DateTimeCard = (order) => {

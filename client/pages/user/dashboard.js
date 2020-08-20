@@ -73,6 +73,9 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //pagination
 //add order ID to driver available etc?
 //remove class inlinetext
+//mainbutton (yellow) for ordercards too
+//standard sizes for stuff (text etc)
+//move account into one folder (either top level or in user, atm theres two)
 
 //notes:
 /*

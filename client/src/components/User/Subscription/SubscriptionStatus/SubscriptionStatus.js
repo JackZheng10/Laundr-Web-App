@@ -90,11 +90,16 @@ class SubscriptionStatus extends Component {
 
     return (
       <React.Fragment>
-        <Grid item>
+        <Grid item style={{ marginBottom: 20 }}>
           <div className={classes.infoCard}>
             <CardHeader
               title={`Current Plan: ${subscription.plan}`}
-              titleTypographyProps={{ variant: "h3" }}
+              titleTypographyProps={{
+                variant: "h2",
+                style: {
+                  color: "#01c9e1",
+                },
+              }}
             />
             <CardContent
               style={{
@@ -146,43 +151,58 @@ class SubscriptionStatus extends Component {
           <Card className={classes.subInfoCard}>
             <CardHeader
               title="Subscription Information"
-              titleTypographyProps={{ variant: "h5" }}
+              titleTypographyProps={{
+                variant: "h4",
+                style: {
+                  color: "white",
+                },
+              }}
+              className={classes.cardHeader}
             />
             <Divider />
-            <CardContent
-              style={{
-                justifyContent: "center",
-              }}
-            >
-              <div className={classes.cardCell}>
-                <Typography variant="body1" style={{ fontWeight: 500 }}>
-                  <PlayCircleOutlineIcon
-                    fontSize="small"
-                    style={{ marginBottom: -4 }}
-                  />{" "}
-                  Period Start
-                </Typography>
-                <Typography variant="body1" color="textSecondary">
-                  {this.renderPeriod(subscription.periodStart)}
-                </Typography>
-                <Typography variant="body1" style={{ fontWeight: 500 }}>
-                  <HighlightOffIcon
-                    fontSize="small"
-                    style={{ marginBottom: -4 }}
-                  />{" "}
-                  Period End
-                </Typography>
-                <Typography variant="body1" color="textSecondary">
-                  {this.renderPeriod(subscription.periodEnd)}
-                </Typography>
-              </div>
+            <CardContent>
+              <Typography
+                variant="h5"
+                style={{
+                  fontWeight: 600,
+                  color: "#01C9E1",
+                }}
+              >
+                <PlayCircleOutlineIcon
+                  fontSize="small"
+                  style={{ marginBottom: -4 }}
+                />{" "}
+                Period Start
+              </Typography>
+              <Typography variant="h6">
+                {this.renderPeriod(subscription.periodStart)}
+              </Typography>
+              <Typography
+                variant="h5"
+                style={{
+                  fontWeight: 600,
+                  color: "#01C9E1",
+                }}
+              >
+                <HighlightOffIcon
+                  fontSize="small"
+                  style={{ marginBottom: -4 }}
+                />{" "}
+                Period End
+              </Typography>
+              <Typography variant="h6">
+                {this.renderPeriod(subscription.periodEnd)}
+              </Typography>
             </CardContent>
             <Divider />
-            <CardActions style={{ justifyContent: "center" }}>
+            <CardActions
+              style={{ justifyContent: "center" }}
+              className={classes.cardHeader}
+            >
               <Button
-                size="small"
+                size="medium"
                 variant="contained"
-                className={classes.gradientButton}
+                className={classes.mainButton}
                 onClick={this.handleManageSub}
               >
                 Manage

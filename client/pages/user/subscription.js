@@ -2,6 +2,13 @@ import React, { Component } from "react";
 import { withStyles, Grid, Typography } from "@material-ui/core";
 import { Layout } from "../../src/layouts";
 import { getCurrentUser, updateToken } from "../../src/helpers/session";
+import {
+  TopBorderDarkPurple,
+  BottomBorderDarkPurple,
+  TopBorderLightPurple,
+  TopBorderBlue,
+  BottomBorderBlue,
+} from "../../src/utility/borders";
 import PropTypes from "prop-types";
 import jwtDecode from "jwt-decode";
 import baseURL from "../../src/baseURL";
@@ -28,13 +35,7 @@ import subscriptionStyles from "../../src/styles/User/Subscription/subscriptionS
 class Subscription extends Component {
   //todo: adopt ordercomponent thing from dashboard as well so it doesnt flash sub boxes before switching
   state = {
-    subscription: {
-      plan: "",
-      lbsLeft: "",
-      periodStart: "N/A",
-      periodEnd: "N/A",
-      status: "N/A",
-    },
+    subscriptionComponent: null,
   };
 
   componentDidMount = async () => {
@@ -44,38 +45,38 @@ class Subscription extends Component {
 
     currentUser = getCurrentUser();
 
-    this.setState({ subscription: currentUser.subscription });
+    this.renderSubscriptionComponent(currentUser);
   };
 
-  renderSubscriptionComponent = () => {
-    if (this.state.subscription.status === "active") {
-      return (
-        <React.Fragment>
+  renderSubscriptionComponent = (currentUser) => {
+    if (currentUser.subscription.status === "active") {
+      return this.setState({
+        subscriptionComponent: (
           <Grid
             container
-            spacing={2}
+            spacing={0}
             direction="column"
             justify="center"
             alignItems="center" /*main page column*/
           >
-            <SubscriptionStatus subscription={this.state.subscription} />
+            <SubscriptionStatus subscription={currentUser.subscription} />
           </Grid>
-        </React.Fragment>
-      );
+        ),
+      });
     } else {
-      return (
-        <React.Fragment>
+      return this.setState({
+        subscriptionComponent: (
           <Grid
             container
-            spacing={2}
+            spacing={0}
             direction="row"
             justify="center"
             alignItems="center" /*main page column*/
           >
             <SubscriptionBoxes />
           </Grid>
-        </React.Fragment>
-      );
+        ),
+      });
     }
   };
 
@@ -86,40 +87,29 @@ class Subscription extends Component {
       <Layout>
         <Grid
           container
-          spacing={2}
+          spacing={0}
           direction="column"
           justify="center"
           alignItems="center" /*main page column*/
           style={{
-            paddingTop: 8,
-            backgroundColor: "#21d0e5",
+            paddingTop: 10,
+            backgroundColor: "#01C9E1",
           }}
         >
           <Grid item>
-            <Typography variant="h1" className={classes.componentName}>
+            <Typography
+              variant="h1"
+              className={classes.componentName}
+              gutterBottom
+            >
               Subscription (WIP)
             </Typography>
           </Grid>
         </Grid>
-        <Grid
-          container
-          spacing={2}
-          direction="column"
-          justify="center"
-          alignItems="center" /*main page column*/
-        >
-          <img
-            src="/images/UserDashboard/sectionBorder.png"
-            style={{
-              width: "100%",
-              height: "100%",
-              paddingTop: 8,
-              paddingBottom: 15,
-            }}
-            alt="Section border"
-          />
-        </Grid>
-        {this.renderSubscriptionComponent()}
+        <div style={{ position: "relative", marginBottom: 70 }}>
+          <BottomBorderBlue />
+        </div>
+        {this.state.subscriptionComponent}
       </Layout>
     );
   }

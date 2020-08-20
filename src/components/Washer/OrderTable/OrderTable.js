@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import PerfectScrollbar from "react-perfect-scrollbar";
 import {
   Card,
   CardContent,

@@ -1,42 +1,67 @@
 {
-  "name": "laundr-web-app",
-  "version": "1.0.0",
-  "description": "Web application for Laundr",
-  "main": "index.js",
+  "name": "laundr-web-app-frontend",
+  "version": "0.1.0",
+  "description": "Frontend for the Laundr web application.",
+  "private": true,
   "dependencies": {
-    "bcrypt-nodejs": "0.0.3",
-    "body-parser": "^1.19.0",
-    "concurrently": "^5.2.0",
-    "cors": "^2.8.5",
-    "crypto-random-string": "^3.2.0",
-    "express": "^4.17.1",
-    "jsonwebtoken": "^8.5.1",
-    "jwt-decode": "^2.2.0",
+    "@date-io/date-fns": "^1.3.13",
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.56",
+    "@material-ui/pickers": "^3.2.10",
+    "@react-google-maps/api": "^1.9.12",
+    "@stripe/react-stripe-js": "^1.1.2",
+    "@stripe/stripe-js": "^1.8.0",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "axios": "^0.19.2",
+    "classnames": "^2.2.6",
+    "fbjs": "^1.0.0",
+    "geolib": "^3.3.1",
+    "google-map-react": "^1.1.7",
+    "material-ui-dots": "^2.0.1",
     "moment": "^2.27.0",
-    "mongoose": "^5.9.27",
-    "morgan": "^1.10.0",
-    "node-cron": "^2.0.3",
-    "nodemon": "^2.0.4",
-    "stripe": "^8.81.0",
-    "twilio": "^3.48.1"
+    "mui-places-autocomplete": "^2.0.0",
+    "next": "^9.5.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-geocode": "^0.2.1",
+    "react-perfect-scrollbar": "^1.5.8",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "3.4.1",
+    "react-swipeable-views": "^0.13.9",
+    "recharts": "^1.8.5",
+    "recompose": "^0.30.0"
   },
-  "devDependencies": {},
   "scripts": {
-    "install-all": "concurrently \"npm install\" \"cd client && npm install\"",
-    "client": "cd client && npm run dev",
-    "server": "nodemon server/server.js",
-    "dev": "concurrently \"nodemon server/server.js\" \"cd client && npm run dev\"",
-    "build": "cd client && npm build",
-    "start": "node server/server.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JackZheng10/Laundr-Web-App.git"
+    "url": "git+https://github.com/JackZheng10/Laundr-Web-App-Frontend.git"
   },
   "author": "Jack Zheng",
   "license": "UNLICENSED",
   "bugs": {
-    "url": "https://github.com/JackZheng10/Laundr-Web-App/issues"
+    "url": "https://github.com/JackZheng10/Laundr-Web-App-Frontend/issues"
   },
-  "homepage": "https://github.com/JackZheng10/Laundr-Web-App#readme"
+  "homepage": "https://github.com/JackZheng10/Laundr-Web-App-Frontend#readme",
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }

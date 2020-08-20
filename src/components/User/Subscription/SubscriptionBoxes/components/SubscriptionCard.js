@@ -74,11 +74,11 @@ class SubscriptionCard extends Component {
 
     return (
       <React.Fragment>
-        <Card className={classes.root}>
+        <Card className={classes.root} elevation={5}>
           <CardHeader
             title={planName}
             titleTypographyProps={{
-              variant: "h4",
+              variant: "h3",
               style: {
                 color: "white",
                 textAlign: "center",

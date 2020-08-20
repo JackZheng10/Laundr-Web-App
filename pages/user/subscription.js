@@ -42,7 +42,7 @@ class Subscription extends Component {
             spacing={0}
             direction="column"
             justify="center"
-            alignItems="center" /*main page column*/
+            alignItems="center"
           >
             <SubscriptionStatus subscription={currentUser.subscription} />
           </Grid>
@@ -57,7 +57,7 @@ class Subscription extends Component {
               spacing={2}
               direction="row"
               justify="center"
-              alignItems="center" /*main page column*/
+              alignItems="center"
             >
               <SubscriptionBoxes />
             </Grid>

@@ -171,7 +171,7 @@ class SubscriptionStatus extends Component {
           </div>
         </Grid>
         <Grid item>
-          <Card className={classes.subInfoCard}>
+          <Card className={classes.subInfoCard} elevation={10}>
             <CardHeader
               title="Subscription Information"
               titleTypographyProps={{

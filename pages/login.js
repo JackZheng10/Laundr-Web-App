@@ -33,6 +33,7 @@ import baseURL from "../src/baseURL";
 //todo: login with phone # since thats what they verify?
 //todo: this is written very badly lol. will make much better.
 //todo: add cssbaseline to layout, dont need on every pg
+//todo: refactor this pg. its off centered bro.
 
 function Copyright() {
   return (
@@ -161,9 +162,9 @@ class Login extends Component {
 
   handleLoginRedirect = () => {
     if (this.state.isWasher) {
-      // return <Redirect push to="/washerAssigned" />;
+      this.props.router.push("/washer/assigned");
     } else if (this.state.isDriver) {
-      // return <Redirect push to="/driverAvailable" />;
+      this.props.router.push("/driver/available");
     } else if (this.state.isAdmin) {
       // return <Redirect push to="/placeholder" />;
     } else {

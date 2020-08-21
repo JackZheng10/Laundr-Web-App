@@ -45,6 +45,7 @@ import baseURL from "../src/baseURL";
 //todo: disable orlando probably
 //todo: this is written very badly lol. will make much better.
 //todo: whitespace detection for fields
+//todo: refactor this pg. its off centered bro.
 
 //in backend, caught errors = return error.code and success false. in frontend, if success is false, print error: message from the response which should be said code
 //in frontend, caught errors = use error itself and alert error: error

@@ -1,4 +1,6 @@
-console.log("ENVIRONMENT VARIABLES: ", process.env);
-const baseURL = process.env.BASE_URL || require("./config").baseURL;
+const baseURL =
+  process.env.BASE_URL ||
+  require("./config").baseURL ||
+  "http://localhost:5000/api";
 
 export default baseURL;

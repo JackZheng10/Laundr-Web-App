@@ -3,11 +3,12 @@ import { withStyles, Grid, Typography } from "@material-ui/core";
 import { Layout } from "../../src/layouts";
 import { getCurrentUser, updateToken } from "../../src/helpers/session";
 import PropTypes from "prop-types";
-import AccountInfo from "../../src/components/User/Account/AccountInfo";
-import PaymentInfo from "../../src/components/User/Account/PaymentInfo";
+import AccountInfo from "../../src/components/Account/Details/AccountInfo";
+import PaymentInfo from "../../src/components/Account/Details/PaymentInfo";
 import detailsStyles from "../../src/styles/User/Account/detailsStyles";
 
 //todo: revise data fetching flow here
+//todo: reorganize the styles
 
 class Details extends Component {
   state = {

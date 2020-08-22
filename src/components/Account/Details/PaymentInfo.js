@@ -23,13 +23,13 @@ import { caughtError, showConsoleError } from "../../../helpers/errors";
 import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../../contexts/MainAppContext";
-import baseURL from "../../../baseURL";
 import paymentInfoStyles from "../../../styles/User/Account/components/paymentInfoStyles";
 
 //todo: maybe use the red/green for other confirms/cancels
 //todo: rerender after stored card (updating child state does not rerender parent)
 //todo: in .catch errors in server, specify also what went wrong!
 
+const baseURL = process.env.BASE_URL || require("../../../config").baseURL;
 const stripeKEY =
   process.env.STRIPE_PUBLISHABLE_KEY ||
   require("../../../config").stripe.publishableKEY;

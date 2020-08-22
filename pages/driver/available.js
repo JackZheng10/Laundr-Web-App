@@ -21,8 +21,9 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import OrderTable from "../../src/components/Driver/OrderTable/OrderTable";
-import baseURL from "../../src/baseURL";
 import availableStyles from "../../src/styles/Driver/Available/availableStyles";
+
+const baseURL = process.env.BASE_URL || require("../../src/config").baseURL;
 
 //todo: https://www.npmjs.com/package/react-infinite-scroll-component for orders and stuff
 //also put inside of a scrollview type thing, or pad so table doesnt stretch all the way

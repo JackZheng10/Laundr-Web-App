@@ -19,10 +19,11 @@ import Pricing from "./components/Pricing";
 import Review from "./components/Review";
 import ProgressBar from "./components/ProgressBar";
 import newOrderStyles from "../../../../styles/User/Dashboard/components/NewOrder/newOrderStyles";
-import baseURL from "../../../../baseURL";
 
 const moment = require("moment");
 const geolib = require("geolib");
+
+const baseURL = process.env.BASE_URL || require("../../../../config").baseURL;
 const apiKEY =
   process.env.GOOGLE_MAPS_KEY || require("../../../../config").google.mapsKEY;
 

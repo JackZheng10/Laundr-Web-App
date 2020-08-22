@@ -13,12 +13,13 @@ import { caughtError, showConsoleError } from "../../src/helpers/errors";
 import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
-import baseURL from "../../src/baseURL";
 import NewOrder from "../../src/components/User/Dashboard/NewOrder/NewOrder";
 import OrderStatus from "../../src/components/User/Dashboard/OrderStatus/OrderStatus";
 import AutoRotatingCarousel from "../../src/components/User/Dashboard/Carousel/AutoRotatingCarousel";
 import Slide from "../../src/components/User/Dashboard/Carousel/Slide";
 import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
+
+const baseURL = process.env.BASE_URL || require("../../src/config").baseURL;
 
 //refactor priorities:
 //!!!map multiple routes to single component

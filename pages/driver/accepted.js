@@ -21,9 +21,9 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import OrderTable from "../../src/components/Driver/OrderTable/OrderTable";
-import baseURL from "../../src/baseURL";
 import acceptedStyles from "../../src/styles/Driver/Accepted/acceptedStyles";
 
+const baseURL = process.env.BASE_URL || require("../../src/config").baseURL;
 //todo: refresh list after completing an action, and THEN show the snackbar?
 
 //0: order just placed

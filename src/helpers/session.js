@@ -1,7 +1,8 @@
 import { caughtError, showConsoleError } from "./errors";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
-import baseURL from "../baseURL";
+
+const baseURL = process.env.BASE_URL || require("../../src/config").baseURL;
 
 export const getCurrentUser = () => {
   if (typeof localStorage !== "undefined") {

@@ -18,12 +18,13 @@ import axios from "axios";
 import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import MainAppContext from "../../../../contexts/MainAppContext";
-import baseURL from "../../../../baseURL";
 import subscriptionStatusStyles from "../../../../styles/User/Subscription/components/SubscriptionStatus/subscriptionStatusStyles";
 
 //todo: responsive
 
 const moment = require("moment");
+const baseURL =
+  process.env.BASE_URL || require("../../../../../src/config").baseURL;
 
 class SubscriptionStatus extends Component {
   static contextType = MainAppContext;

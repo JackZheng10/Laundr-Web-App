@@ -23,12 +23,13 @@ import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import DateFnsUtils from "@date-io/date-fns";
 import axios from "axios";
 import MainAppContext from "../../../../contexts/MainAppContext";
-import baseURL from "../../../../baseURL";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
 import QueryBuilderIcon from "@material-ui/icons/QueryBuilder";
 import LocalMallIcon from "@material-ui/icons/LocalMall";
 import ProgressBar from "./components/ProgressBar";
 import orderStatusStyles from "../../../../styles/User/Dashboard/components/OrderStatus/orderStatusStyles";
+
+const baseURL = process.env.BASE_URL || require("../../../../config").baseURL;
 
 //0: order just placed
 //1: order accepted by driver to be picked up from user

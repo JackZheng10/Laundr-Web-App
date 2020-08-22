@@ -11,11 +11,12 @@ import {
 } from "../../src/utility/borders";
 import PropTypes from "prop-types";
 import jwtDecode from "jwt-decode";
-import baseURL from "../../src/baseURL";
 import axios from "axios";
 import SubscriptionBoxes from "../../src/components/User/Subscription/SubscriptionBoxes/SubscriptionBoxes";
 import SubscriptionStatus from "../../src/components/User/Subscription/SubscriptionStatus/SubscriptionStatus";
 import subscriptionStyles from "../../src/styles/User/Subscription/subscriptionStyles";
+
+const baseURL = process.env.BASE_URL || require("../../src/config").baseURL;
 
 class Subscription extends Component {
   //todo: adopt ordercomponent thing from dashboard as well so it doesnt flash sub boxes before switching

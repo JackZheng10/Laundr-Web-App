@@ -24,7 +24,8 @@ import jwtDecode from "jwt-decode";
 import MainAppContext from "../src/contexts/MainAppContext";
 import loginStyles from "../src/styles/loginStyles";
 import axios from "axios";
-import baseURL from "../src/baseURL";
+
+const baseURL = process.env.BASE_URL || require("../src/config").baseURL;
 
 //todo: forgot password functionality
 //todo: change button colors to match logo/stuff

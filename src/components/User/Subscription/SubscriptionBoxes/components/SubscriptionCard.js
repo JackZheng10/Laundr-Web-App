@@ -19,9 +19,9 @@ import MainAppContext from "../../../../../contexts/MainAppContext";
 import subscriptionCardStyles from "../../../../../styles/User/Subscription/components/SubscriptionBoxes/components/subscriptionCardStyles";
 
 const baseURL =
-  process.env.BASE_URL || require("../../../../../config").baseURL;
+  process.env.NEXT_PUBLIC_BASE_URL || require("../../../../../config").baseURL;
 const stripeKEY =
-  process.env.STRIPE_PUBLISHABLE_KEY ||
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ||
   require("../../../../../config").stripe.publishableKEY;
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid

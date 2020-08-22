@@ -29,9 +29,10 @@ import paymentInfoStyles from "../../../styles/User/Account/components/paymentIn
 //todo: rerender after stored card (updating child state does not rerender parent)
 //todo: in .catch errors in server, specify also what went wrong!
 
-const baseURL = process.env.BASE_URL || require("../../../config").baseURL;
+const baseURL =
+  process.env.NEXT_PUBLIC_BASE_URL || require("../../../config").baseURL;
 const stripeKEY =
-  process.env.STRIPE_PUBLISHABLE_KEY ||
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ||
   require("../../../config").stripe.publishableKEY;
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid

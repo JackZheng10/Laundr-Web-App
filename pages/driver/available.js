@@ -23,7 +23,8 @@ import MainAppContext from "../../src/contexts/MainAppContext";
 import OrderTable from "../../src/components/Driver/OrderTable/OrderTable";
 import availableStyles from "../../src/styles/Driver/Available/availableStyles";
 
-const baseURL = process.env.BASE_URL || require("../../src/config").baseURL;
+const baseURL =
+  process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
 
 //todo: https://www.npmjs.com/package/react-infinite-scroll-component for orders and stuff
 //also put inside of a scrollview type thing, or pad so table doesnt stretch all the way

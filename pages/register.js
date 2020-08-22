@@ -31,7 +31,8 @@ import MainAppContext from "../src/contexts/MainAppContext";
 import registerStyles from "../src/styles/registerStyles";
 import axios from "axios";
 
-const baseURL = process.env.BASE_URL || require("../src/config").baseURL;
+const baseURL =
+  process.env.NEXT_PUBLIC_BASE_URL || require("../src/config").baseURL;
 
 //todo: referral code functionality when possible
 //todo: get city dropdown to have hover effect rather than native dropdown if possible

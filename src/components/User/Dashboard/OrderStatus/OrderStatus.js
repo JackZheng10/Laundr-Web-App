@@ -29,7 +29,8 @@ import LocalMallIcon from "@material-ui/icons/LocalMall";
 import ProgressBar from "./components/ProgressBar";
 import orderStatusStyles from "../../../../styles/User/Dashboard/components/OrderStatus/orderStatusStyles";
 
-const baseURL = process.env.BASE_URL || require("../../../../config").baseURL;
+const baseURL =
+  process.env.NEXT_PUBLIC_BASE_URL || require("../../../../config").baseURL;
 
 //0: order just placed
 //1: order accepted by driver to be picked up from user

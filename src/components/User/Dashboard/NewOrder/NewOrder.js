@@ -23,9 +23,11 @@ import newOrderStyles from "../../../../styles/User/Dashboard/components/NewOrde
 const moment = require("moment");
 const geolib = require("geolib");
 
-const baseURL = process.env.BASE_URL || require("../../../../config").baseURL;
+const baseURL =
+  process.env.NEXT_PUBLIC_BASE_URL || require("../../../../config").baseURL;
 const apiKEY =
-  process.env.GOOGLE_MAPS_KEY || require("../../../../config").google.mapsKEY;
+  process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ||
+  require("../../../../config").google.mapsKEY;
 
 //todo: maybe scroll to top at advancing? or make size of pages same
 //todo: no new order when payment method not added yet

@@ -25,7 +25,8 @@ import MainAppContext from "../src/contexts/MainAppContext";
 import loginStyles from "../src/styles/loginStyles";
 import axios from "axios";
 
-const baseURL = process.env.BASE_URL || require("../src/config").baseURL;
+const baseURL =
+  process.env.NEXT_PUBLIC_BASE_URL || require("../src/config").baseURL;
 
 //todo: forgot password functionality
 //todo: change button colors to match logo/stuff

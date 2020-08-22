@@ -16,7 +16,8 @@ import SubscriptionBoxes from "../../src/components/User/Subscription/Subscripti
 import SubscriptionStatus from "../../src/components/User/Subscription/SubscriptionStatus/SubscriptionStatus";
 import subscriptionStyles from "../../src/styles/User/Subscription/subscriptionStyles";
 
-const baseURL = process.env.BASE_URL || require("../../src/config").baseURL;
+const baseURL =
+  process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
 
 class Subscription extends Component {
   //todo: adopt ordercomponent thing from dashboard as well so it doesnt flash sub boxes before switching

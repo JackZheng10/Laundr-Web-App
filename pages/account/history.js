@@ -30,7 +30,8 @@ import MainAppContext from "../../src/contexts/MainAppContext";
 import OrderTable from "../../src/components/Account/History/OrderTable/OrderTable";
 import historyStyles from "../../src/styles/User/Account/historyStyles";
 
-const baseURL = process.env.BASE_URL || require("../../src/config").baseURL;
+const baseURL =
+  process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
 
 //0: order just placed
 //1: order accepted by driver to be picked up from user

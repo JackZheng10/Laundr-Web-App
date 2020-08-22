@@ -13,7 +13,7 @@ import PropTypes from "prop-types";
 import addressStyles from "../../../../../../styles/User/Dashboard/components/NewOrder/components/addressStyles";
 
 const apiKEY =
-  process.env.GOOGLE_MAPS_KEY ||
+  process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ||
   require("../../../../../../config").google.mapsKEY;
 
 const libraries = ["places"];

@@ -24,7 +24,8 @@ import subscriptionStatusStyles from "../../../../styles/User/Subscription/compo
 
 const moment = require("moment");
 const baseURL =
-  process.env.BASE_URL || require("../../../../../src/config").baseURL;
+  process.env.NEXT_PUBLIC_BASE_URL ||
+  require("../../../../../src/config").baseURL;
 
 class SubscriptionStatus extends Component {
   static contextType = MainAppContext;

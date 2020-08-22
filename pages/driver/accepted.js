@@ -23,7 +23,8 @@ import MainAppContext from "../../src/contexts/MainAppContext";
 import OrderTable from "../../src/components/Driver/OrderTable/OrderTable";
 import acceptedStyles from "../../src/styles/Driver/Accepted/acceptedStyles";
 
-const baseURL = process.env.BASE_URL || require("../../src/config").baseURL;
+const baseURL =
+  process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
 //todo: refresh list after completing an action, and THEN show the snackbar?
 
 //0: order just placed

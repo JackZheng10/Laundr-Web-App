@@ -19,7 +19,8 @@ import AutoRotatingCarousel from "../../src/components/User/Dashboard/Carousel/A
 import Slide from "../../src/components/User/Dashboard/Carousel/Slide";
 import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 
-const baseURL = process.env.BASE_URL || require("../../src/config").baseURL;
+const baseURL =
+  process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
 
 //refactor priorities:
 //!!!map multiple routes to single component

@@ -24,8 +24,7 @@ import baseURL from "../../../../baseURL";
 const moment = require("moment");
 const geolib = require("geolib");
 const apiKEY =
-  process.env.GOOGLE_MAPS_API_KEY ||
-  require("../../../../config").google.mapsKEY;
+  process.env.GOOGLE_MAPS_KEY || require("../../../../config").google.mapsKEY;
 
 //todo: maybe scroll to top at advancing? or make size of pages same
 //todo: no new order when payment method not added yet

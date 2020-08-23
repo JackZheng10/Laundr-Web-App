@@ -29,9 +29,6 @@ import LocalMallIcon from "@material-ui/icons/LocalMall";
 import ProgressBar from "./components/ProgressBar";
 import orderStatusStyles from "../../../../styles/User/Dashboard/components/OrderStatus/orderStatusStyles";
 
-const baseURL =
-  process.env.NEXT_PUBLIC_BASE_URL || require("../../../../config").baseURL;
-
 //0: order just placed
 //1: order accepted by driver to be picked up from user
 //2: weight entered
@@ -105,7 +102,7 @@ class OrderStatus extends Component {
 
   handleOrderCancel = async (order) => {
     try {
-      const response = await axios.delete(`${baseURL}/order/cancelOrder`, {
+      const response = await axios.delete("/api/order/cancelOrder", {
         params: {
           orderID: order.orderInfo.orderID,
         },
@@ -126,7 +123,7 @@ class OrderStatus extends Component {
   handleSetDropoffTime = async (order) => {
     if (this.handleTimeCheck(order.orderInfo.weight, order.pickupInfo)) {
       try {
-        const response = await axios.put(`${baseURL}/order/setDropoff`, {
+        const response = await axios.put("/api/order/setDropoff", {
           orderID: order.orderInfo.orderID,
           date: this.state.date,
           time: this.state.formattedTime,
@@ -250,7 +247,7 @@ class OrderStatus extends Component {
 
   handleConfirmReceived = async (order) => {
     try {
-      const response = await axios.put(`${baseURL}/order/confirmReceived`, {
+      const response = await axios.put("/api/order/confirmReceived", {
         orderID: order.orderInfo.orderID,
       });
 

@@ -23,9 +23,6 @@ import MainAppContext from "../../src/contexts/MainAppContext";
 import OrderTable from "../../src/components/Washer/OrderTable/OrderTable";
 import assignedStyles from "../../src/styles/Washer/Assigned/assignedStyles";
 
-const baseURL =
-  process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
-
 //0: order just placed
 //1: order accepted by driver to be picked up from user
 //2: weight entered
@@ -49,7 +46,7 @@ class AssignedDashboard extends Component {
   fetchOrders = async () => {
     try {
       const currentUser = getCurrentUser();
-      const response = await axios.post(baseURL + "/order/fetchOrders", {
+      const response = await axios.post("/api/order/fetchOrders", {
         filter: "washerAssigned",
         filterEmail: currentUser.email,
       });
@@ -72,7 +69,7 @@ class AssignedDashboard extends Component {
     try {
       const orderID = order.orderInfo.orderID;
 
-      const response = await axios.put(baseURL + "/washer/setWasherDone", {
+      const response = await axios.put("/api/washer/setWasherDone", {
         orderID,
       });
 

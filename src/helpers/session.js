@@ -2,9 +2,6 @@ import { caughtError, showConsoleError } from "./errors";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
 
-const baseURL =
-  process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
-
 export const getCurrentUser = () => {
   if (typeof localStorage !== "undefined") {
     const token = localStorage.getItem("token");
@@ -31,7 +28,7 @@ export const getCurrentUser = () => {
 //todo: maybe use phone
 export const updateToken = async (userEmail) => {
   try {
-    const response = await axios.get(baseURL + "/user/updateToken", {
+    const response = await axios.get("/api/user/updateToken", {
       params: {
         email: userEmail,
       },

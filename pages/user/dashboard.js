@@ -19,9 +19,6 @@ import AutoRotatingCarousel from "../../src/components/User/Dashboard/Carousel/A
 import Slide from "../../src/components/User/Dashboard/Carousel/Slide";
 import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 
-const baseURL =
-  process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
-
 //refactor priorities:
 //!!!map multiple routes to single component
 //-add loading...only to components that need to fetch data from the user? for example login doesnt have it and uses localstorage, but not while rendering i guess? whereas dashboard needs it to prevent localstorage error.
@@ -102,7 +99,7 @@ class Dashboard extends Component {
     try {
       const currentUser = getCurrentUser();
 
-      const response = await axios.get(`${baseURL}/order/getExistingOrder`, {
+      const response = await axios.get("/api/order/getExistingOrder", {
         params: {
           email: currentUser.email,
         },

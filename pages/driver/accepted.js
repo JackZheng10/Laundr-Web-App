@@ -23,8 +23,6 @@ import MainAppContext from "../../src/contexts/MainAppContext";
 import OrderTable from "../../src/components/Driver/OrderTable/OrderTable";
 import acceptedStyles from "../../src/styles/Driver/Accepted/acceptedStyles";
 
-const baseURL =
-  process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
 //todo: refresh list after completing an action, and THEN show the snackbar?
 
 //0: order just placed
@@ -55,7 +53,7 @@ class AcceptedDashboard extends Component {
   fetchOrders = async () => {
     try {
       const currentUser = getCurrentUser();
-      const response = await axios.post(baseURL + "/order/fetchOrders", {
+      const response = await axios.post("/api/order/fetchOrders", {
         filter: "driverAccepted",
         filterEmail: currentUser.email,
       });
@@ -107,7 +105,7 @@ class AcceptedDashboard extends Component {
     try {
       const email = order.userInfo.email;
 
-      const response = await axios.post(baseURL + "/stripe/chargeCustomer", {
+      const response = await axios.post("/api/stripe/chargeCustomer", {
         weight: this.state.weight,
         email: email,
       });
@@ -126,7 +124,7 @@ class AcceptedDashboard extends Component {
     try {
       const orderID = order.orderInfo.orderID;
 
-      const response = await axios.put(baseURL + "/driver/updateOrderWeight", {
+      const response = await axios.put("/api/driver/updateOrderWeight", {
         weight: this.state.weight,
         orderID,
       });
@@ -145,7 +143,7 @@ class AcceptedDashboard extends Component {
     try {
       const orderID = order.orderInfo.orderID;
 
-      const response = await axios.put(baseURL + "/driver/setWasherDelivered", {
+      const response = await axios.put("/api/driver/setWasherDelivered", {
         orderID,
       });
 
@@ -163,7 +161,7 @@ class AcceptedDashboard extends Component {
     try {
       const orderID = order.orderInfo.orderID;
 
-      const response = await axios.put(baseURL + "/driver/setUserDelivered", {
+      const response = await axios.put("/api/driver/setUserDelivered", {
         orderID,
       });
 

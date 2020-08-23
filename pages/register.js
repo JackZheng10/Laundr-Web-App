@@ -31,9 +31,6 @@ import MainAppContext from "../src/contexts/MainAppContext";
 import registerStyles from "../src/styles/registerStyles";
 import axios from "axios";
 
-const baseURL =
-  process.env.NEXT_PUBLIC_BASE_URL || require("../src/config").baseURL;
-
 //todo: referral code functionality when possible
 //todo: get city dropdown to have hover effect rather than native dropdown if possible
 //todo: possibly make modal for ToS rather than link
@@ -107,7 +104,7 @@ class Register extends Component {
 
     if (this.handleInputValidation()) {
       try {
-        const response = await axios.post(baseURL + "/user/checkDuplicate", {
+        const response = await axios.post("/api/user/checkDuplicate", {
           email: this.state.email.toLowerCase(),
           phone: this.state.phone,
         });
@@ -116,10 +113,9 @@ class Register extends Component {
           switch (response.data.message) {
             case 0:
               try {
-                const response = await axios.post(
-                  baseURL + "/twilio/verifyPhone",
-                  { to: this.state.phone }
-                );
+                const response = await axios.post("/api/twilio/verifyPhone", {
+                  to: this.state.phone,
+                });
 
                 if (response.data.success) {
                   this.setState(
@@ -348,7 +344,7 @@ class Register extends Component {
   handleRegister = async () => {
     if (this.state.generatedCode === this.state.enteredCode) {
       try {
-        const response = await axios.post(baseURL + "/user/register", {
+        const response = await axios.post("/api/user/register", {
           email: this.state.email.toLowerCase(),
           fname: this.state.fname,
           lname: this.state.lname,

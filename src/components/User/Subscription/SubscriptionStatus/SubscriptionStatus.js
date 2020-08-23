@@ -23,9 +23,6 @@ import subscriptionStatusStyles from "../../../../styles/User/Subscription/compo
 //todo: responsive
 
 const moment = require("moment");
-const baseURL =
-  process.env.NEXT_PUBLIC_BASE_URL ||
-  require("../../../../../src/config").baseURL;
 
 class SubscriptionStatus extends Component {
   static contextType = MainAppContext;
@@ -42,7 +39,7 @@ class SubscriptionStatus extends Component {
     try {
       const currentUser = getCurrentUser();
 
-      const response = await axios.post(baseURL + "/stripe/createSelfPortal", {
+      const response = await axios.post("/api/stripe/createSelfPortal", {
         customerID: currentUser.stripe.customerID,
       });
 

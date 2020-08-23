@@ -25,9 +25,6 @@ import MainAppContext from "../src/contexts/MainAppContext";
 import loginStyles from "../src/styles/loginStyles";
 import axios from "axios";
 
-const baseURL =
-  process.env.NEXT_PUBLIC_BASE_URL || require("../src/config").baseURL;
-
 //todo: forgot password functionality
 //todo: change button colors to match logo/stuff
 //todo: change textbox + moving word to laundr colors, buttons to colors as well (WIP)
@@ -82,7 +79,7 @@ class Login extends Component {
 
     if (this.handleInputValidation()) {
       try {
-        const response = await axios.post(baseURL + "/user/login", {
+        const response = await axios.post("/api/user/login", {
           email: this.state.email,
           password: this.state.password,
         });

@@ -29,8 +29,6 @@ import paymentInfoStyles from "../../../styles/User/Account/components/paymentIn
 //todo: rerender after stored card (updating child state does not rerender parent)
 //todo: in .catch errors in server, specify also what went wrong!
 
-const baseURL =
-  process.env.NEXT_PUBLIC_BASE_URL || require("../../../config").baseURL;
 const stripeKEY =
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ||
   require("../../../config").stripe.publishableKEY;
@@ -75,7 +73,7 @@ class PaymentInfo extends Component {
 
     if (regPaymentID !== "N/A") {
       try {
-        const response = await axios.post(baseURL + "/stripe/getCardDetails", {
+        const response = await axios.post("/api/stripe/getCardDetails", {
           paymentID: regPaymentID,
         });
 
@@ -112,7 +110,7 @@ class PaymentInfo extends Component {
     try {
       const currentUser = getCurrentUser();
 
-      const response = await axios.post(baseURL + "/stripe/createSetupIntent", {
+      const response = await axios.post("/api/stripe/createSetupIntent", {
         customerID: currentUser.stripe.customerID,
       });
 
@@ -163,7 +161,7 @@ class PaymentInfo extends Component {
       // result.setupIntent.payment_method to your server to save the
       // card to a Customer
       try {
-        const response = await axios.post(baseURL + "/stripe/setRegPaymentID", {
+        const response = await axios.post("/api/stripe/setRegPaymentID", {
           email: currentUser.email,
           regPaymentID: result.setupIntent.payment_method,
         });

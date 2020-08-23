@@ -23,8 +23,6 @@ import newOrderStyles from "../../../../styles/User/Dashboard/components/NewOrde
 const moment = require("moment");
 const geolib = require("geolib");
 
-const baseURL =
-  process.env.NEXT_PUBLIC_BASE_URL || require("../../../../config").baseURL;
 const apiKEY =
   process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ||
   require("../../../../config").google.mapsKEY;
@@ -166,7 +164,7 @@ class NewOrder extends Component {
     try {
       const currentUser = getCurrentUser();
 
-      const response = await axios.post(baseURL + "/order/placeOrder", {
+      const response = await axios.post("/api/order/placeOrder", {
         email: currentUser.email,
         fname: currentUser.fname,
         lname: currentUser.lname,

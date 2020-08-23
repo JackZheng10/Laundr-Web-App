@@ -20,13 +20,18 @@ class AccountInfo extends Component {
 
     return (
       <React.Fragment>
-        <Card className={classes.root}>
+        <Card className={classes.root} elevation={10}>
           <CardHeader
             title="Profile"
-            titleTypographyProps={{ variant: "h5" }}
-            className={classes.centerTitle}
+            titleTypographyProps={{
+              variant: "h4",
+              style: {
+                color: "white",
+              },
+            }}
+            className={classes.cardHeader}
           />
-          <Divider />
+          {/* <Divider /> */}
           <CardContent>
             <Grid //main column
               container
@@ -71,8 +76,8 @@ class AccountInfo extends Component {
               </Grid>
             </Grid>
           </CardContent>
-          <Divider />
-          <CardActions>
+          {/* <Divider /> */}
+          <CardActions className={classes.cardFooter}>
             <Grid
               container
               direction="row"
@@ -81,18 +86,18 @@ class AccountInfo extends Component {
             >
               <Grid item>
                 <Button
-                  size="small"
+                  size="medium"
                   variant="contained"
-                  className={classes.gradientButton}
+                  className={classes.secondaryButton}
                 >
                   Update Password
                 </Button>
               </Grid>
               <Grid item>
                 <Button
-                  size="small"
+                  size="medium"
                   variant="contained"
-                  className={classes.gradientButton}
+                  className={classes.secondaryButton}
                 >
                   Update Profile
                 </Button>

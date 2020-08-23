@@ -167,8 +167,13 @@ class PaymentInfo extends Component {
         });
 
         if (response.data.success) {
-          await updateToken(currentuser.email);
-          this.context.showAlert(response.data.message);
+          await updateToken(currentUser.email);
+          this.setState(
+            { showPaymentUpdate: !this.state.showPaymentUpdate },
+            () => {
+              this.context.showAlert(response.data.message);
+            }
+          );
         } else {
           this.context.showAlert(response.data.message);
         }
@@ -186,7 +191,7 @@ class PaymentInfo extends Component {
           <Button
             size="small"
             variant="contained"
-            className={classes.gradientButton}
+            className={classes.secondaryButton}
             onClick={this.toggleShowPaymentUpdate}
           >
             Update
@@ -226,13 +231,17 @@ class PaymentInfo extends Component {
 
     return (
       <React.Fragment>
-        <Card className={classes.root}>
+        <Card className={classes.root} elevation={10}>
           <CardHeader
             title="Payment Info"
-            titleTypographyProps={{ variant: "h5" }}
-            className={classes.centerTitle}
+            titleTypographyProps={{
+              variant: "h4",
+              style: {
+                color: "white",
+              },
+            }}
+            className={classes.cardHeader}
           />
-          <Divider />
           <CardContent>
             <Grid //main column
               container
@@ -276,8 +285,7 @@ class PaymentInfo extends Component {
               </Grid>
             </Grid>
           </CardContent>
-          <Divider />
-          <CardActions>
+          <CardActions className={classes.cardFooter}>
             <Grid
               container
               direction="row"

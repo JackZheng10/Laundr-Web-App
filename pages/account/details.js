@@ -2,12 +2,20 @@ import React, { Component } from "react";
 import { withStyles, Grid, Typography } from "@material-ui/core";
 import { Layout } from "../../src/layouts";
 import { getCurrentUser, updateToken } from "../../src/helpers/session";
+import {
+  TopBorderDarkPurple,
+  BottomBorderDarkPurple,
+  TopBorderLightPurple,
+  TopBorderBlue,
+  BottomBorderBlue,
+} from "../../src/utility/borders";
 import PropTypes from "prop-types";
 import AccountInfo from "../../src/components/Account/Details/AccountInfo";
 import PaymentInfo from "../../src/components/Account/Details/PaymentInfo";
 import detailsStyles from "../../src/styles/User/Account/detailsStyles";
 
 //todo: revise data fetching flow here
+//todo: fetch everything you need here.
 //todo: reorganize the styles
 
 class Details extends Component {
@@ -37,49 +45,40 @@ class Details extends Component {
       <Layout>
         <Grid
           container
-          spacing={2}
+          spacing={0}
           direction="column"
           justify="center"
           alignItems="center" /*main page column*/
           style={{
-            paddingTop: 8,
-            backgroundColor: "#21d0e5",
+            paddingTop: 10,
+            backgroundColor: "#01C9E1",
           }}
         >
           <Grid item>
-            <Typography variant="h1" className={classes.componentName}>
-              Account (WIP)
+            <Typography
+              variant="h1"
+              className={classes.componentName}
+              gutterBottom
+            >
+              Account
             </Typography>
           </Grid>
         </Grid>
-        <Grid
-          container
-          spacing={2}
-          direction="column"
-          justify="center"
-          alignItems="center" /*main page column*/
-        >
-          <img
-            src="/images/UserDashboard/sectionBorder.png"
-            style={{
-              width: "100%",
-              height: "100%",
-              paddingTop: 8,
-              paddingBottom: 15,
-            }}
-            alt="Section border"
-          />
-        </Grid>
-        <Grid
-          container
-          spacing={2}
-          direction="column"
-          justify="center"
-          alignItems="center" /*main page column*/
-        >
-          <Grid item>{this.state.accountInfoComponent}</Grid>
-          <Grid item>{this.state.paymentInfoComponent}</Grid>
-        </Grid>
+        <div style={{ position: "relative", marginBottom: 70 }}>
+          <BottomBorderBlue />
+        </div>
+        <div style={{ padding: 16 }}>
+          <Grid
+            container
+            spacing={2}
+            direction="column"
+            justify="center"
+            alignItems="center" /*main page column*/
+          >
+            <Grid item>{this.state.accountInfoComponent}</Grid>
+            <Grid item>{this.state.paymentInfoComponent}</Grid>
+          </Grid>
+        </div>
       </Layout>
     );
   }

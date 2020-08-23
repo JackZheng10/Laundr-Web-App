@@ -2,13 +2,20 @@ const accountInfoStyles = (theme) => ({
   root: {
     maxWidth: 400,
   },
-  gradientButton: {
-    backgroundImage:
-      "linear-gradient( 136deg, rgb(1, 201, 226) 15%, rgb(0, 153, 255) 50%, rgb(1, 201, 226) 100%)",
+  secondaryButton: {
     color: "white",
+    backgroundColor: "#01c9e1",
   },
-  centerTitle: {
+  mainButton: {
+    color: "white",
+    backgroundColor: "#FFB600",
+  },
+  cardHeader: {
+    backgroundColor: "#01c9e1",
     textAlign: "center",
+  },
+  cardFooter: {
+    backgroundColor: "#01c9e1",
   },
 });
 

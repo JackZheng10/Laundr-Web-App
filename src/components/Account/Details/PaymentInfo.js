@@ -167,7 +167,7 @@ class PaymentInfo extends Component {
             <Button
               size="small"
               variant="contained"
-              className={classes.gradientButtonRed}
+              className={classes.redButton}
               onClick={this.toggleShowPaymentUpdate}
             >
               Cancel
@@ -177,7 +177,7 @@ class PaymentInfo extends Component {
             <Button
               size="small"
               variant="contained"
-              className={classes.gradientButtonGreen}
+              className={classes.greenButton}
               onClick={this.handleCardSetup}
             >
               Confirm

@@ -25,7 +25,6 @@ class Details extends Component {
   static contextType = MainAppContext;
 
   state = {
-    user: null,
     accountInfoComponent: null,
     paymentInfoComponent: null,
     card: {

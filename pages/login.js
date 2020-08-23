@@ -10,11 +10,6 @@ import {
   Typography,
   Container,
   withStyles,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
 } from "@material-ui/core";
 import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";

@@ -10,6 +10,8 @@ import {
   IconButton,
   withStyles,
 } from "@material-ui/core";
+import { withRouter } from "next/router";
+import compose from "recompose/compose";
 import MenuIcon from "@material-ui/icons/Menu";
 import NotificationsIcon from "@material-ui/icons/NotificationsOutlined";
 import InputIcon from "@material-ui/icons/Input";
@@ -29,11 +31,10 @@ class Topbar extends Component {
   };
 
   render() {
-    const { className, onSidebarOpen, ...rest } = this.props;
-    const classes = this.props.classes;
+    const { className, onSidebarOpen, classes, ...rest } = this.props;
 
     if (this.state.logout) {
-      return <Redirect push to="/login" />;
+      this.props.router.push("/login");
     }
 
     return (
@@ -80,4 +81,4 @@ Topbar.propTypes = {
   onSidebarOpen: PropTypes.func,
 };
 
-export default withStyles(topbarStyles)(Topbar);
+export default compose(withRouter, withStyles(topbarStyles))(Topbar);

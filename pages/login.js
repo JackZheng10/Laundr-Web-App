@@ -28,6 +28,7 @@ import axios from "axios";
 //todo: this is written very badly lol. will make much better.
 //todo: add cssbaseline to layout, dont need on every pg
 //todo: alert in app.js is off centered because login is desktop and "sidebar" would be showing if layout present
+//todo: learn to customize mui components more!
 
 function Copyright() {
   return (
@@ -183,7 +184,10 @@ class Login extends Component {
         direction="column"
         justify="center"
         alignItems="center"
-        style={{ height: "100vh", backgroundImage: `url("/images/space.png")` }}
+        style={{
+          height: "100vh",
+          backgroundImage: `url("/images/space.png")`,
+        }}
       >
         <Grid item>
           <div className={classes.paper}>
@@ -195,7 +199,9 @@ class Login extends Component {
                 height: 160,
               }}
             />
-            <Typography variant="h1">Login</Typography>
+            <Typography variant="h1" style={{ color: "#01c9e1" }}>
+              Login
+            </Typography>
             <form className={classes.form} onSubmit={this.handleLogin}>
               <TextField
                 variant="outlined"
@@ -209,11 +215,7 @@ class Login extends Component {
                   this.handleInputChange("email", event.target.value);
                 }}
                 value={this.state.email}
-                inputProps={{
-                  style: {
-                    backgroundColor: "white",
-                  },
-                }}
+                style={{ borderRadius: 4, backgroundColor: "white" }}
               />
               <TextField
                 variant="outlined"
@@ -228,15 +230,12 @@ class Login extends Component {
                   this.handleInputChange("password", event.target.value);
                 }}
                 value={this.state.password}
-                style={{
-                  backgroundColor: "white",
-                }}
+                style={{ borderRadius: 4, backgroundColor: "white" }}
               />
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
-                color="primary"
                 className={classes.submit}
                 onClick={this.handleLogin}
               >
@@ -244,13 +243,17 @@ class Login extends Component {
               </Button>
               <Grid container>
                 <Grid item xs>
-                  <Link href="#" variant="h5">
+                  <Link href="#" variant="h5" style={{ color: "#01c9e1" }}>
                     Forgot password?
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="/register" variant="h5">
-                    Don't have an account? Sign up
+                  <Link
+                    href="/register"
+                    variant="h5"
+                    style={{ color: "#01c9e1" }}
+                  >
+                    Don't have an account?
                   </Link>
                 </Grid>
               </Grid>

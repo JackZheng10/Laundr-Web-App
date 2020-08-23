@@ -60,44 +60,6 @@ class PaymentInfo extends Component {
 
   state = {
     showPaymentUpdate: false,
-    card: {
-      brand: "N/A",
-      expMonth: "N/A",
-      expYear: "N/A",
-      lastFour: "N/A",
-    },
-  };
-
-  componentDidMount = async () => {
-    const { regPaymentID } = this.props.user.stripe;
-
-    if (regPaymentID !== "N/A") {
-      try {
-        const response = await axios.post("/api/stripe/getCardDetails", {
-          paymentID: regPaymentID,
-        });
-
-        if (response.data.success) {
-          const card = response.data.message.card;
-
-          const cardInfo = {
-            brand: card.brand.toUpperCase(),
-            expMonth: card.exp_month,
-            expYear: card.exp_year,
-            lastFour: card.last4,
-          };
-
-          this.setState({
-            card: cardInfo,
-          });
-        } else {
-          this.context.showAlert(response.data.message);
-        }
-      } catch (error) {
-        showConsoleError("getting card details", error);
-        this.context.showAlert(caughtError("getting card details", error, 99));
-      }
-    }
   };
 
   toggleShowPaymentUpdate = () => {
@@ -227,7 +189,7 @@ class PaymentInfo extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, card } = this.props;
 
     return (
       <React.Fragment>
@@ -253,7 +215,7 @@ class PaymentInfo extends Component {
                   variant="outlined"
                   label="Brand"
                   size="small"
-                  value={this.state.card.brand}
+                  value={card.brand}
                   InputProps={{
                     readOnly: true,
                   }}
@@ -265,7 +227,7 @@ class PaymentInfo extends Component {
                   variant="outlined"
                   label="Expiration"
                   size="small"
-                  value={`${this.state.card.expMonth}/${this.state.card.expYear}`}
+                  value={`${card.expMonth}/${card.expYear}`}
                   InputProps={{
                     readOnly: true,
                   }}
@@ -277,7 +239,7 @@ class PaymentInfo extends Component {
                   variant="outlined"
                   label="Last 4 #"
                   size="small"
-                  value={this.state.card.lastFour}
+                  value={card.lastFour}
                   InputProps={{
                     readOnly: true,
                   }}
@@ -335,12 +297,8 @@ class PaymentInfo extends Component {
   }
 }
 
-InjectedPaymentInfo.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-
 function InjectedPaymentInfo(props) {
-  const { classes, user } = props;
+  const { classes, card } = props;
 
   return (
     <Elements stripe={stripePromise}>
@@ -350,12 +308,16 @@ function InjectedPaymentInfo(props) {
             stripe={stripe}
             elements={elements}
             classes={classes}
-            user={user}
+            card={card}
           />
         )}
       </ElementsConsumer>
     </Elements>
   );
 }
+
+InjectedPaymentInfo.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
 
 export default withStyles(paymentInfoStyles)(InjectedPaymentInfo);

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { withStyles, Grid, Typography } from "@material-ui/core";
 import { Layout } from "../../src/layouts";
+import { caughtError, showConsoleError } from "../../src/helpers/errors";
 import { getCurrentUser, updateToken } from "../../src/helpers/session";
 import {
   TopBorderDarkPurple,
@@ -10,6 +11,8 @@ import {
   BottomBorderBlue,
 } from "../../src/utility/borders";
 import PropTypes from "prop-types";
+import axios from "axios";
+import MainAppContext from "../../src/contexts/MainAppContext";
 import AccountInfo from "../../src/components/Account/Details/AccountInfo";
 import PaymentInfo from "../../src/components/Account/Details/PaymentInfo";
 import detailsStyles from "../../src/styles/User/Account/detailsStyles";
@@ -19,10 +22,18 @@ import detailsStyles from "../../src/styles/User/Account/detailsStyles";
 //todo: reorganize the styles
 
 class Details extends Component {
+  static contextType = MainAppContext;
+
   state = {
     user: null,
     accountInfoComponent: null,
     paymentInfoComponent: null,
+    card: {
+      brand: "N/A",
+      expMonth: "N/A",
+      expYear: "N/A",
+      lastFour: "N/A",
+    },
   };
 
   componentDidMount = async () => {
@@ -32,10 +43,58 @@ class Details extends Component {
 
     currentUser = getCurrentUser();
 
+    const shouldRenderPayment = this.shouldRenderPayment(currentUser);
+
+    //if payment method should be rendered
+    if (shouldRenderPayment) {
+      const regPaymentID = currentUser.stripe.regPaymentID;
+
+      //if they have a payment method, fetch the info
+      if (regPaymentID !== "N/A") {
+        try {
+          const response = await axios.post("/api/stripe/getCardDetails", {
+            paymentID: regPaymentID,
+          });
+
+          if (response.data.success) {
+            const card = response.data.message.card;
+
+            const cardInfo = {
+              brand: card.brand.toUpperCase(),
+              expMonth: card.exp_month,
+              expYear: card.exp_year,
+              lastFour: card.last4,
+            };
+
+            this.setState({
+              card: cardInfo,
+            });
+          } else {
+            this.context.showAlert(response.data.message);
+          }
+        } catch (error) {
+          showConsoleError("getting card details", error);
+          this.context.showAlert(
+            caughtError("getting card details", error, 99)
+          );
+        }
+      }
+    }
+
     this.setState({
       accountInfoComponent: <AccountInfo user={currentUser} />,
-      paymentInfoComponent: <PaymentInfo user={currentUser} />,
+      paymentInfoComponent: shouldRenderPayment && (
+        <PaymentInfo user={currentUser} card={this.state.card} />
+      ),
     });
+  };
+
+  shouldRenderPayment = (currentUser) => {
+    if (currentUser.isWasher || currentUser.isDriver || currentUser.isAdmin) {
+      return false;
+    }
+
+    return true;
   };
 
   render() {

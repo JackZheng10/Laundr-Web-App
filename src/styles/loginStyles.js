@@ -1,6 +1,6 @@
 const loginStyles = (theme) => ({
   paper: {
-    marginTop: theme.spacing(8),
+    // marginTop: theme.spacing(8),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -14,14 +14,8 @@ const loginStyles = (theme) => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
-    backgroundImage:
-      "linear-gradient( 136deg, rgb(1, 201, 226) 15%, rgb(0, 153, 255) 50%, rgb(1, 201, 226) 100%)",
+    backgroundColor: "#FFB600",
     color: "white",
-  },
-  center: {
-    justifyContent: "center",
-    alignItems: "center",
-    display: "flex",
   },
 });
 

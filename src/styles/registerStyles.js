@@ -1,32 +1,60 @@
 const registerStyles = (theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(3),
+  layout: {
+    marginLeft: "auto",
+    marginRight: "auto",
+    [theme.breakpoints.up(520)]: {
+      width: 400,
+    },
+    [theme.breakpoints.down(520)]: {
+      width: "90vw",
+    },
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
-    backgroundImage:
-      "linear-gradient( 136deg, rgb(1, 201, 226) 15%, rgb(0, 153, 255) 50%, rgb(1, 201, 226) 100%)",
+    backgroundColor: "#FFB600",
     color: "white",
   },
-  center: {
-    justifyContent: "center",
-    alignItems: "center",
-    display: "flex",
+  coloredField: {
+    backgroundColor: "white",
+    borderRadius: 4,
+    "& label.Mui-focused": {
+      color: "#01c9e1",
+    },
+    // "& .MuiInput-underline:after": {
+    //   borderBottomColor: "green",
+    // },
+    "& .MuiOutlinedInput-root": {
+      // "& fieldset": {
+      //   borderColor: "red",
+      // },
+      "&:hover fieldset": {
+        borderColor: "#01c9e1",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: "#01c9e1",
+      },
+    },
   },
-  formControl: {
-    margin: theme.spacing(0),
-    minWidth: 120,
+  logo: {
+    [theme.breakpoints.up(520)]: {
+      width: 400,
+    },
+    [theme.breakpoints.down(520)]: {
+      width: "90vw",
+    },
+  },
+  pageContainer: {
+    height: "100vh",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+    [theme.breakpoints.up(770)]: {
+      backgroundImage: `url("/images/space.png")`,
+      backgroundSize: "cover",
+    },
+    [theme.breakpoints.down(770)]: {
+      backgroundImage: `url("/images/space_mobilev2.png")`,
+      backgroundSize: "contain",
+    },
   },
   error: {
     color: "red",

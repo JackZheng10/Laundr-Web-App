@@ -9,10 +9,6 @@ const loginStyles = (theme) => ({
       width: "90vw",
     },
   },
-  form: {
-    width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
   submit: {
     margin: theme.spacing(3, 0, 2),
     backgroundColor: "#FFB600",
@@ -41,7 +37,7 @@ const loginStyles = (theme) => ({
   },
   logo: {
     [theme.breakpoints.up(520)]: {
-      width: 450,
+      width: 400,
     },
     [theme.breakpoints.down(520)]: {
       width: "90vw",

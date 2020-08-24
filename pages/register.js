@@ -22,6 +22,7 @@ import {
   DialogContentText,
   DialogTitle,
   CircularProgress,
+  Paper,
 } from "@material-ui/core";
 import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
@@ -402,8 +403,273 @@ class Register extends Component {
     const classes = this.props.classes;
 
     return (
-      <Container component="main" maxWidth="xs">
-        {/* <CssBaseline /> */}
+      <Grid
+        container
+        direction="column"
+        justify="center"
+        alignItems="center"
+        className={classes.pageContainer}
+      >
+        <Dialog
+          open={this.state.showVerifyDialog}
+          onClose={this.toggleVerifyDialog}
+        >
+          <DialogTitle>Verification</DialogTitle>
+          <DialogContent>
+            <DialogContentText style={{ textAlign: "center" }}>
+              To finish registering, please enter the verification code we just
+              sent to your phone. If you didn't receive a code, make sure your
+              entered phone number is correct and sign up again. Your code will
+              expire upon closing this popup.
+            </DialogContentText>
+            <Grid item xs={12} align="center">
+              <Grid item xs={12} align="center">
+                {this.state.showResentLoad && <CircularProgress />}
+              </Grid>
+              <TextField
+                autoFocus
+                margin="dense"
+                label="Code"
+                disabled={this.state.disableCode}
+                style={{ width: 100 }}
+                value={this.state.enteredCode}
+                onChange={(event) => {
+                  this.handleInputChange("enteredCode", event.target.value);
+                }}
+              />
+            </Grid>
+          </DialogContent>
+          <DialogActions>
+            <Grid item xs={12} align="left">
+              <Button onClick={this.toggleVerifyDialog} color="primary">
+                Cancel
+              </Button>
+            </Grid>
+            <Grid item xs={12} align="right">
+              <Button onClick={this.handleResendCode} color="primary">
+                Resend
+              </Button>
+              <Button onClick={this.handleRegister} color="primary">
+                Submit
+              </Button>
+            </Grid>
+          </DialogActions>
+        </Dialog>
+        <Grid item>
+          <div className={classes.layout}>
+            <Grid
+              container
+              direction="column"
+              justify="center"
+              alignItems="center"
+            >
+              <Grid item>
+                <img
+                  alt="Company Logo"
+                  src="/images/LogRegLogo.png"
+                  className={classes.logo}
+                />
+              </Grid>
+              <Paper>
+                <Typography
+                  variant="h1"
+                  style={{
+                    color: "#01c9e1",
+                    textAlign: "center",
+                    padding: 10,
+                  }}
+                >
+                  Register
+                </Typography>
+              </Paper>
+              <Grid item>
+                <Grid container justify="center">
+                  <Grid item xs={6} sm={6} style={{ paddingRight: 10 }}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      label="First Name"
+                      autoComplete="fname"
+                      error={this.state.fnameError}
+                      helperText={this.state.fnameErrorMsg}
+                      value={this.state.fname}
+                      onChange={(event) => {
+                        this.handleInputChange("fname", event.target.value);
+                      }}
+                      classes={{ root: classes.coloredField }}
+                    />
+                  </Grid>
+                  <Grid item xs={6} sm={6} style={{ paddingLeft: 10 }}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      label="Last Name"
+                      autoComplete="lname"
+                      error={this.state.lnameError}
+                      helperText={this.state.lnameErrorMsg}
+                      value={this.state.lname}
+                      onChange={(event) => {
+                        this.handleInputChange("lname", event.target.value);
+                      }}
+                      classes={{ root: classes.coloredField }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <FormControl
+                      fullWidth
+                      variant="outlined"
+                      margin="normal"
+                      classes={{ root: classes.coloredField }}
+                    >
+                      <InputLabel>City</InputLabel>
+                      <Select
+                        native
+                        label="City"
+                        value={this.state.city}
+                        onChange={(event) => {
+                          this.handleInputChange("city", event.target.value);
+                        }}
+                      >
+                        <option>Gainesville</option>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      label="Email Address"
+                      autoComplete="email"
+                      error={this.state.emailError}
+                      helperText={this.state.emailErrorMsg}
+                      value={this.state.email}
+                      onChange={(event) => {
+                        this.handleInputChange("email", event.target.value);
+                      }}
+                      classes={{ root: classes.coloredField }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      label="Password"
+                      type="password"
+                      autoComplete="current-password"
+                      error={this.state.passwordError}
+                      value={this.state.password}
+                      helperText={this.state.passwordErrorMsg}
+                      onChange={(event) => {
+                        this.handleInputChange("password", event.target.value);
+                      }}
+                      classes={{ root: classes.coloredField }}
+                    />
+                  </Grid>
+                  <Grid item xs={7} sm={7} style={{ paddingRight: 10 }}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      label="Phone Number"
+                      error={this.state.phoneError}
+                      helperText={this.state.phoneErrorMsg}
+                      value={this.state.phone}
+                      onChange={(event) => {
+                        this.handleInputChange("phone", event.target.value);
+                      }}
+                      classes={{ root: classes.coloredField }}
+                    />
+                  </Grid>
+                  <Grid item xs={5} sm={5} style={{ paddingLeft: 10 }}>
+                    <TextField
+                      variant="outlined"
+                      margin="normal"
+                      label="Referral Code"
+                      helperText="*Optional"
+                      fullWidth
+                      value={this.state.referral}
+                      onChange={(event) => {
+                        this.handleInputChange("referral", event.target.value);
+                      }}
+                      classes={{ root: classes.coloredField }}
+                    />
+                  </Grid>
+                  <Grid align="center" item xs={12}>
+                    <Paper style={{ paddingBottom: 10 }}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            onChange={() => {
+                              this.handleInputChange("tos", null);
+                            }}
+                            value={this.state.tos}
+                            style={{ color: "#01c9e1" }}
+                          />
+                        }
+                        label="I have read and agree to the Terms of Service."
+                      />
+                      <Grid item>
+                        <Link
+                          href="/login"
+                          variant="h6"
+                          target="_blank"
+                          rel="noopener"
+                          href="https://www.laundr.io/termsofservice/"
+                          style={{
+                            color: "#01c9e1",
+                            textAlign: "center",
+                          }}
+                        >
+                          Terms of Service
+                        </Link>
+                        <div className={classes.error}>
+                          {this.state.tosErrorMsg}
+                        </div>
+                      </Grid>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Button
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                      className={classes.submit}
+                      onClick={this.handleVerification}
+                    >
+                      Create Account
+                    </Button>
+                  </Grid>
+                  <Grid item>
+                    <Link
+                      href="/login"
+                      variant="h6"
+                      style={{ color: "#01c9e1", textAlign: "center" }}
+                    >
+                      Already have an account?
+                    </Link>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          </div>
+        </Grid>
+      </Grid>
+    );
+  }
+}
+
+Register.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default compose(withRouter, withStyles(registerStyles))(Register);
+
+{
+  /* <Container component="main" maxWidth="xs">
         <div className={classes.paper}>
           <img
             alt="Company Logo"
@@ -464,7 +730,7 @@ class Register extends Component {
           </Dialog>
           <form onSubmit={this.handleVerification} className={classes.form}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={6} sm={6}>
                 <TextField
                   variant="outlined"
                   fullWidth
@@ -478,7 +744,7 @@ class Register extends Component {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={6} sm={6}>
                 <TextField
                   variant="outlined"
                   fullWidth
@@ -539,7 +805,7 @@ class Register extends Component {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} sm={7}>
+              <Grid item xs={7} sm={7}>
                 <TextField
                   variant="outlined"
                   fullWidth
@@ -552,7 +818,7 @@ class Register extends Component {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} sm={5}>
+              <Grid item xs={5} sm={5}>
                 <TextField
                   variant="outlined"
                   label="Referral Code"
@@ -619,13 +885,5 @@ class Register extends Component {
         <Box mt={5}>
           <Copyright />
         </Box>
-      </Container>
-    );
-  }
+      </Container> */
 }
-
-Register.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-
-export default compose(withRouter, withStyles(registerStyles))(Register);

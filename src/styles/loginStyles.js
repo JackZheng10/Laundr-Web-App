@@ -47,6 +47,19 @@ const loginStyles = (theme) => ({
       width: "90vw",
     },
   },
+  pageContainer: {
+    height: "100vh",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+    [theme.breakpoints.up(770)]: {
+      backgroundImage: `url("/images/space.png")`,
+      backgroundSize: "cover",
+    },
+    [theme.breakpoints.down(770)]: {
+      backgroundImage: `url("/images/space_mobilev2.png")`,
+      backgroundSize: "contain",
+    },
+  },
 });
 
 export default loginStyles;

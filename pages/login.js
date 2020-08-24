@@ -185,11 +185,7 @@ class Login extends Component {
         direction="column"
         justify="center"
         alignItems="center"
-        style={{
-          height: "100vh",
-          backgroundImage: `url("/images/space.png")`,
-          backgroundSize: "cover",
-        }}
+        className={classes.pageContainer}
       >
         <Grid item>
           <div className={classes.layout}>
@@ -258,7 +254,7 @@ class Login extends Component {
                     <Grid item xs>
                       <Link
                         href="#"
-                        variant="h5"
+                        variant="h6"
                         style={{ color: "#01c9e1", textAlign: "center" }}
                       >
                         Forgot password?
@@ -267,7 +263,7 @@ class Login extends Component {
                     <Grid item>
                       <Link
                         href="/register"
-                        variant="h5"
+                        variant="h6"
                         style={{ color: "#01c9e1", textAlign: "center" }}
                       >
                         Don't have an account?

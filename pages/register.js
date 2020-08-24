@@ -34,18 +34,11 @@ import axios from "axios";
 
 //todo: referral code functionality when possible
 //todo: get city dropdown to have hover effect rather than native dropdown if possible
-//todo: possibly make modal for ToS rather than link
-//todo: destructure copyright to another file
-//todo: fix positioning of city "we currently..." msg to match
 //todo: get loading from resending code to hover rather than appear?
-//todo: check over views on mobile, maybe resize logo to fit just a bit more
 //todo: change token time to infinite(?) when implementing
-//todo: change loader to a backdrop
+//todo: logo cut off on s5/smaller iphones??
+//todo: add back <form> so can press enter to submit
 //todo: give error msg when wrong phone number entered (you get an error code from twilio controller) and disable verification dialog popup
-//todo: disable orlando probably
-//todo: this is written very badly lol. will make much better.
-//todo: whitespace detection for fields
-//todo: refactor this pg. its off centered bro.
 
 //in backend, caught errors = return error.code and success false. in frontend, if success is false, print error: message from the response which should be said code
 //in frontend, caught errors = use error itself and alert error: error
@@ -455,7 +448,7 @@ class Register extends Component {
             </Grid>
           </DialogActions>
         </Dialog>
-        <Grid item>
+        <Grid item style={{ maxHeight: "100%" }}>
           <div className={classes.layout}>
             <Grid
               container
@@ -599,7 +592,7 @@ class Register extends Component {
                     />
                   </Grid>
                   <Grid align="center" item xs={12}>
-                    <Paper style={{ paddingBottom: 10 }}>
+                    <Paper style={{ padding: 10 }}>
                       <FormControlLabel
                         control={
                           <Checkbox
@@ -643,7 +636,7 @@ class Register extends Component {
                       Create Account
                     </Button>
                   </Grid>
-                  <Grid item>
+                  <Grid item style={{ paddingBottom: 10 }}>
                     <Link
                       href="/login"
                       variant="h6"

@@ -2,10 +2,10 @@ const loginStyles = (theme) => ({
   layout: {
     marginLeft: "auto",
     marginRight: "auto",
-    [theme.breakpoints.up(649)]: {
-      width: 600,
+    [theme.breakpoints.up(520)]: {
+      width: 400,
     },
-    [theme.breakpoints.down(650)]: {
+    [theme.breakpoints.down(520)]: {
       width: "90vw",
     },
   },

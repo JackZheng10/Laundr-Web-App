@@ -187,7 +187,7 @@ class Login extends Component {
         alignItems="center"
         className={classes.pageContainer}
       >
-        <Grid item>
+        <Grid item style={{ maxHeight: "100%" }}>
           <div className={classes.layout}>
             <Grid
               container
@@ -254,7 +254,7 @@ class Login extends Component {
                   Sign In
                 </Button>
                 <Grid container>
-                  <Grid item xs>
+                  <Grid item xs style={{ paddingBottom: 10 }}>
                     <Link
                       href="#"
                       variant="h6"
@@ -263,7 +263,7 @@ class Login extends Component {
                       Forgot password?
                     </Link>
                   </Grid>
-                  <Grid item>
+                  <Grid item style={{ paddingBottom: 10 }}>
                     <Link
                       href="/register"
                       variant="h6"

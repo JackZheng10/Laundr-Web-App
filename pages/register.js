@@ -40,6 +40,10 @@ import axios from "axios";
 //todo: add back <form> so can press enter to submit
 //todo: give error msg when wrong phone number entered (you get an error code from twilio controller) and disable verification dialog popup
 
+//todo: change underline:after during error to be red again, not the blue. check the new class thats applied?
+//todo: make city selector background white when clicked on
+//todo: study how the MuiOutlinedInput-root selector works with more specific fields
+
 //in backend, caught errors = return error.code and success false. in frontend, if success is false, print error: message from the response which should be said code
 //in frontend, caught errors = use error itself and alert error: error
 
@@ -479,7 +483,7 @@ class Register extends Component {
                 <Grid container justify="center">
                   <Grid item xs={6} sm={6} style={{ paddingRight: 10 }}>
                     <TextField
-                      variant="outlined"
+                      variant="filled"
                       margin="normal"
                       fullWidth
                       label="First Name"
@@ -495,7 +499,7 @@ class Register extends Component {
                   </Grid>
                   <Grid item xs={6} sm={6} style={{ paddingLeft: 10 }}>
                     <TextField
-                      variant="outlined"
+                      variant="filled"
                       margin="normal"
                       fullWidth
                       label="Last Name"
@@ -512,7 +516,7 @@ class Register extends Component {
                   <Grid item xs={12}>
                     <FormControl
                       fullWidth
-                      variant="outlined"
+                      variant="filled"
                       margin="normal"
                       classes={{ root: classes.coloredField }}
                     >
@@ -531,7 +535,7 @@ class Register extends Component {
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
-                      variant="outlined"
+                      variant="filled"
                       margin="normal"
                       fullWidth
                       label="Email Address"
@@ -547,7 +551,7 @@ class Register extends Component {
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
-                      variant="outlined"
+                      variant="filled"
                       margin="normal"
                       fullWidth
                       label="Password"
@@ -564,7 +568,7 @@ class Register extends Component {
                   </Grid>
                   <Grid item xs={7} sm={7} style={{ paddingRight: 10 }}>
                     <TextField
-                      variant="outlined"
+                      variant="filled"
                       margin="normal"
                       fullWidth
                       label="Phone Number"
@@ -579,7 +583,7 @@ class Register extends Component {
                   </Grid>
                   <Grid item xs={5} sm={5} style={{ paddingLeft: 10 }}>
                     <TextField
-                      variant="outlined"
+                      variant="filled"
                       margin="normal"
                       label="Referral Code"
                       helperText="*Optional"

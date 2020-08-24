@@ -216,7 +216,7 @@ class Login extends Component {
               </Paper>
               <Grid item>
                 <TextField
-                  variant="outlined"
+                  variant="filled"
                   margin="normal"
                   fullWidth
                   label="Email Address"
@@ -227,10 +227,10 @@ class Login extends Component {
                     this.handleInputChange("email", event.target.value);
                   }}
                   value={this.state.email}
-                  classes={{ root: classes.coloredField }}
+                  className={classes.coloredField}
                 />
                 <TextField
-                  variant="outlined"
+                  variant="filled"
                   margin="normal"
                   fullWidth
                   label="Password"

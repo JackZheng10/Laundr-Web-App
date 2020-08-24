@@ -27,12 +27,27 @@ const registerStyles = (theme) => ({
       // "& fieldset": {
       //   borderColor: "red",
       // },
-      "&:hover fieldset": {
-        borderColor: "#01c9e1",
-      },
-      "&.Mui-focused fieldset": {
-        borderColor: "#01c9e1",
-      },
+      // "&:hover fieldset": {
+      //   borderColor: "#01c9e1",
+      // },
+      // "&.Mui-focused fieldset": {
+      //   borderColor: "#01c9e1",
+      // },
+    },
+    // "& .MuiFormLabel-root": {
+    //   color: "#01c9e1",
+    // },
+    // "& .MuiFormLabel-filled": {
+    //   color: "#01c9e1",
+    // },
+    "& .MuiFilledInput-underline:after": {
+      borderBottom: "2px solid #01c9e1",
+    },
+    // "& .MuiFilledInput-underline:before": {
+    //   borderBottom: "1px solid #01c9e1",
+    // },
+    "& .MuiFilledInput-root": {
+      backgroundColor: "white",
     },
   },
   logo: {

@@ -1,12 +1,13 @@
 const loginStyles = (theme) => ({
-  paper: {
-    // marginTop: theme.spacing(8),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  avatar: {
-    margin: theme.spacing(1),
+  layout: {
+    marginLeft: "auto",
+    marginRight: "auto",
+    [theme.breakpoints.up(649)]: {
+      width: 600,
+    },
+    [theme.breakpoints.down(650)]: {
+      width: "90vw",
+    },
   },
   form: {
     width: "100%", // Fix IE 11 issue.
@@ -16,6 +17,35 @@ const loginStyles = (theme) => ({
     margin: theme.spacing(3, 0, 2),
     backgroundColor: "#FFB600",
     color: "white",
+  },
+  coloredField: {
+    backgroundColor: "white",
+    borderRadius: 4,
+    "& label.Mui-focused": {
+      color: "#01c9e1",
+    },
+    // "& .MuiInput-underline:after": {
+    //   borderBottomColor: "green",
+    // },
+    "& .MuiOutlinedInput-root": {
+      // "& fieldset": {
+      //   borderColor: "red",
+      // },
+      "&:hover fieldset": {
+        borderColor: "#01c9e1",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: "#01c9e1",
+      },
+    },
+  },
+  logo: {
+    [theme.breakpoints.up(520)]: {
+      width: 450,
+    },
+    [theme.breakpoints.down(520)]: {
+      width: "90vw",
+    },
   },
 });
 

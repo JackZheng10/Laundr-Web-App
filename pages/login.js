@@ -10,6 +10,7 @@ import {
   Typography,
   Container,
   withStyles,
+  makeStyles,
 } from "@material-ui/core";
 import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
@@ -187,77 +188,95 @@ class Login extends Component {
         style={{
           height: "100vh",
           backgroundImage: `url("/images/space.png")`,
+          backgroundSize: "cover",
         }}
       >
         <Grid item>
-          <div className={classes.paper}>
-            <img
-              alt="Company Logo"
-              src="/images/LogRegLogo.png"
-              style={{
-                width: 400,
-                height: 160,
-              }}
-            />
-            <Typography variant="h1" style={{ color: "#01c9e1" }}>
-              Login
-            </Typography>
-            <form className={classes.form} onSubmit={this.handleLogin}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                label="Email Address"
-                autoComplete="email"
-                error={this.state.emailError}
-                helperText={this.state.emailErrorMsg}
-                onChange={(event) => {
-                  this.handleInputChange("email", event.target.value);
-                }}
-                value={this.state.email}
-                style={{ borderRadius: 4, backgroundColor: "white" }}
-              />
-              <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                label="Password"
-                type="password"
-                autoComplete="current-password"
-                error={this.state.passwordError}
-                helperText={this.state.passwordErrorMsg}
-                onChange={(event) => {
-                  this.handleInputChange("password", event.target.value);
-                }}
-                value={this.state.password}
-                style={{ borderRadius: 4, backgroundColor: "white" }}
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                className={classes.submit}
-                onClick={this.handleLogin}
-              >
-                Sign In
-              </Button>
-              <Grid container>
-                <Grid item xs>
-                  <Link href="#" variant="h5" style={{ color: "#01c9e1" }}>
-                    Forgot password?
-                  </Link>
+          <div className={classes.layout}>
+            <Grid
+              container
+              direction="column"
+              justify="center"
+              alignItems="center"
+            >
+              <Grid item>
+                <img
+                  alt="Company Logo"
+                  src="/images/LogRegLogo.png"
+                  className={classes.logo}
+                />
+              </Grid>
+              <Grid item>
+                <Typography
+                  variant="h1"
+                  style={{ color: "#01c9e1", textAlign: "center" }}
+                >
+                  Login
+                </Typography>
+                <Grid item>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    label="Email Address"
+                    autoComplete="email"
+                    error={this.state.emailError}
+                    helperText={this.state.emailErrorMsg}
+                    onChange={(event) => {
+                      this.handleInputChange("email", event.target.value);
+                    }}
+                    value={this.state.email}
+                    classes={{ root: classes.coloredField }}
+                  />
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    label="Password"
+                    type="password"
+                    autoComplete="current-password"
+                    error={this.state.passwordError}
+                    helperText={this.state.passwordErrorMsg}
+                    onChange={(event) => {
+                      this.handleInputChange("password", event.target.value);
+                    }}
+                    value={this.state.password}
+                    classes={{ root: classes.coloredField }}
+                  />
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    className={classes.submit}
+                    onClick={this.handleLogin}
+                  >
+                    Sign In
+                  </Button>
                 </Grid>
                 <Grid item>
-                  <Link
-                    href="/register"
-                    variant="h5"
-                    style={{ color: "#01c9e1" }}
-                  >
-                    Don't have an account?
-                  </Link>
+                  <Grid container>
+                    <Grid item xs>
+                      <Link
+                        href="#"
+                        variant="h5"
+                        style={{ color: "#01c9e1", textAlign: "center" }}
+                      >
+                        Forgot password?
+                      </Link>
+                    </Grid>
+                    <Grid item>
+                      <Link
+                        href="/register"
+                        variant="h5"
+                        style={{ color: "#01c9e1", textAlign: "center" }}
+                      >
+                        Don't have an account?
+                      </Link>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
-            </form>
+            </Grid>
           </div>
         </Grid>
       </Grid>
@@ -270,74 +289,3 @@ Login.propTypes = {
 };
 
 export default compose(withRouter, withStyles(loginStyles))(Login);
-
-// <Container component="main" maxWidth="xs">
-//         {/* <CssBaseline /> */}
-//         <div className={classes.paper}>
-//           <img
-//             alt="Company Logo"
-//             src="/images/LogRegLogo.png"
-//             style={{
-//               width: 400,
-//               height: 160,
-//             }}
-//           />
-//           <Typography component="h1" variant="h5">
-//             Sign in
-//           </Typography>
-//           <form className={classes.form} onSubmit={this.handleLogin}>
-//             <TextField
-//               variant="outlined"
-//               margin="normal"
-//               fullWidth
-//               label="Email Address"
-//               autoComplete="email"
-//               error={this.state.emailError}
-//               helperText={this.state.emailErrorMsg}
-//               onChange={(event) => {
-//                 this.handleInputChange("email", event.target.value);
-//               }}
-//               value={this.state.email}
-//             />
-//             <TextField
-//               variant="outlined"
-//               margin="normal"
-//               fullWidth
-//               label="Password"
-//               type="password"
-//               autoComplete="current-password"
-//               error={this.state.passwordError}
-//               helperText={this.state.passwordErrorMsg}
-//               onChange={(event) => {
-//                 this.handleInputChange("password", event.target.value);
-//               }}
-//               value={this.state.password}
-//             />
-//             <Button
-//               type="submit"
-//               fullWidth
-//               variant="contained"
-//               color="primary"
-//               className={classes.submit}
-//               onClick={this.handleLogin}
-//             >
-//               Sign In
-//             </Button>
-//             <Grid container>
-//               <Grid item xs>
-//                 <Link href="#" variant="body2">
-//                   Forgot password?
-//                 </Link>
-//               </Grid>
-//               <Grid item>
-//                 <Link href="/register" variant="body2">
-//                   {"Don't have an account? Sign up"}
-//                 </Link>
-//               </Grid>
-//             </Grid>
-//           </form>
-//         </div>
-//         <Box mt={8}>
-//           <Copyright />
-//         </Box>
-//       </Container>

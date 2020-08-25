@@ -202,7 +202,7 @@ class Login extends Component {
                   className={classes.logo}
                 />
               </Grid>
-              <Paper>
+              <Paper elevation={0}>
                 <Typography
                   variant="h1"
                   style={{
@@ -263,7 +263,7 @@ class Login extends Component {
                       Forgot password?
                     </Link>
                   </Grid>
-                  <Grid item style={{ paddingBottom: 10 }}>
+                  <Grid item style={{ paddingBottom: 50 }}>
                     <Link
                       href="/register"
                       variant="h6"

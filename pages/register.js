@@ -467,7 +467,7 @@ class Register extends Component {
                   className={classes.logo}
                 />
               </Grid>
-              <Paper>
+              <Paper elevation={0}>
                 <Typography
                   variant="h1"
                   style={{
@@ -640,7 +640,7 @@ class Register extends Component {
                       Create Account
                     </Button>
                   </Grid>
-                  <Grid item style={{ paddingBottom: 10 }}>
+                  <Grid item style={{ paddingBottom: 50 }}>
                     <Link
                       href="/login"
                       variant="h6"

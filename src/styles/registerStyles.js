@@ -43,11 +43,20 @@ const registerStyles = (theme) => ({
     "& .MuiFilledInput-underline:after": {
       borderBottom: "2px solid #01c9e1",
     },
+    "& .MuiFilledInput-underline.Mui-error:after": {
+      borderBottom: "2px solid #e53935",
+    },
     // "& .MuiFilledInput-underline:before": {
     //   borderBottom: "1px solid #01c9e1",
     // },
     "& .MuiFilledInput-root": {
       backgroundColor: "white",
+      boxShadow:
+        "0 0 0 1px rgba(63,63,68,0.05), 0 1px 3px 0 rgba(63,63,68,0.15)",
+    },
+    "& .MuiSelect-select:focus": {
+      backgroundColor: "white",
+      borderRadius: 4,
     },
   },
   logo: {

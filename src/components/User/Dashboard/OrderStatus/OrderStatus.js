@@ -540,7 +540,7 @@ class OrderStatus extends Component {
                     {/* <Divider /> */}
                     <CardActions className={classes.cardFooter}>
                       <Button
-                        size="small"
+                        size="medium"
                         variant="contained"
                         className={
                           order.orderInfo.status < 2 &&

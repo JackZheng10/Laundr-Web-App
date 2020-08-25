@@ -42,6 +42,21 @@ const dashboardStyles = (theme) => ({
     textAlign: "center",
     paddingTop: 10,
   },
+  cardHeader: {
+    backgroundColor: "#01c9e1",
+  },
+  cardFooter: {
+    backgroundColor: "#01c9e1",
+    justifyContent: "center",
+  },
+  infoCard: {
+    width: 300,
+    textAlign: "center",
+  },
+  mainButton: {
+    color: "white",
+    backgroundColor: "#FFB600",
+  },
 });
 
 export default dashboardStyles;

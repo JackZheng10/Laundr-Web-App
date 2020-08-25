@@ -37,10 +37,25 @@ class Details extends Component {
 
   componentDidMount = async () => {
     let currentUser = getCurrentUser();
-
     await updateToken(currentUser.email);
-
     currentUser = getCurrentUser();
+
+    //todo: good opportunity to learn promises.all and promises. finish both as the promise!
+    this.fetchAccountInfo(currentUser);
+    this.fetchPaymentInfo(currentUser);
+  };
+
+  fetchAccountInfo = async (currentUser) => {
+    this.setState({
+      accountInfoComponent: <AccountInfo user={currentUser} />,
+    });
+  };
+
+  fetchPaymentInfo = async (currentUser, updateUser) => {
+    if (updateUser) {
+      await updateToken(currentUser.email);
+      currentUser = getCurrentUser();
+    }
 
     const shouldRenderPayment = this.shouldRenderPayment(currentUser);
 
@@ -81,14 +96,18 @@ class Details extends Component {
     }
 
     this.setState({
-      accountInfoComponent: <AccountInfo user={currentUser} />,
       paymentInfoComponent: shouldRenderPayment && (
-        <PaymentInfo user={currentUser} card={this.state.card} />
+        <PaymentInfo
+          user={currentUser}
+          card={this.state.card}
+          fetchPaymentInfo={this.fetchPaymentInfo}
+        />
       ),
     });
   };
 
   shouldRenderPayment = (currentUser) => {
+    console.log(currentUser);
     if (currentUser.isWasher || currentUser.isDriver || currentUser.isAdmin) {
       return false;
     }

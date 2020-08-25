@@ -70,7 +70,7 @@ class PaymentInfo extends Component {
     let secret = "";
 
     try {
-      const currentUser = getCurrentUser();
+      const currentUser = this.props.user;
 
       const response = await axios.post("/api/stripe/createSetupIntent", {
         customerID: currentUser.stripe.customerID,
@@ -90,7 +90,7 @@ class PaymentInfo extends Component {
   };
 
   handleCardSetup = async () => {
-    const { stripe, elements } = this.props;
+    const { stripe, elements, fetchPaymentInfo } = this.props;
 
     if (!stripe || !elements) {
       // Stripe.js has not yet loaded.
@@ -100,7 +100,7 @@ class PaymentInfo extends Component {
 
     //create a setup intent
     const secret = await this.handleSetupIntent();
-    const currentUser = getCurrentUser();
+    const currentUser = this.props.user;
     const name = `${currentUser.fname} ${currentUser.lname}`;
 
     //confirm card setup with the secret
@@ -133,7 +133,9 @@ class PaymentInfo extends Component {
           this.setState(
             { showPaymentUpdate: !this.state.showPaymentUpdate },
             () => {
-              this.context.showAlert(response.data.message);
+              this.context.showAlert(response.data.message, () => {
+                fetchPaymentInfo(currentUser, true);
+              });
             }
           );
         } else {
@@ -151,7 +153,7 @@ class PaymentInfo extends Component {
       return (
         <Grid item>
           <Button
-            size="small"
+            size="medium"
             variant="contained"
             className={classes.secondaryButton}
             onClick={this.toggleShowPaymentUpdate}
@@ -165,7 +167,7 @@ class PaymentInfo extends Component {
         <React.Fragment>
           <Grid item>
             <Button
-              size="small"
+              size="medium"
               variant="contained"
               className={classes.redButton}
               onClick={this.toggleShowPaymentUpdate}
@@ -175,7 +177,7 @@ class PaymentInfo extends Component {
           </Grid>
           <Grid item>
             <Button
-              size="small"
+              size="medium"
               variant="contained"
               className={classes.greenButton}
               onClick={this.handleCardSetup}
@@ -301,7 +303,7 @@ class PaymentInfo extends Component {
 }
 
 function InjectedPaymentInfo(props) {
-  const { classes, card } = props;
+  const { classes, card, fetchPaymentInfo, user } = props;
 
   return (
     <Elements stripe={stripePromise}>
@@ -312,6 +314,8 @@ function InjectedPaymentInfo(props) {
             elements={elements}
             classes={classes}
             card={card}
+            user={user}
+            fetchPaymentInfo={fetchPaymentInfo}
           />
         )}
       </ElementsConsumer>

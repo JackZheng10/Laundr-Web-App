@@ -1,5 +1,15 @@
 import React, { Component } from "react";
-import { Grid, withStyles, Paper, Typography } from "@material-ui/core";
+import {
+  Grid,
+  withStyles,
+  Paper,
+  Typography,
+  Card,
+  CardHeader,
+  CardContent,
+  CardActions,
+  Button,
+} from "@material-ui/core";
 import { Layout } from "../../src/layouts";
 import {
   TopBorderDarkPurple,
@@ -8,8 +18,10 @@ import {
   TopBorderBlue,
   BottomBorderBlue,
 } from "../../src/utility/borders";
+import { withRouter } from "next/router";
 import { getCurrentUser } from "../../src/helpers/session";
 import { caughtError, showConsoleError } from "../../src/helpers/errors";
+import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
@@ -75,6 +87,7 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //mainbutton (yellow) for ordercards too
 //standard sizes for stuff (text etc)
 //move account into one folder (either top level or in user, atm theres two)
+// /https://www.npmjs.com/package/react-infinite-scroll-component
 
 //notes:
 /*
@@ -96,6 +109,8 @@ class Dashboard extends Component {
   };
 
   fetchOrderInfo = async () => {
+    const { classes } = this.props;
+
     try {
       const currentUser = getCurrentUser();
 
@@ -110,7 +125,43 @@ class Dashboard extends Component {
         let componentName;
 
         if (response.data.message === "N/A") {
-          component = <NewOrder fetchOrderInfo={this.fetchOrderInfo} />;
+          if (currentUser.stripe.regPaymentID === "N/A") {
+            component = (
+              <Card className={classes.infoCard} elevation={10}>
+                <CardHeader
+                  title="Missing Payment Method"
+                  titleTypographyProps={{
+                    variant: "h4",
+                    style: {
+                      color: "white",
+                    },
+                  }}
+                  className={classes.cardHeader}
+                />
+
+                <CardContent>
+                  <Typography variant="body1">
+                    Please add a payment method to continue.
+                  </Typography>
+                </CardContent>
+                <CardActions className={classes.cardFooter}>
+                  <Button
+                    size="medium"
+                    variant="contained"
+                    onClick={() => {
+                      this.props.router.push("/account/details");
+                    }}
+                    className={classes.mainButton}
+                  >
+                    Add
+                  </Button>
+                </CardActions>
+              </Card>
+            );
+          } else {
+            component = <NewOrder fetchOrderInfo={this.fetchOrderInfo} />;
+          }
+
           componentName = "New Order";
         } else {
           component = (
@@ -284,4 +335,4 @@ Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(dashboardStyles)(Dashboard);
+export default compose(withRouter, withStyles(dashboardStyles))(Dashboard);

@@ -18,7 +18,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const PlacesAutocomplete = (props) => {
-  const { address, handleInputChange, handleAddressSelect } = props;
+  const {
+    address,
+    handleInputChange,
+    handleAddressSelect,
+    addressClasses,
+  } = props;
 
   const classes = useStyles();
   const [options, setOptions] = React.useState([]);
@@ -96,6 +101,7 @@ const PlacesAutocomplete = (props) => {
           variant="outlined"
           fullWidth
           onChange={handleChange}
+          className={addressClasses.input}
         />
       )}
       renderOption={(option) => {

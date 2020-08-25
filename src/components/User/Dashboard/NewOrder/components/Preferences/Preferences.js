@@ -5,6 +5,7 @@ import preferencesStyles from "../../../../../../styles/User/Dashboard/component
 import PreferenceCard from "./components/PreferenceCard";
 
 //todo: make the damn cards center. redo the layouts of everything based on how i would do it (ie personal site)
+//todo: make the tooltip clicking, not hover
 
 class Preferences extends Component {
   state = {
@@ -94,6 +95,7 @@ class Preferences extends Component {
                 handleInputChange("washerPreferences", event.target.value);
                 this.handleCharCount(event.target.value);
               }}
+              className={classes.input}
             />
           </Grid>
         </Grid>

@@ -84,6 +84,24 @@ const registerStyles = (theme) => ({
     color: "red",
     fontSize: "small",
   },
+  input: {
+    "& label.Mui-focused": {
+      color: "#01c9e1",
+    },
+    "& .MuiOutlinedInput-root": {
+      "&.Mui-focused fieldset": {
+        borderColor: "#01c9e1",
+      },
+    },
+  },
+  secondaryButton: {
+    color: "white",
+    backgroundColor: "#01c9e1",
+  },
+  mainButton: {
+    color: "white",
+    backgroundColor: "#FFB600",
+  },
 });
 
 export default registerStyles;

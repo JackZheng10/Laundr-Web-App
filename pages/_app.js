@@ -39,7 +39,25 @@ const MyApp = (props) => {
     }
   }, []);
 
+  const isSidebarPage = () => {
+    if (typeof window !== "undefined") {
+      const path = window.location.href.split("/");
+      if (path[3] === "login" || path[3] === "register") {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const closeAlertDialog = () => {
+    if (typeof window !== "undefined") {
+      const path = window.location.href.split("/");
+      // if (`/${path[3]}/${path[4]}` === "login" || ) {
+      //   return false;
+      // }
+      console.log(path);
+    }
     setShowAlertDialog(false);
   };
 
@@ -87,20 +105,25 @@ const MyApp = (props) => {
           onClose={dialogCallback ? closeAlertDialogCallback : closeAlertDialog}
           aria-labelledby="form-dialog-title"
           style={{
-            left: isDesktop ? "13%" : "0%",
+            left: isDesktop && isSidebarPage() ? "13%" : "0%",
             zIndex: 20,
           }}
         >
-          <DialogTitle id="form-dialog-title">Alert</DialogTitle>
+          <DialogTitle disableTypography>
+            <Typography variant="h4" style={{ color: "#01c9e1" }}>
+              Alert
+            </Typography>
+          </DialogTitle>
           <DialogContent>
-            <DialogContentText>{alertMessage}</DialogContentText>
+            <Typography variant="body1">{alertMessage}</Typography>
           </DialogContent>
           <DialogActions>
             <Button
               onClick={
                 dialogCallback ? closeAlertDialogCallback : closeAlertDialog
               }
-              color="primary"
+              variant="contained"
+              style={{ backgroundColor: "#01c9e1", color: "white" }}
             >
               Okay
             </Button>

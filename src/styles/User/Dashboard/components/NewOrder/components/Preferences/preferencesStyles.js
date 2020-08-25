@@ -8,6 +8,16 @@ const preferencesStyles = (theme) => ({
   title: {
     marginTop: theme.spacing(2),
   },
+  input: {
+    "& label.Mui-focused": {
+      color: "#01c9e1",
+    },
+    "& .MuiOutlinedInput-root": {
+      "&.Mui-focused fieldset": {
+        borderColor: "#01c9e1",
+      },
+    },
+  },
 });
 
 export default preferencesStyles;

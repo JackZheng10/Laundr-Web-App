@@ -25,6 +25,16 @@ const paymentInfoStyles = (theme) => ({
     backgroundColor: "rgb(0, 130, 0)",
     color: "white",
   },
+  input: {
+    "& label.Mui-focused": {
+      color: "#01c9e1",
+    },
+    "& .MuiOutlinedInput-root": {
+      "&.Mui-focused fieldset": {
+        borderColor: "#01c9e1",
+      },
+    },
+  },
 });
 
 export default paymentInfoStyles;

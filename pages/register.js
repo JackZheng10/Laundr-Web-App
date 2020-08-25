@@ -411,42 +411,60 @@ class Register extends Component {
           open={this.state.showVerifyDialog}
           onClose={this.toggleVerifyDialog}
         >
-          <DialogTitle>Verification</DialogTitle>
+          <DialogTitle disableTypography>
+            <Typography variant="h4" style={{ color: "#01c9e1" }}>
+              Verification
+            </Typography>
+          </DialogTitle>
           <DialogContent>
-            <DialogContentText style={{ textAlign: "center" }}>
+            <Typography
+              variant="body1"
+              style={{ textAlign: "center" }}
+              gutterBottom
+            >
               To finish registering, please enter the verification code we just
               sent to your phone. If you didn't receive a code, make sure your
               entered phone number is correct and sign up again. Your code will
               expire upon closing this popup.
-            </DialogContentText>
-            <Grid item xs={12} align="center">
-              <Grid item xs={12} align="center">
-                {this.state.showResentLoad && <CircularProgress />}
-              </Grid>
+            </Typography>
+            <div style={{ textAlign: "center" }}>
               <TextField
-                autoFocus
-                margin="dense"
+                variant="outlined"
                 label="Code"
-                disabled={this.state.disableCode}
-                style={{ width: 100 }}
+                size="small"
                 value={this.state.enteredCode}
                 onChange={(event) => {
                   this.handleInputChange("enteredCode", event.target.value);
                 }}
+                className={classes.input}
+                style={{ width: 100 }}
               />
-            </Grid>
+            </div>
           </DialogContent>
           <DialogActions>
             <Grid item xs={12} align="left">
-              <Button onClick={this.toggleVerifyDialog} color="primary">
+              <Button
+                onClick={this.toggleVerifyDialog}
+                variant="contained"
+                className={classes.secondaryButton}
+              >
                 Cancel
               </Button>
             </Grid>
             <Grid item xs={12} align="right">
-              <Button onClick={this.handleResendCode} color="primary">
+              <Button
+                onClick={this.handleResendCode}
+                variant="contained"
+                className={classes.secondaryButton}
+                style={{ marginRight: 10 }}
+              >
                 Resend
               </Button>
-              <Button onClick={this.handleRegister} color="primary">
+              <Button
+                onClick={this.handleRegister}
+                variant="contained"
+                className={classes.mainButton}
+              >
                 Submit
               </Button>
             </Grid>

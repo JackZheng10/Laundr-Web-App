@@ -22,6 +22,16 @@ const orderTableStyles = (theme) => ({
     backgroundColor: "#01c9e1",
     color: "white",
   },
+  input: {
+    "& label.Mui-focused": {
+      color: "#01c9e1",
+    },
+    "& .MuiOutlinedInput-root": {
+      "&.Mui-focused fieldset": {
+        borderColor: "#01c9e1",
+      },
+    },
+  },
 });
 
 export default orderTableStyles;

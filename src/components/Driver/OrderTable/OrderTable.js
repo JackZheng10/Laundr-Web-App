@@ -119,7 +119,7 @@ class OrderTable extends Component {
     });
   };
 
-  renderDialogContent = () => {
+  renderDialogContent = (classes) => {
     const order = this.state.currentOrder;
 
     if (order) {
@@ -155,6 +155,7 @@ class OrderTable extends Component {
               <div style={{ textAlign: "center" }}>
                 <TextField
                   margin="dense"
+                  variant="outlined"
                   label="Weight"
                   error={this.props.weightError}
                   helperText={this.props.weightErrorMsg}
@@ -162,7 +163,10 @@ class OrderTable extends Component {
                   onChange={(event) => {
                     this.props.handleWeightChange(event.target.value);
                   }}
-                  style={{ width: 105 }}
+                  className={classes.input}
+                  style={{
+                    width: 105,
+                  }}
                 />
               </div>
             </React.Fragment>
@@ -437,8 +441,12 @@ class OrderTable extends Component {
           open={this.state.showActionDialog}
           onClose={this.handleDialogClose}
         >
-          <DialogTitle>{this.state.actionDialogTitle}</DialogTitle>
-          <DialogContent>{this.renderDialogContent()}</DialogContent>
+          <DialogTitle disableTypography>
+            <Typography variant="h4" style={{ color: "#01c9e1" }}>
+              {this.state.actionDialogTitle}
+            </Typography>
+          </DialogTitle>
+          <DialogContent>{this.renderDialogContent(classes)}</DialogContent>
           <DialogActions>{this.renderDialogActions(classes)}</DialogActions>
         </Dialog>
         <Snackbar

@@ -47,7 +47,7 @@ const moment = require("moment");
 const timeTheme = createMuiTheme({
   palette: {
     primary: {
-      main: "rgb(0, 153, 255)",
+      main: "rgb(1, 203, 225)",
     },
   },
 });
@@ -378,23 +378,32 @@ class OrderStatus extends Component {
                 },
               }}
             >
-              <DialogTitle>Confirmation</DialogTitle>
+              <DialogTitle disableTypography>
+                <Typography variant="h4" style={{ color: "#01c9e1" }}>
+                  Confirmation
+                </Typography>
+              </DialogTitle>
               <DialogContent>
                 <Typography variant="body1">
                   Are you sure you want to cancel your order?
                 </Typography>
               </DialogContent>
               <DialogActions>
-                <Button onClick={this.toggleCancelDialog} color="primary">
-                  Cancel
+                <Button
+                  onClick={this.toggleCancelDialog}
+                  variant="contained"
+                  className={classes.secondaryButton}
+                >
+                  No
                 </Button>
                 <Button
                   onClick={() => {
                     this.handleOrderCancel(order);
                   }}
-                  color="primary"
+                  variant="contained"
+                  className={classes.mainButton}
                 >
-                  Confirm
+                  Yes
                 </Button>
               </DialogActions>
             </Dialog>
@@ -485,14 +494,19 @@ class OrderStatus extends Component {
                 </ThemeProvider>
               </DialogContent>
               <DialogActions>
-                <Button onClick={this.toggleDropoffDialog} color="primary">
+                <Button
+                  onClick={this.toggleDropoffDialog}
+                  variant="contained"
+                  className={classes.secondaryButton}
+                >
                   Cancel
                 </Button>
                 <Button
                   onClick={() => {
                     this.handleSetDropoffTime(order);
                   }}
-                  color="primary"
+                  variant="contained"
+                  className={classes.mainButton}
                 >
                   Confirm
                 </Button>

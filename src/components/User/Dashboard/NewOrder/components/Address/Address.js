@@ -94,6 +94,7 @@ class Address extends Component {
                   address={address}
                   handleInputChange={handleInputChange}
                   handleAddressSelect={handleAddressSelect}
+                  addressClasses={classes}
                 />
               </div>
             </Grid>
@@ -115,6 +116,7 @@ class Address extends Component {
                   handleInputChange("addressPreferences", event.target.value);
                   this.handleCharCount(event.target.value);
                 }}
+                className={classes.input}
               />
             </Grid>
           </Grid>

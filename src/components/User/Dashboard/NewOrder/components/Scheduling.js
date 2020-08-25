@@ -17,7 +17,7 @@ const timeTheme = createMuiTheme({
   // },
   palette: {
     primary: {
-      main: "rgb(0, 153, 255)",
+      main: "rgb(1, 203, 225)",
     },
   },
 });

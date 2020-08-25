@@ -227,7 +227,11 @@ class OrderTable extends Component {
           open={this.state.showActionDialog}
           onClose={this.handleDialogClose}
         >
-          <DialogTitle>{this.state.actionDialogTitle}</DialogTitle>
+          <DialogTitle disableTypography>
+            <Typography variant="h4" style={{ color: "#01c9e1" }}>
+              {this.state.actionDialogTitle}
+            </Typography>
+          </DialogTitle>
           <DialogContent>{this.renderDialogContent()}</DialogContent>
           <DialogActions>{this.renderDialogActions(classes)}</DialogActions>
         </Dialog>

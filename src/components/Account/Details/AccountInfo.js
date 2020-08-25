@@ -45,6 +45,7 @@ class AccountInfo extends Component {
                   label="First Name"
                   size="small"
                   value={user.fname}
+                  className={classes.input}
                 />
               </Grid>
               <Grid item xs={6} sm={6}>
@@ -54,6 +55,7 @@ class AccountInfo extends Component {
                   label="Last Name"
                   size="small"
                   value={user.lname}
+                  className={classes.input}
                 />
               </Grid>
               <Grid item xs={12} sm={12}>
@@ -63,6 +65,7 @@ class AccountInfo extends Component {
                   label="Email Address"
                   size="small"
                   value={user.email}
+                  className={classes.input}
                 />
               </Grid>
               <Grid item xs={6} sm={6}>
@@ -72,6 +75,7 @@ class AccountInfo extends Component {
                   label="Phone Number"
                   size="small"
                   value={user.phone}
+                  className={classes.input}
                 />
               </Grid>
             </Grid>

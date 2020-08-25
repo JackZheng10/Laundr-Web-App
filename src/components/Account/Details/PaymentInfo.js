@@ -219,6 +219,7 @@ class PaymentInfo extends Component {
                   InputProps={{
                     readOnly: true,
                   }}
+                  className={classes.input}
                 />
               </Grid>
               <Grid item xs={4} sm={4}>
@@ -231,6 +232,7 @@ class PaymentInfo extends Component {
                   InputProps={{
                     readOnly: true,
                   }}
+                  className={classes.input}
                 />
               </Grid>
               <Grid item xs={4} sm={4}>
@@ -243,6 +245,7 @@ class PaymentInfo extends Component {
                   InputProps={{
                     readOnly: true,
                   }}
+                  className={classes.input}
                 />
               </Grid>
             </Grid>

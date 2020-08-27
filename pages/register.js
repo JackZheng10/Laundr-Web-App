@@ -360,7 +360,9 @@ class Register extends Component {
               enteredCode: "",
             },
             () => {
-              this.context.showAlert(response.data.message);
+              this.context.showAlert(response.data.message, () => {
+                this.props.router.push("/login");
+              });
             }
           );
         } else {
@@ -370,6 +372,10 @@ class Register extends Component {
         showConsoleError("registering", error);
         this.context.showAlert(caughtError("registering", error, 99));
       }
+    } else {
+      this.context.showAlert(
+        "Verification code is incorrect. Please try again."
+      );
     }
   };
 
@@ -410,6 +416,7 @@ class Register extends Component {
         <Dialog
           open={this.state.showVerifyDialog}
           onClose={this.toggleVerifyDialog}
+          style={{ zIndex: 19 }}
         >
           <DialogTitle disableTypography>
             <Typography variant="h4" style={{ color: "#01c9e1" }}>

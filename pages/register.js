@@ -134,27 +134,21 @@ class Register extends Component {
               break;
 
             case 1:
-              this.setState({
-                showGeneralDialog: true,
-                generalDialogMsg:
-                  "Email address is already in use. Please try again.",
-              });
+              this.context.showAlert(
+                "Email address is already in use. Please try again."
+              );
               break;
 
             case 2:
-              this.setState({
-                showGeneralDialog: true,
-                generalDialogMsg:
-                  "Phone number is already in use. Please try again.",
-              });
+              this.context.showAlert(
+                "Phone number is already in use. Please try again."
+              );
               break;
 
             case 3:
-              this.setState({
-                showGeneralDialog: true,
-                generalDialogMsg:
-                  "Email address and phone number are already in use. Please try again.",
-              });
+              this.context.showAlert(
+                "Email address and phone number are already in use. Please try again."
+              );
               break;
           }
         } else {

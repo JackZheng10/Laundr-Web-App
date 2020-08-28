@@ -60,7 +60,7 @@ const Help = (props) => {
           </Typography>
         </Grid>
         <Grid item>
-          <h1>gl with that</h1>
+          <h1>placeholder</h1>
         </Grid>
       </Grid>
     </Layout>

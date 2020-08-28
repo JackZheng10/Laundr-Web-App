@@ -30,7 +30,6 @@ const PlacesAutocomplete = (props) => {
 
   const handleChange = (event) => {
     handleInputChange("address", event.target.value);
-    console.log(event.target.value);
   };
 
   const handleAutocompleteChange = (event, value, reason) => {
@@ -129,8 +128,7 @@ const PlacesAutocomplete = (props) => {
                   {part.text}
                 </span>
               ))}
-
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant="body2">
                 {option.structured_formatting.secondary_text}
               </Typography>
             </Grid>

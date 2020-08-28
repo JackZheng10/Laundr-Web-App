@@ -1,5 +1,12 @@
 import React, { Component } from "react";
-import { Button, withStyles, Fade, Tooltip } from "@material-ui/core";
+import {
+  Button,
+  withStyles,
+  Fade,
+  Tooltip,
+  IconButton,
+} from "@material-ui/core";
+import InfoIcon from "@material-ui/icons/Info";
 
 const LightTooltip = withStyles((theme) => ({
   tooltip: {
@@ -23,8 +30,33 @@ class PopoverButton extends Component {
     this.setState({ open: !this.state.open });
   };
 
+  renderTrigger = (icon, className, size, buttonText) => {
+    if (icon) {
+      return (
+        <IconButton
+          onClick={this.togglePopover}
+          size="small"
+          style={{ color: "#01c9e1" }}
+        >
+          <InfoIcon />
+        </IconButton>
+      );
+    } else {
+      return (
+        <Button
+          variant="contained"
+          className={className}
+          onClick={this.togglePopover}
+          size={size || "medium"}
+        >
+          {buttonText}
+        </Button>
+      );
+    }
+  };
+
   render() {
-    const { className, text, buttonText, size } = this.props;
+    const { className, text, buttonText, size, icon } = this.props;
 
     return (
       <React.Fragment>
@@ -38,14 +70,7 @@ class PopoverButton extends Component {
           onClose={this.togglePopover}
           arrow
         >
-          <Button
-            variant="contained"
-            className={className}
-            onClick={this.togglePopover}
-            size={size || "medium"}
-          >
-            {buttonText}
-          </Button>
+          {this.renderTrigger(icon, className, size, buttonText)}
         </LightTooltip>
       </React.Fragment>
     );

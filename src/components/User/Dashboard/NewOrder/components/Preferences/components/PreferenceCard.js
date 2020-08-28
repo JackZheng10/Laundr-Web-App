@@ -12,19 +12,17 @@ import {
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import InfoIcon from "@material-ui/icons/Info";
+import TooltipButton from "../../../../../../Driver/OrderTable/components/TooltipButton";
 import preferenceCardStyles from "../../../../../../../styles/User/Dashboard/components/NewOrder/components/Preferences/components/preferenceCardStyles";
 
-const LightTooltip = withStyles((theme) => ({
-  tooltip: {
-    backgroundColor: theme.palette.common.white,
-    color: "rgba(0, 0, 0, 0.87)",
-    boxShadow: theme.shadows[1],
-    fontSize: 12,
+const BlueCheckbox = withStyles({
+  root: {
+    color: "#01c9e1",
+    "&$checked": {
+      color: "#01c9e1",
+    },
   },
-  arrow: {
-    color: theme.palette.common.grey,
-  },
-}))(Tooltip);
+})((props) => <Checkbox color="default" {...props} />);
 
 class PreferenceCard extends Component {
   constructor(props) {
@@ -63,13 +61,7 @@ class PreferenceCard extends Component {
     return (
       <Card className={classes.root}>
         <CardHeader
-          action={
-            <Checkbox
-              inputProps={{ "aria-label": "secondary checkbox" }}
-              onClick={this.handleSelect}
-              /*todo: change color to dat blue*/
-            />
-          }
+          action={<BlueCheckbox onClick={this.handleSelect} />}
           title={
             <Typography gutterBottom variant="h6" component="h2">
               {title}
@@ -78,16 +70,7 @@ class PreferenceCard extends Component {
         />
         <CardMedia className={classes.media} image={this.state.currentImage} />
         <CardActions disableSpacing style={{ justifyContent: "center" }}>
-          {/*todo: change arrow color to "#01c9e1"*/}
-          <LightTooltip title={info} TransitionComponent={Fade} arrow>
-            <InfoIcon
-              color="primary"
-              style={{
-                cursor: "pointer",
-                color: "#01c9e1",
-              }}
-            />
-          </LightTooltip>
+          <TooltipButton icon={true} text={info} />
         </CardActions>
       </Card>
     );

@@ -235,7 +235,7 @@ class NewOrder extends Component {
     ) {
       //if 1 hr in advance is between 10 and 7 AND pickup time is before that AND the date selected is today
       this.context.showAlert(
-        "The pickup time must be at least 1 hour hour from now."
+        "The pickup time must be at least 1 hour from now."
       );
       canNext = false;
     }

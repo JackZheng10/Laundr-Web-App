@@ -5,10 +5,12 @@ import PropTypes from "prop-types";
 import {
   AppBar,
   Toolbar,
-  Badge,
+  Paper,
   Hidden,
   IconButton,
   withStyles,
+  Typography,
+  Button,
 } from "@material-ui/core";
 import { withRouter } from "next/router";
 import { getCurrentUser } from "../../../../helpers/session";
@@ -24,12 +26,11 @@ import topbarStyles from "../../../../styles/layouts/Main/components/Topbar/topb
 class Topbar extends Component {
   static contextType = MainAppContext;
 
-  state = { logout: false };
-
   handleLogout = () => {
+    //will change when cookies
     localStorage.clear();
 
-    this.setState({ logout: true });
+    this.props.router.push("/login");
   };
 
   handleRedirectHome = () => {
@@ -49,10 +50,6 @@ class Topbar extends Component {
   render() {
     const { className, onSidebarOpen, classes, ...rest } = this.props;
 
-    if (this.state.logout) {
-      this.props.router.push("/login");
-    }
-
     return (
       <AppBar {...rest} className={clsx(classes.root, className)}>
         <Toolbar>
@@ -67,22 +64,16 @@ class Topbar extends Component {
             onClick={this.handleRedirectHome}
           />
           <div className={classes.flexGrow} />
-          {/* <IconButton color="inherit">
-            <Badge
-              badgeContent={this.state.notifications.length}
-              color="primary"
-              variant="dot"
+          <Hidden mdDown>
+            <Button
+              variant="contained"
+              style={{ backgroundColor: "#FFB600", color: "white" }}
+              onClick={this.handleLogout}
+              startIcon={<InputIcon />}
             >
-              <NotificationsIcon />
-            </Badge>
-          </IconButton> */}
-          <IconButton
-            className={classes.signOutButton}
-            color="inherit"
-            onClick={this.handleLogout}
-          >
-            <InputIcon />
-          </IconButton>
+              Sign Out
+            </Button>
+          </Hidden>
           <Hidden lgUp>
             <IconButton color="inherit" onClick={onSidebarOpen}>
               <MenuIcon />

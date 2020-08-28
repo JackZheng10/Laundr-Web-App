@@ -100,6 +100,17 @@ class AssignedDashboard extends Component {
           }}
         >
           <Grid item>
+            <Paper elevation={0} className={classes.welcomeCard}>
+              <Typography
+                variant="h3"
+                className={classes.welcomeText}
+                gutterBottom
+              >
+                {`Welcome, ${this.state.userFname}`}
+              </Typography>
+            </Paper>
+          </Grid>
+          <Grid item>
             <Typography
               variant="h1"
               className={classes.componentName}

@@ -128,7 +128,7 @@ class AvailableDashboard extends Component {
           }}
         >
           <Grid item>
-            <Paper elevation={3} className={classes.welcomeCard}>
+            <Paper elevation={0} className={classes.welcomeCard}>
               <Typography
                 variant="h3"
                 className={classes.welcomeText}

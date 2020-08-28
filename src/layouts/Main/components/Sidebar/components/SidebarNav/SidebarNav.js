@@ -4,12 +4,20 @@ import React, { useState } from "react";
 import clsx from "clsx";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
+import { useRouter } from "next/router";
 import Link from "next/link";
-import { List, ListItem, Button, colors } from "@material-ui/core";
+import InputIcon from "@material-ui/icons/Input";
+import { List, ListItem, Button, Hidden } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
   item: {
+    display: "flex",
+    paddingTop: 0,
+    paddingBottom: 0,
+  },
+  logout: {
+    justifyContent: "center",
     display: "flex",
     paddingTop: 0,
     paddingBottom: 0,
@@ -43,6 +51,7 @@ const SidebarNav = (props) => {
   const { pages, className, ...rest } = props;
 
   const classes = useStyles();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
 
   React.useEffect(() => {
@@ -58,6 +67,13 @@ const SidebarNav = (props) => {
     }
 
     return "#6b6b6b";
+  };
+
+  const handleLogout = () => {
+    //will change when cookies
+    localStorage.clear();
+
+    router.push("/login");
   };
 
   return loading ? null : (
@@ -80,6 +96,18 @@ const SidebarNav = (props) => {
           </Link>
         </ListItem>
       ))}
+      <Hidden lgUp>
+        <ListItem className={classes.logout} disableGutters>
+          <Button
+            variant="contained"
+            style={{ backgroundColor: "#FFB600", color: "white" }}
+            startIcon={<InputIcon />}
+            onClick={handleLogout}
+          >
+            Sign Out
+          </Button>
+        </ListItem>
+      </Hidden>
     </List>
   );
 };

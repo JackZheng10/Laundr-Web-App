@@ -1,6 +1,6 @@
 const dashboardStyles = (theme) => ({
   welcomeCard: {
-    background: "#21d0e5",
+    background: "#01c9e1",
   },
   welcomeText: {
     color: "white",

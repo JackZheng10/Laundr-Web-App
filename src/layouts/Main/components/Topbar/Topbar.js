@@ -11,23 +11,39 @@ import {
   withStyles,
 } from "@material-ui/core";
 import { withRouter } from "next/router";
+import { getCurrentUser } from "../../../../helpers/session";
+import MainAppContext from "../../../../contexts/MainAppContext";
 import compose from "recompose/compose";
 import MenuIcon from "@material-ui/icons/Menu";
 import NotificationsIcon from "@material-ui/icons/NotificationsOutlined";
 import InputIcon from "@material-ui/icons/Input";
 import topbarStyles from "../../../../styles/layouts/Main/components/Topbar/topbarStyles";
 
-class Topbar extends Component {
-  constructor(props) {
-    super(props);
+//for logout confirmation: configure dialog in app.js more
 
-    this.state = { notifications: [], logout: false };
-  }
+class Topbar extends Component {
+  static contextType = MainAppContext;
+
+  state = { logout: false };
 
   handleLogout = () => {
     localStorage.clear();
 
     this.setState({ logout: true });
+  };
+
+  handleRedirectHome = () => {
+    const currentUser = getCurrentUser();
+
+    if (currentUser.isWasher) {
+      this.props.router.push("/washer/assigned");
+    } else if (currentUser.isDriver) {
+      this.props.router.push("/driver/available");
+    } else if (currentUser.isAdmin) {
+      // return <Redirect push to="/placeholder" />;
+    } else {
+      this.props.router.push("/user/dashboard");
+    }
   };
 
   render() {
@@ -44,12 +60,14 @@ class Topbar extends Component {
             style={{
               height: 60,
               marginLeft: -10,
+              cursor: "pointer",
             }}
             alt="Company Logo"
             src="/images/Topbar/LaundrLogo.png"
+            onClick={this.handleRedirectHome}
           />
           <div className={classes.flexGrow} />
-          <IconButton color="inherit">
+          {/* <IconButton color="inherit">
             <Badge
               badgeContent={this.state.notifications.length}
               color="primary"
@@ -57,7 +75,7 @@ class Topbar extends Component {
             >
               <NotificationsIcon />
             </Badge>
-          </IconButton>
+          </IconButton> */}
           <IconButton
             className={classes.signOutButton}
             color="inherit"

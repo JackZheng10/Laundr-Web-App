@@ -51,13 +51,6 @@ const MyApp = (props) => {
   };
 
   const closeAlertDialog = () => {
-    if (typeof window !== "undefined") {
-      const path = window.location.href.split("/");
-      // if (`/${path[3]}/${path[4]}` === "login" || ) {
-      //   return false;
-      // }
-      console.log(path);
-    }
     setShowAlertDialog(false);
   };
 
@@ -123,7 +116,7 @@ const MyApp = (props) => {
                 dialogCallback ? closeAlertDialogCallback : closeAlertDialog
               }
               variant="contained"
-              style={{ backgroundColor: "#01c9e1", color: "white" }}
+              style={{ backgroundColor: "#FFB600", color: "white" }}
             >
               Okay
             </Button>

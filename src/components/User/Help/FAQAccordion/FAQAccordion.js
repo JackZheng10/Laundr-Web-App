@@ -14,12 +14,27 @@ const FAQAccordion = (props) => {
   const renderAccordion = () => {
     return questions.map((question, index) => {
       return (
-        <Accordion key={index}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>{question.question}</Typography>
+        <Accordion
+          key={index}
+          style={{
+            backgroundColor: "#01c9e1",
+          }}
+        >
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon style={{ color: "white" }} />}
+          >
+            <Typography variant="h5" style={{ color: "white" }}>
+              {question.question}
+            </Typography>
           </AccordionSummary>
-          <AccordionDetails>
-            <Typography>{question.answer}</Typography>
+          <AccordionDetails
+            style={{
+              backgroundColor: "white",
+            }}
+          >
+            <Typography variant="body1" style={{ marginTop: 5 }}>
+              {question.answer}
+            </Typography>
           </AccordionDetails>
         </Accordion>
       );

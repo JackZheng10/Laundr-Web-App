@@ -54,6 +54,14 @@ const Help = (props) => {
         <FAQAccordion title="My Order" questions={MyOrder} />
         <FAQAccordion title="Subscriptions" questions={Subscriptions} />
         <FAQAccordion title="Company Info" questions={CompanyInfo} />
+        <Grid item>
+          <Typography variant="h1" style={{ color: "#01C9E1" }} gutterBottom>
+            Still need help?
+          </Typography>
+        </Grid>
+        <Grid item>
+          <h1>gl with that</h1>
+        </Grid>
       </Grid>
     </Layout>
   );

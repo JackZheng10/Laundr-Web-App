@@ -4,10 +4,22 @@ import { BottomBorderBlue } from "../../src/utility/borders";
 import { getCurrentUser, updateToken } from "../../src/helpers/session";
 import { caughtError, showConsoleError } from "../../src/helpers/errors";
 import { Layout } from "../../src/layouts";
+import {
+  GettingStarted,
+  MyOrder,
+  Subscriptions,
+  CompanyInfo,
+} from "../../src/components/User/Help/FAQAccordion/questions";
 import PropTypes from "prop-types";
 import axios from "axios";
+import FAQAccordion from "../../src/components/User/Help/FAQAccordion/FAQAccordion";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import historyStyles from "../../src/styles/User/Account/historyStyles";
+
+//todo: styling, @getting started, reach out for email?
+//todo: format for readability (paragraphs, etc)
+//@ my order: feature to reschedule delivery if not home? also maybe conflicts with "what happens..miss pickup.."
+//@subscription: renewal refund, manual or feature?
 
 const Help = (props) => {
   const { classes } = props;
@@ -38,9 +50,10 @@ const Help = (props) => {
         <BottomBorderBlue />
       </div>
       <Grid container direction="column" justify="center" alignItems="center">
-        <Grid item>
-          <h1>accord</h1>
-        </Grid>
+        <FAQAccordion title="Getting Started" questions={GettingStarted} />
+        <FAQAccordion title="My Order" questions={MyOrder} />
+        <FAQAccordion title="Subscriptions" questions={Subscriptions} />
+        <FAQAccordion title="Company Info" questions={CompanyInfo} />
       </Grid>
     </Layout>
   );

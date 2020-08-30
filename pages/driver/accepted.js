@@ -104,10 +104,12 @@ class AcceptedDashboard extends Component {
   handleChargeCustomer = async (order) => {
     try {
       const email = order.userInfo.email;
+      const orderID = order.orderInfo.orderID;
 
       const response = await axios.post("/api/stripe/chargeCustomer", {
         weight: this.state.weight,
         email: email,
+        orderID: orderID,
       });
 
       return { success: response.data.success, message: response.data.message };
@@ -120,7 +122,7 @@ class AcceptedDashboard extends Component {
     }
   };
 
-  handleWeightEntered = async (order) => {
+  handleUpdateWeight = async (order) => {
     try {
       const orderID = order.orderInfo.orderID;
 
@@ -225,7 +227,7 @@ class AcceptedDashboard extends Component {
               handleWeightMinimum={this.handleWeightMinimum}
               handleChargeCustomer={this.handleChargeCustomer}
               handleClearWeightError={this.handleClearWeightError}
-              handleWeightEntered={this.handleWeightEntered}
+              handleUpdateWeight={this.handleUpdateWeight}
               handleWasherReceived={this.handleWasherReceived}
               handleUserReceived={this.handleUserReceived}
             />

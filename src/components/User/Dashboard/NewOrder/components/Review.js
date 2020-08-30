@@ -397,7 +397,7 @@ class Review extends Component {
                       className={classes.secondaryButton}
                       variant="contained"
                       onClick={() => {
-                        alert("clicked");
+                        alert("work in progress");
                       }}
                       style={{ marginLeft: 10 }}
                     >

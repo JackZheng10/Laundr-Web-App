@@ -351,7 +351,7 @@ class OrderStatus extends Component {
           <Typography variant="h5" style={{ marginBottom: -10 }}>
             {order.orderInfo.cost === -1
               ? "Price: TBD"
-              : `Price: $${order.orderInfo.cost}`}
+              : `Price: ${order.orderInfo.cost}`}
           </Typography>
         </React.Fragment>
       );

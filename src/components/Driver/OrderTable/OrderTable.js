@@ -370,7 +370,7 @@ class OrderTable extends Component {
         this.showNotification(response.message, response.success);
       } else {
         //otherwise update weight after successful charge
-        const response = await this.props.handleWeightEntered(
+        const response = await this.props.handleUpdateWeight(
           this.state.currentOrder
         );
 

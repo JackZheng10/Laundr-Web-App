@@ -166,7 +166,7 @@ const PriceCard = (order) => {
           Price:&nbsp;
         </Typography>
         <Typography variant="body1" gutterBottom>
-          {order.orderInfo.cost === -1 ? "N/A" : `$${order.orderInfo.cost}`}
+          {order.orderInfo.cost === "-1" ? "N/A" : `$${order.orderInfo.cost}`}
         </Typography>
       </Grid>
     </Grid>

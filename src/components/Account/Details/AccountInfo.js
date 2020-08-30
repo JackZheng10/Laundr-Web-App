@@ -93,6 +93,9 @@ class AccountInfo extends Component {
                   size="medium"
                   variant="contained"
                   className={classes.secondaryButton}
+                  onClick={() => {
+                    alert("work in progress");
+                  }}
                 >
                   Update Password
                 </Button>
@@ -102,6 +105,9 @@ class AccountInfo extends Component {
                   size="medium"
                   variant="contained"
                   className={classes.secondaryButton}
+                  onClick={() => {
+                    alert("work in progress");
+                  }}
                 >
                   Update Profile
                 </Button>

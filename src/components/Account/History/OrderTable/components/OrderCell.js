@@ -155,7 +155,7 @@ const PriceCell = (order) => {
   return (
     <TableCell>
       <Typography variant="body1">
-        {order.orderInfo.cost === "-1" ? "N/A" : `$${order.orderInfo.cost}`}
+        {order.orderInfo.cost === "-1" ? "N/A" : `${order.orderInfo.cost}`}
       </Typography>
     </TableCell>
   );

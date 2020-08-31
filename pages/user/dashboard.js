@@ -48,6 +48,7 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //error when: drop both order collections, place new order, cancel? doesnt cancel? check
 //configure: account, history, for washer/driver
 //for order tables, left align the cells, not center
+//sorting the orders by date in order history,
 
 //method for loading: do all data fetching in main parent component, apply loading bool
 //hold child components that rely on loaded data in state as null first, then change after gathered loaded data

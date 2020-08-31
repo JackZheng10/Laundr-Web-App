@@ -68,7 +68,12 @@ class Topbar extends Component {
             <Button
               variant="contained"
               style={{ backgroundColor: "#FFB600", color: "white" }}
-              onClick={this.handleLogout}
+              onClick={() => {
+                this.context.showAlert_C(
+                  "Are you sure you want to sign out?",
+                  this.handleLogout
+                );
+              }}
               startIcon={<InputIcon />}
             >
               Sign Out

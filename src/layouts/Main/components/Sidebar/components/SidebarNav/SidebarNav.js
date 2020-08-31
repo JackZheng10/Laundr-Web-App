@@ -1,13 +1,14 @@
 /* eslint-disable react/no-multi-comp */
 /* eslint-disable react/display-name */
-import React, { useState } from "react";
-import clsx from "clsx";
-import PropTypes from "prop-types";
+import React, { useState, useContext } from "react";
+import { List, ListItem, Button, Hidden } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useRouter } from "next/router";
+import clsx from "clsx";
+import PropTypes from "prop-types";
 import Link from "next/link";
 import InputIcon from "@material-ui/icons/Input";
-import { List, ListItem, Button, Hidden } from "@material-ui/core";
+import MainAppContext from "../../../../../../contexts/MainAppContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -48,8 +49,9 @@ const useStyles = makeStyles((theme) => ({
 
 //todo: active works on refresh now, maybe do something for the loading? should be fast enough tho
 const SidebarNav = (props) => {
-  const { pages, className, ...rest } = props;
+  const context = useContext(MainAppContext);
 
+  const { pages, className, ...rest } = props;
   const classes = useStyles();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -102,7 +104,12 @@ const SidebarNav = (props) => {
             variant="contained"
             style={{ backgroundColor: "#FFB600", color: "white" }}
             startIcon={<InputIcon />}
-            onClick={handleLogout}
+            onClick={() => {
+              context.showAlert_C(
+                "Are you sure you want to sign out?",
+                handleLogout
+              );
+            }}
           >
             Sign Out
           </Button>

@@ -26,10 +26,18 @@ const MyApp = (props) => {
     defaultMatches: true,
   });
 
-  const [showAlertDialog, setShowAlertDialog] = useState(false);
+  //loading
   const [showLoadingDialog, setShowLoadingDialog] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [dialogCallback, setDialogCallback] = useState(null);
+
+  //alert with no confirmation, usage: showAlert(message, callback(optional))
+  const [showAlertDialog_NC, setShowAlertDialog_NC] = useState(false);
+  const [alertMessage_NC, setAlertMessage_NC] = useState("");
+  const [dialogCallback_NC, setDialogCallback_NC] = useState(null);
+
+  //alert with confirmation, usage: showAlert_C(message, callback)
+  const [showAlertDialog_C, setShowAlertDialog_C] = useState(false);
+  const [alertMessage_C, setAlertMessage_C] = useState("");
+  const [dialogCallback_C, setDialogCallback_C] = useState(null);
 
   React.useEffect(() => {
     // Remove the server-side injected CSS.
@@ -39,6 +47,7 @@ const MyApp = (props) => {
     }
   }, []);
 
+  //returns true if page could have a sidebar depending on screen size (basically true = youre logged into app)
   const isSidebarPage = () => {
     if (typeof window !== "undefined") {
       const path = window.location.href.split("/");
@@ -50,25 +59,42 @@ const MyApp = (props) => {
     return true;
   };
 
-  const closeAlertDialog = () => {
-    setShowAlertDialog(false);
-  };
-
-  const closeAlertDialogCallback = () => {
-    setShowAlertDialog(false);
-    dialogCallback();
-  };
-
-  //takes a callback to be executed when alert is dismissed
+  //alert with no confirmation
   //todo: look into promises, how setstate is chained in hooks, etc. since ideally youd want:
   //dialog to close, THEN callback. alert message and callback set, THEN show dialog
   //todo: await on this? ex: fetchorderinfo in orderstatus
   const showAlert = (message, callback) => {
-    setAlertMessage(message);
-    setShowAlertDialog(true);
-    setDialogCallback(() => callback);
+    setAlertMessage_NC(message);
+    setShowAlertDialog_NC(true);
+    setDialogCallback_NC(() => callback);
   };
 
+  const closeAlertDialog_NC = () => {
+    setShowAlertDialog_NC(false);
+  };
+
+  const closeAlertDialogWithCallback_NC = () => {
+    setShowAlertDialog_NC(false);
+    dialogCallback_NC();
+  };
+
+  //alert with confirmation
+  const showAlert_C = (message, callback) => {
+    setAlertMessage_C(message);
+    setShowAlertDialog_C(true);
+    setDialogCallback_C(() => callback);
+  };
+
+  const closeAlertDialog_C = () => {
+    setShowAlertDialog_C(false);
+  };
+
+  const closeAlertDialogWithCallback_C = () => {
+    setShowAlertDialog_C(false);
+    dialogCallback_C();
+  };
+
+  //loading
   const showLoading = () => {
     setShowLoadingDialog(true);
   };
@@ -80,7 +106,7 @@ const MyApp = (props) => {
   return (
     <React.Fragment>
       <Head>
-        <title>Laundr Test</title>
+        <title>Laundr</title>
         {/* <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"
@@ -94,8 +120,12 @@ const MyApp = (props) => {
         {/*add more configsl like title, buttons, to replace order cancel dialog for example*/}
         {/*ALERT DIALOG*/}
         <Dialog
-          open={showAlertDialog}
-          onClose={dialogCallback ? closeAlertDialogCallback : closeAlertDialog}
+          open={showAlertDialog_NC}
+          onClose={
+            dialogCallback_NC
+              ? closeAlertDialogWithCallback_NC
+              : closeAlertDialog_NC
+          }
           aria-labelledby="form-dialog-title"
           style={{
             left: isDesktop && isSidebarPage() ? "13%" : "0%",
@@ -108,17 +138,54 @@ const MyApp = (props) => {
             </Typography>
           </DialogTitle>
           <DialogContent>
-            <Typography variant="body1">{alertMessage}</Typography>
+            <Typography variant="body1">{alertMessage_NC}</Typography>
           </DialogContent>
           <DialogActions>
             <Button
               onClick={
-                dialogCallback ? closeAlertDialogCallback : closeAlertDialog
+                dialogCallback_NC
+                  ? closeAlertDialogWithCallback_NC
+                  : closeAlertDialog_NC
               }
               variant="contained"
               style={{ backgroundColor: "#FFB600", color: "white" }}
             >
               Okay
+            </Button>
+          </DialogActions>
+        </Dialog>
+        {/*ALERT DIALOG w/CONFIRMATION*/}
+        <Dialog
+          open={showAlertDialog_C}
+          onClose={closeAlertDialog_C}
+          aria-labelledby="form-dialog-title"
+          style={{
+            left: isDesktop && isSidebarPage() ? "13%" : "0%",
+            zIndex: !isDesktop && isSidebarPage() ? 9999 : 20,
+          }}
+        >
+          <DialogTitle disableTypography>
+            <Typography variant="h4" style={{ color: "#01c9e1" }}>
+              Confirmation
+            </Typography>
+          </DialogTitle>
+          <DialogContent>
+            <Typography variant="body1">{alertMessage_C}</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={closeAlertDialog_C}
+              variant="contained"
+              style={{ backgroundColor: "#01c9e1", color: "white" }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={closeAlertDialogWithCallback_C}
+              variant="contained"
+              style={{ backgroundColor: "#FFB600", color: "white" }}
+            >
+              Confirm
             </Button>
           </DialogActions>
         </Dialog>
@@ -163,6 +230,7 @@ const MyApp = (props) => {
         <MainAppContext.Provider
           value={{
             showAlert: showAlert,
+            showAlert_C: showAlert_C,
             showLoading: showLoading,
             hideLoading: hideLoading,
           }}

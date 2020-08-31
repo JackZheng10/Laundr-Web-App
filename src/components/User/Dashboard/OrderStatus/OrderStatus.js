@@ -349,7 +349,7 @@ class OrderStatus extends Component {
               : `${order.orderInfo.weight} lbs`}
           </Typography>
           <Typography variant="h5" style={{ marginBottom: -10 }}>
-            {order.orderInfo.cost === -1
+            {order.orderInfo.cost === "-1"
               ? "Price: TBD"
               : `Price: ${order.orderInfo.cost}`}
           </Typography>

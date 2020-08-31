@@ -91,10 +91,7 @@ class Register extends Component {
     tosErrorMsg: "",
     generatedCode: "N/A", //phone verification
     enteredCode: "",
-    showGeneralDialog: false, //dialogs
-    generalDialogMsg: "",
     showVerifyDialog: false,
-    registered: false, //redirect
   };
 
   handleVerification = async (event) => {
@@ -374,7 +371,7 @@ class Register extends Component {
   };
 
   handleResendCode = () => {
-    alert("code will be resent");
+    alert("work in progress");
   };
 
   toggleVerifyDialog = () => {
@@ -391,12 +388,6 @@ class Register extends Component {
   };
 
   render() {
-    //todo: dont set registered as soon as they verify phone because itll redirect before they can click "ok"
-    //use new callback prop for showAlert
-    // if (this.state.registered) {
-    //   this.props.router.push("/login");
-    // }
-
     const classes = this.props.classes;
 
     return (
@@ -443,31 +434,38 @@ class Register extends Component {
             </div>
           </DialogContent>
           <DialogActions>
-            <Grid item xs={12} align="left">
-              <Button
-                onClick={this.toggleVerifyDialog}
-                variant="contained"
-                className={classes.secondaryButton}
-              >
-                Cancel
-              </Button>
-            </Grid>
-            <Grid item xs={12} align="right">
-              <Button
-                onClick={this.handleResendCode}
-                variant="contained"
-                className={classes.secondaryButton}
-                style={{ marginRight: 10 }}
-              >
-                Resend
-              </Button>
-              <Button
-                onClick={this.handleRegister}
-                variant="contained"
-                className={classes.mainButton}
-              >
-                Submit
-              </Button>
+            <Grid
+              container
+              direction="row"
+              justify="space-between"
+              alignItems="center"
+            >
+              <Grid item>
+                <Button
+                  onClick={this.toggleVerifyDialog}
+                  variant="contained"
+                  className={classes.secondaryButton}
+                >
+                  Cancel
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button
+                  onClick={this.handleResendCode}
+                  variant="contained"
+                  className={classes.secondaryButton}
+                  style={{ marginRight: 10 }}
+                >
+                  Resend
+                </Button>
+                <Button
+                  onClick={this.handleRegister}
+                  variant="contained"
+                  className={classes.mainButton}
+                >
+                  Submit
+                </Button>
+              </Grid>
             </Grid>
           </DialogActions>
         </Dialog>

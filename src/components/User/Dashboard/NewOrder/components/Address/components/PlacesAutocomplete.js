@@ -8,6 +8,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import parse from "autosuggest-highlight/parse";
 import throttle from "lodash/throttle";
 
+//todo: detect when user stops typing, and then update the map? in addition to selection and clearing updates?
+//so when they update the map on select, but type new address w/o selecting, it doesnt show the old selection
+
 const autocompleteService = { current: null };
 
 const useStyles = makeStyles((theme) => ({
@@ -34,7 +37,7 @@ const PlacesAutocomplete = (props) => {
 
   const handleAutocompleteChange = (event, value, reason) => {
     if (reason === "select-option") {
-      console.log(value);
+      //console.log(value);
       handleAddressSelect(value.description);
     } else if (reason === "clear") {
       //value is null if cleared
@@ -87,8 +90,10 @@ const PlacesAutocomplete = (props) => {
       noOptionsText={"Type to search for a location"}
       // filterOptions={(x) => x}
       options={options}
+      inputValue={address}
       autoComplete
       includeInputInList
+      freeSolo
       onChange={handleAutocompleteChange}
       getOptionSelected={(option, value) =>
         option.description === value.description
@@ -99,6 +104,7 @@ const PlacesAutocomplete = (props) => {
           label="Address"
           variant="outlined"
           fullWidth
+          // value={address}
           onChange={handleChange}
           className={addressClasses.input}
         />

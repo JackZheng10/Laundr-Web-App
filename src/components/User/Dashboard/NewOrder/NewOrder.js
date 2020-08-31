@@ -149,7 +149,7 @@ class NewOrder extends Component {
     }
 
     if (canNext) {
-      console.log("moved on to next");
+      window.scrollTo(0, 0);
       this.setState({ activeStep: this.state.activeStep + 1 });
     }
   };

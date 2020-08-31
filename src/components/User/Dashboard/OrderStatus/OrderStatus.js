@@ -65,7 +65,6 @@ class OrderStatus extends Component {
     this.tomorrow = moment().add(1, "days").format("MM/DD/YYYY");
 
     this.state = {
-      showCancelDialog: false,
       showDropoffDialog: false,
       rawTime: new Date(),
       formattedTime: moment().format("LT"),
@@ -108,12 +107,7 @@ class OrderStatus extends Component {
         },
       });
 
-      this.setState({ showCancelDialog: false }, () => {
-        this.context.showAlert(
-          response.data.message,
-          this.props.fetchOrderInfo
-        );
-      });
+      this.context.showAlert(response.data.message, this.props.fetchOrderInfo);
     } catch (error) {
       showConsoleError("cancelling order", error);
       this.context.showAlert(caughtError("cancelling order", error, 99));
@@ -276,10 +270,6 @@ class OrderStatus extends Component {
     }
   };
 
-  toggleCancelDialog = () => {
-    this.setState({ showCancelDialog: !this.state.showCancelDialog });
-  };
-
   renderDropoffComponent = (classes, order) => {
     //if status is not at least 2 and no time is entered
     if (order.orderInfo.status < 2 && order.dropoffInfo.time === "N/A") {
@@ -365,48 +355,6 @@ class OrderStatus extends Component {
       <React.Fragment>
         <div className={classes.layout}>
           <div className={classes.root}>
-            {/*ORDER CANCELLING*/}
-            <Dialog
-              open={this.state.showCancelDialog}
-              onClose={this.toggleCancelDialog}
-              container={() => document.getElementById("orderStatusContainer")}
-              style={{ position: "absolute", zIndex: 1 }}
-              BackdropProps={{
-                style: {
-                  position: "absolute",
-                  backgroundColor: "transparent",
-                },
-              }}
-            >
-              <DialogTitle disableTypography>
-                <Typography variant="h4" style={{ color: "#01c9e1" }}>
-                  Confirmation
-                </Typography>
-              </DialogTitle>
-              <DialogContent>
-                <Typography variant="body1">
-                  Are you sure you want to cancel your order?
-                </Typography>
-              </DialogContent>
-              <DialogActions>
-                <Button
-                  onClick={this.toggleCancelDialog}
-                  variant="contained"
-                  className={classes.secondaryButton}
-                >
-                  No
-                </Button>
-                <Button
-                  onClick={() => {
-                    this.handleOrderCancel(order);
-                  }}
-                  variant="contained"
-                  className={classes.mainButton}
-                >
-                  Yes
-                </Button>
-              </DialogActions>
-            </Dialog>
             {/*DROPOFF SCHEDULING*/}
             <Dialog
               open={this.state.showDropoffDialog}
@@ -551,7 +499,12 @@ class OrderStatus extends Component {
                         onClick={() => {
                           order.orderInfo.status === 6
                             ? this.handleConfirmReceived(order)
-                            : this.toggleCancelDialog();
+                            : this.context.showAlert_C(
+                                "Are you sure you want to cancel your order?",
+                                () => {
+                                  this.handleOrderCancel(order);
+                                }
+                              );
                         }}
                       >
                         {order.orderInfo.status === 6 ? "New Order" : "Cancel"}

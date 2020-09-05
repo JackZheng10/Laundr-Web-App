@@ -49,6 +49,9 @@ function Copyright() {
   );
 }
 
+//todo: make login not case sensitive (typing W1@gmail.com) doesnt work
+//limit input length for login + registration
+
 class Login extends Component {
   static contextType = MainAppContext;
 
@@ -77,7 +80,7 @@ class Login extends Component {
     if (this.handleInputValidation()) {
       try {
         const response = await axios.post("/api/user/login", {
-          email: this.state.email,
+          email: this.state.email.toLowerCase(),
           password: this.state.password,
         });
 

@@ -1,5 +1,11 @@
 import React from "react";
-import { withStyles, Grid, Typography } from "@material-ui/core";
+import {
+  withStyles,
+  Grid,
+  Typography,
+  Button,
+  TextField,
+} from "@material-ui/core";
 import { BottomBorderBlue } from "../../src/utility/borders";
 import { getCurrentUser, updateToken } from "../../src/helpers/session";
 import { caughtError, showConsoleError } from "../../src/helpers/errors";
@@ -60,7 +66,33 @@ const Help = (props) => {
           </Typography>
         </Grid>
         <Grid item>
-          <h1>placeholder</h1>
+          <Typography variant="h5" gutterBottom>
+            Call our support line at (352) 363-5211!
+          </Typography>
+        </Grid>
+        <Grid item style={{ marginBottom: 16 }}>
+          <Button variant="contained" className={classes.mainButton}>
+            Live Chat
+          </Button>
+        </Grid>
+        <Grid item>
+          <Typography variant="h5" gutterBottom>
+            Send us a message and we'll get back to you ASAP.
+          </Typography>
+        </Grid>
+        <Grid item style={{ marginBottom: 16 }}>
+          <TextField
+            label="Message"
+            fullWidth
+            multiline
+            variant="outlined"
+            className={classes.input}
+          />
+        </Grid>
+        <Grid item>
+          <Button variant="contained" className={classes.mainButton}>
+            Submit
+          </Button>
         </Grid>
       </Grid>
     </Layout>

@@ -82,7 +82,6 @@ const registerStyles = (theme) => ({
   },
   error: {
     color: "red",
-    fontSize: "small",
   },
   input: {
     "& label.Mui-focused": {

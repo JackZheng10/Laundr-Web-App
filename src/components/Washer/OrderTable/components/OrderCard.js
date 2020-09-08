@@ -21,7 +21,7 @@ const OrderCard = (props) => {
     <div className={classes.layout}>
       <Card className={classes.root} elevation={10}>
         <CardHeader
-          title={`${order.userInfo.fname} ${order.userInfo.lname}`}
+          title={`Order ID: ${order.orderInfo.orderID}`}
           titleTypographyProps={{
             variant: "h3",
             className: classes.title,

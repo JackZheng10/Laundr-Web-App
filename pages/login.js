@@ -49,7 +49,7 @@ function Copyright() {
   );
 }
 
-//todo: make login not case sensitive (typing W1@gmail.com) doesnt work
+//todo: make login not case sensitive (typing W1@gmail.com) doesnt work (done, just test)
 //limit input length for login + registration
 
 class Login extends Component {

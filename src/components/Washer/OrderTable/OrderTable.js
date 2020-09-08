@@ -276,7 +276,7 @@ class OrderTable extends Component {
               <TableHead>
                 <TableRow>
                   <TableCell align="left" className={classes.tableHeader}>
-                    Name
+                    ID
                   </TableCell>
                   <TableCell align="left" className={classes.tableHeader}>
                     Date/Time

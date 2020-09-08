@@ -42,7 +42,6 @@ class AcceptedDashboard extends Component {
   state = {
     orders: [],
     weight: "",
-    weightError: false,
     weightErrorMsg: "",
   };
 
@@ -70,7 +69,8 @@ class AcceptedDashboard extends Component {
   };
 
   handleWeightChange = (weight) => {
-    const regex = /^[0-9\b]+$/;
+    //todo: make sure decimal works
+    const regex = /^\d*\.?\d*$/;
 
     if (weight === "" || regex.test(weight)) {
       this.setState({ weight: weight });
@@ -80,25 +80,26 @@ class AcceptedDashboard extends Component {
   handleWeightMinimum = () => {
     if (!this.state.weight.replace(/\s/g, "").length) {
       this.setState({
-        weightError: true,
         weightErrorMsg: "Please enter a weight.",
       });
 
       return false;
     } else if (this.state.weight < 10) {
       this.setState({
-        weightError: true,
         weightErrorMsg: "Minimum weight to be entered is 10 lbs.",
       });
 
       return false;
     } else {
+      this.setState({
+        weightErrorMsg: "",
+      });
       return true;
     }
   };
 
   handleClearWeightError = () => {
-    this.setState({ weightError: false, weightErrorMsg: "" });
+    this.setState({ weightErrorMsg: "" });
   };
 
   handleChargeCustomer = async (order) => {

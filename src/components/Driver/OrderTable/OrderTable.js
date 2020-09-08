@@ -154,11 +154,10 @@ class OrderTable extends Component {
               </Typography>
               <div style={{ textAlign: "center" }}>
                 <TextField
-                  margin="dense"
+                  size="small"
+                  margin="normal"
                   variant="outlined"
                   label="Weight"
-                  error={this.props.weightError}
-                  helperText={this.props.weightErrorMsg}
                   value={this.props.weight}
                   onChange={(event) => {
                     this.props.handleWeightChange(event.target.value);
@@ -168,6 +167,9 @@ class OrderTable extends Component {
                     width: 105,
                   }}
                 />
+                <Typography variant="body2" style={{ color: "red" }}>
+                  {this.props.weightErrorMsg}
+                </Typography>
               </div>
             </React.Fragment>
           );

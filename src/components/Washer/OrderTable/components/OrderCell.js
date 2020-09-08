@@ -25,9 +25,7 @@ const OrderCell = (props) => {
   return (
     <TableRow>
       <TableCell>
-        <Typography variant="body1">
-          {`${order.userInfo.fname} ${order.userInfo.lname}`}
-        </Typography>
+        <Typography variant="body1">{order.orderInfo.orderID}</Typography>
       </TableCell>
       <TableCell>
         <Grid

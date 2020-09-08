@@ -640,9 +640,9 @@ class Register extends Component {
                         >
                           Terms of Service
                         </Link>
-                        <div className={classes.error}>
+                        <Typography variant="body2" className={classes.error}>
                           {this.state.tosErrorMsg}
-                        </div>
+                        </Typography>
                       </Grid>
                     </Paper>
                   </Grid>

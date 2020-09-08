@@ -391,11 +391,17 @@ class Review extends Component {
                 />
                 <CardContent className={classes.removePadding}>
                   <div style={{ display: "flex" }}>
-                    <TextField label="Code" variant="outlined" size="small" />
+                    <TextField
+                      label="Code"
+                      variant="outlined"
+                      size="small"
+                      className={classes.input}
+                    />
                     {/*todo: to be changed when functionality added, typing in something atm breaks it*/}
                     <Button
                       className={classes.secondaryButton}
                       variant="contained"
+                      size="small"
                       onClick={() => {
                         alert("work in progress");
                       }}

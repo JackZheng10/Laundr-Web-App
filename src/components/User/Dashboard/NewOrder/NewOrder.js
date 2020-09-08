@@ -112,11 +112,11 @@ class NewOrder extends Component {
 
         if (distance > 16094) {
           this.context.showAlert(
-            "The address entered is not valid or is not within our service range. Please try again."
+            "The address entered is not valid or is not within our service range. Make sure you've selected an address from the dropdown and try again."
           );
 
-          console.log("distance: " + distance);
-          console.log("====================================");
+          // console.log("distance: " + distance);
+          // console.log("====================================");
           canNext = false;
         }
         break;
@@ -379,14 +379,7 @@ class NewOrder extends Component {
       <React.Fragment>
         <div className={classes.layout}>
           <div className={classes.root}>
-            <CardContent
-              id="newOrderContainer"
-              // style={{
-              //   backgroundColor: "white",
-              //   boxShadow: "0 0 10px",
-              //   borderRadius: 20,
-              // }}
-            >
+            <CardContent id="newOrderContainer">
               <ProgressBar step={this.state.activeStep} />
               <React.Fragment>
                 {this.state.activeStep === steps.length ? (
@@ -433,18 +426,6 @@ class NewOrder extends Component {
                           rawTime={this.state.rawTime}
                           handleInputChange={this.handleInputChange}
                         />
-                        {/* <Review
-                          address={this.state.address}
-                          addressPreferences={this.state.addressPreferences}
-                          scented={this.state.scented}
-                          delicates={this.state.delicates}
-                          separate={this.state.separate}
-                          towelsSheets={this.state.towelsSheets}
-                          washerPreferences={this.state.washerPreferences}
-                          pickupDate={this.state.date}
-                          pickupTime={this.state.formattedTime}
-                          loads={this.state.loads}
-                        /> */}
                       </div>
                     </Fade>
                     <Fade

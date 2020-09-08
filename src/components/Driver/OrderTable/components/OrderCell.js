@@ -25,7 +25,7 @@ const OrderCell = (props) => {
   return (
     <TableRow>
       <TableCell>
-        <Typography variant="body1" style={{ textAlign: "center" }}>
+        <Typography variant="body1">
           {`${order.userInfo.fname} ${order.userInfo.lname}`}
         </Typography>
       </TableCell>

@@ -41,7 +41,7 @@ const PlacesAutocomplete = (props) => {
       handleAddressSelect(value.description);
     } else if (reason === "clear") {
       //value is null if cleared
-      console.log(value || "");
+      //console.log(value || "");
       handleAddressSelect("");
     }
   };
@@ -107,6 +107,7 @@ const PlacesAutocomplete = (props) => {
           // value={address}
           onChange={handleChange}
           className={addressClasses.input}
+          helperText="*Please select a valid address from the dropdown."
         />
       )}
       renderOption={(option) => {

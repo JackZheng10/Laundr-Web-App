@@ -155,7 +155,9 @@ class NewOrder extends Component {
   };
 
   handleBack = () => {
-    this.setState({ activeStep: this.state.activeStep - 1 });
+    this.setState({ activeStep: this.state.activeStep - 1 }, () => {
+      window.scrollTo(0, 0);
+    });
   };
 
   handlePlaceOrder = async () => {
@@ -199,14 +201,17 @@ class NewOrder extends Component {
 
   handleTimeCheck = () => {
     console.log("scheduled time:" + this.state.formattedTime);
+    console.log("raw time:" + this.state.rawTime);
 
     let canNext = true;
     //time checks, military time format: check if logged in user is gainesville or etc, hardcode gnv for now
     const scheduledTime = moment(this.state.rawTime, "HH:mm:ss"); //note: converting Date() to moment obj
-    const lowerBound = moment("10:00:00", "HH:mm:ss").add(1, "minutes");
-    const upperBound = moment("19:00:00", "HH:mm:ss").add(1, "minutes"); //so accepts 7 PM as a time, todo: test
 
-    console.log("scheduled time raw:" + scheduledTime);
+    //not exact bounds since isBetween is non-inclusive of the bounds
+    const lowerBound = moment("9:59:59", "HH:mm:ss"); //want 10:00:00 to be true
+    const upperBound = moment("19:00:59", "HH:mm:ss"); //want 19:00:00 to be true
+
+    //console.log("scheduled time raw:" + scheduledTime);
 
     //universal 1 hour from now check
     const hourFromNow = moment(moment(), "HH:mm:ss").add(1, "hours");
@@ -248,20 +253,40 @@ class NewOrder extends Component {
   };
 
   handleInputChange = (property, value) => {
+    //todo: test the automatic time selection for today+tomorrow, also upper and lower bounds just in case
+
     switch (property) {
       case "today":
-        this.setState({
-          todaySelected: true,
-          tomorrowSelected: false,
-          date: this.today,
-        });
+        const hourFromNow = moment(moment(), "HH:mm:ss").add(1, "hours");
+        const lowerBound = moment("9:59:59", "HH:mm:ss");
+        const upperBound = moment("19:00:59", "HH:mm:ss");
+
+        //if within operating times
+        if (hourFromNow.isBetween(lowerBound, upperBound)) {
+          this.setState({
+            todaySelected: true,
+            tomorrowSelected: false,
+            date: this.today,
+            rawTime: hourFromNow.toDate(),
+            formattedTime: hourFromNow.format("LT"),
+          });
+        } else {
+          this.setState({
+            todaySelected: true,
+            tomorrowSelected: false,
+            date: this.today,
+          });
+        }
         break;
 
       case "tomorrow":
+        const earliestTime = moment("10:00:00", "HH:mm:ss");
         this.setState({
           todaySelected: false,
           tomorrowSelected: true,
           date: this.tomorrow,
+          rawTime: earliestTime.toDate(),
+          formattedTime: earliestTime.format("LT"),
         });
         break;
 

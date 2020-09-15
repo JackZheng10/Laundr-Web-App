@@ -67,7 +67,7 @@ const Help = (props) => {
         </Grid>
         <Grid item>
           <Typography variant="h5" gutterBottom>
-            Call our support line at (352) 363-5211!
+            Call customer service at (352) 363-5211!
           </Typography>
         </Grid>
         <Grid item style={{ marginBottom: 16 }}>

@@ -253,8 +253,6 @@ class NewOrder extends Component {
   };
 
   handleInputChange = (property, value) => {
-    //todo: test the automatic time selection for today+tomorrow, also upper and lower bounds just in case
-
     switch (property) {
       case "today":
         const hourFromNow = moment(moment(), "HH:mm:ss").add(1, "hours");

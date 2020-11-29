@@ -65,9 +65,7 @@ class Login extends Component {
     emailErrorMsg: "",
     passwordErrorMsg: "",
     loggedIn: false,
-    isWasher: false,
-    isDriver: false,
-    isAdmin: false,
+    redirectURL: "",
   };
 
   handleInputChange = (property, value) => {
@@ -85,17 +83,9 @@ class Login extends Component {
         });
 
         if (response.data.success) {
-          const token = response.data.token;
-
-          localStorage.setItem("token", token);
-
-          const data = jwtDecode(token);
-
           this.setState({
             loggedIn: true,
-            isWasher: data.isWasher,
-            isDriver: data.isDriver,
-            isAdmin: data.isAdmin,
+            redirectURL: response.data.message,
           });
         } else {
           this.context.showAlert(response.data.message);
@@ -159,25 +149,13 @@ class Login extends Component {
     return valid;
   };
 
-  handleLoginRedirect = () => {
-    if (this.state.isWasher) {
-      this.props.router.push("/washer/assigned");
-    } else if (this.state.isDriver) {
-      this.props.router.push("/driver/available");
-    } else if (this.state.isAdmin) {
-      // return <Redirect push to="/placeholder" />;
-    } else {
-      this.props.router.push("/user/dashboard");
-    }
-  };
-
   toggleDialog = () => {
     this.setState({ showErrorDialog: !this.state.showErrorDialog });
   };
 
   render() {
     if (this.state.loggedIn) {
-      this.handleLoginRedirect();
+      this.props.router.push(this.state.redirectURL);
     }
 
     const classes = this.props.classes;

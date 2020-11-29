@@ -113,7 +113,12 @@ class Dashboard extends Component {
     const { classes } = this.props;
 
     try {
-      const currentUser = getCurrentUser();
+      //=====HOW TO HANDLE GET CURRENT USER NOW=====
+      const currentUser = await getCurrentUser();
+
+      if (currentUser.redirect) {
+        return this.props.router.push(currentUser.message);
+      }
 
       const response = await axios.get("/api/order/getExistingOrder", {
         params: {

@@ -2,26 +2,24 @@ import { caughtError, showConsoleError } from "./errors";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
 
-export const getCurrentUser = () => {
+export const getCurrentUser = async () => {
   if (typeof localStorage !== "undefined") {
-    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get("/api/user/getCurrentUser");
 
-    if (token !== null) {
-      const data = jwtDecode(token);
-      //todo: verify the token beforehand
-      return data;
-    } else {
-      //todo: maybe something else to handle this null return. depends on the context this is usually used in
-      //todo: possible combine w/getStored by returning object with property and token
-      alert("Error with retrieving current user. Please relog and try again.");
-      return null;
+      if (response.data.success) {
+        return { success: true, message: response.data.message };
+      } else {
+        return {
+          success: false,
+          redirect: response.data.redirect,
+          message: response.data.message,
+        };
+      }
+    } catch (error) {
+      showConsoleError("fetching current user", error);
+      alert(caughtError("fetching current user", error, 99));
     }
-  } else {
-    //todo: will change when switch to cookies
-    console.log(
-      "Error with retrieving current user. Please make sure localStorage is enabled."
-    );
-    return null;
   }
 };
 

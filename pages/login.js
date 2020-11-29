@@ -64,8 +64,6 @@ class Login extends Component {
     errorDialogMsg: "",
     emailErrorMsg: "",
     passwordErrorMsg: "",
-    loggedIn: false,
-    redirectURL: "",
   };
 
   handleInputChange = (property, value) => {
@@ -83,10 +81,7 @@ class Login extends Component {
         });
 
         if (response.data.success) {
-          this.setState({
-            loggedIn: true,
-            redirectURL: response.data.message,
-          });
+          this.props.router.push(response.data.message);
         } else {
           this.context.showAlert(response.data.message);
         }
@@ -154,10 +149,6 @@ class Login extends Component {
   };
 
   render() {
-    if (this.state.loggedIn) {
-      this.props.router.push(this.state.redirectURL);
-    }
-
     const classes = this.props.classes;
 
     return (

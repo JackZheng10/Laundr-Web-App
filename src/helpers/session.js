@@ -18,7 +18,10 @@ export const getCurrentUser = async () => {
       }
     } catch (error) {
       showConsoleError("fetching current user", error);
-      alert(caughtError("fetching current user", error, 99));
+      return {
+        success: false,
+        message: caughtError("fetching current user", error, 99),
+      };
     }
   }
 };

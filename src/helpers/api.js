@@ -5,6 +5,8 @@ const axiosInstance = axios.create;
 axiosInstance.interceptors.response.use(
   (response) => {
     console.log(response.data);
+    if (response.data.redirect) {
+    }
     return response;
   },
   (error) => {

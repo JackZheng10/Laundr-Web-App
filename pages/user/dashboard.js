@@ -19,7 +19,8 @@ import {
   BottomBorderBlue,
 } from "../../src/utility/borders";
 import { withRouter } from "next/router";
-import { getCurrentUser } from "../../src/helpers/session";
+import { GetServerSideProps } from "next";
+import { getCurrentUser, getCurrentUser_SSR } from "../../src/helpers/session";
 import { caughtError, showConsoleError } from "../../src/helpers/errors";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
@@ -96,6 +97,9 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 doing .add(something) changes the object itself with moment
 */
 
+const baseURL =
+  process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
+
 class Dashboard extends Component {
   static contextType = MainAppContext;
 
@@ -110,21 +114,10 @@ class Dashboard extends Component {
   };
 
   fetchOrderInfo = async () => {
-    const { classes } = this.props;
+    const { classes, currentUser } = this.props;
 
+    //if it's reached here, user was fetched successfully
     try {
-      //=====HOW TO HANDLE GET CURRENT USER NOW=====
-      const currentUser = await getCurrentUser();
-
-      if (!currentUser.success) {
-        if (currentUser.redirect) {
-          return this.props.router.push(currentUser.message);
-        } else {
-          return this.context.showAlert(currentUser.message);
-        }
-      }
-      //============================================
-
       const response = await axios.get("/api/order/getExistingOrder", {
         params: {
           email: currentUser.email,
@@ -345,5 +338,90 @@ class Dashboard extends Component {
 Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
+
+export async function getServerSideProps(context) {
+  //fetch current user
+  const response = await getCurrentUser_SSR(context);
+
+  //check for (redirect needed due to invalid session) or (error in fetching)
+  if (!response.success) {
+    if (response.redirect) {
+      return {
+        redirect: {
+          destination: response.message,
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        props: {
+          userFetch: {
+            success: false,
+            message: response.message,
+          },
+        },
+      };
+    }
+  }
+
+  //check for permissions to access page
+  const currentUser = response.message;
+  const urlSections = context.resolvedUrl.split("/");
+
+  switch (urlSections[1]) {
+    case "user":
+      if (currentUser.isDriver || currentUser.isWasher || currentUser.isAdmin) {
+        return {
+          redirect: {
+            destination: "/noAccess",
+            permanent: false,
+          },
+        };
+      }
+      break;
+
+    case "washer:":
+      if (!currentUser.isWasher) {
+        return {
+          redirect: {
+            destination: "/noAccess",
+            permanent: false,
+          },
+        };
+      }
+      break;
+
+    case "driver":
+      if (!currentUser.isDriver) {
+        return {
+          redirect: {
+            destination: "/noAccess",
+            permanent: false,
+          },
+        };
+      }
+      break;
+
+    case "admin":
+      if (!currentUser.isAdmin) {
+        return {
+          redirect: {
+            destination: "/noAccess",
+            permanent: false,
+          },
+        };
+      }
+      break;
+  }
+
+  //everything ok, so current user was fetched
+  //**therefore: app context will always contain valid user's ID. be wary of any other information extracted from here as it may be changed
+  //its ok to use this information on componentDidMount if its contained within the same page, since this information will not have changed since the page rendered
+  return {
+    props: {
+      currentUser: currentUser,
+    },
+  };
+}
 
 export default compose(withRouter, withStyles(dashboardStyles))(Dashboard);

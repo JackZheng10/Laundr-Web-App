@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Avatar, Typography, withStyles } from "@material-ui/core";
 import { getCurrentUser } from "../../../../../../helpers/session";
+import { GetServerSideProps } from "next";
 import clsx from "clsx";
 import PropTypes from "prop-types";
 import jwtDecode from "jwt-decode";

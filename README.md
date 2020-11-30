@@ -5,4 +5,4 @@
 - You are free to view and fork this code, but not edit or use it for any purpose.
 - Learn more here: https://choosealicense.com/no-permission/
 
-### The backend is hidden for security purposes. 
+### The backend is private for security purposes. 

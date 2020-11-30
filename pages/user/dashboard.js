@@ -110,13 +110,18 @@ class Dashboard extends Component {
   };
 
   componentDidMount = async () => {
+    if (!this.props.userFetch.success) {
+      return this.context.showAlert(userFetch.message);
+    }
+
     await this.fetchOrderInfo();
   };
 
   fetchOrderInfo = async () => {
-    const { classes, currentUser } = this.props;
+    const { classes, userFetch } = this.props;
 
-    //if it's reached here, user was fetched successfully
+    //if reached here, user was fetched successfully
+    const currentUser = userFetch.message;
     try {
       const response = await axios.get("/api/order/getExistingOrder", {
         params: {
@@ -419,9 +424,25 @@ export async function getServerSideProps(context) {
   //its ok to use this information on componentDidMount if its contained within the same page, since this information will not have changed since the page rendered
   return {
     props: {
-      currentUser: currentUser,
+      userFetch: {
+        success: true,
+        message: currentUser,
+      },
     },
   };
 }
 
 export default compose(withRouter, withStyles(dashboardStyles))(Dashboard);
+
+/*
+want:
+-getServerSideProps: 
+-initial data fetch
+-initial page auth check
+
+-axios intercept:
+-intercept responses and redirect if necessary 
+
+-fetch current user, check perms, fetch any INITIAL data, insert into context for "page"
+-any child can access this and use it in componentdidmount etc
+*/

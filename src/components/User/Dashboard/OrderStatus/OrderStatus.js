@@ -19,6 +19,8 @@ import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { getCurrentUser } from "../../../../helpers/session";
 import { caughtError, showConsoleError } from "../../../../helpers/errors";
 import { MuiPickersUtilsProvider, TimePicker } from "@material-ui/pickers";
+import { withRouter } from "next/router";
+import compose from "recompose/compose";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import DateFnsUtils from "@date-io/date-fns";
 import axios from "axios";
@@ -41,6 +43,7 @@ import orderStatusStyles from "../../../../styles/User/Dashboard/components/Orde
 
 //todo: fix time picker dialog positioning for this and scheduling?
 //todo: design like card for driver/washer or vice versa?
+//todo: gold button focus for dropoff and cancel
 
 const moment = require("moment");
 
@@ -107,6 +110,10 @@ class OrderStatus extends Component {
         },
       });
 
+      if (!response.data.success && response.data.redirect) {
+        return this.props.router.push(response.data.message);
+      }
+
       this.context.showAlert(response.data.message, this.props.fetchOrderInfo);
     } catch (error) {
       showConsoleError("cancelling order", error);
@@ -122,7 +129,12 @@ class OrderStatus extends Component {
           date: this.state.date,
           time: this.state.formattedTime,
         });
+
         this.setState({ showDropoffDialog: false }, () => {
+          if (!response.data.success && response.data.redirect) {
+            return this.props.router.push(response.data.message);
+          }
+
           this.context.showAlert(
             response.data.message,
             this.props.fetchOrderInfo
@@ -136,9 +148,19 @@ class OrderStatus extends Component {
   };
 
   //todo: test
-  handleTimeCheck = (weight, pickupInfo) => {
+  handleTimeCheck = async (weight, pickupInfo) => {
     let canNext = true;
-    const currentUser = getCurrentUser();
+    const response = await getCurrentUser();
+
+    if (!response.data.success) {
+      if (response.data.redirect) {
+        return this.props.router.push(response.data.message);
+      } else {
+        return this.context.showAlert(response.data.message);
+      }
+    }
+
+    const currentUser = response.data.message;
 
     const lowerBound = moment("10:00:00", "HH:mm:ss").add(1, "minutes"); //10 AM
     const upperBound = moment("19:00:00", "HH:mm:ss").add(1, "minutes"); //7 PM
@@ -246,8 +268,12 @@ class OrderStatus extends Component {
       });
 
       if (response.data.success) {
-        await this.props.fetchOrderInfo();
+        this.props.fetchOrderInfo();
       } else {
+        if (response.data.redirect) {
+          return this.props.router.push(response.message);
+        }
+
         this.context.showAlert(response.data.message);
       }
     } catch (error) {
@@ -491,10 +517,10 @@ class OrderStatus extends Component {
                         size="medium"
                         variant="contained"
                         className={
-                          order.orderInfo.status < 2 &&
-                          order.dropoffInfo.time === "N/A"
-                            ? classes.mainButton
-                            : classes.secondaryButton
+                          order.dropoffInfo.time === "N/A" &&
+                          order.orderInfo.status > 2
+                            ? classes.secondaryButton
+                            : classes.mainButton
                         }
                         onClick={() => {
                           order.orderInfo.status === 6
@@ -525,4 +551,4 @@ OrderStatus.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(orderStatusStyles)(OrderStatus);
+export default compose(withRouter, withStyles(orderStatusStyles))(OrderStatus);

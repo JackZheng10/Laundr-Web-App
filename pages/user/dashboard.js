@@ -115,17 +115,16 @@ class Dashboard extends Component {
 
   componentDidMount = async () => {
     const { fetch_SSR } = this.props;
+
     //check for error on fetching initial info via SSR. if this has appeared, nothing will render for the order component so its ok
     if (!fetch_SSR.success) {
       return this.context.showAlert(fetch_SSR.message);
     }
-
-    //await this.fetchOrderInfo();
   };
 
-  //to refresh order info
+  //to refresh order info, just reload the page
   fetchOrderInfo = () => {
-    return 1;
+    window.location.reload();
   };
 
   renderOrderComponent = (fetch_SSR, classes) => {
@@ -147,7 +146,6 @@ class Dashboard extends Component {
               }}
               className={classes.cardHeader}
             />
-
             <CardContent>
               <Typography variant="body1">
                 Please add a payment method to continue.
@@ -172,7 +170,7 @@ class Dashboard extends Component {
         return (
           <NewOrder
             fetchOrderInfo={this.fetchOrderInfo}
-            currentUser_ID={fetch_SSR.userInfo.userID}
+            user={fetch_SSR.userInfo}
           />
         );
 
@@ -180,6 +178,7 @@ class Dashboard extends Component {
         return (
           <OrderStatus
             order={fetch_SSR.orderInfo.message}
+            user={fetch_SSR.userInfo}
             fetchOrderInfo={this.fetchOrderInfo}
           />
         );
@@ -357,11 +356,11 @@ export async function getServerSideProps(context) {
   const response_one = await getCurrentUser_SSR(context);
 
   //check for redirect needed due to invalid session or error in fetching
-  if (!response_one.success) {
-    if (response_one.redirect) {
+  if (!response_one.data.success) {
+    if (response_one.data.redirect) {
       return {
         redirect: {
-          destination: response_one.message,
+          destination: response_one.data.message,
           permanent: false,
         },
       };
@@ -370,7 +369,7 @@ export async function getServerSideProps(context) {
         props: {
           fetch_SSR: {
             success: false,
-            message: response_one.message,
+            message: response_one.data.message,
           },
         },
       };
@@ -378,7 +377,7 @@ export async function getServerSideProps(context) {
   }
 
   //check for permissions to access page if no error from fetching user
-  const currentUser = response_one.message;
+  const currentUser = response_one.data.message;
   const urlSections = context.resolvedUrl.split("/");
 
   switch (urlSections[1]) {
@@ -429,27 +428,36 @@ export async function getServerSideProps(context) {
 
   //everything ok, so current user is fetched (currentUser is valid)
 
-  //user - dashboard: fetch their current order via their userID
+  //fetch their current order via their userID
   const response_two = await getExistingOrder_SSR(context, currentUser);
 
-  //check for error in fetching current order info (or info for no order)
-  if (!response_two.success) {
-    return {
-      props: {
-        fetch_SSR: {
-          success: false,
-          message: response_two.message,
+  //check for error in fetching current order info (or info for no order) or need for redirect due to invalid session
+  if (!response_two.data.success) {
+    if (response_two.data.redirect) {
+      return {
+        redirect: {
+          destination: response_two.data.message,
+          permanent: false,
         },
-      },
-    };
+      };
+    } else {
+      return {
+        props: {
+          fetch_SSR: {
+            success: false,
+            message: response_two.data.message,
+          },
+        },
+      };
+    }
   }
 
-  //finally, return info for fetched user + order info
+  //finally, return info for fetched user + order info, available via props
   return {
     props: {
       fetch_SSR: {
         success: true,
-        orderInfo: response_two,
+        orderInfo: response_two.data,
         userInfo: currentUser,
       },
     },

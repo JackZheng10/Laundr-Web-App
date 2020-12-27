@@ -4,9 +4,27 @@ import axios from "axios";
 const baseURL =
   process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
 
-export const getExistingOrder_SSR = async (context, currentUser) => {
-  //const { classes, userFetch } = this.props;
+//general - used to fetch current user in getServerSideProps - can be used for further data fetching, authorization etc.
+export const getCurrentUser_SSR = async (context) => {
+  try {
+    const response = await axios.get(`${baseURL}/api/user/getCurrentUser`, {
+      headers: context.req ? { cookie: context.req.headers.cookie } : undefined,
+    });
 
+    return response;
+  } catch (error) {
+    showConsoleError("fetching current user", error);
+    return {
+      data: {
+        success: false,
+        message: caughtError("fetching current user", error, 99),
+      },
+    };
+  }
+};
+
+//user - dashboard
+export const getExistingOrder_SSR = async (context, currentUser) => {
   try {
     const response = await axios.get(`${baseURL}/api/order/getExistingOrder`, {
       headers: context.req ? { cookie: context.req.headers.cookie } : undefined,
@@ -14,8 +32,6 @@ export const getExistingOrder_SSR = async (context, currentUser) => {
         userID: currentUser.userID,
       },
     });
-
-    //console.warn(response.data);
 
     if (response.data.success) {
       let componentName;
@@ -30,39 +46,24 @@ export const getExistingOrder_SSR = async (context, currentUser) => {
         componentName = "order_status";
       }
 
+      //message = user object
       return {
-        success: true,
-        componentName: componentName,
-        message: response.data.message,
+        data: {
+          success: true,
+          componentName: componentName,
+          message: response.data.message,
+        },
       };
     } else {
-      return {
-        success: false,
-        message: response.data.message,
-      };
+      return response;
     }
   } catch (error) {
     showConsoleError("fetching order info", error);
     return {
-      success: false,
-      message: caughtError("fetching order info", error, 99),
-    };
-  }
-};
-
-//used to fetch current user in getServerSideProps - can be used for further data fetching, authorization etc.
-export const getCurrentUser_SSR = async (context) => {
-  try {
-    const response = await axios.get(`${baseURL}/api/user/getCurrentUser`, {
-      headers: context.req ? { cookie: context.req.headers.cookie } : undefined,
-    });
-
-    return response.data;
-  } catch (error) {
-    showConsoleError("fetching current user", error);
-    return {
-      success: false,
-      message: caughtError("fetching current user", error, 99),
+      data: {
+        success: false,
+        message: caughtError("fetching order info", error, 99),
+      },
     };
   }
 };

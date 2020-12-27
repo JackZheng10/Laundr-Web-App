@@ -5,10 +5,11 @@ import jwtDecode from "jwt-decode";
 const baseURL =
   process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
 
-//todo: to be used for fetching current user outside of SSR and initial page+children component mounting (in the case that the data may have changed)
+//todo: to be used for fetching current user outside of SSR and initial page+children component mounting (in the case that the data may have changed after page load)
+//used for buttons/actions that require something other than userID, otherwise the current context of the page suffices
 export const getCurrentUser = async () => {
   try {
-    const response = await axios.get(`${baseURL}/api/user/getCurrentUser`);
+    const response = await axios.get("/api/user/getCurrentUser");
 
     if (response.data.success) {
       return { success: true, message: response.data.message };
@@ -19,23 +20,6 @@ export const getCurrentUser = async () => {
         message: response.data.message,
       };
     }
-  } catch (error) {
-    showConsoleError("fetching current user", error);
-    return {
-      success: false,
-      message: caughtError("fetching current user", error, 99),
-    };
-  }
-};
-
-//used to fetch current user in getServerSideProps - can be used for further data fetching, authorization etc.
-export const getCurrentUser_SSR = async (context) => {
-  try {
-    const response = await axios.get(`${baseURL}/api/user/getCurrentUser`, {
-      headers: context.req ? { cookie: context.req.headers.cookie } : undefined,
-    });
-
-    return response.data;
   } catch (error) {
     showConsoleError("fetching current user", error);
     return {

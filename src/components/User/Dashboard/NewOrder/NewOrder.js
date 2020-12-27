@@ -161,16 +161,9 @@ class NewOrder extends Component {
   };
 
   handlePlaceOrder = async () => {
-    // axios.defaults.headers.common["token"] = token;
-
     try {
-      const currentUser = getCurrentUser();
-
       const response = await axios.post("/api/order/placeOrder", {
-        email: currentUser.email,
-        fname: currentUser.fname,
-        lname: currentUser.lname,
-        phone: currentUser.phone,
+        userID: this.props.currentUser_ID,
         coupon: "placeholder",
         scented: this.state.scented,
         delicates: this.state.delicates,

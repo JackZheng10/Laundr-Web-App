@@ -223,7 +223,9 @@ class Dashboard extends Component {
                 className={classes.welcomeText}
                 gutterBottom
               >
-                {`Welcome, ${fetch_SSR.userInfo.fname}`}
+                {`Welcome, ${
+                  fetch_SSR.success ? fetch_SSR.userInfo.fname : ""
+                }`}
               </Typography>
             </Paper>
           </Grid>

@@ -55,7 +55,12 @@ class AssignedDashboard extends Component {
     }
   };
 
-  //not touched
+  fetchOrders = () => {
+    window.location.reload();
+  };
+
+  //not touched yet - next is order table also
+  //todo: make sure the extra "getcurrentusers" are just the topbr and sidebar bugging out for now
   handleWasherDone = async (order) => {
     try {
       const orderID = order.orderInfo.orderID;
@@ -97,7 +102,9 @@ class AssignedDashboard extends Component {
                 className={classes.welcomeText}
                 gutterBottom
               >
-                {`Welcome, ${this.state.userFname}`}
+                {`Welcome, ${
+                  fetch_SSR.success ? fetch_SSR.userInfo.fname : ""
+                }`}
               </Typography>
             </Paper>
           </Grid>

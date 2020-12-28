@@ -13,6 +13,8 @@ import {
 import { loadStripe } from "@stripe/stripe-js";
 import { getCurrentUser, updateToken } from "../../../../../helpers/session";
 import { caughtError, showConsoleError } from "../../../../../helpers/errors";
+import { withRouter } from "next/router";
+import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../../../../contexts/MainAppContext";
@@ -33,10 +35,10 @@ class SubscriptionCard extends Component {
     // When the customer clicks on the button, redirect them to Checkout.
     // Call your backend to create the Checkout session.
     try {
-      const currentUser = getCurrentUser();
+      const { planName, currentUser } = this.props;
 
       const response = await axios.post("/api/stripe/createCheckoutSession", {
-        type: this.props.planName,
+        type: planName,
         customerID: currentUser.stripe.customerID,
       });
 
@@ -58,7 +60,11 @@ class SubscriptionCard extends Component {
           );
         }
       } else {
-        this.context.showAlert(response.data.message);
+        if (response.data.redirect) {
+          this.props.router.push(response.data.message);
+        } else {
+          this.context.showAlert(response.data.message);
+        }
       }
     } catch (error) {
       showConsoleError("creating checkout session", error);
@@ -118,4 +124,7 @@ SubscriptionCard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(subscriptionCardStyles)(SubscriptionCard);
+export default compose(
+  withRouter,
+  withStyles(subscriptionCardStyles)
+)(SubscriptionCard);

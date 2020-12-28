@@ -22,3 +22,7 @@ export const getCurrentUser = async () => {
     };
   }
 };
+
+export const updateToken = () => {
+  //deprecated
+};

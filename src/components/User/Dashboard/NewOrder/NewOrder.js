@@ -167,7 +167,7 @@ class NewOrder extends Component {
   handlePlaceOrder = async () => {
     try {
       const response = await axios.post("/api/order/placeOrder", {
-        userID: this.props.user.userID,
+        userID: this.props.currentUser.userID,
         coupon: "placeholder",
         scented: this.state.scented,
         delicates: this.state.delicates,

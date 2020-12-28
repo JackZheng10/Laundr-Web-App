@@ -2,6 +2,7 @@ import axios from "axios";
 
 const axiosInstance = axios.create;
 
+//unused
 axiosInstance.interceptors.response.use(
   (response) => {
     console.log(response.data);

@@ -111,10 +111,13 @@ class OrderStatus extends Component {
       });
 
       if (!response.data.success && response.data.redirect) {
-        return this.props.router.push(response.data.message);
+        this.props.router.push(response.data.message);
+      } else {
+        this.context.showAlert(
+          response.data.message,
+          this.props.fetchOrderInfo
+        );
       }
-
-      this.context.showAlert(response.data.message, this.props.fetchOrderInfo);
     } catch (error) {
       showConsoleError("cancelling order", error);
       this.context.showAlert(caughtError("cancelling order", error, 99));
@@ -132,13 +135,13 @@ class OrderStatus extends Component {
 
         this.setState({ showDropoffDialog: false }, () => {
           if (!response.data.success && response.data.redirect) {
-            return this.props.router.push(response.data.message);
+            this.props.router.push(response.data.message);
+          } else {
+            this.context.showAlert(
+              response.data.message,
+              this.props.fetchOrderInfo
+            );
           }
-
-          this.context.showAlert(
-            response.data.message,
-            this.props.fetchOrderInfo
-          );
         });
       } catch (error) {
         showConsoleError("setting dropoff", error);
@@ -271,10 +274,10 @@ class OrderStatus extends Component {
         this.props.fetchOrderInfo();
       } else {
         if (response.data.redirect) {
-          return this.props.router.push(response.message);
+          this.props.router.push(response.message);
+        } else {
+          this.context.showAlert(response.data.message);
         }
-
-        this.context.showAlert(response.data.message);
       }
     } catch (error) {
       showConsoleError("setting dropoff", error);

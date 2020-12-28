@@ -13,6 +13,8 @@ import {
 import { PieChart, Pie, Sector, Cell } from "recharts";
 import { getCurrentUser, updateToken } from "../../../../helpers/session";
 import { caughtError, showConsoleError } from "../../../../helpers/errors";
+import { withRouter } from "next/router";
+import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import axios from "axios";
 import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
@@ -37,7 +39,7 @@ class SubscriptionStatus extends Component {
 
   handleManageSub = async () => {
     try {
-      const currentUser = getCurrentUser();
+      const { currentUser } = this.props;
 
       const response = await axios.post("/api/stripe/createSelfPortal", {
         customerID: currentUser.stripe.customerID,
@@ -46,7 +48,11 @@ class SubscriptionStatus extends Component {
       if (response.data.success) {
         window.open(response.data.message, "_self");
       } else {
-        this.context.showAlert(response.data.message);
+        if (response.data.redirect) {
+          this.props.router.push(response.data.message);
+        } else {
+          this.context.showAlert(response.data.message);
+        }
       }
     } catch (error) {
       showConsoleError("creating self service portal", error);
@@ -86,14 +92,14 @@ class SubscriptionStatus extends Component {
   };
 
   render() {
-    const { classes, subscription } = this.props;
+    const { classes, currentUser } = this.props;
 
     return (
       <React.Fragment>
         <Grid item style={{ marginBottom: 10 }}>
           <div className={classes.infoCard}>
             <CardHeader
-              title={`Current Plan: ${subscription.plan}`}
+              title={`Current Plan: ${currentUser.subscription.plan}`}
               titleTypographyProps={{
                 variant: "h2",
                 style: {
@@ -110,20 +116,22 @@ class SubscriptionStatus extends Component {
             >
               <PieChart width={310} height={400}>
                 <Pie
-                  data={this.getLbsData(subscription)}
+                  data={this.getLbsData(currentUser.subscription)}
                   innerRadius={130}
                   outerRadius={150}
                   paddingAngle={1}
                   startAngle={180}
                   endAngle={-180}
                 >
-                  {this.getLbsData(subscription).map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={entry.color}
-                      style={{ opacity: entry.opacity }}
-                    />
-                  ))}
+                  {this.getLbsData(currentUser.subscription).map(
+                    (entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.color}
+                        style={{ opacity: entry.opacity }}
+                      />
+                    )
+                  )}
                 </Pie>
               </PieChart>
               <div
@@ -162,7 +170,9 @@ class SubscriptionStatus extends Component {
                 >
                   <Typography variant="h1" style={{ color: "#01c9e1" }}>
                     {/*todo: fix centering of this based on the number*/}
-                    {`${subscription.lbsLeft}/${this.getMaxLbs(subscription)}`}
+                    {`${currentUser.subscription.lbsLeft}/${this.getMaxLbs(
+                      currentUser.subscription
+                    )}`}
                   </Typography>
                 </div>
               </div>
@@ -197,7 +207,7 @@ class SubscriptionStatus extends Component {
                 Period Start
               </Typography>
               <Typography variant="h6">
-                {this.renderPeriod(subscription.periodStart)}
+                {this.renderPeriod(currentUser.subscription.periodStart)}
               </Typography>
               <Typography
                 variant="h5"
@@ -213,7 +223,7 @@ class SubscriptionStatus extends Component {
                 Period End
               </Typography>
               <Typography variant="h6">
-                {this.renderPeriod(subscription.periodEnd)}
+                {this.renderPeriod(currentUser.subscription.periodEnd)}
               </Typography>
             </CardContent>
             <Divider />
@@ -241,4 +251,7 @@ SubscriptionStatus.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(subscriptionStatusStyles)(SubscriptionStatus);
+export default compose(
+  withRouter,
+  withStyles(subscriptionStatusStyles)
+)(SubscriptionStatus);

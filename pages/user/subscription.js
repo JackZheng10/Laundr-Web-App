@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { withStyles, Grid, Typography } from "@material-ui/core";
 import { Layout } from "../../src/layouts";
-import { getCurrentUser, updateToken } from "../../src/helpers/session";
+import { getCurrentUser } from "../../src/helpers/session";
 import {
   TopBorderDarkPurple,
   BottomBorderDarkPurple,
@@ -9,7 +9,14 @@ import {
   TopBorderBlue,
   BottomBorderBlue,
 } from "../../src/utility/borders";
+import { GetServerSideProps } from "next";
+import { withRouter } from "next/router";
+import {
+  getExistingOrder_SSR,
+  getCurrentUser_SSR,
+} from "../../src/helpers/ssr";
 import PropTypes from "prop-types";
+import compose from "recompose/compose";
 import jwtDecode from "jwt-decode";
 import axios from "axios";
 import SubscriptionBoxes from "../../src/components/User/Subscription/SubscriptionBoxes/SubscriptionBoxes";
@@ -17,57 +24,38 @@ import SubscriptionStatus from "../../src/components/User/Subscription/Subscript
 import subscriptionStyles from "../../src/styles/User/Subscription/subscriptionStyles";
 
 class Subscription extends Component {
-  //todo: adopt ordercomponent thing from dashboard as well so it doesnt flash sub boxes before switching
-  state = {
-    subscriptionComponent: null,
-  };
-
-  componentDidMount = async () => {
-    let currentUser = getCurrentUser();
-
-    await updateToken(currentUser.email);
-
-    currentUser = getCurrentUser();
-
-    this.renderSubscriptionComponent(currentUser);
-  };
-
   renderSubscriptionComponent = (currentUser) => {
     if (currentUser.subscription.status === "active") {
-      this.setState({
-        subscriptionComponent: (
+      return (
+        <Grid
+          container
+          spacing={0}
+          direction="column"
+          justify="center"
+          alignItems="center"
+        >
+          <SubscriptionStatus currentUser={currentUser} />
+        </Grid>
+      );
+    } else {
+      return (
+        <div style={{ padding: 16 }}>
           <Grid
             container
-            spacing={0}
-            direction="column"
+            spacing={2}
+            direction="row"
             justify="center"
             alignItems="center"
           >
-            <SubscriptionStatus subscription={currentUser.subscription} />
+            <SubscriptionBoxes currentUser={currentUser} />
           </Grid>
-        ),
-      });
-    } else {
-      this.setState({
-        subscriptionComponent: (
-          <div style={{ padding: 16 }}>
-            <Grid
-              container
-              spacing={2}
-              direction="row"
-              justify="center"
-              alignItems="center"
-            >
-              <SubscriptionBoxes />
-            </Grid>
-          </div>
-        ),
-      });
+        </div>
+      );
     }
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, fetch_SSR } = this.props;
 
     return (
       <Layout>
@@ -95,7 +83,7 @@ class Subscription extends Component {
         <div style={{ position: "relative", marginBottom: 70 }}>
           <BottomBorderBlue />
         </div>
-        {this.state.subscriptionComponent}
+        {this.renderSubscriptionComponent(fetch_SSR.userInfo)}
       </Layout>
     );
   }
@@ -105,4 +93,95 @@ Subscription.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(subscriptionStyles)(Subscription);
+export async function getServerSideProps(context) {
+  //fetch current user
+  const response_one = await getCurrentUser_SSR(context);
+
+  //check for redirect needed due to invalid session or error in fetching
+  if (!response_one.data.success) {
+    if (response_one.data.redirect) {
+      return {
+        redirect: {
+          destination: response_one.data.message,
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        props: {
+          fetch_SSR: {
+            success: false,
+            message: response_one.data.message,
+          },
+        },
+      };
+    }
+  }
+
+  //check for permissions to access page if no error from fetching user
+  const currentUser = response_one.data.message;
+  const urlSections = context.resolvedUrl.split("/");
+
+  switch (urlSections[1]) {
+    case "user":
+      if (currentUser.isDriver || currentUser.isWasher || currentUser.isAdmin) {
+        return {
+          redirect: {
+            destination: "/noAccess",
+            permanent: false,
+          },
+        };
+      }
+      break;
+
+    case "washer:":
+      if (!currentUser.isWasher) {
+        return {
+          redirect: {
+            destination: "/noAccess",
+            permanent: false,
+          },
+        };
+      }
+      break;
+
+    case "driver":
+      if (!currentUser.isDriver) {
+        return {
+          redirect: {
+            destination: "/noAccess",
+            permanent: false,
+          },
+        };
+      }
+      break;
+
+    case "admin":
+      if (!currentUser.isAdmin) {
+        return {
+          redirect: {
+            destination: "/noAccess",
+            permanent: false,
+          },
+        };
+      }
+      break;
+  }
+
+  //everything ok, so current user is fetched (currentUser is valid)
+
+  //return info for fetched user, available via props
+  return {
+    props: {
+      fetch_SSR: {
+        success: true,
+        userInfo: currentUser,
+      },
+    },
+  };
+}
+
+export default compose(
+  withRouter,
+  withStyles(subscriptionStyles)
+)(Subscription);

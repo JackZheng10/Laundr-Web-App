@@ -170,7 +170,7 @@ class Dashboard extends Component {
         return (
           <NewOrder
             fetchOrderInfo={this.fetchOrderInfo}
-            user={fetch_SSR.userInfo}
+            currentUser={fetch_SSR.userInfo}
           />
         );
 
@@ -178,7 +178,7 @@ class Dashboard extends Component {
         return (
           <OrderStatus
             order={fetch_SSR.orderInfo.message}
-            user={fetch_SSR.userInfo}
+            currentUser={fetch_SSR.userInfo}
             fetchOrderInfo={this.fetchOrderInfo}
           />
         );

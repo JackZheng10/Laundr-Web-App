@@ -17,6 +17,14 @@ import {
 import { getCurrentUser, updateToken } from "../../src/helpers/session";
 import { caughtError, showConsoleError } from "../../src/helpers/errors";
 import { Layout } from "../../src/layouts";
+import { GetServerSideProps } from "next";
+import { withRouter } from "next/router";
+import {
+  getExistingOrder_SSR,
+  getCurrentUser_SSR,
+  fetchOrders_WA_SSR,
+} from "../../src/helpers/ssr";
+import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
@@ -40,31 +48,14 @@ class AssignedDashboard extends Component {
   state = { orders: [], userFname: "" };
 
   componentDidMount = async () => {
-    await this.fetchOrders();
-  };
+    const { fetch_SSR } = this.props;
 
-  fetchOrders = async () => {
-    try {
-      const currentUser = getCurrentUser();
-      const response = await axios.post("/api/order/fetchOrders", {
-        filter: "washerAssigned",
-        filterEmail: currentUser.email,
-      });
-
-      if (response.data.success) {
-        this.setState({
-          orders: response.data.message,
-          userFname: currentUser.fname,
-        });
-      } else {
-        this.context.showAlert(response.data.message);
-      }
-    } catch (error) {
-      showConsoleError("fetching orders", error);
-      this.context.showAlert(caughtError("fetching orders", error, 99));
+    if (!fetch_SSR.success) {
+      this.context.showAlert(fetch_SSR.message);
     }
   };
 
+  //not touched
   handleWasherDone = async (order) => {
     try {
       const orderID = order.orderInfo.orderID;
@@ -84,7 +75,7 @@ class AssignedDashboard extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, fetch_SSR } = this.props;
 
     return (
       <Layout>
@@ -135,7 +126,7 @@ class AssignedDashboard extends Component {
             style={{ width: "100%", paddingLeft: 10, paddingRight: 10 }}
           >
             <OrderTable
-              orders={this.state.orders}
+              orders={fetch_SSR.success ? fetch_SSR.orders : []}
               fetchOrders={this.fetchOrders}
               handleWasherDone={this.handleWasherDone}
             />
@@ -150,4 +141,116 @@ AssignedDashboard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(assignedStyles)(AssignedDashboard);
+export async function getServerSideProps(context) {
+  //fetch current user
+  const response_one = await getCurrentUser_SSR(context);
+
+  //check for redirect needed due to invalid session or error in fetching
+  if (!response_one.data.success) {
+    if (response_one.data.redirect) {
+      return {
+        redirect: {
+          destination: response_one.data.message,
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        props: {
+          fetch_SSR: {
+            success: false,
+            message: response_one.data.message,
+          },
+        },
+      };
+    }
+  }
+
+  //check for permissions to access page if no error from fetching user
+  const currentUser = response_one.data.message;
+  const urlSections = context.resolvedUrl.split("/");
+  switch (urlSections[1]) {
+    case "user":
+      if (currentUser.isDriver || currentUser.isWasher || currentUser.isAdmin) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+    case "washer:":
+      if (!currentUser.isWasher) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+    case "driver":
+      if (!currentUser.isDriver) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+    case "admin":
+      if (!currentUser.isAdmin) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+  }
+
+  //everything ok, so current user is fetched (currentUser is valid)
+
+  //fetch their assigned orders via user id
+  const response_two = await fetchOrders_WA_SSR(context, currentUser);
+
+  //check for error
+  if (!response_two.data.success) {
+    if (response_two.data.redirect) {
+      return {
+        redirect: {
+          destination: response_two.data.message,
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        props: {
+          fetch_SSR: {
+            success: false,
+            message: response_two.data.message,
+          },
+        },
+      };
+    }
+  }
+
+  //return info for fetched user, available via props
+  return {
+    props: {
+      fetch_SSR: {
+        success: true,
+        userInfo: currentUser,
+        orders: response_two.data.message,
+      },
+    },
+  };
+}
+
+export default compose(
+  withRouter,
+  withStyles(assignedStyles)
+)(AssignedDashboard);

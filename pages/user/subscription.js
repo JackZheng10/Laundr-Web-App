@@ -15,8 +15,8 @@ import {
   getExistingOrder_SSR,
   getCurrentUser_SSR,
 } from "../../src/helpers/ssr";
-import PropTypes from "prop-types";
 import compose from "recompose/compose";
+import PropTypes from "prop-types";
 import jwtDecode from "jwt-decode";
 import axios from "axios";
 import SubscriptionBoxes from "../../src/components/User/Subscription/SubscriptionBoxes/SubscriptionBoxes";

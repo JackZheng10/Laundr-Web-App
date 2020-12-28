@@ -67,3 +67,31 @@ export const getExistingOrder_SSR = async (context, currentUser) => {
     };
   }
 };
+
+//washer - assigned
+export const fetchOrders_WA_SSR = async (context, currentUser) => {
+  try {
+    const response = await axios.post(
+      `${baseURL}/api/order/fetchOrders`,
+      {
+        filter: "washerAssigned",
+        userID: currentUser.userID,
+      },
+      {
+        headers: context.req
+          ? { cookie: context.req.headers.cookie }
+          : undefined,
+      }
+    );
+
+    return response;
+  } catch (error) {
+    showConsoleError("fetching orders", error);
+    return {
+      data: {
+        success: false,
+        message: caughtError("fetching orders", error, 99),
+      },
+    };
+  }
+};

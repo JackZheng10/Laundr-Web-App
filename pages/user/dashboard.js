@@ -118,7 +118,7 @@ class Dashboard extends Component {
 
     //check for error on fetching initial info via SSR. if this has appeared, nothing will render for the order component so its ok
     if (!fetch_SSR.success) {
-      return this.context.showAlert(fetch_SSR.message);
+      this.context.showAlert(fetch_SSR.message);
     }
   };
 
@@ -127,7 +127,9 @@ class Dashboard extends Component {
     window.location.reload();
   };
 
-  renderOrderComponent = (fetch_SSR, classes) => {
+  renderOrderComponent = (classes) => {
+    const { fetch_SSR } = this.props;
+
     if (!fetch_SSR.success) {
       return <div></div>;
     }
@@ -249,7 +251,7 @@ class Dashboard extends Component {
           alignItems="center"
           // style={{ backgroundImage: `url("/images/space.png")` }}
         >
-          <Grid item>{this.renderOrderComponent(fetch_SSR, classes)}</Grid>
+          <Grid item>{this.renderOrderComponent(classes)}</Grid>
         </Grid>
         <div style={{ position: "relative", marginTop: 50 }}>
           <TopBorderBlue />

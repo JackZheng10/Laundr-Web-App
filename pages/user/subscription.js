@@ -24,7 +24,22 @@ import SubscriptionStatus from "../../src/components/User/Subscription/Subscript
 import subscriptionStyles from "../../src/styles/User/Subscription/subscriptionStyles";
 
 class Subscription extends Component {
-  renderSubscriptionComponent = (currentUser) => {
+  componentDidMount = () => {
+    const { fetch_SSR } = this.props;
+
+    if (!fetch_SSR.success) {
+      this.context.showAlert(fetch_SSR.message);
+    }
+  };
+
+  renderSubscriptionComponent = () => {
+    const { fetch_SSR } = this.props;
+    const currentUser = fetch_SSR.userInfo;
+
+    if (!fetch_SSR.success) {
+      return <div></div>;
+    }
+
     if (currentUser.subscription.status === "active") {
       return (
         <Grid
@@ -83,7 +98,7 @@ class Subscription extends Component {
         <div style={{ position: "relative", marginBottom: 70 }}>
           <BottomBorderBlue />
         </div>
-        {this.renderSubscriptionComponent(fetch_SSR.userInfo)}
+        {this.renderSubscriptionComponent()}
       </Layout>
     );
   }

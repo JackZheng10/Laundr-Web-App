@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   withStyles,
   Grid,
@@ -34,99 +34,109 @@ import historyStyles from "../../src/styles/User/Account/historyStyles";
 //@ my order: feature to reschedule delivery if not home? also maybe conflicts with "what happens..miss pickup.."
 //@subscription: renewal refund, manual or feature?
 
-const Help = (props) => {
-  const { classes } = props;
+class Help extends Component {
+  componentDidMount = async () => {
+    const { fetch_SSR } = this.props;
 
-  return (
-    <Layout>
-      <Grid
-        container
-        direction="column"
-        justify="center"
-        alignItems="center" /*main page column*/
-        style={{
-          paddingTop: 10,
-          backgroundColor: "#01C9E1",
-        }}
-      >
-        <Grid item>
-          <Typography
-            variant="h1"
-            className={classes.componentName}
-            gutterBottom
-          >
-            Help
-          </Typography>
+    if (!fetch_SSR.success) {
+      this.context.showAlert(fetch_SSR.message);
+    }
+  };
+
+  render() {
+    const { classes } = this.props;
+
+    return (
+      <Layout>
+        <Grid
+          container
+          direction="column"
+          justify="center"
+          alignItems="center" /*main page column*/
+          style={{
+            paddingTop: 10,
+            backgroundColor: "#01C9E1",
+          }}
+        >
+          <Grid item>
+            <Typography
+              variant="h1"
+              className={classes.componentName}
+              gutterBottom
+            >
+              Help
+            </Typography>
+          </Grid>
         </Grid>
-      </Grid>
-      <div style={{ position: "relative", marginBottom: 70 }}>
-        <BottomBorderBlue />
-      </div>
-      <Grid container direction="column" justify="center" alignItems="center">
-        <FAQAccordion title="Getting Started" questions={GettingStarted} />
-        <FAQAccordion title="My Order" questions={MyOrder} />
-        <FAQAccordion title="Subscriptions" questions={Subscriptions} />
-        <FAQAccordion title="Company Info" questions={CompanyInfo} />
-        <Grid item>
-          <Typography variant="h1" style={{ color: "#01C9E1" }} gutterBottom>
-            Still need help?
-          </Typography>
+        <div style={{ position: "relative", marginBottom: 70 }}>
+          <BottomBorderBlue />
+        </div>
+        <Grid container direction="column" justify="center" alignItems="center">
+          <FAQAccordion title="Getting Started" questions={GettingStarted} />
+          <FAQAccordion title="My Order" questions={MyOrder} />
+          <FAQAccordion title="Subscriptions" questions={Subscriptions} />
+          <FAQAccordion title="Company Info" questions={CompanyInfo} />
+          <Grid item>
+            <Typography variant="h1" style={{ color: "#01C9E1" }} gutterBottom>
+              Still need help?
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Typography variant="h5" gutterBottom>
+              Call customer service at (352) 363-5211!
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Typography variant="h5" gutterBottom>
+              or
+            </Typography>
+          </Grid>
+          <Grid item style={{ marginBottom: 16 }}>
+            <Button
+              variant="contained"
+              className={classes.mainButton}
+              onClick={() => {
+                alert("In progress");
+              }}
+            >
+              Live Chat
+            </Button>
+          </Grid>
+          <Grid item>
+            <Typography variant="h5" gutterBottom>
+              or
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Typography variant="h5" gutterBottom>
+              Send us a message and we'll get back to you ASAP.
+            </Typography>
+          </Grid>
+          <Grid item style={{ marginBottom: 16 }}>
+            <TextField
+              label="Message"
+              fullWidth
+              multiline
+              variant="outlined"
+              className={classes.input}
+            />
+          </Grid>
+          <Grid item>
+            <Button
+              variant="contained"
+              className={classes.mainButton}
+              onClick={() => {
+                alert("In progress");
+              }}
+            >
+              Submit
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item>
-          <Typography variant="h5" gutterBottom>
-            Call customer service at (352) 363-5211!
-          </Typography>
-        </Grid>
-        <Grid item>
-          <Typography variant="h5" gutterBottom>
-            or
-          </Typography>
-        </Grid>
-        <Grid item style={{ marginBottom: 16 }}>
-          <Button
-            variant="contained"
-            className={classes.mainButton}
-            onClick={() => {
-              alert("In progress");
-            }}
-          >
-            Live Chat
-          </Button>
-        </Grid>
-        <Grid item>
-          <Typography variant="h5" gutterBottom>
-            or
-          </Typography>
-        </Grid>
-        <Grid item>
-          <Typography variant="h5" gutterBottom>
-            Send us a message and we'll get back to you ASAP.
-          </Typography>
-        </Grid>
-        <Grid item style={{ marginBottom: 16 }}>
-          <TextField
-            label="Message"
-            fullWidth
-            multiline
-            variant="outlined"
-            className={classes.input}
-          />
-        </Grid>
-        <Grid item>
-          <Button
-            variant="contained"
-            className={classes.mainButton}
-            onClick={() => {
-              alert("In progress");
-            }}
-          >
-            Submit
-          </Button>
-        </Grid>
-      </Grid>
-    </Layout>
-  );
-};
+      </Layout>
+    );
+  }
+}
 
 Help.propTypes = {
   classes: PropTypes.object.isRequired,

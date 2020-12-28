@@ -4,11 +4,14 @@ import axios from "axios";
 const baseURL =
   process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
 
+//test with cookies disabled (context.req is undefined) to see if null works
+
 //general - used to fetch current user in getServerSideProps - can be used for further data fetching, authorization etc.
 export const getCurrentUser_SSR = async (context) => {
   try {
     const response = await axios.get(`${baseURL}/api/user/getCurrentUser`, {
-      headers: context.req ? { cookie: context.req.headers.cookie } : undefined,
+      headers: { cookie: context.req ? context.req.headers.cookie : null },
+      //context.req ? { cookie: context.req.headers.cookie } : undefined,
     });
 
     return response;
@@ -27,7 +30,7 @@ export const getCurrentUser_SSR = async (context) => {
 export const getExistingOrder_SSR = async (context, currentUser) => {
   try {
     const response = await axios.get(`${baseURL}/api/order/getExistingOrder`, {
-      headers: context.req ? { cookie: context.req.headers.cookie } : undefined,
+      headers: { cookie: context.req ? context.req.headers.cookie : null },
       params: {
         userID: currentUser.userID,
       },
@@ -78,9 +81,7 @@ export const fetchOrders_WA_SSR = async (context, currentUser) => {
         userID: currentUser.userID,
       },
       {
-        headers: context.req
-          ? { cookie: context.req.headers.cookie }
-          : undefined,
+        headers: { cookie: context.req ? context.req.headers.cookie : null },
       }
     );
 

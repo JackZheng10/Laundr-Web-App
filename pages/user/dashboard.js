@@ -387,7 +387,7 @@ export async function getServerSideProps(context) {
       if (currentUser.isDriver || currentUser.isWasher || currentUser.isAdmin) {
         return {
           redirect: {
-            destination: "/noAccess",
+            destination: "/accessDenied",
             permanent: false,
           },
         };
@@ -398,7 +398,7 @@ export async function getServerSideProps(context) {
       if (!currentUser.isWasher) {
         return {
           redirect: {
-            destination: "/noAccess",
+            destination: "/accessDenied",
             permanent: false,
           },
         };
@@ -409,7 +409,7 @@ export async function getServerSideProps(context) {
       if (!currentUser.isDriver) {
         return {
           redirect: {
-            destination: "/noAccess",
+            destination: "/accessDenied",
             permanent: false,
           },
         };
@@ -420,7 +420,7 @@ export async function getServerSideProps(context) {
       if (!currentUser.isAdmin) {
         return {
           redirect: {
-            destination: "/noAccess",
+            destination: "/accessDenied",
             permanent: false,
           },
         };

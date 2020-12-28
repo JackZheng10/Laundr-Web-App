@@ -144,7 +144,7 @@ class NewOrder extends Component {
             canNext = false;
           }
         } else {
-          this.setState({ orderID: response.data.message });
+          this.setState({ orderID: response.data.orderID });
         }
         break;
 

@@ -35,6 +35,8 @@ import historyStyles from "../../src/styles/User/Account/historyStyles";
 //@subscription: renewal refund, manual or feature?
 
 class Help extends Component {
+  static contextType = MainAppContext;
+
   componentDidMount = async () => {
     const { fetch_SSR } = this.props;
 

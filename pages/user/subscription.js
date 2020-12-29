@@ -19,11 +19,14 @@ import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import jwtDecode from "jwt-decode";
 import axios from "axios";
+import MainAppContext from "../../src/contexts/MainAppContext";
 import SubscriptionBoxes from "../../src/components/User/Subscription/SubscriptionBoxes/SubscriptionBoxes";
 import SubscriptionStatus from "../../src/components/User/Subscription/SubscriptionStatus/SubscriptionStatus";
 import subscriptionStyles from "../../src/styles/User/Subscription/subscriptionStyles";
 
 class Subscription extends Component {
+  static contextType = MainAppContext;
+
   componentDidMount = () => {
     const { fetch_SSR } = this.props;
 

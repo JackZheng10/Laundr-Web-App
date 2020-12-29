@@ -10,7 +10,7 @@ const baseURL =
 export const getCurrentUser_SSR = async (context) => {
   try {
     const response = await axios.get(`${baseURL}/api/user/getCurrentUser`, {
-      headers: { cookie: context.req ? context.req.headers.cookie : null },
+      headers: { cookie: context.req ? context.req.headers.cookie : "" },
       //context.req ? { cookie: context.req.headers.cookie } : undefined,
     });
 
@@ -30,7 +30,7 @@ export const getCurrentUser_SSR = async (context) => {
 export const getExistingOrder_SSR = async (context, currentUser) => {
   try {
     const response = await axios.get(`${baseURL}/api/order/getExistingOrder`, {
-      headers: { cookie: context.req ? context.req.headers.cookie : null },
+      headers: { cookie: context.req ? context.req.headers.cookie : "" },
       params: {
         userID: currentUser.userID,
       },
@@ -81,7 +81,7 @@ export const fetchOrders_WA_SSR = async (context, currentUser) => {
         userID: currentUser.userID,
       },
       {
-        headers: { cookie: context.req ? context.req.headers.cookie : null },
+        headers: { cookie: context.req ? context.req.headers.cookie : "" },
       }
     );
 

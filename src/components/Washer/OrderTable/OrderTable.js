@@ -22,6 +22,8 @@ import {
   TableContainer,
   Hidden,
 } from "@material-ui/core";
+import { withRouter } from "next/router";
+import compose from "recompose/compose";
 import Close from "@material-ui/icons/Close";
 import OrderCell from "./components/OrderCell";
 import OrderCard from "./components/OrderCard";
@@ -141,7 +143,15 @@ class OrderTable extends Component {
                 const response = await this.props.handleWasherDone(
                   this.state.currentOrder
                 );
-                this.showNotification(response.message, response.success);
+
+                if (!response.data.success && response.data.redirect) {
+                  this.props.router.push(response.data.message);
+                } else {
+                  this.showNotification(
+                    response.data.message,
+                    response.data.success
+                  );
+                }
               }}
               variant="contained"
               className={classes.mainButton}
@@ -199,21 +209,19 @@ class OrderTable extends Component {
     return prefs;
   };
 
+  //todo: make this the order for every one of these snackbars!
   showNotification = (message, success) => {
     //close action dialog first
-    this.setState({ showActionDialog: false }, () => {
-      //show the notification
-      this.setState(
-        {
-          notificationMessage: message,
-          notificationSuccess: success,
-          showNotification: true,
-        },
-        () => {
-          //fetch orders after showing notification, so an invalid or valid order disappears
-          this.props.fetchOrders();
-        }
-      );
+    this.setState({ showActionDialog: false }, async () => {
+      //refetch orders, so an invalid or valid order disappears
+      await this.props.fetchOrders();
+
+      //show the notification from setting the order as washed, potentially along with an error message from the above order fetching
+      this.setState({
+        notificationMessage: message,
+        notificationSuccess: success,
+        showNotification: true,
+      });
     });
   };
 
@@ -328,4 +336,4 @@ OrderTable.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(orderTableStyles)(OrderTable);
+export default compose(withRouter, withStyles(orderTableStyles))(OrderTable);

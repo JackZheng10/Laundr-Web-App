@@ -42,10 +42,19 @@ import assignedStyles from "../../src/styles/Washer/Assigned/assignedStyles";
 
 //only display status 0 and 4, ones able to be "accepted"
 
+const baseURL =
+  process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
+
 class AssignedDashboard extends Component {
   static contextType = MainAppContext;
 
-  state = { orders: [], userFname: "" };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      orders: this.props.fetch_SSR.success ? this.props.fetch_SSR.orders : [],
+    };
+  }
 
   componentDidMount = async () => {
     const { fetch_SSR } = this.props;
@@ -55,12 +64,38 @@ class AssignedDashboard extends Component {
     }
   };
 
-  fetchOrders = () => {
-    window.location.reload();
+  fetchOrders = async () => {
+    //cannot reload window since we want the orders to refetch, and then a notification/snackbar appearing on screen
+    //window.location.reload();
+    try {
+      const { fetch_SSR } = this.props;
+
+      const response = await axios.post(
+        "/api/order/fetchOrders",
+        {
+          filter: "washerAssigned",
+          userID: fetch_SSR.userInfo.userID,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (!response.data.success) {
+        if (response.data.redirect) {
+          this.props.router.push(response.data.message);
+        } else {
+          this.context.showAlert(response.data.message);
+        }
+      } else {
+        this.setState({ orders: response.data.message });
+      }
+    } catch (error) {
+      showConsoleError("fetching orders", error);
+      this.context.showAlert(caughtError("fetching orders", error, 99));
+    }
   };
 
-  //not touched yet - next is order table also
-  //todo: make sure the extra "getcurrentusers" are just the topbr and sidebar bugging out for now
   handleWasherDone = async (order) => {
     try {
       const orderID = order.orderInfo.orderID;
@@ -69,12 +104,14 @@ class AssignedDashboard extends Component {
         orderID,
       });
 
-      return { success: response.data.success, message: response.data.message };
+      return response;
     } catch (error) {
       showConsoleError("setting order as done by washer", error);
       return {
-        success: false,
-        message: caughtError("setting order as done by washer", error, 99),
+        data: {
+          success: false,
+          message: caughtError("setting order as done by washer", error, 99),
+        },
       };
     }
   };
@@ -133,7 +170,7 @@ class AssignedDashboard extends Component {
             style={{ width: "100%", paddingLeft: 10, paddingRight: 10 }}
           >
             <OrderTable
-              orders={fetch_SSR.success ? fetch_SSR.orders : []}
+              orders={this.state.orders}
               fetchOrders={this.fetchOrders}
               handleWasherDone={this.handleWasherDone}
             />

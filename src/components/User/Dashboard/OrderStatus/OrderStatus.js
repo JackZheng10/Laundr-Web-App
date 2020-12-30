@@ -274,7 +274,7 @@ class OrderStatus extends Component {
         this.props.fetchOrderInfo();
       } else {
         if (response.data.redirect) {
-          this.props.router.push(response.message);
+          this.props.router.push(response.data.message);
         } else {
           this.context.showAlert(response.data.message);
         }

@@ -20,17 +20,22 @@ import {
   Grid,
   Hidden,
 } from "@material-ui/core";
+import { withRouter } from "next/router";
+import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import OrderCard from "./components/OrderCard";
 import OrderCell from "./components/OrderCell";
 import Close from "@material-ui/icons/Close";
 import orderTableStyles from "../../../styles/Driver/components/OrderTable/orderTableStyles";
+import MainAppContext from "../../../contexts/MainAppContext";
 
 //todo: change snackbars to https://github.com/iamhosseindhv/notistack to make it prettier
 //todo: textalign center on snackbar text in case its scrunched
 //todo: dialog in window-specific like alert is
 
 class OrderTable extends Component {
+  static contextType = MainAppContext;
+
   state = {
     showActionDialog: false,
     actionDialogTitle: "",
@@ -239,7 +244,15 @@ class OrderTable extends Component {
                   const response = await this.props.handlePickupAccept(
                     this.state.currentOrder
                   );
-                  this.showNotification(response.message, response.success);
+
+                  if (!response.data.success && response.data.redirect) {
+                    this.props.router.push(response.data.message);
+                  } else {
+                    this.showNotification(
+                      response.data.message,
+                      response.data.success
+                    );
+                  }
                 }}
                 variant="contained"
                 className={classes.mainButton}
@@ -309,7 +322,15 @@ class OrderTable extends Component {
                   const response = await this.props.handleDropoffAccept(
                     this.state.currentOrder
                   );
-                  this.showNotification(response.message, response.success);
+
+                  if (!response.data.success && response.data.redirect) {
+                    this.props.router.push(response.data.message);
+                  } else {
+                    this.showNotification(
+                      response.data.message,
+                      response.data.success
+                    );
+                  }
                 }}
                 variant="contained"
                 className={classes.mainButton}
@@ -383,19 +404,16 @@ class OrderTable extends Component {
 
   showNotification = (message, success) => {
     //close action dialog first
-    this.setState({ showActionDialog: false }, () => {
-      //show the notification
-      this.setState(
-        {
-          notificationMessage: message,
-          notificationSuccess: success,
-          showNotification: true,
-        },
-        () => {
-          //fetch orders after showing notification, so an invalid or valid order disappears
-          this.props.fetchOrders();
-        }
-      );
+    this.setState({ showActionDialog: false }, async () => {
+      //refetch orders, so an invalid or valid order disappears
+      await this.props.fetchOrders();
+
+      //show the notification from setting the order as washed, potentially along with an error message from the above order fetching
+      this.setState({
+        notificationMessage: message,
+        notificationSuccess: success,
+        showNotification: true,
+      });
     });
   };
 
@@ -545,4 +563,4 @@ OrderTable.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(orderTableStyles)(OrderTable);
+export default compose(withRouter, withStyles(orderTableStyles))(OrderTable);

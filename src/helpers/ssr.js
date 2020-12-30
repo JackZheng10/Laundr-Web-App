@@ -102,3 +102,31 @@ export const fetchOrders_WA_SSR = async (context, currentUser) => {
     };
   }
 };
+
+//driver - available
+export const fetchOrders_DAV_SSR = async (context, currentUser) => {
+  try {
+    const response = await axios.post(
+      `${baseURL}/api/order/fetchOrders`,
+      {
+        filter: "none",
+        statuses: [0, 4],
+      },
+      {
+        headers: context.req.headers.cookie
+          ? { cookie: context.req.headers.cookie }
+          : null,
+      }
+    );
+
+    return response;
+  } catch (error) {
+    showConsoleError("fetching orders", error);
+    return {
+      data: {
+        success: false,
+        message: caughtError("fetching orders", error, 99),
+      },
+    };
+  }
+};

@@ -130,3 +130,31 @@ export const fetchOrders_DAV_SSR = async (context, currentUser) => {
     };
   }
 };
+
+//driver - accepted
+export const fetchOrders_DAC_SSR = async (context, currentUser) => {
+  try {
+    const response = await axios.post(
+      `${baseURL}/api/order/fetchOrders`,
+      {
+        filter: "driverAccepted",
+        userID: currentUser.userID,
+      },
+      {
+        headers: context.req.headers.cookie
+          ? { cookie: context.req.headers.cookie }
+          : null,
+      }
+    );
+
+    return response;
+  } catch (error) {
+    showConsoleError("fetching orders", error);
+    return {
+      data: {
+        success: false,
+        message: caughtError("fetching orders", error, 99),
+      },
+    };
+  }
+};

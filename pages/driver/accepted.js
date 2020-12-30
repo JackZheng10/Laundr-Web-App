@@ -17,6 +17,16 @@ import {
 import { getCurrentUser, updateToken } from "../../src/helpers/session";
 import { caughtError, showConsoleError } from "../../src/helpers/errors";
 import { Layout } from "../../src/layouts";
+import { GetServerSideProps } from "next";
+import { withRouter } from "next/router";
+import {
+  getExistingOrder_SSR,
+  getCurrentUser_SSR,
+  fetchOrders_WA_SSR,
+  fetchOrders_DAV_SSR,
+  fetchOrders_DAC_SSR,
+} from "../../src/helpers/ssr";
+import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
@@ -39,31 +49,50 @@ import acceptedStyles from "../../src/styles/Driver/Accepted/acceptedStyles";
 class AcceptedDashboard extends Component {
   static contextType = MainAppContext;
 
-  state = {
-    orders: [],
-    weight: "",
-    weightErrorMsg: "",
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      orders: this.props.fetch_SSR.success ? this.props.fetch_SSR.orders : [],
+      weight: "",
+      weightErrorMsg: "",
+    };
+  }
 
   componentDidMount = async () => {
-    await this.fetchOrders();
+    const { fetch_SSR } = this.props;
+
+    if (!fetch_SSR.success) {
+      this.context.showAlert(fetch_SSR.message);
+    }
   };
 
   fetchOrders = async () => {
     try {
-      const currentUser = getCurrentUser();
-      const response = await axios.post("/api/order/fetchOrders", {
-        filter: "driverAccepted",
-        filterEmail: currentUser.email,
-      });
+      const { fetch_SSR } = this.props;
 
-      if (response.data.success) {
-        this.setState({ orders: response.data.message });
+      const response = await axios.post(
+        "/api/order/fetchOrders",
+        {
+          filter: "driverAccepted",
+          userID: fetch_SSR.userInfo.userID,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (!response.data.success) {
+        if (response.data.redirect) {
+          this.props.router.push(response.data.message);
+        } else {
+          this.context.showAlert(response.data.message);
+        }
       } else {
-        this.context.showAlert(response.data.message);
+        this.setState({ orders: response.data.message });
       }
     } catch (error) {
-      showConsoleError("getting orders", error);
+      showConsoleError("fetching orders", error);
       this.context.showAlert(caughtError("fetching orders", error, 99));
     }
   };
@@ -77,7 +106,7 @@ class AcceptedDashboard extends Component {
     }
   };
 
-  handleWeightMinimum = () => {
+  validateWeightMinimum = () => {
     if (!this.state.weight.replace(/\s/g, "").length) {
       this.setState({
         weightErrorMsg: "Please enter a weight.",
@@ -104,21 +133,23 @@ class AcceptedDashboard extends Component {
 
   handleChargeCustomer = async (order) => {
     try {
-      const email = order.userInfo.email;
+      const userID = order.userInfo.userID;
       const orderID = order.orderInfo.orderID;
 
       const response = await axios.post("/api/stripe/chargeCustomer", {
         weight: this.state.weight,
-        email: email,
+        userID: userID,
         orderID: orderID,
       });
 
-      return { success: response.data.success, message: response.data.message };
+      return response;
     } catch (error) {
       showConsoleError("charging customer", error);
       return {
-        success: false,
-        message: caughtError("charging customer", error, 99),
+        data: {
+          success: false,
+          message: caughtError("charging customer", error, 99),
+        },
       };
     }
   };
@@ -132,12 +163,14 @@ class AcceptedDashboard extends Component {
         orderID,
       });
 
-      return { success: response.data.success, message: response.data.message };
+      return response;
     } catch (error) {
       showConsoleError("entering weight", error);
       return {
-        success: false,
-        message: caughtError("entering weight", error, 99),
+        data: {
+          success: false,
+          message: caughtError("entering weight", error, 99),
+        },
       };
     }
   };
@@ -150,12 +183,18 @@ class AcceptedDashboard extends Component {
         orderID,
       });
 
-      return { success: response.data.success, message: response.data.message };
+      return response;
     } catch (error) {
       showConsoleError("setting order as received by washer", error);
       return {
-        success: false,
-        message: caughtError("setting order as received by washer", error, 99),
+        data: {
+          success: false,
+          message: caughtError(
+            "setting order as received by washer",
+            error,
+            99
+          ),
+        },
       };
     }
   };
@@ -168,12 +207,14 @@ class AcceptedDashboard extends Component {
         orderID,
       });
 
-      return { success: response.data.success, message: response.data.message };
+      return response;
     } catch (error) {
       showConsoleError("setting order as delivered", error);
       return {
-        success: false,
-        message: caughtError("setting order as delivered", error, 99),
+        data: {
+          success: false,
+          message: caughtError("setting order as delivered", error, 99),
+        },
       };
     }
   };
@@ -225,7 +266,7 @@ class AcceptedDashboard extends Component {
               weightError={this.state.weightError}
               weightErrorMsg={this.state.weightErrorMsg}
               handleWeightChange={this.handleWeightChange}
-              handleWeightMinimum={this.handleWeightMinimum}
+              validateWeightMinimum={this.validateWeightMinimum}
               handleChargeCustomer={this.handleChargeCustomer}
               handleClearWeightError={this.handleClearWeightError}
               handleUpdateWeight={this.handleUpdateWeight}
@@ -243,4 +284,116 @@ AcceptedDashboard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(acceptedStyles)(AcceptedDashboard);
+export async function getServerSideProps(context) {
+  //fetch current user
+  const response_one = await getCurrentUser_SSR(context);
+
+  //check for redirect needed due to invalid session or error in fetching
+  if (!response_one.data.success) {
+    if (response_one.data.redirect) {
+      return {
+        redirect: {
+          destination: response_one.data.message,
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        props: {
+          fetch_SSR: {
+            success: false,
+            message: response_one.data.message,
+          },
+        },
+      };
+    }
+  }
+
+  //check for permissions to access page if no error from fetching user
+  const currentUser = response_one.data.message;
+  const urlSections = context.resolvedUrl.split("/");
+  switch (urlSections[1]) {
+    case "user":
+      if (currentUser.isDriver || currentUser.isWasher || currentUser.isAdmin) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+    case "washer":
+      if (!currentUser.isWasher) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+    case "driver":
+      if (!currentUser.isDriver) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+    case "admin":
+      if (!currentUser.isAdmin) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+  }
+
+  //everything ok, so current user is fetched (currentUser is valid)
+
+  //fetch their assigned orders via user id
+  const response_two = await fetchOrders_DAC_SSR(context, currentUser);
+
+  //check for error
+  if (!response_two.data.success) {
+    if (response_two.data.redirect) {
+      return {
+        redirect: {
+          destination: response_two.data.message,
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        props: {
+          fetch_SSR: {
+            success: false,
+            message: response_two.data.message,
+          },
+        },
+      };
+    }
+  }
+
+  //return info for fetched user, available via props
+  return {
+    props: {
+      fetch_SSR: {
+        success: true,
+        userInfo: currentUser,
+        orders: response_two.data.message,
+      },
+    },
+  };
+}
+
+export default compose(
+  withRouter,
+  withStyles(acceptedStyles)
+)(AcceptedDashboard);

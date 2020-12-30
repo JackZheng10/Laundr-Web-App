@@ -297,7 +297,15 @@ class OrderTable extends Component {
                   const response = await this.props.handleWasherReceived(
                     this.state.currentOrder
                   );
-                  this.showNotification(response.message, response.success);
+
+                  if (!response.data.success && response.data.redirect) {
+                    this.props.router.push(response.data.message);
+                  } else {
+                    this.showNotification(
+                      response.data.message,
+                      response.data.success
+                    );
+                  }
                 }}
                 variant="contained"
                 className={classes.mainButton}
@@ -355,7 +363,15 @@ class OrderTable extends Component {
                   const response = await this.props.handleUserReceived(
                     this.state.currentOrder
                   );
-                  this.showNotification(response.message, response.success);
+
+                  if (!response.data.success && response.data.redirect) {
+                    this.props.router.push(response.data.message);
+                  } else {
+                    this.showNotification(
+                      response.data.message,
+                      response.data.success
+                    );
+                  }
                 }}
                 variant="contained"
                 className={classes.mainButton}
@@ -383,21 +399,36 @@ class OrderTable extends Component {
   };
 
   handleWeightEntered = async () => {
-    if (this.props.handleWeightMinimum()) {
-      const response = await this.props.handleChargeCustomer(
+    if (this.props.validateWeightMinimum()) {
+      //passed weight check, so attempt to charge
+      const response_one = await this.props.handleChargeCustomer(
         this.state.currentOrder
       );
 
-      //if charge didnt succeed for whatever reason, todo: test w/NO payment method
-      if (!response.success) {
-        this.showNotification(response.message, response.success);
+      //if charge unsuccessful
+      if (!response_one.data.success) {
+        if (response_one.data.redirect) {
+          this.props.router.push(response_one.data.message);
+        } else {
+          this.showNotification(
+            response_one.data.message,
+            response_one.data.success
+          );
+        }
       } else {
-        //otherwise update weight after successful charge
-        const response = await this.props.handleUpdateWeight(
+        //charge successful, so update the weight of the order
+        const response_two = await this.props.handleUpdateWeight(
           this.state.currentOrder
         );
 
-        this.showNotification(response.message, response.success);
+        if (!response_two.data.success && response_two.data.redirect) {
+          this.props.router.push(response_two.data.message);
+        } else {
+          this.showNotification(
+            response_two.data.message,
+            response_two.data.success
+          );
+        }
       }
     }
   };

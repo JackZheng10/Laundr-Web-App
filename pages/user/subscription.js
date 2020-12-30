@@ -152,7 +152,7 @@ export async function getServerSideProps(context) {
       }
       break;
 
-    case "washer:":
+    case "washer":
       if (!currentUser.isWasher) {
         return {
           redirect: {

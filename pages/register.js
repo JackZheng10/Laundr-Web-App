@@ -26,6 +26,8 @@ import {
 } from "@material-ui/core";
 import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
+import { GetServerSideProps } from "next";
+import { getExistingOrder_SSR, getCurrentUser_SSR } from "../src/helpers/ssr";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import MainAppContext from "../src/contexts/MainAppContext";
@@ -679,5 +681,37 @@ class Register extends Component {
 Register.propTypes = {
   classes: PropTypes.object.isRequired,
 };
+
+export async function getServerSideProps(context) {
+  //fetch current user if there exists one
+  const response_one = await getCurrentUser_SSR(context);
+
+  //check for redirect needed due to a currently logged in user
+  if (response_one.data.success) {
+    const currentUser = response_one.data.message;
+    let redirectDestination;
+
+    if (currentUser.isDriver) {
+      redirectDestination = "/driver/available";
+    } else if (currentUser.isWasher) {
+      redirectDestination = "/washer/assigned";
+    } else if (currentUser.isAdmin) {
+      redirectDestination = "/admin/placeholder";
+    } else {
+      redirectDestination = "/user/dashboard";
+    }
+
+    return {
+      redirect: {
+        destination: redirectDestination,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+}
 
 export default compose(withRouter, withStyles(registerStyles))(Register);

@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Main = (props) => {
-  const { children } = props;
+  const { children, currentUser } = props;
 
   const classes = useStyles();
   const theme = useTheme();
@@ -49,11 +49,12 @@ const Main = (props) => {
         [classes.shiftContent]: isDesktop,
       })}
     >
-      <Topbar onSidebarOpen={handleSidebarOpen} />
+      <Topbar onSidebarOpen={handleSidebarOpen} currentUser={currentUser} />
       <Sidebar
         onClose={handleSidebarClose}
         open={shouldOpenSidebar}
         variant={isDesktop ? "persistent" : "temporary"}
+        currentUser={currentUser}
       />
       <main className={classes.content}>
         {children}

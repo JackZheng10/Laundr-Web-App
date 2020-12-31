@@ -26,3 +26,5 @@ export const getCurrentUser = async () => {
 export const updateToken = () => {
   //deprecated
 };
+
+export const handleLogout = async () => {};

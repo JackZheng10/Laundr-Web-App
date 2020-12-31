@@ -34,14 +34,14 @@ class Topbar extends Component {
   };
 
   handleRedirectHome = () => {
-    const currentUser = getCurrentUser();
+    const currentUser = this.props.currentUser;
 
     if (currentUser.isWasher) {
       this.props.router.push("/washer/assigned");
     } else if (currentUser.isDriver) {
       this.props.router.push("/driver/available");
     } else if (currentUser.isAdmin) {
-      // return <Redirect push to="/placeholder" />;
+      this.props.router.push("/admin/placeholder");
     } else {
       this.props.router.push("/user/dashboard");
     }

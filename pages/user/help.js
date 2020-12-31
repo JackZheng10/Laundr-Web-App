@@ -46,10 +46,10 @@ class Help extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, fetch_SSR } = this.props;
 
     return (
-      <Layout>
+      <Layout currentUser={fetch_SSR.success ? fetch_SSR.userInfo : null}>
         <Grid
           container
           direction="column"

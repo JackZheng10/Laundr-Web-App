@@ -120,7 +120,7 @@ class AssignedDashboard extends Component {
     const { classes, fetch_SSR } = this.props;
 
     return (
-      <Layout>
+      <Layout currentUser={fetch_SSR.success ? fetch_SSR.userInfo : null}>
         <Grid
           container
           spacing={0}

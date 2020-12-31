@@ -98,7 +98,7 @@ class Help extends Component {
               variant="contained"
               className={classes.mainButton}
               onClick={() => {
-                alert("In progress");
+                window.open("https://m.me/laundrofficial");
               }}
             >
               Live Chat

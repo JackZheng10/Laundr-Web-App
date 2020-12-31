@@ -196,3 +196,32 @@ export const fetchOrderHistory_SSR = async (context, currentUser) => {
     };
   }
 };
+
+//account - details
+export const fetchCardDetails_SSR = async (context, currentUser) => {
+  try {
+    const response = await axios.post(
+      `${baseURL}/api/stripe/getCardDetails`,
+      {
+        paymentID: currentUser.stripe.regPaymentID,
+      },
+      {
+        headers: context.req.headers.cookie
+          ? { cookie: context.req.headers.cookie }
+          : null,
+      }
+    );
+
+    return response;
+  } catch (error) {
+    showConsoleError("fetching card details", error);
+    return {
+      data: {
+        success: false,
+        message: caughtError("fetching card details", error, 99),
+      },
+    };
+  }
+};
+
+//when doing authorization, pay attention to if youre using userid from body/query or the authentication part...

@@ -101,6 +101,8 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 doing .add(something) changes the object itself with moment
 */
 
+//todo: limit input length for text boxes!
+
 const baseURL =
   process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
 

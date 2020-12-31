@@ -10,6 +10,16 @@ import {
   TopBorderBlue,
   BottomBorderBlue,
 } from "../../src/utility/borders";
+import { GetServerSideProps } from "next";
+import { withRouter } from "next/router";
+import {
+  getExistingOrder_SSR,
+  getCurrentUser_SSR,
+  fetchOrders_WA_SSR,
+  fetchOrders_DAV_SSR,
+  fetchCardDetails_SSR,
+} from "../../src/helpers/ssr";
+import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
@@ -17,106 +27,34 @@ import AccountInfo from "../../src/components/Account/Details/AccountInfo";
 import PaymentInfo from "../../src/components/Account/Details/PaymentInfo";
 import detailsStyles from "../../src/styles/User/Account/detailsStyles";
 
-//todo: revise data fetching flow here
-//todo: fetch everything you need here.
-//todo: reorganize the styles
+//todo: need to show payment info to only some users? (not admins/drivers/washers?)
 
 class Details extends Component {
   static contextType = MainAppContext;
 
-  state = {
-    accountInfoComponent: null,
-    paymentInfoComponent: null,
-    card: {
-      brand: "N/A",
-      expMonth: "N/A",
-      expYear: "N/A",
-      lastFour: "N/A",
-    },
-  };
+  // componentDidMount = async () => {
+  //   let currentUser = getCurrentUser();
+  //   await updateToken(currentUser.email);
+  //   currentUser = getCurrentUser();
 
+  //   //todo: good opportunity to learn promises.all and promises. finish both as the promise!
+  //   this.fetchAccountInfo(currentUser);
+  //   this.fetchPaymentInfo(currentUser);
+  // };
   componentDidMount = async () => {
-    let currentUser = getCurrentUser();
-    await updateToken(currentUser.email);
-    currentUser = getCurrentUser();
+    const { fetch_SSR } = this.props;
 
-    //todo: good opportunity to learn promises.all and promises. finish both as the promise!
-    this.fetchAccountInfo(currentUser);
-    this.fetchPaymentInfo(currentUser);
+    if (!fetch_SSR.success) {
+      this.context.showAlert(fetch_SSR.message);
+    }
   };
 
-  fetchAccountInfo = async (currentUser) => {
-    this.setState({
-      accountInfoComponent: <AccountInfo user={currentUser} />,
-    });
-  };
-
-  fetchPaymentInfo = async (currentUser, updateUser) => {
-    if (updateUser) {
-      await updateToken(currentUser.email);
-      currentUser = getCurrentUser();
-    }
-
-    const shouldRenderPayment = this.shouldRenderPayment(currentUser);
-
-    //if payment method should be rendered
-    if (shouldRenderPayment) {
-      const regPaymentID = currentUser.stripe.regPaymentID;
-
-      //if they have a payment method, fetch the info
-      if (regPaymentID !== "N/A") {
-        try {
-          const response = await axios.post("/api/stripe/getCardDetails", {
-            paymentID: regPaymentID,
-          });
-
-          if (response.data.success) {
-            const card = response.data.message.card;
-
-            const cardInfo = {
-              brand: card.brand.toUpperCase(),
-              expMonth: card.exp_month,
-              expYear: card.exp_year,
-              lastFour: card.last4,
-            };
-
-            this.setState({
-              card: cardInfo,
-            });
-          } else {
-            this.context.showAlert(response.data.message);
-          }
-        } catch (error) {
-          showConsoleError("getting card details", error);
-          this.context.showAlert(
-            caughtError("getting card details", error, 99)
-          );
-        }
-      }
-    }
-
-    this.setState({
-      paymentInfoComponent: shouldRenderPayment && (
-        <PaymentInfo
-          user={currentUser}
-          card={this.state.card}
-          fetchPaymentInfo={this.fetchPaymentInfo}
-        />
-      ),
-    });
-  };
-
-  shouldRenderPayment = (currentUser) => {
-    console.log(currentUser);
-    if (currentUser.isWasher || currentUser.isDriver || currentUser.isAdmin) {
-      return false;
-    }
-
-    return true;
+  fetchPaymentInfo = () => {
+    window.location.reload();
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, fetch_SSR } = this.props;
 
     return (
       <Layout>
@@ -152,8 +90,20 @@ class Details extends Component {
             justify="center"
             alignItems="center" /*main page column*/
           >
-            <Grid item>{this.state.accountInfoComponent}</Grid>
-            <Grid item>{this.state.paymentInfoComponent}</Grid>
+            <Grid item>
+              {fetch_SSR.success ? (
+                <AccountInfo user={fetch_SSR.userInfo} />
+              ) : null}
+            </Grid>
+            <Grid item>
+              {fetch_SSR.success ? (
+                <PaymentInfo
+                  user={fetch_SSR.userInfo}
+                  card={fetch_SSR.cardInfo}
+                  fetchPaymentInfo={this.fetchPaymentInfo}
+                />
+              ) : null}
+            </Grid>
           </Grid>
         </div>
       </Layout>
@@ -165,4 +115,89 @@ Details.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(detailsStyles)(Details);
+export async function getServerSideProps(context) {
+  //fetch current user
+  const response_one = await getCurrentUser_SSR(context);
+
+  //check for redirect needed due to invalid session or error in fetching
+  if (!response_one.data.success) {
+    if (response_one.data.redirect) {
+      return {
+        redirect: {
+          destination: response_one.data.message,
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        props: {
+          fetch_SSR: {
+            success: false,
+            message: response_one.data.message,
+          },
+        },
+      };
+    }
+  }
+
+  //any user can access this page
+  const currentUser = response_one.data.message;
+
+  //fetch card if user has one
+  let cardInfo;
+
+  if (currentUser.stripe.regPaymentID != "N/A") {
+    const response_two = await fetchCardDetails_SSR(context, currentUser);
+
+    //check for error in fetching (***will throw an error if payment method ID is incorrect)
+    if (!response_two.data.success) {
+      if (response_two.data.redirect) {
+        return {
+          redirect: {
+            destination: response_two.data.message,
+            permanent: false,
+          },
+        };
+      } else {
+        return {
+          props: {
+            fetch_SSR: {
+              success: false,
+              message: response_two.data.message,
+            },
+          },
+        };
+      }
+    } else {
+      //if successful, return the correct card info
+      const card = response_two.data.message.card;
+
+      cardInfo = {
+        brand: card.brand.toUpperCase(),
+        expMonth: card.exp_month,
+        expYear: card.exp_year,
+        lastFour: card.last4,
+      };
+    }
+  } else {
+    //no card fetch needed? just return a default dummy card instead
+    cardInfo = {
+      brand: "N/A",
+      expMonth: "N/A",
+      expYear: "N/A",
+      lastFour: "N/A",
+    };
+  }
+
+  return {
+    props: {
+      fetch_SSR: {
+        success: true,
+        userInfo: currentUser,
+        cardInfo: cardInfo,
+      },
+    },
+  };
+}
+
+export default compose(withRouter, withStyles(detailsStyles))(Details);

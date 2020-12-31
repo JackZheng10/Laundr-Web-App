@@ -29,6 +29,8 @@ import paymentInfoStyles from "../../../styles/User/Account/components/paymentIn
 //todo: rerender after stored card (updating child state does not rerender parent)
 //todo: in .catch errors in server, specify also what went wrong!
 
+//todo: use callback with alert for order fetching so you CAN refresh the page? but prob not since its a snackbar...
+
 const stripeKEY =
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ||
   require("../../../config").stripe.publishableKEY;
@@ -67,8 +69,6 @@ class PaymentInfo extends Component {
   };
 
   handleSetupIntent = async () => {
-    let secret = "";
-
     try {
       const currentUser = this.props.user;
 
@@ -80,21 +80,25 @@ class PaymentInfo extends Component {
         { withCredentials: true }
       );
 
-      if (response.data.success) {
-        secret = response.data.message;
-      } else {
-        this.context.showAlert(response.data.message);
-      }
+      return response;
+      // if (response.data.success) {
+      //   secret = response.data.message;
+      // } else {
+      //   return this.context.showAlert(response.data.message);
+      // }
     } catch (error) {
       showConsoleError("creating setup intent", error);
-      this.context.showAlert(caughtError("creating setup intent", error, 99));
+      return {
+        data: {
+          success: false,
+          message: caughtError("creating setup intent", error, 99),
+        },
+      };
     }
-
-    return secret;
   };
 
   handleCardSetup = async () => {
-    const { stripe, elements, fetchPaymentInfo } = this.props;
+    const { stripe, elements } = this.props;
 
     if (!stripe || !elements) {
       // Stripe.js has not yet loaded.
@@ -103,11 +107,24 @@ class PaymentInfo extends Component {
     }
 
     //create a setup intent
-    const secret = await this.handleSetupIntent();
+    const response = await this.handleSetupIntent();
+    let secret;
+
+    //check for error in creating setup intent
+    if (!response.data.success) {
+      if (response.data.redirect) {
+        return this.props.router.push(response.data.message);
+      } else {
+        return this.context.showAlert(response.data.message);
+      }
+    } else {
+      secret = response.data.message;
+    }
+
     const currentUser = this.props.user;
     const name = `${currentUser.fname} ${currentUser.lname}`;
 
-    //confirm card setup with the secret
+    //confirm card setup with the secret from setup intent
     const result = await stripe.confirmCardSetup(secret, {
       payment_method: {
         card: elements.getElement(CardElement),
@@ -117,42 +134,46 @@ class PaymentInfo extends Component {
       },
     });
 
+    //check for error in card setup
     if (result.error) {
       // Display result.error.message in your UI.
-      this.context.showAlert(
-        caughtError("setting payment method", result.error.message, 99)
+      return this.context.showAlert(
+        caughtError("confirming payment method", result.error.message, 99)
       );
     } else {
       // The setup has succeeded. Display a success message and send
       // result.setupIntent.payment_method to your server to save the
       // card to a Customer
-      try {
-        const response = await axios.post(
-          "/api/stripe/setRegPaymentID",
-          {
-            email: currentUser.email,
-            regPaymentID: result.setupIntent.payment_method,
-          },
-          { withCredentials: true }
-        );
+      await this.handleUpdatePaymentID(result, currentUser);
+    }
+  };
 
-        if (response.data.success) {
-          await updateToken(currentUser.email);
-          this.setState(
-            { showPaymentUpdate: !this.state.showPaymentUpdate },
-            () => {
-              this.context.showAlert(response.data.message, () => {
-                fetchPaymentInfo(currentUser, true);
-              });
-            }
-          );
-        } else {
-          this.context.showAlert(response.data.message);
-        }
-      } catch (error) {
-        showConsoleError("updating card", error);
-        this.context.showAlert(caughtError("updating card", error, 99));
+  handleUpdatePaymentID = async (result) => {
+    //update the regPaymentID in database
+    try {
+      const response = await axios.post(
+        "/api/stripe/setRegPaymentID",
+        {
+          regPaymentID: result.setupIntent.payment_method,
+        },
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        this.setState(
+          { showPaymentUpdate: !this.state.showPaymentUpdate },
+          () => {
+            this.context.showAlert(response.data.message, () => {
+              this.props.fetchPaymentInfo();
+            });
+          }
+        );
+      } else {
+        this.context.showAlert(response.data.message);
       }
+    } catch (error) {
+      showConsoleError("updating payment ID", error);
+      this.context.showAlert(caughtError("updating payment ID", error, 99));
     }
   };
 

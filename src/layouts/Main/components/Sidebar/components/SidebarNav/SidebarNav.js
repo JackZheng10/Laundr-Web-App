@@ -4,6 +4,7 @@ import React, { useState, useContext } from "react";
 import { List, ListItem, Button, Hidden } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useRouter } from "next/router";
+import { handleLogout } from "../../../../../../helpers/session";
 import clsx from "clsx";
 import PropTypes from "prop-types";
 import Link from "next/link";
@@ -71,11 +72,18 @@ const SidebarNav = (props) => {
     return "#6b6b6b";
   };
 
-  const handleLogout = () => {
-    //will change when cookies
-    localStorage.clear();
+  const logout = async () => {
+    const response = await handleLogout();
 
-    router.push("/login");
+    if (!response.data.success) {
+      if (response.data.redirect) {
+        router.push(response.data.message);
+      } else {
+        context.showAlert(response.data.message);
+      }
+    } else {
+      router.push("/login");
+    }
   };
 
   return loading ? null : (
@@ -105,10 +113,7 @@ const SidebarNav = (props) => {
             style={{ backgroundColor: "#FFB600", color: "white" }}
             startIcon={<InputIcon />}
             onClick={() => {
-              context.showAlert_C(
-                "Are you sure you want to sign out?",
-                handleLogout
-              );
+              context.showAlert_C("Are you sure you want to sign out?", logout);
             }}
           >
             Sign Out

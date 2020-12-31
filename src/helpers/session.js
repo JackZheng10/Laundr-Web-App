@@ -9,7 +9,9 @@ const baseURL =
 //usage: x = getCurrentUser, x.success
 export const getCurrentUser = async () => {
   try {
-    const response = await axios.get("/api/user/getCurrentUser");
+    const response = await axios.get("/api/user/getCurrentUser", {
+      withCredentials: true,
+    });
 
     return response;
   } catch (error) {
@@ -27,4 +29,20 @@ export const updateToken = () => {
   //deprecated
 };
 
-export const handleLogout = async () => {};
+export const handleLogout = async () => {
+  try {
+    const response = await axios.post("/api/user/logout", {
+      withCredentials: true,
+    });
+
+    return response;
+  } catch (error) {
+    showConsoleError("fetching current user", error);
+    return {
+      data: {
+        success: false,
+        message: caughtError("fetching current user", error, 99),
+      },
+    };
+  }
+};

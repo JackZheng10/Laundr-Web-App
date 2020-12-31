@@ -136,11 +136,15 @@ class AcceptedDashboard extends Component {
       const userID = order.userInfo.userID;
       const orderID = order.orderInfo.orderID;
 
-      const response = await axios.post("/api/stripe/chargeCustomer", {
-        weight: this.state.weight,
-        userID: userID,
-        orderID: orderID,
-      });
+      const response = await axios.post(
+        "/api/stripe/chargeCustomer",
+        {
+          weight: this.state.weight,
+          userID: userID,
+          orderID: orderID,
+        },
+        { withCredentials: true }
+      );
 
       return response;
     } catch (error) {
@@ -158,10 +162,14 @@ class AcceptedDashboard extends Component {
     try {
       const orderID = order.orderInfo.orderID;
 
-      const response = await axios.put("/api/driver/updateOrderWeight", {
-        weight: this.state.weight,
-        orderID,
-      });
+      const response = await axios.put(
+        "/api/driver/updateOrderWeight",
+        {
+          weight: this.state.weight,
+          orderID,
+        },
+        { withCredentials: true }
+      );
 
       return response;
     } catch (error) {
@@ -179,9 +187,13 @@ class AcceptedDashboard extends Component {
     try {
       const orderID = order.orderInfo.orderID;
 
-      const response = await axios.put("/api/driver/setWasherDelivered", {
-        orderID,
-      });
+      const response = await axios.put(
+        "/api/driver/setWasherDelivered",
+        {
+          orderID,
+        },
+        { withCredentials: true }
+      );
 
       return response;
     } catch (error) {
@@ -203,9 +215,13 @@ class AcceptedDashboard extends Component {
     try {
       const orderID = order.orderInfo.orderID;
 
-      const response = await axios.put("/api/driver/setUserDelivered", {
-        orderID,
-      });
+      const response = await axios.put(
+        "/api/driver/setUserDelivered",
+        {
+          orderID,
+        },
+        { withCredentials: true }
+      );
 
       return response;
     } catch (error) {

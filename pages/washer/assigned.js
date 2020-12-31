@@ -100,9 +100,13 @@ class AssignedDashboard extends Component {
     try {
       const orderID = order.orderInfo.orderID;
 
-      const response = await axios.put("/api/washer/setWasherDone", {
-        orderID,
-      });
+      const response = await axios.put(
+        "/api/washer/setWasherDone",
+        {
+          orderID,
+        },
+        { withCredentials: true }
+      );
 
       return response;
     } catch (error) {

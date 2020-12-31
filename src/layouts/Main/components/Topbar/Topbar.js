@@ -13,7 +13,7 @@ import {
   Button,
 } from "@material-ui/core";
 import { withRouter } from "next/router";
-import { getCurrentUser } from "../../../../helpers/session";
+import { getCurrentUser, handleLogout } from "../../../../helpers/session";
 import MainAppContext from "../../../../contexts/MainAppContext";
 import compose from "recompose/compose";
 import MenuIcon from "@material-ui/icons/Menu";
@@ -26,17 +26,26 @@ import topbarStyles from "../../../../styles/layouts/Main/components/Topbar/topb
 class Topbar extends Component {
   static contextType = MainAppContext;
 
-  handleLogout = () => {
-    //will change when cookies
-    localStorage.clear();
+  handleLogout = async () => {
+    const response = await handleLogout();
 
-    this.props.router.push("/login");
+    if (!response.data.success) {
+      if (response.data.redirect) {
+        this.props.router.push(response.data.message);
+      } else {
+        this.context.showAlert(response.data.message);
+      }
+    } else {
+      this.props.router.push("/login");
+    }
   };
 
   handleRedirectHome = () => {
     const currentUser = this.props.currentUser;
 
-    if (currentUser.isWasher) {
+    if (!currentUser) {
+      this.props.router.push("/login");
+    } else if (currentUser.isWasher) {
       this.props.router.push("/washer/assigned");
     } else if (currentUser.isDriver) {
       this.props.router.push("/driver/available");

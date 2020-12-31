@@ -37,10 +37,14 @@ class SubscriptionCard extends Component {
     try {
       const { planName, currentUser } = this.props;
 
-      const response = await axios.post("/api/stripe/createCheckoutSession", {
-        type: planName,
-        customerID: currentUser.stripe.customerID,
-      });
+      const response = await axios.post(
+        "/api/stripe/createCheckoutSession",
+        {
+          type: planName,
+          customerID: currentUser.stripe.customerID,
+        },
+        { withCredentials: true }
+      );
 
       if (response.data.success) {
         const sessionId = response.data.message;

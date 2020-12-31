@@ -72,9 +72,13 @@ class PaymentInfo extends Component {
     try {
       const currentUser = this.props.user;
 
-      const response = await axios.post("/api/stripe/createSetupIntent", {
-        customerID: currentUser.stripe.customerID,
-      });
+      const response = await axios.post(
+        "/api/stripe/createSetupIntent",
+        {
+          customerID: currentUser.stripe.customerID,
+        },
+        { withCredentials: true }
+      );
 
       if (response.data.success) {
         secret = response.data.message;
@@ -123,10 +127,14 @@ class PaymentInfo extends Component {
       // result.setupIntent.payment_method to your server to save the
       // card to a Customer
       try {
-        const response = await axios.post("/api/stripe/setRegPaymentID", {
-          email: currentUser.email,
-          regPaymentID: result.setupIntent.payment_method,
-        });
+        const response = await axios.post(
+          "/api/stripe/setRegPaymentID",
+          {
+            email: currentUser.email,
+            regPaymentID: result.setupIntent.payment_method,
+          },
+          { withCredentials: true }
+        );
 
         if (response.data.success) {
           await updateToken(currentUser.email);

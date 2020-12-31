@@ -166,21 +166,25 @@ class NewOrder extends Component {
 
   handlePlaceOrder = async () => {
     try {
-      const response = await axios.post("/api/order/placeOrder", {
-        userID: this.props.currentUser.userID,
-        coupon: "placeholder",
-        scented: this.state.scented,
-        delicates: this.state.delicates,
-        separate: this.state.separate,
-        towelsSheets: this.state.towelsSheets,
-        washerPrefs: this.evaluateWhitespace(this.state.washerPreferences),
-        address: this.state.address,
-        addressPrefs: this.evaluateWhitespace(this.state.addressPreferences),
-        loads: this.state.loads,
-        pickupDate: this.state.date,
-        pickupTime: this.state.formattedTime,
-        created: new Date(),
-      });
+      const response = await axios.post(
+        "/api/order/placeOrder",
+        {
+          userID: this.props.currentUser.userID,
+          coupon: "placeholder",
+          scented: this.state.scented,
+          delicates: this.state.delicates,
+          separate: this.state.separate,
+          towelsSheets: this.state.towelsSheets,
+          washerPrefs: this.evaluateWhitespace(this.state.washerPreferences),
+          address: this.state.address,
+          addressPrefs: this.evaluateWhitespace(this.state.addressPreferences),
+          loads: this.state.loads,
+          pickupDate: this.state.date,
+          pickupTime: this.state.formattedTime,
+          created: new Date(),
+        },
+        { withCredentials: true }
+      );
 
       return response;
     } catch (error) {

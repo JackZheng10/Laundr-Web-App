@@ -99,9 +99,13 @@ class AvailableDashboard extends Component {
     try {
       const orderID = order.orderInfo.orderID;
 
-      const response = await axios.put("/api/driver/assignOrderPickup", {
-        orderID,
-      });
+      const response = await axios.put(
+        "/api/driver/assignOrderPickup",
+        {
+          orderID,
+        },
+        { withCredentials: true }
+      );
 
       return response;
     } catch (error) {
@@ -119,9 +123,13 @@ class AvailableDashboard extends Component {
     try {
       const orderID = order.orderInfo.orderID;
 
-      const response = await axios.put("/api/driver/assignOrderDropoff", {
-        orderID,
-      });
+      const response = await axios.put(
+        "/api/driver/assignOrderDropoff",
+        {
+          orderID,
+        },
+        { withCredentials: true }
+      );
 
       return response;
     } catch (error) {

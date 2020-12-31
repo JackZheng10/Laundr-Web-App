@@ -104,11 +104,15 @@ class OrderStatus extends Component {
 
   handleOrderCancel = async (order) => {
     try {
-      const response = await axios.delete("/api/order/cancelOrder", {
-        params: {
-          orderID: order.orderInfo.orderID,
+      const response = await axios.delete(
+        "/api/order/cancelOrder",
+        {
+          params: {
+            orderID: order.orderInfo.orderID,
+          },
         },
-      });
+        { withCredentials: true }
+      );
 
       if (!response.data.success && response.data.redirect) {
         this.props.router.push(response.data.message);
@@ -127,11 +131,15 @@ class OrderStatus extends Component {
   handleSetDropoffTime = async (order) => {
     if (this.handleTimeCheck(order.orderInfo.weight, order.pickupInfo)) {
       try {
-        const response = await axios.put("/api/order/setDropoff", {
-          orderID: order.orderInfo.orderID,
-          date: this.state.date,
-          time: this.state.formattedTime,
-        });
+        const response = await axios.put(
+          "/api/order/setDropoff",
+          {
+            orderID: order.orderInfo.orderID,
+            date: this.state.date,
+            time: this.state.formattedTime,
+          },
+          { withCredentials: true }
+        );
 
         this.setState({ showDropoffDialog: false }, () => {
           if (!response.data.success && response.data.redirect) {
@@ -266,9 +274,13 @@ class OrderStatus extends Component {
 
   handleConfirmReceived = async (order) => {
     try {
-      const response = await axios.put("/api/order/confirmReceived", {
-        orderID: order.orderInfo.orderID,
-      });
+      const response = await axios.put(
+        "/api/order/confirmReceived",
+        {
+          orderID: order.orderInfo.orderID,
+        },
+        { withCredentials: true }
+      );
 
       if (response.data.success) {
         this.props.fetchOrderInfo();

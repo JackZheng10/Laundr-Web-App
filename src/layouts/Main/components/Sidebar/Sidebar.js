@@ -93,7 +93,9 @@ const adminPages = [
 
 class Sidebar extends Component {
   handlePagesConfig = (currentUser) => {
-    if (currentUser.isWasher) {
+    if (!currentUser) {
+      return userPages;
+    } else if (currentUser.isWasher) {
       return washerPages;
     } else if (currentUser.isDriver) {
       return driverPages;
@@ -124,7 +126,7 @@ class Sidebar extends Component {
         variant={variant}
       >
         <div {...rest} className={clsx(classes.root, className)}>
-          <Profile />
+          <Profile currentUser={currentUser} />
           <Divider className={classes.divider} />
           <SidebarNav
             className={classes.nav}

@@ -10,7 +10,6 @@ import {
 import PropTypes from "prop-types";
 import TooltipButton from "../../../../Driver/OrderTable/components/TooltipButton";
 import orderCellStyles from "../../../../../styles/Driver/components/OrderTable/components/orderCellStyles";
-import { getCurrentUser } from "../../../../../helpers/session";
 
 const DateTimeCell = (order) => {
   return (
@@ -234,18 +233,17 @@ const StatusCellWasher = (order) => {
   );
 };
 
-const getDriverStages = (order) => {
-  const currentUser = getCurrentUser();
-  const pickupEmail = order.pickupInfo.driverEmail;
-  const dropoffEmail = order.dropoffInfo.driverEmail;
+const getDriverStages = (order, currentUser) => {
+  const pickupUserID = order.pickupInfo.userID;
+  const dropoffUserID = order.dropoffInfo.userID;
 
   let stages = "";
 
-  if (pickupEmail === currentUser.email) {
+  if (pickupUserID === currentUser.userID) {
     stages += "Pickup, ";
   }
 
-  if (dropoffEmail === currentUser.email) {
+  if (dropoffUserID === currentUser.userID) {
     stages += "Dropoff, ";
   }
 
@@ -254,7 +252,7 @@ const getDriverStages = (order) => {
 };
 
 const OrderCell = (props) => {
-  const { classes, order, config } = props;
+  const { classes, order, config, currentUser } = props;
 
   const renderCellConfig = (config) => {
     switch (config) {
@@ -271,7 +269,9 @@ const OrderCell = (props) => {
             {TooltipCell(order.pickupInfo.prefs, classes)}
             {WeightCell(order)}
             <TableCell>
-              <Typography variant="body1">{getDriverStages(order)}</Typography>
+              <Typography variant="body1">
+                {getDriverStages(order, currentUser)}
+              </Typography>
             </TableCell>
             {StatusCellDriver(order)}
           </React.Fragment>

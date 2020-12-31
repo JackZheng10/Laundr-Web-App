@@ -158,3 +158,41 @@ export const fetchOrders_DAC_SSR = async (context, currentUser) => {
     };
   }
 };
+
+//account - history
+export const fetchOrderHistory_SSR = async (context, currentUser) => {
+  try {
+    let filter;
+
+    if (currentUser.isDriver) {
+      filter = "orderHistoryDriver";
+    } else if (currentUser.isWasher) {
+      filter = "orderHistoryWasher";
+    } else {
+      filter = "orderHistoryUser";
+    }
+
+    const response = await axios.post(
+      `${baseURL}/api/order/fetchOrders`,
+      {
+        filter: filter,
+        userID: currentUser.userID,
+      },
+      {
+        headers: context.req.headers.cookie
+          ? { cookie: context.req.headers.cookie }
+          : null,
+      }
+    );
+
+    return response;
+  } catch (error) {
+    showConsoleError("fetching orders", error);
+    return {
+      data: {
+        success: false,
+        message: caughtError("fetching orders", error, 99),
+      },
+    };
+  }
+};

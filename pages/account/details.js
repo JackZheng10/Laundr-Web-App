@@ -32,15 +32,6 @@ import detailsStyles from "../../src/styles/User/Account/detailsStyles";
 class Details extends Component {
   static contextType = MainAppContext;
 
-  // componentDidMount = async () => {
-  //   let currentUser = getCurrentUser();
-  //   await updateToken(currentUser.email);
-  //   currentUser = getCurrentUser();
-
-  //   //todo: good opportunity to learn promises.all and promises. finish both as the promise!
-  //   this.fetchAccountInfo(currentUser);
-  //   this.fetchPaymentInfo(currentUser);
-  // };
   componentDidMount = async () => {
     const { fetch_SSR } = this.props;
 
@@ -57,7 +48,7 @@ class Details extends Component {
     const { classes, fetch_SSR } = this.props;
 
     return (
-      <Layout>
+      <Layout currentUser={fetch_SSR.success ? fetch_SSR.userInfo : null}>
         <Grid
           container
           spacing={0}

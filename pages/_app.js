@@ -51,6 +51,7 @@ const MyApp = (props) => {
   const isSidebarPage = () => {
     if (typeof window !== "undefined") {
       const path = window.location.href.split("/");
+
       if (path[3] === "login" || path[3] === "register") {
         return false;
       }
@@ -200,7 +201,7 @@ const MyApp = (props) => {
               alignItems: "center",
               position: "fixed",
               // top: "50%",
-              left: isDesktop ? "52%" : "",
+              left: isDesktop && isSidebarPage() ? "52%" : "",
             },
           }}
           style={{

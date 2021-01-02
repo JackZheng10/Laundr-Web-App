@@ -74,15 +74,22 @@ class Login extends Component {
     this.setState({ [property]: value });
   };
 
+  // loadingTest = (event) => {
+  //   event.preventDefault();
+  //   this.context.showLoading();
+  // };
+
   handleLogin = async (event) => {
     event.preventDefault();
 
     if (this.handleInputValidation()) {
       try {
+        this.context.showLoading();
         const response = await axios.post("/api/user/login", {
           email: this.state.email.toLowerCase(),
           password: this.state.password,
         });
+        this.context.hideLoading();
 
         if (response.data.success) {
           this.props.router.push(response.data.message);
@@ -191,44 +198,46 @@ class Login extends Component {
                 </Typography>
               </Paper>
               <Grid item>
-                <TextField
-                  variant="filled"
-                  margin="normal"
-                  fullWidth
-                  label="Email Address"
-                  autoComplete="email"
-                  error={this.state.emailError}
-                  helperText={this.state.emailErrorMsg}
-                  onChange={(event) => {
-                    this.handleInputChange("email", event.target.value);
-                  }}
-                  value={this.state.email}
-                  className={classes.coloredField}
-                />
-                <TextField
-                  variant="filled"
-                  margin="normal"
-                  fullWidth
-                  label="Password"
-                  type="password"
-                  autoComplete="current-password"
-                  error={this.state.passwordError}
-                  helperText={this.state.passwordErrorMsg}
-                  onChange={(event) => {
-                    this.handleInputChange("password", event.target.value);
-                  }}
-                  value={this.state.password}
-                  classes={{ root: classes.coloredField }}
-                />
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  className={classes.submit}
-                  onClick={this.handleLogin}
-                >
-                  Sign In
-                </Button>
+                <form>
+                  <TextField
+                    variant="filled"
+                    margin="normal"
+                    fullWidth
+                    label="Email Address"
+                    autoComplete="email"
+                    error={this.state.emailError}
+                    helperText={this.state.emailErrorMsg}
+                    onChange={(event) => {
+                      this.handleInputChange("email", event.target.value);
+                    }}
+                    value={this.state.email}
+                    className={classes.coloredField}
+                  />
+                  <TextField
+                    variant="filled"
+                    margin="normal"
+                    fullWidth
+                    label="Password"
+                    type="password"
+                    autoComplete="current-password"
+                    error={this.state.passwordError}
+                    helperText={this.state.passwordErrorMsg}
+                    onChange={(event) => {
+                      this.handleInputChange("password", event.target.value);
+                    }}
+                    value={this.state.password}
+                    classes={{ root: classes.coloredField }}
+                  />
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    className={classes.submit}
+                    onClick={this.handleLogin}
+                  >
+                    Sign In
+                  </Button>
+                </form>
                 <Grid container>
                   <Grid item xs style={{ paddingBottom: 10 }}>
                     <Link

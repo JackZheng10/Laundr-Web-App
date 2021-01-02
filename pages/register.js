@@ -615,7 +615,13 @@ class Register extends Component {
                     />
                   </Grid>
                   <Grid align="center" item xs={12}>
-                    <Paper style={{ padding: 10 }}>
+                    <Paper
+                      style={{
+                        paddingLeft: 15,
+                        paddingTop: 10,
+                        paddingBottom: 10,
+                      }}
+                    >
                       <FormControlLabel
                         control={
                           <Checkbox

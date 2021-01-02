@@ -10,7 +10,6 @@ const baseURL =
 export const getCurrentUser_SSR = async (context) => {
   try {
     const response = await axios.get(`${baseURL}/api/user/getCurrentUser`, {
-      //headers: { cookie: context.req ? context.req.headers.cookie : "" }, //works for me
       headers: context.req.headers.cookie
         ? { cookie: context.req.headers.cookie }
         : null,

@@ -189,7 +189,7 @@ const MyApp = (props) => {
             </Button>
           </DialogActions>
         </Dialog>
-        {/*LOADING DIALOG (for component pages, not fullscreen)*/}
+        {/*LOADING DIALOG (for component pages, not fullscreen like login/register. todo: adjust for it should be ez)*/}
         <Dialog
           open={showLoadingDialog}
           PaperProps={{
@@ -215,9 +215,11 @@ const MyApp = (props) => {
               alignItems="center"
             >
               <Grid item>
-                <Typography gutterBottom>Loading...</Typography>
+                <Typography style={{ fontWeight: "bold" }} gutterBottom>
+                  Loading...
+                </Typography>
               </Grid>
-              <Grid item>
+              <Grid item style={{ marginBottom: 10 }}>
                 <CircularProgress
                   size={50}
                   thickness={5}

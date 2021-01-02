@@ -458,6 +458,11 @@ export async function getServerSideProps(context) {
     }
   }
 
+  // const newCookie = response_one.headers["set-cookie"];
+
+  // console.log("COOKIE: ", newCookie);
+  // context.res.setHeader("Set-Cookie", newCookie);
+
   //finally, return info for fetched user + order info, available via props
   return {
     props: {

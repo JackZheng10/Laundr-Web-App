@@ -43,9 +43,7 @@ class SubscriptionStatus extends Component {
 
       const response = await axios.post(
         "/api/stripe/createSelfPortal",
-        {
-          customerID: currentUser.stripe.customerID,
-        },
+        {},
         { withCredentials: true }
       );
 

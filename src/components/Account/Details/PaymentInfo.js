@@ -74,10 +74,10 @@ class PaymentInfo extends Component {
 
       const response = await axios.post(
         "/api/stripe/createSetupIntent",
+        {},
         {
-          customerID: currentUser.stripe.customerID,
-        },
-        { withCredentials: true }
+          withCredentials: true,
+        }
       );
 
       return response;

@@ -41,7 +41,6 @@ class SubscriptionCard extends Component {
         "/api/stripe/createCheckoutSession",
         {
           type: planName,
-          customerID: currentUser.stripe.customerID,
         },
         { withCredentials: true }
       );

@@ -195,9 +195,7 @@ export const fetchCardDetails_SSR = async (context, currentUser) => {
   try {
     const response = await axios.post(
       `${baseURL}/api/stripe/getCardDetails`,
-      {
-        paymentID: currentUser.stripe.regPaymentID,
-      },
+      {},
       {
         headers: context.req.headers.cookie
           ? { cookie: context.req.headers.cookie }

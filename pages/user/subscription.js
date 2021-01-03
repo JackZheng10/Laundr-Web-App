@@ -101,7 +101,15 @@ class Subscription extends Component {
         <div style={{ position: "relative", marginBottom: 70 }}>
           <BottomBorderBlue />
         </div>
-        {this.renderSubscriptionComponent()}
+        <Grid
+          container
+          spacing={0}
+          direction="row"
+          justify="center"
+          alignItems="center" /*main page column*/
+        >
+          {this.renderSubscriptionComponent()}
+        </Grid>
       </Layout>
     );
   }

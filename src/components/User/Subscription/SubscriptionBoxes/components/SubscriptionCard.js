@@ -82,42 +82,44 @@ class SubscriptionCard extends Component {
 
     return (
       <React.Fragment>
-        <Card className={classes.root} elevation={5}>
-          <CardHeader
-            title={planName}
-            titleTypographyProps={{
-              variant: "h3",
-              style: {
-                color: "white",
-                textAlign: "center",
-              },
-            }}
-            className={classes.cardHeader}
-          />
-          <CardMedia className={classes.media} image={image} />
-          <CardContent style={{ textAlign: "center" }}>
-            <Typography variant="h4" gutterBottom>
-              {priceText}
-            </Typography>
-            <Typography variant="body1" color="textSecondary">
-              {text}
-            </Typography>
-          </CardContent>
-          <Divider />
-          <CardActions
-            style={{ justifyContent: "center" }}
-            className={classes.cardHeader}
-          >
-            <Button
-              size="medium"
-              variant="contained"
-              className={classes.mainButton}
-              onClick={this.handlePurchase}
+        <div className={classes.layout}>
+          <Card className={classes.root} elevation={5}>
+            <CardHeader
+              title={planName}
+              titleTypographyProps={{
+                variant: "h3",
+                style: {
+                  color: "white",
+                  textAlign: "center",
+                },
+              }}
+              className={classes.cardHeader}
+            />
+            <CardMedia className={classes.media} image={image} />
+            <CardContent style={{ textAlign: "center" }}>
+              <Typography variant="h4" gutterBottom>
+                {priceText}
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                {text}
+              </Typography>
+            </CardContent>
+            <Divider />
+            <CardActions
+              style={{ justifyContent: "center" }}
+              className={classes.cardHeader}
             >
-              Purchase
-            </Button>
-          </CardActions>
-        </Card>
+              <Button
+                size="medium"
+                variant="contained"
+                className={classes.mainButton}
+                onClick={this.handlePurchase}
+              >
+                Purchase
+              </Button>
+            </CardActions>
+          </Card>
+        </div>
       </React.Fragment>
     );
   }

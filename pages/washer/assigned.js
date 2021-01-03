@@ -74,7 +74,6 @@ class AssignedDashboard extends Component {
         "/api/order/fetchOrders",
         {
           filter: "washerAssigned",
-          userID: fetch_SSR.userInfo.userID,
         },
         {
           withCredentials: true,

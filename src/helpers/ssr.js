@@ -34,9 +34,6 @@ export const getExistingOrder_SSR = async (context, currentUser) => {
       headers: context.req.headers.cookie
         ? { cookie: context.req.headers.cookie }
         : null,
-      params: {
-        userID: currentUser.userID,
-      },
     });
 
     if (response.data.success) {
@@ -81,7 +78,6 @@ export const fetchOrders_WA_SSR = async (context, currentUser) => {
       `${baseURL}/api/order/fetchOrders`,
       {
         filter: "washerAssigned",
-        userID: currentUser.userID,
       },
       {
         headers: context.req.headers.cookie
@@ -137,7 +133,6 @@ export const fetchOrders_DAC_SSR = async (context, currentUser) => {
       `${baseURL}/api/order/fetchOrders`,
       {
         filter: "driverAccepted",
-        userID: currentUser.userID,
       },
       {
         headers: context.req.headers.cookie
@@ -175,7 +170,6 @@ export const fetchOrderHistory_SSR = async (context, currentUser) => {
       `${baseURL}/api/order/fetchOrders`,
       {
         filter: filter,
-        userID: currentUser.userID,
       },
       {
         headers: context.req.headers.cookie

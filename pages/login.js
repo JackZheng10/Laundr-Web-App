@@ -85,10 +85,14 @@ class Login extends Component {
     if (this.handleInputValidation()) {
       try {
         this.context.showLoading();
-        const response = await axios.post("/api/user/login", {
-          email: this.state.email.toLowerCase(),
-          password: this.state.password,
-        });
+        const response = await axios.post(
+          "/api/user/login",
+          {
+            email: this.state.email.toLowerCase(),
+            password: this.state.password,
+          },
+          { withCredentials: true }
+        );
         this.context.hideLoading();
 
         if (response.data.success) {

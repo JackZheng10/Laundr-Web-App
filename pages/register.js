@@ -91,36 +91,38 @@ class Register extends Component {
     passwordErrorMsg: "",
     phoneErrorMsg: "",
     tosErrorMsg: "",
-    generatedCode: "N/A", //phone verification
-    enteredCode: "",
+    enteredCode: "", //phone verification
     showVerifyDialog: false,
   };
 
-  handleVerification = async (event) => {
+  handleSendVerification = async (event) => {
     event.preventDefault();
 
     if (this.handleInputValidation()) {
       try {
-        const response = await axios.post("/api/user/checkDuplicate", {
-          email: this.state.email.toLowerCase(),
-          phone: this.state.phone,
-        });
+        const response = await axios.post(
+          "/api/user/checkDuplicate",
+          {
+            email: this.state.email.toLowerCase(),
+            phone: this.state.phone,
+          },
+          { withCredentials: true }
+        );
 
         if (response.data.success) {
           switch (response.data.message) {
             case 0:
               try {
-                const response = await axios.post("/api/twilio/verifyPhone", {
-                  to: this.state.phone,
-                });
+                const response = await axios.post(
+                  "/api/twilio/sendVerification",
+                  {
+                    to: this.state.phone,
+                  },
+                  { withCredentials: true }
+                );
 
                 if (response.data.success) {
-                  this.setState(
-                    { generatedCode: response.data.message },
-                    () => {
-                      this.toggleVerifyDialog();
-                    }
-                  );
+                  this.toggleVerifyDialog();
                 } else {
                   this.context.showAlert(response.data.message);
                 }
@@ -159,6 +161,74 @@ class Register extends Component {
           caughtError("checking for duplicate phone/email", error, 99)
         );
       }
+    }
+  };
+
+  handleCheckVerification = async () => {
+    try {
+      if (this.state.enteredCode.length < 4) {
+        //since codes must be at least 4 long
+        return this.context.showAlert(
+          "Verification code is incorrect. Please try again."
+        );
+      }
+
+      const response = await axios.post(
+        "/api/twilio/checkVerification",
+        {
+          to: this.state.phone,
+          enteredCode: this.state.enteredCode,
+        },
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        this.handleRegister();
+      } else {
+        this.context.showAlert(response.data.message);
+      }
+    } catch (error) {
+      showConsoleError("checking verification code", error);
+      this.context.showAlert(
+        caughtError("checking verification code", error, 99)
+      );
+    }
+  };
+
+  handleRegister = async () => {
+    try {
+      const response = await axios.post(
+        "/api/user/register",
+        {
+          email: this.state.email.toLowerCase(),
+          fname: this.state.fname,
+          lname: this.state.lname,
+          city: this.state.city,
+          phone: this.state.phone,
+          password: this.state.password,
+          referral: this.state.referral,
+        },
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        this.setState(
+          {
+            showVerifyDialog: false,
+            enteredCode: "",
+          },
+          () => {
+            this.context.showAlert(response.data.message, () => {
+              this.props.router.push("/login");
+            });
+          }
+        );
+      } else {
+        this.context.showAlert(response.data.message);
+      }
+    } catch (error) {
+      showConsoleError("registering", error);
+      this.context.showAlert(caughtError("registering", error, 99));
     }
   };
 
@@ -332,61 +402,15 @@ class Register extends Component {
     }
   };
 
-  handleRegister = async () => {
-    if (this.state.generatedCode === this.state.enteredCode) {
-      try {
-        const response = await axios.post("/api/user/register", {
-          email: this.state.email.toLowerCase(),
-          fname: this.state.fname,
-          lname: this.state.lname,
-          city: this.state.city,
-          phone: this.state.phone,
-          password: this.state.password,
-          referral: this.state.referral,
-        });
-
-        if (response.data.success) {
-          this.setState(
-            {
-              showVerifyDialog: false,
-              generatedCode: "N/A",
-              enteredCode: "",
-            },
-            () => {
-              this.context.showAlert(response.data.message, () => {
-                this.props.router.push("/login");
-              });
-            }
-          );
-        } else {
-          this.context.showAlert(response.data.message);
-        }
-      } catch (error) {
-        showConsoleError("registering", error);
-        this.context.showAlert(caughtError("registering", error, 99));
-      }
-    } else {
-      this.context.showAlert(
-        "Verification code is incorrect. Please try again."
-      );
-    }
-  };
-
   handleResendCode = () => {
     alert("work in progress");
   };
 
   toggleVerifyDialog = () => {
-    //to prevent generated code from being reset
-    if (this.state.showVerifyDialog) {
-      this.setState({
-        showVerifyDialog: !this.state.showVerifyDialog,
-        generatedCode: "N/A",
-        enteredCode: "",
-      });
-    } else {
-      this.setState({ showVerifyDialog: !this.state.showVerifyDialog });
-    }
+    this.setState({
+      showVerifyDialog: !this.state.showVerifyDialog,
+      enteredCode: "",
+    });
   };
 
   render() {
@@ -418,8 +442,8 @@ class Register extends Component {
             >
               To finish registering, please enter the verification code we just
               sent to your phone. If you didn't receive a code, make sure your
-              entered phone number is correct and sign up again. Your code will
-              expire upon closing this popup.
+              entered phone number is correct and sign up again. The code will
+              expire in 10 minutes.
             </Typography>
             <div style={{ textAlign: "center" }}>
               <TextField
@@ -461,7 +485,7 @@ class Register extends Component {
                   Resend
                 </Button>
                 <Button
-                  onClick={this.handleRegister}
+                  onClick={this.handleCheckVerification}
                   variant="contained"
                   className={classes.mainButton}
                 >
@@ -667,7 +691,7 @@ class Register extends Component {
                         fullWidth
                         variant="contained"
                         className={classes.submit}
-                        onClick={this.handleVerification}
+                        onClick={this.handleSendVerification}
                       >
                         Create Account
                       </Button>

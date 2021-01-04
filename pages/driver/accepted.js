@@ -6,6 +6,7 @@ import {
   Grid,
   Typography,
   Paper,
+  TablePagination,
 } from "@material-ui/core";
 import {
   TopBorderDarkPurple,
@@ -52,8 +53,17 @@ class AcceptedDashboard extends Component {
   constructor(props) {
     super(props);
 
+    //handle pagination
+    const { fetch_SSR } = this.props;
+    const paginationInfo = fetch_SSR.paginationInfo;
+    const initialLimit = 10;
+    const initialPage = 0; //MUI uses 0-indexed
+
     this.state = {
-      orders: this.props.fetch_SSR.success ? this.props.fetch_SSR.orders : [],
+      orders: fetch_SSR.success ? fetch_SSR.orders : [],
+      limit: initialLimit,
+      page: initialPage,
+      totalCount: paginationInfo.totalCount,
       weight: "",
       weightErrorMsg: "",
     };
@@ -67,15 +77,40 @@ class AcceptedDashboard extends Component {
     }
   };
 
-  fetchOrders = async () => {
+  fetchPage = async (page, limit) => {
     try {
-      const { fetch_SSR } = this.props;
-
       const response = await axios.post(
-        "/api/order/fetchOrders",
+        `/api/order/fetchOrders`,
         {
           filter: "driverAccepted",
-          userID: fetch_SSR.userInfo.userID,
+          limit: limit,
+          page: page,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      return response;
+    } catch (error) {
+      showConsoleError("fetching orders", error);
+      return {
+        data: {
+          success: false,
+          message: caughtError("fetching orders", error, 99),
+        },
+      };
+    }
+  };
+
+  refreshPage = async (page, limit) => {
+    try {
+      const response = await axios.post(
+        `/api/order/fetchOrders`,
+        {
+          filter: "driverAccepted",
+          limit: limit,
+          page: page,
         },
         {
           withCredentials: true,
@@ -89,11 +124,55 @@ class AcceptedDashboard extends Component {
           this.context.showAlert(response.data.message);
         }
       } else {
-        this.setState({ orders: response.data.message });
+        this.setState({
+          orders: response.data.message.orders,
+          totalCount: response.data.message.totalCount,
+        });
       }
     } catch (error) {
       showConsoleError("fetching orders", error);
-      this.context.showAlert(caughtError("fetching orders", error, 99));
+      return {
+        data: {
+          success: false,
+          message: caughtError("fetching orders", error, 99),
+        },
+      };
+    }
+  };
+
+  handleChangePage = async (event, newPage) => {
+    const response = await this.fetchPage(newPage, this.state.limit);
+
+    if (!response.data.success) {
+      if (response.data.redirect) {
+        this.props.router.push(response.data.message);
+      } else {
+        this.context.showAlert(response.data.message);
+      }
+    } else {
+      this.setState({
+        orders: response.data.message.orders,
+        totalCount: response.data.message.totalCount,
+        page: newPage,
+      });
+    }
+  };
+
+  handleChangeRowsPerPage = async (event) => {
+    const response = await this.fetchPage(this.state.page, event.target.value);
+
+    if (!response.data.success) {
+      if (response.data.redirect) {
+        this.props.router.push(response.data.message);
+      } else {
+        this.context.showAlert(response.data.message);
+      }
+    } else {
+      this.setState({
+        orders: response.data.message.orders,
+        totalCount: response.data.message.totalCount,
+        limit: event.target.value,
+      });
     }
   };
 
@@ -237,6 +316,7 @@ class AcceptedDashboard extends Component {
 
   render() {
     const { classes, fetch_SSR } = this.props;
+    const { totalCount, limit, page } = this.state;
 
     return (
       <Layout currentUser={fetch_SSR.success ? fetch_SSR.userInfo : null}>
@@ -288,7 +368,21 @@ class AcceptedDashboard extends Component {
               handleUpdateWeight={this.handleUpdateWeight}
               handleWasherReceived={this.handleWasherReceived}
               handleUserReceived={this.handleUserReceived}
+              refreshPage={this.refreshPage}
+              limit={this.state.limit}
+              page={this.state.page}
             />
+            {fetch_SSR.success && (
+              <TablePagination
+                rowsPerPageOptions={[10, 25, 50]}
+                component="div"
+                count={totalCount}
+                rowsPerPage={limit}
+                page={page}
+                onChangePage={this.handleChangePage}
+                onChangeRowsPerPage={this.handleChangeRowsPerPage}
+              />
+            )}
           </Grid>
         </Grid>
       </Layout>
@@ -374,7 +468,14 @@ export async function getServerSideProps(context) {
   //everything ok, so current user is fetched (currentUser is valid)
 
   //fetch their assigned orders via user id
-  const response_two = await fetchOrders_DAC_SSR(context, currentUser);
+  const initialLimit = 10;
+  const initialPage = 0;
+  const response_two = await fetchOrders_DAC_SSR(
+    context,
+    currentUser,
+    initialLimit,
+    initialPage
+  );
 
   //check for error
   if (!response_two.data.success) {
@@ -403,7 +504,8 @@ export async function getServerSideProps(context) {
       fetch_SSR: {
         success: true,
         userInfo: currentUser,
-        orders: response_two.data.message,
+        orders: response_two.data.message.orders,
+        paginationInfo: response_two.data.message,
       },
     },
   };

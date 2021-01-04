@@ -214,7 +214,7 @@ class OrderTable extends Component {
     //close action dialog first
     this.setState({ showActionDialog: false }, async () => {
       //refetch orders, so an invalid or valid order disappears
-      await this.props.fetchOrders();
+      await this.props.refreshPage(this.props.page, this.props.limit);
 
       //show the notification from setting the order as washed, potentially along with an error message from the above order fetching
       this.setState({

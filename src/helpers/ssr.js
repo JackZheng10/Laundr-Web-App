@@ -71,13 +71,15 @@ export const getExistingOrder_SSR = async (context, currentUser) => {
   }
 };
 
-//washer - assigned
-export const fetchOrders_WA_SSR = async (context, currentUser) => {
+//washer - assigned (paginated)
+export const fetchOrders_WA_SSR = async (context, currentUser, limit, page) => {
   try {
     const response = await axios.post(
       `${baseURL}/api/order/fetchOrders`,
       {
         filter: "washerAssigned",
+        limit: limit,
+        page: page,
       },
       {
         headers: context.req.headers.cookie
@@ -98,14 +100,21 @@ export const fetchOrders_WA_SSR = async (context, currentUser) => {
   }
 };
 
-//driver - available
-export const fetchOrders_DAV_SSR = async (context, currentUser) => {
+//driver - available (paginated)
+export const fetchOrders_DAV_SSR = async (
+  context,
+  currentUser,
+  limit,
+  page
+) => {
   try {
     const response = await axios.post(
       `${baseURL}/api/order/fetchOrders`,
       {
         filter: "none",
         statuses: [0, 4],
+        limit: limit,
+        page: page,
       },
       {
         headers: context.req.headers.cookie
@@ -126,13 +135,20 @@ export const fetchOrders_DAV_SSR = async (context, currentUser) => {
   }
 };
 
-//driver - accepted
-export const fetchOrders_DAC_SSR = async (context, currentUser) => {
+//driver - accepted (paginated)
+export const fetchOrders_DAC_SSR = async (
+  context,
+  currentUser,
+  limit,
+  page
+) => {
   try {
     const response = await axios.post(
       `${baseURL}/api/order/fetchOrders`,
       {
         filter: "driverAccepted",
+        limit: limit,
+        page: page,
       },
       {
         headers: context.req.headers.cookie
@@ -153,8 +169,13 @@ export const fetchOrders_DAC_SSR = async (context, currentUser) => {
   }
 };
 
-//account - history
-export const fetchOrderHistory_SSR = async (context, currentUser) => {
+//account - history (paginated)
+export const fetchOrderHistory_SSR = async (
+  context,
+  currentUser,
+  limit,
+  page
+) => {
   try {
     let filter;
 
@@ -170,6 +191,8 @@ export const fetchOrderHistory_SSR = async (context, currentUser) => {
       `${baseURL}/api/order/fetchOrders`,
       {
         filter: filter,
+        limit: limit,
+        page: page,
       },
       {
         headers: context.req.headers.cookie

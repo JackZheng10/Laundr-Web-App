@@ -1,5 +1,10 @@
 import React, { Component } from "react";
-import { withStyles, Grid, Typography } from "@material-ui/core";
+import {
+  withStyles,
+  Grid,
+  Typography,
+  TablePagination,
+} from "@material-ui/core";
 import {
   TopBorderDarkPurple,
   BottomBorderDarkPurple,
@@ -47,8 +52,17 @@ class History extends Component {
   constructor(props) {
     super(props);
 
+    //handle pagination
+    const { fetch_SSR } = this.props;
+    const paginationInfo = fetch_SSR.paginationInfo;
+    const initialLimit = 10;
+    const initialPage = 0; //MUI uses 0-indexed
+
     this.state = {
-      orders: this.props.fetch_SSR.success ? this.props.fetch_SSR.orders : [],
+      orders: fetch_SSR.success ? fetch_SSR.orders : [],
+      limit: initialLimit,
+      page: initialPage,
+      totalCount: paginationInfo.totalCount,
     };
   }
 
@@ -72,8 +86,79 @@ class History extends Component {
     }
   };
 
+  fetchPage = async (page, limit, filter) => {
+    try {
+      const response = await axios.post(
+        `/api/order/fetchOrders`,
+        {
+          filter: filter,
+          limit: limit,
+          page: page,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      return response;
+    } catch (error) {
+      showConsoleError("fetching orders", error);
+      return {
+        data: {
+          success: false,
+          message: caughtError("fetching orders", error, 99),
+        },
+      };
+    }
+  };
+
+  handleChangePage = async (event, newPage) => {
+    const response = await this.fetchPage(
+      newPage,
+      this.state.limit,
+      this.getFilterConfig(this.props.fetch_SSR.userInfo)
+    );
+
+    if (!response.data.success) {
+      if (response.data.redirect) {
+        this.props.router.push(response.data.message);
+      } else {
+        this.context.showAlert(response.data.message);
+      }
+    } else {
+      this.setState({
+        orders: response.data.message.orders,
+        totalCount: response.data.message.totalCount,
+        page: newPage,
+      });
+    }
+  };
+
+  handleChangeRowsPerPage = async (event) => {
+    const response = await this.fetchPage(
+      this.state.page,
+      event.target.value,
+      this.getFilterConfig(this.props.fetch_SSR.userInfo)
+    );
+
+    if (!response.data.success) {
+      if (response.data.redirect) {
+        this.props.router.push(response.data.message);
+      } else {
+        this.context.showAlert(response.data.message);
+      }
+    } else {
+      this.setState({
+        orders: response.data.message.orders,
+        totalCount: response.data.message.totalCount,
+        limit: event.target.value,
+      });
+    }
+  };
+
   render() {
     const { classes, fetch_SSR } = this.props;
+    const { totalCount, limit, page } = this.state;
 
     return (
       <Layout currentUser={fetch_SSR.success ? fetch_SSR.userInfo : null}>
@@ -112,6 +197,17 @@ class History extends Component {
               )}
               currentUser={fetch_SSR.success ? fetch_SSR.userInfo : null}
             />
+            {fetch_SSR.success && (
+              <TablePagination
+                rowsPerPageOptions={[10, 25, 50]}
+                component="div"
+                count={totalCount}
+                rowsPerPage={limit}
+                page={page}
+                onChangePage={this.handleChangePage}
+                onChangeRowsPerPage={this.handleChangeRowsPerPage}
+              />
+            )}
           </Grid>
         </Grid>
       </Layout>
@@ -166,8 +262,15 @@ export async function getServerSideProps(context) {
 
   //everything ok, so current user is fetched (currentUser is valid)
 
-  //fetch possible orders
-  const response_two = await fetchOrderHistory_SSR(context, currentUser);
+  //fetch possible orders, paginated for first page and an initial limit of 10
+  const initialLimit = 10;
+  const initialPage = 0;
+  const response_two = await fetchOrderHistory_SSR(
+    context,
+    currentUser,
+    initialLimit,
+    initialPage
+  );
 
   //check for error
   if (!response_two.data.success) {
@@ -196,7 +299,8 @@ export async function getServerSideProps(context) {
       fetch_SSR: {
         success: true,
         userInfo: currentUser,
-        orders: response_two.data.message,
+        orders: response_two.data.message.orders,
+        paginationInfo: response_two.data.message,
       },
     },
   };

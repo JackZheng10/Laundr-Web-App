@@ -6,6 +6,7 @@ const baseURL =
   process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
 
 //to be used for fetching current user outside of SSR and initial page+children component mounting (in the case that the data may have changed after page load, for ex while user is afk or in another tab)
+//should rarely be used
 //usage: x = getCurrentUser, x.success
 export const getCurrentUser = async () => {
   try {
@@ -31,9 +32,13 @@ export const updateToken = () => {
 
 export const handleLogout = async () => {
   try {
-    const response = await axios.post("/api/user/logout", {
-      withCredentials: true,
-    });
+    const response = await axios.post(
+      "/api/user/logout",
+      {},
+      {
+        withCredentials: true,
+      }
+    );
 
     return response;
   } catch (error) {

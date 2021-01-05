@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 class MissingPage extends Component {
   render() {
-    return <h1>Page not found</h1>;
+    return <h1>Page not found (placeholder)</h1>;
   }
 }
 

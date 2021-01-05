@@ -164,7 +164,38 @@ class Register extends Component {
     }
   };
 
-  handleCheckVerification = async () => {
+  // handleCheckVerification = async () => {
+  //   try {
+  //     if (this.state.enteredCode.length < 4) {
+  //       //since codes must be at least 4 long
+  //       return this.context.showAlert(
+  //         "Verification code is incorrect. Please try again."
+  //       );
+  //     }
+
+  //     const response = await axios.post(
+  //       "/api/twilio/checkVerification",
+  //       {
+  //         to: this.state.phone,
+  //         enteredCode: this.state.enteredCode,
+  //       },
+  //       { withCredentials: true }
+  //     );
+
+  //     if (response.data.success) {
+  //       this.handleRegister();
+  //     } else {
+  //       this.context.showAlert(response.data.message);
+  //     }
+  //   } catch (error) {
+  //     showConsoleError("checking verification code", error);
+  //     this.context.showAlert(
+  //       caughtError("checking verification code", error, 99)
+  //     );
+  //   }
+  // };
+
+  handleRegister = async () => {
     try {
       if (this.state.enteredCode.length < 4) {
         //since codes must be at least 4 long
@@ -174,32 +205,10 @@ class Register extends Component {
       }
 
       const response = await axios.post(
-        "/api/twilio/checkVerification",
-        {
-          to: this.state.phone,
-          enteredCode: this.state.enteredCode,
-        },
-        { withCredentials: true }
-      );
-
-      if (response.data.success) {
-        this.handleRegister();
-      } else {
-        this.context.showAlert(response.data.message);
-      }
-    } catch (error) {
-      showConsoleError("checking verification code", error);
-      this.context.showAlert(
-        caughtError("checking verification code", error, 99)
-      );
-    }
-  };
-
-  handleRegister = async () => {
-    try {
-      const response = await axios.post(
         "/api/user/register",
         {
+          to: this.state.phone, //verification code stuff, to check along the way
+          enteredCode: this.state.enteredCode,
           email: this.state.email.toLowerCase(),
           fname: this.state.fname,
           lname: this.state.lname,
@@ -485,7 +494,7 @@ class Register extends Component {
                   Resend
                 </Button>
                 <Button
-                  onClick={this.handleCheckVerification}
+                  onClick={this.handleRegister}
                   variant="contained"
                   className={classes.mainButton}
                 >

@@ -24,6 +24,8 @@ import SubscriptionBoxes from "../../src/components/User/Subscription/Subscripti
 import SubscriptionStatus from "../../src/components/User/Subscription/SubscriptionStatus/SubscriptionStatus";
 import subscriptionStyles from "../../src/styles/User/Subscription/subscriptionStyles";
 
+//todo: why does it do 3+1 but then 4 in a row after a refresh for the cards
+
 class Subscription extends Component {
   static contextType = MainAppContext;
 

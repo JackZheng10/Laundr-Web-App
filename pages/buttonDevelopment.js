@@ -12,7 +12,7 @@ import {
 import CheckIcon from "@material-ui/icons/Check";
 import SaveIcon from "@material-ui/icons/Save";
 import clsx from "clsx";
-import buttonDevelopmentStyles from "./buttonDevelopmentStyles";
+import buttonDevelopmentStyles from "../src/temp/buttonDevelopmentStyles";
 
 class LoadingButton extends Component {
   state = { loading: false, success: false };

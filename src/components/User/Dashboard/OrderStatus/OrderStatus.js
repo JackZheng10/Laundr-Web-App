@@ -19,6 +19,8 @@ import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { getCurrentUser } from "../../../../helpers/session";
 import { caughtError, showConsoleError } from "../../../../helpers/errors";
 import { MuiPickersUtilsProvider, TimePicker } from "@material-ui/pickers";
+import { withRouter } from "next/router";
+import compose from "recompose/compose";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import DateFnsUtils from "@date-io/date-fns";
 import axios from "axios";
@@ -41,6 +43,7 @@ import orderStatusStyles from "../../../../styles/User/Dashboard/components/Orde
 
 //todo: fix time picker dialog positioning for this and scheduling?
 //todo: design like card for driver/washer or vice versa?
+//todo: gold button focus for dropoff and cancel
 
 const moment = require("moment");
 
@@ -105,9 +108,17 @@ class OrderStatus extends Component {
         params: {
           orderID: order.orderInfo.orderID,
         },
+        withCredentials: true,
       });
 
-      this.context.showAlert(response.data.message, this.props.fetchOrderInfo);
+      if (!response.data.success && response.data.redirect) {
+        this.props.router.push(response.data.message);
+      } else {
+        this.context.showAlert(
+          response.data.message,
+          this.props.fetchOrderInfo
+        );
+      }
     } catch (error) {
       showConsoleError("cancelling order", error);
       this.context.showAlert(caughtError("cancelling order", error, 99));
@@ -117,16 +128,25 @@ class OrderStatus extends Component {
   handleSetDropoffTime = async (order) => {
     if (this.handleTimeCheck(order.orderInfo.weight, order.pickupInfo)) {
       try {
-        const response = await axios.put("/api/order/setDropoff", {
-          orderID: order.orderInfo.orderID,
-          date: this.state.date,
-          time: this.state.formattedTime,
-        });
+        const response = await axios.put(
+          "/api/order/setDropoff",
+          {
+            orderID: order.orderInfo.orderID,
+            date: this.state.date,
+            time: this.state.formattedTime,
+          },
+          { withCredentials: true }
+        );
+
         this.setState({ showDropoffDialog: false }, () => {
-          this.context.showAlert(
-            response.data.message,
-            this.props.fetchOrderInfo
-          );
+          if (!response.data.success && response.data.redirect) {
+            this.props.router.push(response.data.message);
+          } else {
+            this.context.showAlert(
+              response.data.message,
+              this.props.fetchOrderInfo
+            );
+          }
         });
       } catch (error) {
         showConsoleError("setting dropoff", error);
@@ -136,9 +156,19 @@ class OrderStatus extends Component {
   };
 
   //todo: test
-  handleTimeCheck = (weight, pickupInfo) => {
+  handleTimeCheck = async (weight, pickupInfo) => {
     let canNext = true;
-    const currentUser = getCurrentUser();
+    const response = await getCurrentUser();
+
+    if (!response.data.success) {
+      if (response.data.redirect) {
+        return this.props.router.push(response.data.message);
+      } else {
+        return this.context.showAlert(response.data.message);
+      }
+    }
+
+    const currentUser = response.data.message;
 
     const lowerBound = moment("10:00:00", "HH:mm:ss").add(1, "minutes"); //10 AM
     const upperBound = moment("19:00:00", "HH:mm:ss").add(1, "minutes"); //7 PM
@@ -241,14 +271,22 @@ class OrderStatus extends Component {
 
   handleConfirmReceived = async (order) => {
     try {
-      const response = await axios.put("/api/order/confirmReceived", {
-        orderID: order.orderInfo.orderID,
-      });
+      const response = await axios.put(
+        "/api/order/confirmReceived",
+        {
+          orderID: order.orderInfo.orderID,
+        },
+        { withCredentials: true }
+      );
 
       if (response.data.success) {
-        await this.props.fetchOrderInfo();
+        this.props.fetchOrderInfo();
       } else {
-        this.context.showAlert(response.data.message);
+        if (response.data.redirect) {
+          this.props.router.push(response.data.message);
+        } else {
+          this.context.showAlert(response.data.message);
+        }
       }
     } catch (error) {
       showConsoleError("setting dropoff", error);
@@ -491,10 +529,10 @@ class OrderStatus extends Component {
                         size="medium"
                         variant="contained"
                         className={
-                          order.orderInfo.status < 2 &&
-                          order.dropoffInfo.time === "N/A"
-                            ? classes.mainButton
-                            : classes.secondaryButton
+                          order.dropoffInfo.time === "N/A" &&
+                          order.orderInfo.status > 2
+                            ? classes.secondaryButton
+                            : classes.mainButton
                         }
                         onClick={() => {
                           order.orderInfo.status === 6
@@ -525,4 +563,4 @@ OrderStatus.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(orderStatusStyles)(OrderStatus);
+export default compose(withRouter, withStyles(orderStatusStyles))(OrderStatus);

@@ -26,6 +26,8 @@ import {
 } from "@material-ui/core";
 import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
+import { GetServerSideProps } from "next";
+import { getExistingOrder_SSR, getCurrentUser_SSR } from "../src/helpers/ssr";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import MainAppContext from "../src/contexts/MainAppContext";
@@ -89,36 +91,38 @@ class Register extends Component {
     passwordErrorMsg: "",
     phoneErrorMsg: "",
     tosErrorMsg: "",
-    generatedCode: "N/A", //phone verification
-    enteredCode: "",
+    enteredCode: "", //phone verification
     showVerifyDialog: false,
   };
 
-  handleVerification = async (event) => {
+  handleSendVerification = async (event) => {
     event.preventDefault();
 
     if (this.handleInputValidation()) {
       try {
-        const response = await axios.post("/api/user/checkDuplicate", {
-          email: this.state.email.toLowerCase(),
-          phone: this.state.phone,
-        });
+        const response = await axios.post(
+          "/api/user/checkDuplicate",
+          {
+            email: this.state.email.toLowerCase(),
+            phone: this.state.phone,
+          },
+          { withCredentials: true }
+        );
 
         if (response.data.success) {
           switch (response.data.message) {
             case 0:
               try {
-                const response = await axios.post("/api/twilio/verifyPhone", {
-                  to: this.state.phone,
-                });
+                const response = await axios.post(
+                  "/api/twilio/sendVerification",
+                  {
+                    to: this.state.phone,
+                  },
+                  { withCredentials: true }
+                );
 
                 if (response.data.success) {
-                  this.setState(
-                    { generatedCode: response.data.message },
-                    () => {
-                      this.toggleVerifyDialog();
-                    }
-                  );
+                  this.toggleVerifyDialog();
                 } else {
                   this.context.showAlert(response.data.message);
                 }
@@ -157,6 +161,52 @@ class Register extends Component {
           caughtError("checking for duplicate phone/email", error, 99)
         );
       }
+    }
+  };
+
+  handleRegister = async () => {
+    try {
+      if (this.state.enteredCode.length < 4) {
+        //since codes must be at least 4 long
+        return this.context.showAlert(
+          "Verification code is incorrect. Please try again."
+        );
+      }
+
+      const response = await axios.post(
+        "/api/user/register",
+        {
+          to: this.state.phone, //verification code stuff, to check along the way
+          enteredCode: this.state.enteredCode,
+          email: this.state.email.toLowerCase(),
+          fname: this.state.fname,
+          lname: this.state.lname,
+          city: this.state.city,
+          phone: this.state.phone,
+          password: this.state.password,
+          referral: this.state.referral,
+        },
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        this.setState(
+          {
+            showVerifyDialog: false,
+            enteredCode: "",
+          },
+          () => {
+            this.context.showAlert(response.data.message, () => {
+              this.props.router.push("/login");
+            });
+          }
+        );
+      } else {
+        this.context.showAlert(response.data.message);
+      }
+    } catch (error) {
+      showConsoleError("registering", error);
+      this.context.showAlert(caughtError("registering", error, 99));
     }
   };
 
@@ -330,61 +380,15 @@ class Register extends Component {
     }
   };
 
-  handleRegister = async () => {
-    if (this.state.generatedCode === this.state.enteredCode) {
-      try {
-        const response = await axios.post("/api/user/register", {
-          email: this.state.email.toLowerCase(),
-          fname: this.state.fname,
-          lname: this.state.lname,
-          city: this.state.city,
-          phone: this.state.phone,
-          password: this.state.password,
-          referral: this.state.referral,
-        });
-
-        if (response.data.success) {
-          this.setState(
-            {
-              showVerifyDialog: false,
-              generatedCode: "N/A",
-              enteredCode: "",
-            },
-            () => {
-              this.context.showAlert(response.data.message, () => {
-                this.props.router.push("/login");
-              });
-            }
-          );
-        } else {
-          this.context.showAlert(response.data.message);
-        }
-      } catch (error) {
-        showConsoleError("registering", error);
-        this.context.showAlert(caughtError("registering", error, 99));
-      }
-    } else {
-      this.context.showAlert(
-        "Verification code is incorrect. Please try again."
-      );
-    }
-  };
-
   handleResendCode = () => {
     alert("work in progress");
   };
 
   toggleVerifyDialog = () => {
-    //to prevent generated code from being reset
-    if (this.state.showVerifyDialog) {
-      this.setState({
-        showVerifyDialog: !this.state.showVerifyDialog,
-        generatedCode: "N/A",
-        enteredCode: "",
-      });
-    } else {
-      this.setState({ showVerifyDialog: !this.state.showVerifyDialog });
-    }
+    this.setState({
+      showVerifyDialog: !this.state.showVerifyDialog,
+      enteredCode: "",
+    });
   };
 
   render() {
@@ -416,8 +420,8 @@ class Register extends Component {
             >
               To finish registering, please enter the verification code we just
               sent to your phone. If you didn't receive a code, make sure your
-              entered phone number is correct and sign up again. Your code will
-              expire upon closing this popup.
+              entered phone number is correct and sign up again. The code will
+              expire in 10 minutes.
             </Typography>
             <div style={{ textAlign: "center" }}>
               <TextField
@@ -496,178 +500,193 @@ class Register extends Component {
                   Register
                 </Typography>
               </Paper>
-              <Grid item>
-                <Grid container justify="center">
-                  <Grid item xs={6} sm={6} style={{ paddingRight: 10 }}>
-                    <TextField
-                      variant="filled"
-                      margin="normal"
-                      fullWidth
-                      label="First Name"
-                      autoComplete="fname"
-                      error={this.state.fnameError}
-                      helperText={this.state.fnameErrorMsg}
-                      value={this.state.fname}
-                      onChange={(event) => {
-                        this.handleInputChange("fname", event.target.value);
-                      }}
-                      classes={{ root: classes.coloredField }}
-                    />
-                  </Grid>
-                  <Grid item xs={6} sm={6} style={{ paddingLeft: 10 }}>
-                    <TextField
-                      variant="filled"
-                      margin="normal"
-                      fullWidth
-                      label="Last Name"
-                      autoComplete="lname"
-                      error={this.state.lnameError}
-                      helperText={this.state.lnameErrorMsg}
-                      value={this.state.lname}
-                      onChange={(event) => {
-                        this.handleInputChange("lname", event.target.value);
-                      }}
-                      classes={{ root: classes.coloredField }}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <FormControl
-                      fullWidth
-                      variant="filled"
-                      margin="normal"
-                      classes={{ root: classes.coloredField }}
-                    >
-                      <InputLabel>City</InputLabel>
-                      <Select
-                        native
-                        label="City"
-                        value={this.state.city}
+              <form>
+                <Grid item>
+                  <Grid container justify="center">
+                    <Grid item xs={6} sm={6} style={{ paddingRight: 10 }}>
+                      <TextField
+                        variant="filled"
+                        margin="normal"
+                        fullWidth
+                        label="First Name"
+                        autoComplete="fname"
+                        error={this.state.fnameError}
+                        helperText={this.state.fnameErrorMsg}
+                        value={this.state.fname}
                         onChange={(event) => {
-                          this.handleInputChange("city", event.target.value);
+                          this.handleInputChange("fname", event.target.value);
                         }}
-                      >
-                        <option>Gainesville</option>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      variant="filled"
-                      margin="normal"
-                      fullWidth
-                      label="Email Address"
-                      autoComplete="email"
-                      error={this.state.emailError}
-                      helperText={this.state.emailErrorMsg}
-                      value={this.state.email}
-                      onChange={(event) => {
-                        this.handleInputChange("email", event.target.value);
-                      }}
-                      classes={{ root: classes.coloredField }}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      variant="filled"
-                      margin="normal"
-                      fullWidth
-                      label="Password"
-                      type="password"
-                      autoComplete="current-password"
-                      error={this.state.passwordError}
-                      value={this.state.password}
-                      helperText={this.state.passwordErrorMsg}
-                      onChange={(event) => {
-                        this.handleInputChange("password", event.target.value);
-                      }}
-                      classes={{ root: classes.coloredField }}
-                    />
-                  </Grid>
-                  <Grid item xs={7} sm={7} style={{ paddingRight: 10 }}>
-                    <TextField
-                      variant="filled"
-                      margin="normal"
-                      fullWidth
-                      label="Phone Number"
-                      error={this.state.phoneError}
-                      helperText={this.state.phoneErrorMsg}
-                      value={this.state.phone}
-                      onChange={(event) => {
-                        this.handleInputChange("phone", event.target.value);
-                      }}
-                      classes={{ root: classes.coloredField }}
-                    />
-                  </Grid>
-                  <Grid item xs={5} sm={5} style={{ paddingLeft: 10 }}>
-                    <TextField
-                      variant="filled"
-                      margin="normal"
-                      label="Referral Code"
-                      helperText="*Optional"
-                      fullWidth
-                      value={this.state.referral}
-                      onChange={(event) => {
-                        this.handleInputChange("referral", event.target.value);
-                      }}
-                      classes={{ root: classes.coloredField }}
-                    />
-                  </Grid>
-                  <Grid align="center" item xs={12}>
-                    <Paper style={{ padding: 10 }}>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            onChange={() => {
-                              this.handleInputChange("tos", null);
-                            }}
-                            value={this.state.tos}
-                            style={{ color: "#01c9e1" }}
-                          />
-                        }
-                        label="I have read and agree to the Terms of Service."
+                        classes={{ root: classes.coloredField }}
                       />
-                      <Grid item>
-                        <Link
-                          href="/login"
-                          variant="h6"
-                          target="_blank"
-                          rel="noopener"
-                          href="https://www.laundr.io/termsofservice/"
-                          style={{
-                            color: "#01c9e1",
-                            textAlign: "center",
+                    </Grid>
+                    <Grid item xs={6} sm={6} style={{ paddingLeft: 10 }}>
+                      <TextField
+                        variant="filled"
+                        margin="normal"
+                        fullWidth
+                        label="Last Name"
+                        autoComplete="lname"
+                        error={this.state.lnameError}
+                        helperText={this.state.lnameErrorMsg}
+                        value={this.state.lname}
+                        onChange={(event) => {
+                          this.handleInputChange("lname", event.target.value);
+                        }}
+                        classes={{ root: classes.coloredField }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <FormControl
+                        fullWidth
+                        variant="filled"
+                        margin="normal"
+                        classes={{ root: classes.coloredField }}
+                      >
+                        <InputLabel>City</InputLabel>
+                        <Select
+                          native
+                          label="City"
+                          value={this.state.city}
+                          onChange={(event) => {
+                            this.handleInputChange("city", event.target.value);
                           }}
                         >
-                          Terms of Service
-                        </Link>
-                        <Typography variant="body2" className={classes.error}>
-                          {this.state.tosErrorMsg}
-                        </Typography>
-                      </Grid>
-                    </Paper>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      className={classes.submit}
-                      onClick={this.handleVerification}
-                    >
-                      Create Account
-                    </Button>
-                  </Grid>
-                  <Grid item style={{ paddingBottom: 50 }}>
-                    <Link
-                      href="/login"
-                      variant="h6"
-                      style={{ color: "#01c9e1", textAlign: "center" }}
-                    >
-                      Already have an account?
-                    </Link>
+                          <option>Gainesville</option>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        variant="filled"
+                        margin="normal"
+                        fullWidth
+                        label="Email Address"
+                        autoComplete="email"
+                        error={this.state.emailError}
+                        helperText={this.state.emailErrorMsg}
+                        value={this.state.email}
+                        onChange={(event) => {
+                          this.handleInputChange("email", event.target.value);
+                        }}
+                        classes={{ root: classes.coloredField }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        variant="filled"
+                        margin="normal"
+                        fullWidth
+                        label="Password"
+                        type="password"
+                        autoComplete="current-password"
+                        error={this.state.passwordError}
+                        value={this.state.password}
+                        helperText={this.state.passwordErrorMsg}
+                        onChange={(event) => {
+                          this.handleInputChange(
+                            "password",
+                            event.target.value
+                          );
+                        }}
+                        classes={{ root: classes.coloredField }}
+                      />
+                    </Grid>
+                    <Grid item xs={7} sm={7} style={{ paddingRight: 10 }}>
+                      <TextField
+                        variant="filled"
+                        margin="normal"
+                        fullWidth
+                        label="Phone Number"
+                        error={this.state.phoneError}
+                        helperText={this.state.phoneErrorMsg}
+                        value={this.state.phone}
+                        onChange={(event) => {
+                          this.handleInputChange("phone", event.target.value);
+                        }}
+                        classes={{ root: classes.coloredField }}
+                      />
+                    </Grid>
+                    <Grid item xs={5} sm={5} style={{ paddingLeft: 10 }}>
+                      <TextField
+                        variant="filled"
+                        margin="normal"
+                        label="Referral Code"
+                        helperText="*Optional"
+                        fullWidth
+                        value={this.state.referral}
+                        onChange={(event) => {
+                          this.handleInputChange(
+                            "referral",
+                            event.target.value
+                          );
+                        }}
+                        classes={{ root: classes.coloredField }}
+                      />
+                    </Grid>
+                    <Grid align="center" item xs={12}>
+                      <Paper
+                        style={{
+                          paddingLeft: 15,
+                          paddingTop: 10,
+                          paddingBottom: 10,
+                        }}
+                      >
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              onChange={() => {
+                                this.handleInputChange("tos", null);
+                              }}
+                              value={this.state.tos}
+                              style={{ color: "#01c9e1" }}
+                            />
+                          }
+                          label="I have read and agree to the Terms of Service."
+                        />
+                        <Grid item>
+                          <Link
+                            href="/login"
+                            variant="h6"
+                            target="_blank"
+                            rel="noopener"
+                            href="https://www.laundr.io/termsofservice/"
+                            style={{
+                              color: "#01c9e1",
+                              textAlign: "center",
+                            }}
+                          >
+                            Terms of Service
+                          </Link>
+                          <Typography variant="body2" className={classes.error}>
+                            {this.state.tosErrorMsg}
+                          </Typography>
+                        </Grid>
+                      </Paper>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        className={classes.submit}
+                        onClick={this.handleSendVerification}
+                      >
+                        Create Account
+                      </Button>
+                    </Grid>
+
+                    <Grid item style={{ paddingBottom: 50 }}>
+                      <Link
+                        href="/login"
+                        variant="h6"
+                        style={{ color: "#01c9e1", textAlign: "center" }}
+                      >
+                        Already have an account?
+                      </Link>
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
+              </form>
             </Grid>
           </div>
         </Grid>
@@ -679,5 +698,37 @@ class Register extends Component {
 Register.propTypes = {
   classes: PropTypes.object.isRequired,
 };
+
+export async function getServerSideProps(context) {
+  //fetch current user if there exists one
+  const response_one = await getCurrentUser_SSR(context);
+
+  //check for redirect needed due to a currently logged in user
+  if (response_one.data.success) {
+    const currentUser = response_one.data.message;
+    let redirectDestination;
+
+    if (currentUser.isDriver) {
+      redirectDestination = "/driver/available";
+    } else if (currentUser.isWasher) {
+      redirectDestination = "/washer/assigned";
+    } else if (currentUser.isAdmin) {
+      redirectDestination = "/admin/placeholder";
+    } else {
+      redirectDestination = "/user/dashboard";
+    }
+
+    return {
+      redirect: {
+        destination: redirectDestination,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+}
 
 export default compose(withRouter, withStyles(registerStyles))(Register);

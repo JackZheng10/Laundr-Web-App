@@ -19,8 +19,13 @@ import {
   BottomBorderBlue,
 } from "../../src/utility/borders";
 import { withRouter } from "next/router";
+import { GetServerSideProps } from "next";
 import { getCurrentUser } from "../../src/helpers/session";
 import { caughtError, showConsoleError } from "../../src/helpers/errors";
+import {
+  getExistingOrder_SSR,
+  getCurrentUser_SSR,
+} from "../../src/helpers/ssr";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import axios from "axios";
@@ -96,6 +101,11 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 doing .add(something) changes the object itself with moment
 */
 
+//todo: limit input length for text boxes!
+
+const baseURL =
+  process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
+
 class Dashboard extends Component {
   static contextType = MainAppContext;
 
@@ -106,93 +116,100 @@ class Dashboard extends Component {
   };
 
   componentDidMount = async () => {
-    await this.fetchOrderInfo();
+    const { fetch_SSR } = this.props;
+
+    //check for error on fetching initial info via SSR. if this has appeared, nothing will render for the order component so its ok
+    if (!fetch_SSR.success) {
+      this.context.showAlert(fetch_SSR.message);
+    }
   };
 
-  fetchOrderInfo = async () => {
-    const { classes } = this.props;
+  //to refresh order info, just reload the page
+  fetchOrderInfo = () => {
+    window.location.reload();
+  };
 
-    try {
-      const currentUser = getCurrentUser();
+  renderOrderComponent = (classes) => {
+    const { fetch_SSR } = this.props;
 
-      const response = await axios.get("/api/order/getExistingOrder", {
-        params: {
-          email: currentUser.email,
-        },
-      });
+    if (!fetch_SSR.success) {
+      return <div></div>;
+    }
 
-      if (response.data.success) {
-        let component;
-        let componentName;
-
-        if (response.data.message === "N/A") {
-          if (currentUser.stripe.regPaymentID === "N/A") {
-            component = (
-              <Card className={classes.infoCard} elevation={10}>
-                <CardHeader
-                  title="Missing Payment Method"
-                  titleTypographyProps={{
-                    variant: "h4",
-                    style: {
-                      color: "white",
-                    },
-                  }}
-                  className={classes.cardHeader}
-                />
-
-                <CardContent>
-                  <Typography variant="body1">
-                    Please add a payment method to continue.
-                  </Typography>
-                </CardContent>
-                <CardActions className={classes.cardFooter}>
-                  <Button
-                    size="medium"
-                    variant="contained"
-                    onClick={() => {
-                      this.props.router.push("/account/details");
-                    }}
-                    className={classes.mainButton}
-                  >
-                    Add
-                  </Button>
-                </CardActions>
-              </Card>
-            );
-          } else {
-            component = <NewOrder fetchOrderInfo={this.fetchOrderInfo} />;
-          }
-
-          componentName = "New Order";
-        } else {
-          component = (
-            <OrderStatus
-              order={response.data.message}
-              fetchOrderInfo={this.fetchOrderInfo}
+    switch (fetch_SSR.orderInfo.componentName) {
+      case "set_payment":
+        return (
+          <Card className={classes.infoCard} elevation={10}>
+            <CardHeader
+              title="Missing Payment Method"
+              titleTypographyProps={{
+                variant: "h4",
+                style: {
+                  color: "white",
+                },
+              }}
+              className={classes.cardHeader}
             />
-          );
-          componentName = "Order Status";
-        }
+            <CardContent>
+              <Typography variant="body1">
+                Please add a payment method to continue.
+              </Typography>
+            </CardContent>
+            <CardActions className={classes.cardFooter}>
+              <Button
+                size="medium"
+                variant="contained"
+                onClick={() => {
+                  this.props.router.push("/account/details");
+                }}
+                className={classes.mainButton}
+              >
+                Add
+              </Button>
+            </CardActions>
+          </Card>
+        );
 
-        this.setState({
-          orderComponent: component,
-          orderComponentName: componentName,
-          userFname: currentUser.fname,
-        });
-      } else {
-        this.context.showAlert(response.data.message);
-      }
-    } catch (error) {
-      showConsoleError("fetching order info", error);
-      this.context.showAlert(caughtError("fetching order info", error, 99));
+      case "new_order":
+        return (
+          <NewOrder
+            fetchOrderInfo={this.fetchOrderInfo}
+            currentUser={fetch_SSR.userInfo}
+          />
+        );
+
+      case "order_status":
+        return (
+          <OrderStatus
+            order={fetch_SSR.orderInfo.message}
+            currentUser={fetch_SSR.userInfo}
+            fetchOrderInfo={this.fetchOrderInfo}
+          />
+        );
+    }
+  };
+
+  renderOrderComponentName = (componentName) => {
+    switch (componentName) {
+      case "set_payment":
+        return "Missing Payment Method";
+
+      case "new_order":
+        return "New Order";
+
+      case "order_status":
+        return "Order Status";
+
+      default:
+        return "";
     }
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, fetch_SSR } = this.props;
 
     return (
-      <Layout>
+      <Layout currentUser={fetch_SSR.success ? fetch_SSR.userInfo : null}>
         <Grid
           container
           spacing={0}
@@ -208,7 +225,9 @@ class Dashboard extends Component {
                 className={classes.welcomeText}
                 gutterBottom
               >
-                {`Welcome, ${this.state.userFname}`}
+                {`Welcome, ${
+                  fetch_SSR.success ? fetch_SSR.userInfo.fname : ""
+                }`}
               </Typography>
             </Paper>
           </Grid>
@@ -218,7 +237,9 @@ class Dashboard extends Component {
               className={classes.orderComponentName}
               gutterBottom
             >
-              {this.state.orderComponentName}
+              {this.renderOrderComponentName(
+                fetch_SSR.success ? fetch_SSR.orderInfo.componentName : ""
+              )}
             </Typography>
           </Grid>
         </Grid>
@@ -234,7 +255,7 @@ class Dashboard extends Component {
           alignItems="center"
           // style={{ backgroundImage: `url("/images/space.png")` }}
         >
-          <Grid item>{this.state.orderComponent}</Grid>
+          <Grid item>{this.renderOrderComponent(classes)}</Grid>
         </Grid>
         <div style={{ position: "relative", marginTop: 50 }}>
           <TopBorderBlue />
@@ -335,5 +356,123 @@ class Dashboard extends Component {
 Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
+
+export async function getServerSideProps(context) {
+  //fetch current user
+  const response_one = await getCurrentUser_SSR(context);
+
+  //check for redirect needed due to invalid session or error in fetching
+  if (!response_one.data.success) {
+    if (response_one.data.redirect) {
+      return {
+        redirect: {
+          destination: response_one.data.message,
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        props: {
+          fetch_SSR: {
+            success: false,
+            message: response_one.data.message,
+          },
+        },
+      };
+    }
+  }
+
+  //check for permissions to access page if no error from fetching user
+  const currentUser = response_one.data.message;
+  const urlSections = context.resolvedUrl.split("/");
+
+  switch (urlSections[1]) {
+    case "user":
+      if (currentUser.isDriver || currentUser.isWasher || currentUser.isAdmin) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+
+    case "washer":
+      if (!currentUser.isWasher) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+
+    case "driver":
+      if (!currentUser.isDriver) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+
+    case "admin":
+      if (!currentUser.isAdmin) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+  }
+
+  //everything ok, so current user is fetched (currentUser is valid)
+
+  //fetch their current order via their userID
+  const response_two = await getExistingOrder_SSR(context, currentUser);
+
+  //check for error in fetching current order info (or info for no order) or need for redirect due to invalid session
+  if (!response_two.data.success) {
+    if (response_two.data.redirect) {
+      return {
+        redirect: {
+          destination: response_two.data.message,
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        props: {
+          fetch_SSR: {
+            success: false,
+            message: response_two.data.message,
+          },
+        },
+      };
+    }
+  }
+
+  // const newCookie = response_one.headers["set-cookie"];
+
+  // console.log("COOKIE: ", newCookie);
+  // context.res.setHeader("Set-Cookie", newCookie);
+
+  //finally, return info for fetched user + order info, available via props
+  return {
+    props: {
+      fetch_SSR: {
+        success: true,
+        orderInfo: response_two.data,
+        userInfo: currentUser,
+      },
+    },
+  };
+}
 
 export default compose(withRouter, withStyles(dashboardStyles))(Dashboard);

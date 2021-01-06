@@ -6,6 +6,7 @@ import {
   Grid,
   Typography,
   Paper,
+  TablePagination,
 } from "@material-ui/core";
 import {
   TopBorderDarkPurple,
@@ -17,6 +18,16 @@ import {
 import { getCurrentUser, updateToken } from "../../src/helpers/session";
 import { caughtError, showConsoleError } from "../../src/helpers/errors";
 import { Layout } from "../../src/layouts";
+import { GetServerSideProps } from "next";
+import { withRouter } from "next/router";
+import {
+  getExistingOrder_SSR,
+  getCurrentUser_SSR,
+  fetchOrders_WA_SSR,
+  fetchOrders_DAV_SSR,
+  fetchOrders_DAC_SSR,
+} from "../../src/helpers/ssr";
+import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
@@ -39,32 +50,129 @@ import acceptedStyles from "../../src/styles/Driver/Accepted/acceptedStyles";
 class AcceptedDashboard extends Component {
   static contextType = MainAppContext;
 
-  state = {
-    orders: [],
-    weight: "",
-    weightErrorMsg: "",
-  };
+  constructor(props) {
+    super(props);
+
+    //handle pagination
+    const { fetch_SSR } = this.props;
+    const paginationInfo = fetch_SSR.paginationInfo;
+    const initialLimit = 10;
+    const initialPage = 0; //MUI uses 0-indexed
+
+    this.state = {
+      orders: fetch_SSR.success ? fetch_SSR.orders : [],
+      limit: initialLimit,
+      page: initialPage,
+      totalCount: paginationInfo.totalCount,
+      weight: "",
+      weightErrorMsg: "",
+    };
+  }
 
   componentDidMount = async () => {
-    await this.fetchOrders();
+    const { fetch_SSR } = this.props;
+
+    if (!fetch_SSR.success) {
+      this.context.showAlert(fetch_SSR.message);
+    }
   };
 
-  fetchOrders = async () => {
+  fetchPage = async (page, limit) => {
     try {
-      const currentUser = getCurrentUser();
-      const response = await axios.post("/api/order/fetchOrders", {
-        filter: "driverAccepted",
-        filterEmail: currentUser.email,
-      });
+      const response = await axios.post(
+        `/api/order/fetchOrders`,
+        {
+          filter: "driverAccepted",
+          limit: limit,
+          page: page,
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
-      if (response.data.success) {
-        this.setState({ orders: response.data.message });
+      return response;
+    } catch (error) {
+      showConsoleError("fetching orders", error);
+      return {
+        data: {
+          success: false,
+          message: caughtError("fetching orders", error, 99),
+        },
+      };
+    }
+  };
+
+  refreshPage = async (page, limit) => {
+    try {
+      const response = await axios.post(
+        `/api/order/fetchOrders`,
+        {
+          filter: "driverAccepted",
+          limit: limit,
+          page: page,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (!response.data.success) {
+        if (response.data.redirect) {
+          this.props.router.push(response.data.message);
+        } else {
+          this.context.showAlert(response.data.message);
+        }
+      } else {
+        this.setState({
+          orders: response.data.message.orders,
+          totalCount: response.data.message.totalCount,
+        });
+      }
+    } catch (error) {
+      showConsoleError("fetching orders", error);
+      return {
+        data: {
+          success: false,
+          message: caughtError("fetching orders", error, 99),
+        },
+      };
+    }
+  };
+
+  handleChangePage = async (event, newPage) => {
+    const response = await this.fetchPage(newPage, this.state.limit);
+
+    if (!response.data.success) {
+      if (response.data.redirect) {
+        this.props.router.push(response.data.message);
       } else {
         this.context.showAlert(response.data.message);
       }
-    } catch (error) {
-      showConsoleError("getting orders", error);
-      this.context.showAlert(caughtError("fetching orders", error, 99));
+    } else {
+      this.setState({
+        orders: response.data.message.orders,
+        totalCount: response.data.message.totalCount,
+        page: newPage,
+      });
+    }
+  };
+
+  handleChangeRowsPerPage = async (event) => {
+    const response = await this.fetchPage(this.state.page, event.target.value);
+
+    if (!response.data.success) {
+      if (response.data.redirect) {
+        this.props.router.push(response.data.message);
+      } else {
+        this.context.showAlert(response.data.message);
+      }
+    } else {
+      this.setState({
+        orders: response.data.message.orders,
+        totalCount: response.data.message.totalCount,
+        limit: event.target.value,
+      });
     }
   };
 
@@ -77,7 +185,7 @@ class AcceptedDashboard extends Component {
     }
   };
 
-  handleWeightMinimum = () => {
+  validateWeightMinimum = () => {
     if (!this.state.weight.replace(/\s/g, "").length) {
       this.setState({
         weightErrorMsg: "Please enter a weight.",
@@ -104,21 +212,27 @@ class AcceptedDashboard extends Component {
 
   handleChargeCustomer = async (order) => {
     try {
-      const email = order.userInfo.email;
+      const userID = order.userInfo.userID;
       const orderID = order.orderInfo.orderID;
 
-      const response = await axios.post("/api/stripe/chargeCustomer", {
-        weight: this.state.weight,
-        email: email,
-        orderID: orderID,
-      });
+      const response = await axios.post(
+        "/api/stripe/chargeCustomer",
+        {
+          weight: this.state.weight,
+          userID: userID,
+          orderID: orderID,
+        },
+        { withCredentials: true }
+      );
 
-      return { success: response.data.success, message: response.data.message };
+      return response;
     } catch (error) {
       showConsoleError("charging customer", error);
       return {
-        success: false,
-        message: caughtError("charging customer", error, 99),
+        data: {
+          success: false,
+          message: caughtError("charging customer", error, 99),
+        },
       };
     }
   };
@@ -127,17 +241,23 @@ class AcceptedDashboard extends Component {
     try {
       const orderID = order.orderInfo.orderID;
 
-      const response = await axios.put("/api/driver/updateOrderWeight", {
-        weight: this.state.weight,
-        orderID,
-      });
+      const response = await axios.put(
+        "/api/driver/updateOrderWeight",
+        {
+          weight: this.state.weight,
+          orderID,
+        },
+        { withCredentials: true }
+      );
 
-      return { success: response.data.success, message: response.data.message };
+      return response;
     } catch (error) {
       showConsoleError("entering weight", error);
       return {
-        success: false,
-        message: caughtError("entering weight", error, 99),
+        data: {
+          success: false,
+          message: caughtError("entering weight", error, 99),
+        },
       };
     }
   };
@@ -146,16 +266,26 @@ class AcceptedDashboard extends Component {
     try {
       const orderID = order.orderInfo.orderID;
 
-      const response = await axios.put("/api/driver/setWasherDelivered", {
-        orderID,
-      });
+      const response = await axios.put(
+        "/api/driver/setWasherDelivered",
+        {
+          orderID,
+        },
+        { withCredentials: true }
+      );
 
-      return { success: response.data.success, message: response.data.message };
+      return response;
     } catch (error) {
       showConsoleError("setting order as received by washer", error);
       return {
-        success: false,
-        message: caughtError("setting order as received by washer", error, 99),
+        data: {
+          success: false,
+          message: caughtError(
+            "setting order as received by washer",
+            error,
+            99
+          ),
+        },
       };
     }
   };
@@ -164,25 +294,32 @@ class AcceptedDashboard extends Component {
     try {
       const orderID = order.orderInfo.orderID;
 
-      const response = await axios.put("/api/driver/setUserDelivered", {
-        orderID,
-      });
+      const response = await axios.put(
+        "/api/driver/setUserDelivered",
+        {
+          orderID,
+        },
+        { withCredentials: true }
+      );
 
-      return { success: response.data.success, message: response.data.message };
+      return response;
     } catch (error) {
       showConsoleError("setting order as delivered", error);
       return {
-        success: false,
-        message: caughtError("setting order as delivered", error, 99),
+        data: {
+          success: false,
+          message: caughtError("setting order as delivered", error, 99),
+        },
       };
     }
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, fetch_SSR } = this.props;
+    const { totalCount, limit, page } = this.state;
 
     return (
-      <Layout>
+      <Layout currentUser={fetch_SSR.success ? fetch_SSR.userInfo : null}>
         <Grid
           container
           spacing={0}
@@ -225,13 +362,27 @@ class AcceptedDashboard extends Component {
               weightError={this.state.weightError}
               weightErrorMsg={this.state.weightErrorMsg}
               handleWeightChange={this.handleWeightChange}
-              handleWeightMinimum={this.handleWeightMinimum}
+              validateWeightMinimum={this.validateWeightMinimum}
               handleChargeCustomer={this.handleChargeCustomer}
               handleClearWeightError={this.handleClearWeightError}
               handleUpdateWeight={this.handleUpdateWeight}
               handleWasherReceived={this.handleWasherReceived}
               handleUserReceived={this.handleUserReceived}
+              refreshPage={this.refreshPage}
+              limit={this.state.limit}
+              page={this.state.page}
             />
+            {fetch_SSR.success && (
+              <TablePagination
+                rowsPerPageOptions={[10, 25, 50]}
+                component="div"
+                count={totalCount}
+                rowsPerPage={limit}
+                page={page}
+                onChangePage={this.handleChangePage}
+                onChangeRowsPerPage={this.handleChangeRowsPerPage}
+              />
+            )}
           </Grid>
         </Grid>
       </Layout>
@@ -243,4 +394,124 @@ AcceptedDashboard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(acceptedStyles)(AcceptedDashboard);
+export async function getServerSideProps(context) {
+  //fetch current user
+  const response_one = await getCurrentUser_SSR(context);
+
+  //check for redirect needed due to invalid session or error in fetching
+  if (!response_one.data.success) {
+    if (response_one.data.redirect) {
+      return {
+        redirect: {
+          destination: response_one.data.message,
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        props: {
+          fetch_SSR: {
+            success: false,
+            message: response_one.data.message,
+          },
+        },
+      };
+    }
+  }
+
+  //check for permissions to access page if no error from fetching user
+  const currentUser = response_one.data.message;
+  const urlSections = context.resolvedUrl.split("/");
+  switch (urlSections[1]) {
+    case "user":
+      if (currentUser.isDriver || currentUser.isWasher || currentUser.isAdmin) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+    case "washer":
+      if (!currentUser.isWasher) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+    case "driver":
+      if (!currentUser.isDriver) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+    case "admin":
+      if (!currentUser.isAdmin) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+  }
+
+  //everything ok, so current user is fetched (currentUser is valid)
+
+  //fetch their assigned orders via user id
+  const initialLimit = 10;
+  const initialPage = 0;
+  const response_two = await fetchOrders_DAC_SSR(
+    context,
+    currentUser,
+    initialLimit,
+    initialPage
+  );
+
+  //check for error
+  if (!response_two.data.success) {
+    if (response_two.data.redirect) {
+      return {
+        redirect: {
+          destination: response_two.data.message,
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        props: {
+          fetch_SSR: {
+            success: false,
+            message: response_two.data.message,
+          },
+        },
+      };
+    }
+  }
+
+  //return info for fetched user, available via props
+  return {
+    props: {
+      fetch_SSR: {
+        success: true,
+        userInfo: currentUser,
+        orders: response_two.data.message.orders,
+        paginationInfo: response_two.data.message,
+      },
+    },
+  };
+}
+
+export default compose(
+  withRouter,
+  withStyles(acceptedStyles)
+)(AcceptedDashboard);

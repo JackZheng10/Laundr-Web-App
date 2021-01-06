@@ -15,7 +15,6 @@ import {
 import PropTypes from "prop-types";
 import TooltipButton from "../../../../Driver/OrderTable/components/TooltipButton";
 import orderCardStyles from "../../../../../styles/Driver/components/OrderTable/components/orderCardStyles";
-import { getCurrentUser } from "../../../../../helpers/session";
 
 const NameCard = (order) => {
   return (
@@ -245,18 +244,17 @@ const PreferencesCard = (order) => {
 };
 
 //driver stages
-const getDriverStages = (order) => {
-  const currentUser = getCurrentUser();
-  const pickupEmail = order.pickupInfo.driverEmail;
-  const dropoffEmail = order.dropoffInfo.driverEmail;
+const getDriverStages = (order, currentUser) => {
+  const pickupUserID = order.pickupInfo.userID;
+  const dropoffUserID = order.dropoffInfo.userID;
 
   let stages = "";
 
-  if (pickupEmail === currentUser.email) {
+  if (pickupUserID === currentUser.userID) {
     stages += "Pickup, ";
   }
 
-  if (dropoffEmail === currentUser.email) {
+  if (dropoffUserID === currentUser.userID) {
     stages += "Dropoff, ";
   }
 
@@ -299,7 +297,7 @@ const renderWasherPrefs = (order) => {
 };
 
 const OrderCard = (props) => {
-  const { classes, order, config } = props;
+  const { classes, order, config, currentUser } = props;
 
   const renderCardConfig = (config, classes) => {
     switch (config) {
@@ -336,7 +334,7 @@ const OrderCard = (props) => {
                       Stage:&nbsp;
                     </Typography>
                     <Typography variant="body1" gutterBottom>
-                      {getDriverStages(order)}
+                      {getDriverStages(order, currentUser)}
                     </Typography>
                   </Grid>
                 </Grid>

@@ -13,6 +13,7 @@ import {
   Modal,
 } from "@material-ui/core";
 import { ThemeProvider } from "@material-ui/core/styles";
+import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import Head from "next/head";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -25,6 +26,20 @@ const MyApp = (props) => {
   const isDesktop = useMediaQuery(() => theme.breakpoints.up("lg"), {
     defaultMatches: true,
   });
+
+  if (process.env.MAINTENANCE_MODE === "true") {
+    return (
+      <React.Fragment>
+        <Head>
+          <title>Laundr</title>
+        </Head>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <h1>Currently under maintenance</h1>
+        </ThemeProvider>
+      </React.Fragment>
+    );
+  }
 
   //loading
   const [showLoadingDialog, setShowLoadingDialog] = useState(false);
@@ -51,6 +66,7 @@ const MyApp = (props) => {
   const isSidebarPage = () => {
     if (typeof window !== "undefined") {
       const path = window.location.href.split("/");
+
       if (path[3] === "login" || path[3] === "register") {
         return false;
       }
@@ -189,7 +205,7 @@ const MyApp = (props) => {
             </Button>
           </DialogActions>
         </Dialog>
-        {/*LOADING DIALOG (for component pages, not fullscreen)*/}
+        {/*LOADING DIALOG (for component pages, not fullscreen like login/register. todo: adjust for it should be ez)*/}
         <Dialog
           open={showLoadingDialog}
           PaperProps={{
@@ -200,7 +216,7 @@ const MyApp = (props) => {
               alignItems: "center",
               position: "fixed",
               // top: "50%",
-              left: isDesktop ? "52%" : "",
+              left: isDesktop && isSidebarPage() ? "52%" : "",
             },
           }}
           style={{
@@ -215,9 +231,11 @@ const MyApp = (props) => {
               alignItems="center"
             >
               <Grid item>
-                <Typography gutterBottom>Loading...</Typography>
+                <Typography style={{ fontWeight: "bold" }} gutterBottom>
+                  Loading...
+                </Typography>
               </Grid>
-              <Grid item>
+              <Grid item style={{ marginBottom: 10 }}>
                 <CircularProgress
                   size={50}
                   thickness={5}

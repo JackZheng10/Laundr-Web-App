@@ -13,8 +13,11 @@ import {
 import PropTypes from "prop-types";
 import jwtDecode from "jwt-decode";
 import accountInfoStyles from "../../../styles/User/Account/components/accountInfoStyles";
+import MainAppContext from "../../../contexts/MainAppContext";
 
 class AccountInfo extends Component {
+  static contextType = MainAppContext;
+
   render() {
     const { classes, user } = this.props;
 
@@ -93,7 +96,9 @@ class AccountInfo extends Component {
                   size="medium"
                   variant="contained"
                   className={classes.secondaryButton}
-                  onClick={() => {
+                  onClick={async () => {
+                    this.context.showLoading();
+                    setTimeout(this.context.hideLoading, 2000);
                     alert("work in progress");
                   }}
                 >

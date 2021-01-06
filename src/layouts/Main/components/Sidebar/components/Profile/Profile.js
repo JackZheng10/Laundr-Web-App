@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Avatar, Typography, withStyles } from "@material-ui/core";
 import { getCurrentUser } from "../../../../../../helpers/session";
+import { GetServerSideProps } from "next";
 import clsx from "clsx";
 import PropTypes from "prop-types";
 import jwtDecode from "jwt-decode";
@@ -11,44 +12,28 @@ import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import profileStyles from "../../../../../../styles/layouts/Main/components/Sidebar/components/profileStyles";
 
 class Profile extends Component {
-  state = {
-    userFname: "N/A",
-    userLname: "N/A",
-    isWasher: false,
-    isDriver: false,
-    isAdmin: false,
-  };
-
-  componentDidMount = () => {
-    const currentUser = getCurrentUser();
-
-    this.setState({
-      userFname: currentUser.fname,
-      userLname: currentUser.lname,
-      isWasher: currentUser.isWasher,
-      isDriver: currentUser.isDriver,
-      isAdmin: currentUser.isAdmin,
-    });
-  };
-
-  renderBio = () => {
-    if (this.state.isWasher) {
+  renderBio = (currentUser) => {
+    if (!currentUser) {
+      return "User";
+    } else if (currentUser.isWasher) {
       return "Washer";
-    } else if (this.state.isDriver) {
+    } else if (currentUser.isDriver) {
       return "Driver";
-    } else if (this.state.isAdmin) {
+    } else if (currentUser.isAdmin) {
       return "Admin";
     } else {
       return "User";
     }
   };
 
-  renderAvatarIcon = (classes) => {
-    if (this.state.isWasher) {
+  renderAvatarIcon = (classes, currentUser) => {
+    if (!currentUser) {
+      return <PersonIcon className={classes.icon} />;
+    } else if (currentUser.isWasher) {
       return <LocalLaundryServiceIcon className={classes.icon} />;
-    } else if (this.state.isDriver) {
+    } else if (currentUser.isDriver) {
       return <DirectionsCarIcon className={classes.icon} />;
-    } else if (this.state.isAdmin) {
+    } else if (currentUser.isAdmin) {
       return <VpnKeyIcon className={classes.icon} />;
     } else {
       return <PersonIcon className={classes.icon} />;
@@ -56,17 +41,18 @@ class Profile extends Component {
   };
 
   render() {
-    const { classes, className, ...rest } = this.props;
+    const { classes, className, currentUser, ...rest } = this.props;
 
     return (
       <div {...rest} className={clsx(classes.root, className)}>
         <Avatar alt="Person" className={classes.avatar}>
-          {this.renderAvatarIcon(classes)}
+          {this.renderAvatarIcon(classes, currentUser)}
         </Avatar>
         <Typography className={classes.name} variant="h4">
-          {this.state.userFname} {this.state.userLname}
+          {currentUser ? currentUser.fname : ""}{" "}
+          {currentUser ? currentUser.lname : ""}
         </Typography>
-        <Typography variant="body2">{this.renderBio()}</Typography>
+        <Typography variant="body2">{this.renderBio(currentUser)}</Typography>
       </div>
     );
   }

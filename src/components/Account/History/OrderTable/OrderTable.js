@@ -32,17 +32,37 @@ import orderTableStyles from "../../../../styles/Driver/components/OrderTable/or
 //driver first
 
 class OrderTable extends Component {
-  renderOrderCells = (orders, config) => {
+  renderOrderCells = (orders, config, currentUser) => {
+    if (!currentUser) {
+      return <div></div>;
+    }
+
     return orders.map((order, index) => {
-      return <OrderCell order={order} config={config} key={index} />;
+      return (
+        <OrderCell
+          order={order}
+          config={config}
+          key={index}
+          currentUser={currentUser}
+        />
+      );
     });
   };
 
-  renderOrderCards = (orders, config) => {
+  renderOrderCards = (orders, config, currentUser) => {
+    if (!currentUser) {
+      return <div></div>;
+    }
+
     return orders.map((order, index) => {
       return (
         <Grid item>
-          <OrderCard order={order} config={config} key={index} />
+          <OrderCard
+            order={order}
+            config={config}
+            key={index}
+            currentUser={currentUser}
+          />
         </Grid>
       );
     });
@@ -137,7 +157,9 @@ class OrderTable extends Component {
                   </TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>{this.renderOrderCells(orders, config)}</TableBody>
+              <TableBody>
+                {this.renderOrderCells(orders, config, this.props.currentUser)}
+              </TableBody>
             </Table>
           </TableContainer>
         </Hidden>
@@ -150,7 +172,7 @@ class OrderTable extends Component {
               justify="center"
               alignItems="center"
             >
-              {this.renderOrderCards(orders, config)}
+              {this.renderOrderCards(orders, config, this.props.currentUser)}
             </Grid>
           </div>
         </Hidden>

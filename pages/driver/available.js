@@ -6,6 +6,7 @@ import {
   Grid,
   Typography,
   Paper,
+  TablePagination,
 } from "@material-ui/core";
 import {
   TopBorderDarkPurple,
@@ -17,6 +18,15 @@ import {
 import { getCurrentUser, updateToken } from "../../src/helpers/session";
 import { showConsoleError, caughtError } from "../../src/helpers/errors";
 import { Layout } from "../../src/layouts";
+import { GetServerSideProps } from "next";
+import { withRouter } from "next/router";
+import {
+  getExistingOrder_SSR,
+  getCurrentUser_SSR,
+  fetchOrders_WA_SSR,
+  fetchOrders_DAV_SSR,
+} from "../../src/helpers/ssr";
+import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
@@ -40,82 +50,186 @@ import availableStyles from "../../src/styles/Driver/Available/availableStyles";
 class AvailableDashboard extends Component {
   static contextType = MainAppContext;
 
-  state = { orders: [], userFname: "" };
+  constructor(props) {
+    super(props);
+
+    //handle pagination
+    const { fetch_SSR } = this.props;
+    const paginationInfo = fetch_SSR.paginationInfo;
+    const initialLimit = 10;
+    const initialPage = 0; //MUI uses 0-indexed
+
+    this.state = {
+      orders: fetch_SSR.success ? fetch_SSR.orders : [],
+      limit: initialLimit,
+      page: initialPage,
+      totalCount: paginationInfo.totalCount,
+    };
+  }
 
   componentDidMount = async () => {
-    await this.fetchOrders();
-  };
+    const { fetch_SSR } = this.props;
 
-  //high level dialog for errors
-  //todo: change to fetchorders for others too
-  fetchOrders = async () => {
-    try {
-      const currentUser = getCurrentUser();
-      const response = await axios.post("/api/order/fetchOrders", {
-        statuses: [0, 4],
-        filter: "none",
-      });
-
-      if (response.data.success) {
-        this.setState({
-          orders: response.data.message,
-          userFname: currentUser.fname,
-        });
-      } else {
-        this.context.showAlert(response.data.message);
-      }
-    } catch (error) {
-      showConsoleError("fetching orders", error);
-      this.context.showAlert(caughtError("fetching orders", error, 99));
+    if (!fetch_SSR.success) {
+      this.context.showAlert(fetch_SSR.message);
     }
   };
 
-  //snackbar
+  fetchPage = async (page, limit) => {
+    try {
+      const response = await axios.post(
+        `/api/order/fetchOrders`,
+        {
+          filter: "none",
+          statuses: [0, 4],
+          limit: limit,
+          page: page,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      return response;
+    } catch (error) {
+      showConsoleError("fetching orders", error);
+      return {
+        data: {
+          success: false,
+          message: caughtError("fetching orders", error, 99),
+        },
+      };
+    }
+  };
+
+  refreshPage = async (page, limit) => {
+    try {
+      const response = await axios.post(
+        `/api/order/fetchOrders`,
+        {
+          filter: "none",
+          statuses: [0, 4],
+          limit: limit,
+          page: page,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (!response.data.success) {
+        if (response.data.redirect) {
+          this.props.router.push(response.data.message);
+        } else {
+          this.context.showAlert(response.data.message);
+        }
+      } else {
+        this.setState({
+          orders: response.data.message.orders,
+          totalCount: response.data.message.totalCount,
+        });
+      }
+    } catch (error) {
+      showConsoleError("fetching orders", error);
+      return {
+        data: {
+          success: false,
+          message: caughtError("fetching orders", error, 99),
+        },
+      };
+    }
+  };
+
+  handleChangePage = async (event, newPage) => {
+    const response = await this.fetchPage(newPage, this.state.limit);
+
+    if (!response.data.success) {
+      if (response.data.redirect) {
+        this.props.router.push(response.data.message);
+      } else {
+        this.context.showAlert(response.data.message);
+      }
+    } else {
+      this.setState({
+        orders: response.data.message.orders,
+        totalCount: response.data.message.totalCount,
+        page: newPage,
+      });
+    }
+  };
+
+  handleChangeRowsPerPage = async (event) => {
+    const response = await this.fetchPage(this.state.page, event.target.value);
+
+    if (!response.data.success) {
+      if (response.data.redirect) {
+        this.props.router.push(response.data.message);
+      } else {
+        this.context.showAlert(response.data.message);
+      }
+    } else {
+      this.setState({
+        orders: response.data.message.orders,
+        totalCount: response.data.message.totalCount,
+        limit: event.target.value,
+      });
+    }
+  };
+
   handlePickupAccept = async (order) => {
     try {
-      const currentUser = getCurrentUser();
       const orderID = order.orderInfo.orderID;
 
-      const response = await axios.put("/api/driver/assignOrderPickup", {
-        driverEmail: currentUser.email,
-        orderID,
-      });
+      const response = await axios.put(
+        "/api/driver/assignOrderPickup",
+        {
+          orderID,
+        },
+        { withCredentials: true }
+      );
 
-      return { success: response.data.success, message: response.data.message };
+      return response;
     } catch (error) {
       showConsoleError("accepting order", error);
       return {
-        success: false,
-        message: caughtError("accepting order", error, 99),
+        data: {
+          success: false,
+          message: caughtError("accepting order", error, 99),
+        },
       };
     }
   };
 
   handleDropoffAccept = async (order) => {
     try {
-      const currentUser = getCurrentUser();
       const orderID = order.orderInfo.orderID;
 
-      const response = await axios.put("/api/driver/assignOrderDropoff", {
-        driverEmail: currentUser.email,
-        orderID,
-      });
+      const response = await axios.put(
+        "/api/driver/assignOrderDropoff",
+        {
+          orderID,
+        },
+        { withCredentials: true }
+      );
 
-      return { success: response.data.success, message: response.data.message };
+      return response;
     } catch (error) {
       showConsoleError("accepting order for dropoff", error);
       return {
-        success: false,
-        message: caughtError("accepting order for dropoff", error, 99),
+        data: {
+          success: false,
+          message: caughtError("accepting order for dropoff", error, 99),
+        },
       };
     }
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, fetch_SSR } = this.props;
+    const { totalCount, limit, page } = this.state;
 
     return (
-      <Layout>
+      <Layout currentUser={fetch_SSR.success ? fetch_SSR.userInfo : null}>
         <Grid
           container
           spacing={0}
@@ -134,7 +248,9 @@ class AvailableDashboard extends Component {
                 className={classes.welcomeText}
                 gutterBottom
               >
-                {`Welcome, ${this.state.userFname}`}
+                {`Welcome, ${
+                  fetch_SSR.success ? fetch_SSR.userInfo.fname : ""
+                }`}
               </Typography>
             </Paper>
           </Grid>
@@ -164,10 +280,23 @@ class AvailableDashboard extends Component {
           >
             <OrderTable
               orders={this.state.orders}
-              fetchOrders={this.fetchOrders}
+              refreshPage={this.refreshPage}
               handlePickupAccept={this.handlePickupAccept}
               handleDropoffAccept={this.handleDropoffAccept}
+              limit={this.state.limit}
+              page={this.state.page}
             />
+            {fetch_SSR.success && (
+              <TablePagination
+                rowsPerPageOptions={[10, 25, 50]}
+                component="div"
+                count={totalCount}
+                rowsPerPage={limit}
+                page={page}
+                onChangePage={this.handleChangePage}
+                onChangeRowsPerPage={this.handleChangeRowsPerPage}
+              />
+            )}
           </Grid>
         </Grid>
       </Layout>
@@ -179,4 +308,124 @@ AvailableDashboard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(availableStyles)(AvailableDashboard);
+export async function getServerSideProps(context) {
+  //fetch current user
+  const response_one = await getCurrentUser_SSR(context);
+
+  //check for redirect needed due to invalid session or error in fetching
+  if (!response_one.data.success) {
+    if (response_one.data.redirect) {
+      return {
+        redirect: {
+          destination: response_one.data.message,
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        props: {
+          fetch_SSR: {
+            success: false,
+            message: response_one.data.message,
+          },
+        },
+      };
+    }
+  }
+
+  //check for permissions to access page if no error from fetching user
+  const currentUser = response_one.data.message;
+  const urlSections = context.resolvedUrl.split("/");
+  switch (urlSections[1]) {
+    case "user":
+      if (currentUser.isDriver || currentUser.isWasher || currentUser.isAdmin) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+    case "washer":
+      if (!currentUser.isWasher) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+    case "driver":
+      if (!currentUser.isDriver) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+    case "admin":
+      if (!currentUser.isAdmin) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+  }
+
+  //everything ok, so current user is fetched (currentUser is valid)
+
+  //fetch possible orders
+  const initialLimit = 10;
+  const initialPage = 0;
+  const response_two = await fetchOrders_DAV_SSR(
+    context,
+    currentUser,
+    initialLimit,
+    initialPage
+  );
+
+  //check for error
+  if (!response_two.data.success) {
+    if (response_two.data.redirect) {
+      return {
+        redirect: {
+          destination: response_two.data.message,
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        props: {
+          fetch_SSR: {
+            success: false,
+            message: response_two.data.message,
+          },
+        },
+      };
+    }
+  }
+
+  //return info for fetched user, available via props
+  return {
+    props: {
+      fetch_SSR: {
+        success: true,
+        userInfo: currentUser,
+        orders: response_two.data.message.orders,
+        paginationInfo: response_two.data.message,
+      },
+    },
+  };
+}
+
+export default compose(
+  withRouter,
+  withStyles(availableStyles)
+)(AvailableDashboard);

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { withStyles, Grid, Typography } from "@material-ui/core";
 import { Layout } from "../../src/layouts";
-import { getCurrentUser, updateToken } from "../../src/helpers/session";
+import { getCurrentUser } from "../../src/helpers/session";
 import {
   TopBorderDarkPurple,
   BottomBorderDarkPurple,
@@ -9,68 +9,76 @@ import {
   TopBorderBlue,
   BottomBorderBlue,
 } from "../../src/utility/borders";
+import { GetServerSideProps } from "next";
+import { withRouter } from "next/router";
+import {
+  getExistingOrder_SSR,
+  getCurrentUser_SSR,
+} from "../../src/helpers/ssr";
+import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import jwtDecode from "jwt-decode";
 import axios from "axios";
+import MainAppContext from "../../src/contexts/MainAppContext";
 import SubscriptionBoxes from "../../src/components/User/Subscription/SubscriptionBoxes/SubscriptionBoxes";
 import SubscriptionStatus from "../../src/components/User/Subscription/SubscriptionStatus/SubscriptionStatus";
 import subscriptionStyles from "../../src/styles/User/Subscription/subscriptionStyles";
 
+//todo: why does it do 3+1 but then 4 in a row after a refresh for the cards
+
 class Subscription extends Component {
-  //todo: adopt ordercomponent thing from dashboard as well so it doesnt flash sub boxes before switching
-  state = {
-    subscriptionComponent: null,
+  static contextType = MainAppContext;
+
+  componentDidMount = () => {
+    const { fetch_SSR } = this.props;
+
+    if (!fetch_SSR.success) {
+      this.context.showAlert(fetch_SSR.message);
+    }
   };
 
-  componentDidMount = async () => {
-    let currentUser = getCurrentUser();
+  renderSubscriptionComponent = () => {
+    const { fetch_SSR } = this.props;
+    const currentUser = fetch_SSR.userInfo;
 
-    await updateToken(currentUser.email);
+    if (!fetch_SSR.success) {
+      return <div></div>;
+    }
 
-    currentUser = getCurrentUser();
-
-    this.renderSubscriptionComponent(currentUser);
-  };
-
-  renderSubscriptionComponent = (currentUser) => {
     if (currentUser.subscription.status === "active") {
-      this.setState({
-        subscriptionComponent: (
+      return (
+        <Grid
+          container
+          spacing={0}
+          direction="column"
+          justify="center"
+          alignItems="center"
+        >
+          <SubscriptionStatus currentUser={currentUser} />
+        </Grid>
+      );
+    } else {
+      return (
+        <div style={{ padding: 16 }}>
           <Grid
             container
-            spacing={0}
-            direction="column"
+            spacing={2}
+            direction="row"
             justify="center"
             alignItems="center"
           >
-            <SubscriptionStatus subscription={currentUser.subscription} />
+            <SubscriptionBoxes currentUser={currentUser} />
           </Grid>
-        ),
-      });
-    } else {
-      this.setState({
-        subscriptionComponent: (
-          <div style={{ padding: 16 }}>
-            <Grid
-              container
-              spacing={2}
-              direction="row"
-              justify="center"
-              alignItems="center"
-            >
-              <SubscriptionBoxes />
-            </Grid>
-          </div>
-        ),
-      });
+        </div>
+      );
     }
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, fetch_SSR } = this.props;
 
     return (
-      <Layout>
+      <Layout currentUser={fetch_SSR.success ? fetch_SSR.userInfo : null}>
         <Grid
           container
           spacing={0}
@@ -95,7 +103,15 @@ class Subscription extends Component {
         <div style={{ position: "relative", marginBottom: 70 }}>
           <BottomBorderBlue />
         </div>
-        {this.state.subscriptionComponent}
+        <Grid
+          container
+          spacing={0}
+          direction="row"
+          justify="center"
+          alignItems="center" /*main page column*/
+        >
+          {this.renderSubscriptionComponent()}
+        </Grid>
       </Layout>
     );
   }
@@ -105,4 +121,95 @@ Subscription.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(subscriptionStyles)(Subscription);
+export async function getServerSideProps(context) {
+  //fetch current user
+  const response_one = await getCurrentUser_SSR(context);
+
+  //check for redirect needed due to invalid session or error in fetching
+  if (!response_one.data.success) {
+    if (response_one.data.redirect) {
+      return {
+        redirect: {
+          destination: response_one.data.message,
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        props: {
+          fetch_SSR: {
+            success: false,
+            message: response_one.data.message,
+          },
+        },
+      };
+    }
+  }
+
+  //check for permissions to access page if no error from fetching user
+  const currentUser = response_one.data.message;
+  const urlSections = context.resolvedUrl.split("/");
+
+  switch (urlSections[1]) {
+    case "user":
+      if (currentUser.isDriver || currentUser.isWasher || currentUser.isAdmin) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+
+    case "washer":
+      if (!currentUser.isWasher) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+
+    case "driver":
+      if (!currentUser.isDriver) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+
+    case "admin":
+      if (!currentUser.isAdmin) {
+        return {
+          redirect: {
+            destination: "/accessDenied",
+            permanent: false,
+          },
+        };
+      }
+      break;
+  }
+
+  //everything ok, so current user is fetched (currentUser is valid)
+
+  //return info for fetched user, available via props
+  return {
+    props: {
+      fetch_SSR: {
+        success: true,
+        userInfo: currentUser,
+      },
+    },
+  };
+}
+
+export default compose(
+  withRouter,
+  withStyles(subscriptionStyles)
+)(Subscription);

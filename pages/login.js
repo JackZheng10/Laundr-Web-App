@@ -11,9 +11,13 @@ import {
   Container,
   withStyles,
   Paper,
+  FormControlLabel,
+  Checkbox,
 } from "@material-ui/core";
 import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
+import { GetServerSideProps } from "next";
+import { getExistingOrder_SSR, getCurrentUser_SSR } from "../src/helpers/ssr";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import jwtDecode from "jwt-decode";
@@ -30,6 +34,9 @@ import axios from "axios";
 //todo: add cssbaseline to layout, dont need on every pg
 //todo: alert in app.js is off centered because login is desktop and "sidebar" would be showing if layout present
 //todo: learn to customize mui components more!
+
+const baseURL =
+  process.env.NEXT_PUBLIC_BASE_URL || require("../src/config").baseURL;
 
 function Copyright() {
   return (
@@ -64,10 +71,6 @@ class Login extends Component {
     errorDialogMsg: "",
     emailErrorMsg: "",
     passwordErrorMsg: "",
-    loggedIn: false,
-    isWasher: false,
-    isDriver: false,
-    isAdmin: false,
   };
 
   handleInputChange = (property, value) => {
@@ -79,28 +82,24 @@ class Login extends Component {
 
     if (this.handleInputValidation()) {
       try {
-        const response = await axios.post("/api/user/login", {
-          email: this.state.email.toLowerCase(),
-          password: this.state.password,
-        });
+        this.context.showLoading();
+        const response = await axios.post(
+          "/api/user/login",
+          {
+            email: this.state.email.toLowerCase(),
+            password: this.state.password,
+          },
+          { withCredentials: true }
+        );
+        this.context.hideLoading();
 
         if (response.data.success) {
-          const token = response.data.token;
-
-          localStorage.setItem("token", token);
-
-          const data = jwtDecode(token);
-
-          this.setState({
-            loggedIn: true,
-            isWasher: data.isWasher,
-            isDriver: data.isDriver,
-            isAdmin: data.isAdmin,
-          });
+          this.props.router.push(response.data.message);
         } else {
           this.context.showAlert(response.data.message);
         }
       } catch (error) {
+        this.context.hideLoading();
         showConsoleError("logging in", error);
         this.context.showAlert(caughtError("logging in", error, 99));
       }
@@ -159,27 +158,11 @@ class Login extends Component {
     return valid;
   };
 
-  handleLoginRedirect = () => {
-    if (this.state.isWasher) {
-      this.props.router.push("/washer/assigned");
-    } else if (this.state.isDriver) {
-      this.props.router.push("/driver/available");
-    } else if (this.state.isAdmin) {
-      // return <Redirect push to="/placeholder" />;
-    } else {
-      this.props.router.push("/user/dashboard");
-    }
-  };
-
   toggleDialog = () => {
     this.setState({ showErrorDialog: !this.state.showErrorDialog });
   };
 
   render() {
-    if (this.state.loggedIn) {
-      this.handleLoginRedirect();
-    }
-
     const classes = this.props.classes;
 
     return (
@@ -218,44 +201,46 @@ class Login extends Component {
                 </Typography>
               </Paper>
               <Grid item>
-                <TextField
-                  variant="filled"
-                  margin="normal"
-                  fullWidth
-                  label="Email Address"
-                  autoComplete="email"
-                  error={this.state.emailError}
-                  helperText={this.state.emailErrorMsg}
-                  onChange={(event) => {
-                    this.handleInputChange("email", event.target.value);
-                  }}
-                  value={this.state.email}
-                  className={classes.coloredField}
-                />
-                <TextField
-                  variant="filled"
-                  margin="normal"
-                  fullWidth
-                  label="Password"
-                  type="password"
-                  autoComplete="current-password"
-                  error={this.state.passwordError}
-                  helperText={this.state.passwordErrorMsg}
-                  onChange={(event) => {
-                    this.handleInputChange("password", event.target.value);
-                  }}
-                  value={this.state.password}
-                  classes={{ root: classes.coloredField }}
-                />
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  className={classes.submit}
-                  onClick={this.handleLogin}
-                >
-                  Sign In
-                </Button>
+                <form>
+                  <TextField
+                    variant="filled"
+                    margin="normal"
+                    fullWidth
+                    label="Email Address"
+                    autoComplete="email"
+                    error={this.state.emailError}
+                    helperText={this.state.emailErrorMsg}
+                    onChange={(event) => {
+                      this.handleInputChange("email", event.target.value);
+                    }}
+                    value={this.state.email}
+                    className={classes.coloredField}
+                  />
+                  <TextField
+                    variant="filled"
+                    margin="normal"
+                    fullWidth
+                    label="Password"
+                    type="password"
+                    autoComplete="current-password"
+                    error={this.state.passwordError}
+                    helperText={this.state.passwordErrorMsg}
+                    onChange={(event) => {
+                      this.handleInputChange("password", event.target.value);
+                    }}
+                    value={this.state.password}
+                    classes={{ root: classes.coloredField }}
+                  />
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    className={classes.submit}
+                    onClick={this.handleLogin}
+                  >
+                    Sign In
+                  </Button>
+                </form>
                 <Grid container>
                   <Grid item xs style={{ paddingBottom: 10 }}>
                     <Link
@@ -288,5 +273,39 @@ class Login extends Component {
 Login.propTypes = {
   classes: PropTypes.object.isRequired,
 };
+
+export async function getServerSideProps(context) {
+  //fetch current user if there exists one
+  const response_one = await getCurrentUser_SSR(context);
+
+  //console.log(context);
+
+  //check for redirect needed due to a currently logged in user
+  if (response_one.data.success) {
+    const currentUser = response_one.data.message;
+    let redirectDestination;
+
+    if (currentUser.isDriver) {
+      redirectDestination = "/driver/available";
+    } else if (currentUser.isWasher) {
+      redirectDestination = "/washer/assigned";
+    } else if (currentUser.isAdmin) {
+      redirectDestination = "/admin/placeholder";
+    } else {
+      redirectDestination = "/user/dashboard";
+    }
+
+    return {
+      redirect: {
+        destination: redirectDestination,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+}
 
 export default compose(withRouter, withStyles(loginStyles))(Login);

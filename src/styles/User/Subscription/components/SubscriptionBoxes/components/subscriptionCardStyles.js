@@ -1,9 +1,20 @@
 const subscriptionCardStyles = (theme) => ({
   root: {
-    width: 332,
+    width: "100%",
+    height: "100%",
+  },
+  layout: {
+    marginLeft: "auto",
+    marginRight: "auto",
+    height: "auto",
+    width: 400,
+    [theme.breakpoints.down(520)]: {
+      width: "90vw",
+    },
   },
   media: {
-    height: 340,
+    height: 0,
+    paddingTop: "66.25%",
   },
   gradientButton: {
     backgroundImage:

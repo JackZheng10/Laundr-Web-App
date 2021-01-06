@@ -7,7 +7,9 @@ import {
   CardContent,
 } from "@material-ui/core";
 import { getCurrentUser } from "../../../../helpers/session";
+import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../../../../helpers/errors";
+import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import Geocode from "react-geocode";
 import axios from "axios";
@@ -115,8 +117,6 @@ class NewOrder extends Component {
             "The address entered is not valid or is not within our service range. Make sure you've selected an address from the dropdown and try again."
           );
 
-          // console.log("distance: " + distance);
-          // console.log("====================================");
           canNext = false;
         }
         break;
@@ -136,11 +136,15 @@ class NewOrder extends Component {
           return;
         }
 
-        if (!response.success) {
-          this.context.showAlert(response.message);
-          canNext = false;
+        if (!response.data.success) {
+          if (response.data.redirect) {
+            return this.props.router.push(response.data.message);
+          } else {
+            this.context.showAlert(response.data.message);
+            canNext = false;
+          }
         } else {
-          this.setState({ orderID: response.message });
+          this.setState({ orderID: response.data.orderID });
         }
         break;
 
@@ -161,48 +165,39 @@ class NewOrder extends Component {
   };
 
   handlePlaceOrder = async () => {
-    // axios.defaults.headers.common["token"] = token;
-
     try {
-      const currentUser = getCurrentUser();
+      const response = await axios.post(
+        "/api/order/placeOrder",
+        {
+          coupon: "placeholder",
+          scented: this.state.scented,
+          delicates: this.state.delicates,
+          separate: this.state.separate,
+          towelsSheets: this.state.towelsSheets,
+          washerPrefs: this.evaluateWhitespace(this.state.washerPreferences),
+          address: this.state.address,
+          addressPrefs: this.evaluateWhitespace(this.state.addressPreferences),
+          loads: this.state.loads,
+          pickupDate: this.state.date,
+          pickupTime: this.state.formattedTime,
+          created: new Date(),
+        },
+        { withCredentials: true }
+      );
 
-      const response = await axios.post("/api/order/placeOrder", {
-        email: currentUser.email,
-        fname: currentUser.fname,
-        lname: currentUser.lname,
-        phone: currentUser.phone,
-        coupon: "placeholder",
-        scented: this.state.scented,
-        delicates: this.state.delicates,
-        separate: this.state.separate,
-        towelsSheets: this.state.towelsSheets,
-        washerPrefs: this.evaluateWhitespace(this.state.washerPreferences),
-        address: this.state.address,
-        addressPrefs: this.evaluateWhitespace(this.state.addressPreferences),
-        loads: this.state.loads,
-        pickupDate: this.state.date,
-        pickupTime: this.state.formattedTime,
-        created: new Date(),
-      });
-
-      if (response.data.success) {
-        return { success: true, message: response.data.orderID };
-      } else {
-        return { success: false, message: response.data.message };
-      }
+      return response;
     } catch (error) {
       showConsoleError("placing order: ", error);
       return {
-        success: false,
-        message: caughtError("placing order", error, 99),
+        data: {
+          success: false,
+          message: caughtError("placing order", error, 99),
+        },
       };
     }
   };
 
   handleTimeCheck = () => {
-    console.log("scheduled time:" + this.state.formattedTime);
-    console.log("raw time:" + this.state.rawTime);
-
     let canNext = true;
     //time checks, military time format: check if logged in user is gainesville or etc, hardcode gnv for now
     const scheduledTime = moment(this.state.rawTime, "HH:mm:ss"); //note: converting Date() to moment obj
@@ -210,8 +205,6 @@ class NewOrder extends Component {
     //not exact bounds since isBetween is non-inclusive of the bounds
     const lowerBound = moment("9:59:59", "HH:mm:ss"); //want 10:00:00 to be true
     const upperBound = moment("19:00:59", "HH:mm:ss"); //want 19:00:00 to be true
-
-    //console.log("scheduled time raw:" + scheduledTime);
 
     //universal 1 hour from now check
     const hourFromNow = moment(moment(), "HH:mm:ss").add(1, "hours");
@@ -573,4 +566,4 @@ NewOrder.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(newOrderStyles)(NewOrder);
+export default compose(withRouter, withStyles(newOrderStyles))(NewOrder);

@@ -83,37 +83,39 @@ const washerPages = [
   },
 ];
 
+const adminPages = [
+  {
+    title: "placeholder",
+    href: "/admin/placeholder",
+    icon: <AssignmentIcon />,
+  },
+];
+
 class Sidebar extends Component {
-  state = {
-    isWasher: false,
-    isDriver: false,
-    isAdmin: false,
-  };
-
-  componentDidMount = () => {
-    const currentUser = getCurrentUser();
-
-    this.setState({
-      isWasher: currentUser.isWasher,
-      isDriver: currentUser.isDriver,
-      isAdmin: currentUser.isAdmin,
-    });
-  };
-
-  handlePagesConfig = () => {
-    if (this.state.isWasher) {
+  handlePagesConfig = (currentUser) => {
+    if (!currentUser) {
+      return userPages;
+    } else if (currentUser.isWasher) {
       return washerPages;
-    } else if (this.state.isDriver) {
+    } else if (currentUser.isDriver) {
       return driverPages;
-    } else if (this.state.isAdmin) {
-      return washerPages;
+    } else if (currentUser.isAdmin) {
+      return adminPages;
     } else {
       return userPages;
     }
   };
 
   render() {
-    const { classes, open, variant, onClose, className, ...rest } = this.props;
+    const {
+      classes,
+      open,
+      variant,
+      onClose,
+      className,
+      currentUser,
+      ...rest
+    } = this.props;
 
     return (
       <Drawer
@@ -124,11 +126,11 @@ class Sidebar extends Component {
         variant={variant}
       >
         <div {...rest} className={clsx(classes.root, className)}>
-          <Profile />
+          <Profile currentUser={currentUser} />
           <Divider className={classes.divider} />
           <SidebarNav
             className={classes.nav}
-            pages={this.handlePagesConfig()}
+            pages={this.handlePagesConfig(currentUser)}
           />
           {/* <UpgradePlan /> */}
         </div>

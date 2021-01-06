@@ -13,6 +13,8 @@ import {
 import { loadStripe } from "@stripe/stripe-js";
 import { getCurrentUser, updateToken } from "../../../../../helpers/session";
 import { caughtError, showConsoleError } from "../../../../../helpers/errors";
+import { withRouter } from "next/router";
+import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../../../../contexts/MainAppContext";
@@ -33,12 +35,15 @@ class SubscriptionCard extends Component {
     // When the customer clicks on the button, redirect them to Checkout.
     // Call your backend to create the Checkout session.
     try {
-      const currentUser = getCurrentUser();
+      const { planName, currentUser } = this.props;
 
-      const response = await axios.post("/api/stripe/createCheckoutSession", {
-        type: this.props.planName,
-        customerID: currentUser.stripe.customerID,
-      });
+      const response = await axios.post(
+        "/api/stripe/createCheckoutSession",
+        {
+          type: planName,
+        },
+        { withCredentials: true }
+      );
 
       if (response.data.success) {
         const sessionId = response.data.message;
@@ -58,7 +63,11 @@ class SubscriptionCard extends Component {
           );
         }
       } else {
-        this.context.showAlert(response.data.message);
+        if (response.data.redirect) {
+          this.props.router.push(response.data.message);
+        } else {
+          this.context.showAlert(response.data.message);
+        }
       }
     } catch (error) {
       showConsoleError("creating checkout session", error);
@@ -73,42 +82,44 @@ class SubscriptionCard extends Component {
 
     return (
       <React.Fragment>
-        <Card className={classes.root} elevation={5}>
-          <CardHeader
-            title={planName}
-            titleTypographyProps={{
-              variant: "h3",
-              style: {
-                color: "white",
-                textAlign: "center",
-              },
-            }}
-            className={classes.cardHeader}
-          />
-          <CardMedia className={classes.media} image={image} />
-          <CardContent style={{ textAlign: "center" }}>
-            <Typography variant="h4" gutterBottom>
-              {priceText}
-            </Typography>
-            <Typography variant="body1" color="textSecondary">
-              {text}
-            </Typography>
-          </CardContent>
-          <Divider />
-          <CardActions
-            style={{ justifyContent: "center" }}
-            className={classes.cardHeader}
-          >
-            <Button
-              size="medium"
-              variant="contained"
-              className={classes.mainButton}
-              onClick={this.handlePurchase}
+        <div className={classes.layout}>
+          <Card className={classes.root} elevation={5}>
+            <CardHeader
+              title={planName}
+              titleTypographyProps={{
+                variant: "h3",
+                style: {
+                  color: "white",
+                  textAlign: "center",
+                },
+              }}
+              className={classes.cardHeader}
+            />
+            <CardMedia className={classes.media} image={image} />
+            <CardContent style={{ textAlign: "center" }}>
+              <Typography variant="h4" gutterBottom>
+                {priceText}
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                {text}
+              </Typography>
+            </CardContent>
+            <Divider />
+            <CardActions
+              style={{ justifyContent: "center" }}
+              className={classes.cardHeader}
             >
-              Purchase
-            </Button>
-          </CardActions>
-        </Card>
+              <Button
+                size="medium"
+                variant="contained"
+                className={classes.mainButton}
+                onClick={this.handlePurchase}
+              >
+                Purchase
+              </Button>
+            </CardActions>
+          </Card>
+        </div>
       </React.Fragment>
     );
   }
@@ -118,4 +129,7 @@ SubscriptionCard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(subscriptionCardStyles)(SubscriptionCard);
+export default compose(
+  withRouter,
+  withStyles(subscriptionCardStyles)
+)(SubscriptionCard);

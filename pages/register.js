@@ -164,37 +164,6 @@ class Register extends Component {
     }
   };
 
-  // handleCheckVerification = async () => {
-  //   try {
-  //     if (this.state.enteredCode.length < 4) {
-  //       //since codes must be at least 4 long
-  //       return this.context.showAlert(
-  //         "Verification code is incorrect. Please try again."
-  //       );
-  //     }
-
-  //     const response = await axios.post(
-  //       "/api/twilio/checkVerification",
-  //       {
-  //         to: this.state.phone,
-  //         enteredCode: this.state.enteredCode,
-  //       },
-  //       { withCredentials: true }
-  //     );
-
-  //     if (response.data.success) {
-  //       this.handleRegister();
-  //     } else {
-  //       this.context.showAlert(response.data.message);
-  //     }
-  //   } catch (error) {
-  //     showConsoleError("checking verification code", error);
-  //     this.context.showAlert(
-  //       caughtError("checking verification code", error, 99)
-  //     );
-  //   }
-  // };
-
   handleRegister = async () => {
     try {
       if (this.state.enteredCode.length < 4) {

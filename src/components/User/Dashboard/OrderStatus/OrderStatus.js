@@ -104,15 +104,12 @@ class OrderStatus extends Component {
 
   handleOrderCancel = async (order) => {
     try {
-      const response = await axios.delete(
-        "/api/order/cancelOrder",
-        {
-          params: {
-            orderID: order.orderInfo.orderID,
-          },
+      const response = await axios.delete("/api/order/cancelOrder", {
+        params: {
+          orderID: order.orderInfo.orderID,
         },
-        { withCredentials: true }
-      );
+        withCredentials: true,
+      });
 
       if (!response.data.success && response.data.redirect) {
         this.props.router.push(response.data.message);

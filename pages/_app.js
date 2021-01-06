@@ -27,7 +27,7 @@ const MyApp = (props) => {
     defaultMatches: true,
   });
 
-  if (process.env.MAINTENANCE_MODE) {
+  if (process.env.MAINTENANCE_MODE === "true") {
     return (
       <React.Fragment>
         <Head>

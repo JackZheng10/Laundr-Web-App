@@ -35,6 +35,9 @@ import axios from "axios";
 //todo: alert in app.js is off centered because login is desktop and "sidebar" would be showing if layout present
 //todo: learn to customize mui components more!
 
+const baseURL =
+  process.env.NEXT_PUBLIC_BASE_URL || require("../src/config").baseURL;
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -74,11 +77,6 @@ class Login extends Component {
     this.setState({ [property]: value });
   };
 
-  // loadingTest = (event) => {
-  //   event.preventDefault();
-  //   this.context.showLoading();
-  // };
-
   handleLogin = async (event) => {
     event.preventDefault();
 
@@ -101,6 +99,7 @@ class Login extends Component {
           this.context.showAlert(response.data.message);
         }
       } catch (error) {
+        this.context.hideLoading();
         showConsoleError("logging in", error);
         this.context.showAlert(caughtError("logging in", error, 99));
       }
@@ -278,6 +277,8 @@ Login.propTypes = {
 export async function getServerSideProps(context) {
   //fetch current user if there exists one
   const response_one = await getCurrentUser_SSR(context);
+
+  //console.log(context);
 
   //check for redirect needed due to a currently logged in user
   if (response_one.data.success) {

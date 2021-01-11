@@ -69,7 +69,7 @@ class Topbar extends Component {
               cursor: "pointer",
             }}
             alt="Company Logo"
-            src="/images/Topbar/LaundrLogo.png"
+            src="/images/Topbar/LaundrLogo_Blue.png"
             onClick={this.handleRedirectHome}
           />
           <div className={classes.flexGrow} />

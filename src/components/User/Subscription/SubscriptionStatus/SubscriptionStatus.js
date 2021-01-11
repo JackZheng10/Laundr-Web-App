@@ -89,7 +89,7 @@ class SubscriptionStatus extends Component {
 
     return [
       { value: lbsLeft, color: "#01c9e1", opacity: 1 },
-      { value: maxLbs, color: "#828282", opacity: 0.2 },
+      { value: maxLbs - lbsLeft, color: "#828282", opacity: 0.2 },
     ];
   };
 

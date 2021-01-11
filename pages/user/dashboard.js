@@ -287,7 +287,7 @@ class Dashboard extends Component {
                   <Slide
                     media={
                       <img
-                        src="/images/UserDashboard/LaundrBombsLogo.png"
+                        src="/images/UserDashboard/LaundrBombs_New.png"
                         alt="Laundr Bombs"
                       />
                     }

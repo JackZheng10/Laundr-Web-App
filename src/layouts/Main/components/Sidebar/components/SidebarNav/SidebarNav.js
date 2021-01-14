@@ -82,7 +82,7 @@ const SidebarNav = (props) => {
         context.showAlert(response.data.message);
       }
     } else {
-      router.push("/login");
+      router.push("/");
     }
   };
 

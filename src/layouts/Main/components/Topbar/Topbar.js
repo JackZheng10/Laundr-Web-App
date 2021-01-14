@@ -36,7 +36,7 @@ class Topbar extends Component {
         this.context.showAlert(response.data.message);
       }
     } else {
-      this.props.router.push("/login");
+      this.props.router.push("/");
     }
   };
 
@@ -44,7 +44,7 @@ class Topbar extends Component {
     const currentUser = this.props.currentUser;
 
     if (!currentUser) {
-      this.props.router.push("/login");
+      this.props.router.push("/");
     } else if (currentUser.isWasher) {
       this.props.router.push("/washer/assigned");
     } else if (currentUser.isDriver) {

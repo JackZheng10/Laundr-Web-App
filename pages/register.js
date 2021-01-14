@@ -197,7 +197,7 @@ class Register extends Component {
           },
           () => {
             this.context.showAlert(response.data.message, () => {
-              this.props.router.push("/login");
+              this.props.router.push("/");
             });
           }
         );
@@ -645,7 +645,6 @@ class Register extends Component {
                         />
                         <Grid item>
                           <Link
-                            href="/login"
                             variant="h6"
                             target="_blank"
                             rel="noopener"
@@ -677,7 +676,7 @@ class Register extends Component {
 
                     <Grid item style={{ paddingBottom: 50 }}>
                       <Link
-                        href="/login"
+                        href="/"
                         variant="h6"
                         style={{ color: "#01c9e1", textAlign: "center" }}
                       >

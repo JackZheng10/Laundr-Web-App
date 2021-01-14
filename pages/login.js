@@ -20,20 +20,10 @@ import { GetServerSideProps } from "next";
 import { getExistingOrder_SSR, getCurrentUser_SSR } from "../src/helpers/ssr";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
-import jwtDecode from "jwt-decode";
+import LoadingButton from "../src/components/other/LoadingButton";
 import MainAppContext from "../src/contexts/MainAppContext";
 import loginStyles from "../src/styles/loginStyles";
 import axios from "axios";
-
-//todo: forgot password functionality
-//todo: change button colors to match logo/stuff
-//todo: change textbox + moving word to laundr colors, buttons to colors as well (WIP)
-//todo: big thing is to verify token on each page and redirect if necessary
-//todo: login with phone # since thats what they verify?
-//todo: this is written very badly lol. will make much better.
-//todo: add cssbaseline to layout, dont need on every pg
-//todo: alert in app.js is off centered because login is desktop and "sidebar" would be showing if layout present
-//todo: learn to customize mui components more!
 
 const baseURL =
   process.env.NEXT_PUBLIC_BASE_URL || require("../src/config").baseURL;
@@ -82,7 +72,7 @@ class Login extends Component {
 
     if (this.handleInputValidation()) {
       try {
-        this.context.showLoading();
+        //this.context.showLoading();
         const response = await axios.post(
           "/api/user/login",
           {
@@ -91,7 +81,7 @@ class Login extends Component {
           },
           { withCredentials: true }
         );
-        this.context.hideLoading();
+        //this.context.hideLoading();
 
         if (response.data.success) {
           this.props.router.push(response.data.message);
@@ -188,18 +178,20 @@ class Login extends Component {
                   className={classes.logo}
                 />
               </Grid>
-              <Paper elevation={0}>
-                <Typography
-                  variant="h1"
-                  style={{
-                    color: "#01c9e1",
-                    textAlign: "center",
-                    padding: 10,
-                  }}
-                >
-                  Login
-                </Typography>
-              </Paper>
+              <Grid item>
+                <Paper elevation={0}>
+                  <Typography
+                    variant="h1"
+                    style={{
+                      color: "#01c9e1",
+                      textAlign: "center",
+                      padding: 10,
+                    }}
+                  >
+                    Login
+                  </Typography>
+                </Paper>
+              </Grid>
               <Grid item>
                 <form>
                   <TextField
@@ -231,7 +223,7 @@ class Login extends Component {
                     value={this.state.password}
                     classes={{ root: classes.coloredField }}
                   />
-                  <Button
+                  <LoadingButton
                     type="submit"
                     fullWidth
                     variant="contained"
@@ -239,27 +231,27 @@ class Login extends Component {
                     onClick={this.handleLogin}
                   >
                     Sign In
-                  </Button>
+                  </LoadingButton>
                 </form>
-                <Grid container>
-                  <Grid item xs style={{ paddingBottom: 10 }}>
-                    <Link
-                      href="#"
-                      variant="h6"
-                      style={{ color: "#01c9e1", textAlign: "center" }}
-                    >
-                      Forgot password?
-                    </Link>
-                  </Grid>
-                  <Grid item style={{ paddingBottom: 50 }}>
-                    <Link
-                      href="/register"
-                      variant="h6"
-                      style={{ color: "#01c9e1", textAlign: "center" }}
-                    >
-                      Don't have an account?
-                    </Link>
-                  </Grid>
+              </Grid>
+              <Grid container>
+                <Grid item xs style={{ paddingBottom: 10 }}>
+                  <Link
+                    href="#"
+                    variant="h6"
+                    style={{ color: "#01c9e1", textAlign: "center" }}
+                  >
+                    Forgot password?
+                  </Link>
+                </Grid>
+                <Grid item style={{ paddingBottom: 50 }}>
+                  <Link
+                    href="/register"
+                    variant="h6"
+                    style={{ color: "#01c9e1", textAlign: "center" }}
+                  >
+                    Don't have an account?
+                  </Link>
                 </Grid>
               </Grid>
             </Grid>

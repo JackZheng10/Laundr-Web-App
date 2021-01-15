@@ -36,72 +36,16 @@ import AutoRotatingCarousel from "../../src/components/User/Dashboard/Carousel/A
 import Slide from "../../src/components/User/Dashboard/Carousel/Slide";
 import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 
-//refactor priorities:
-//!!!map multiple routes to single component
-//-add loading...only to components that need to fetch data from the user? for example login doesnt have it and uses localstorage, but not while rendering i guess? whereas dashboard needs it to prevent localstorage error.
-//^^ figure out, also use getstaticprops for fetching something like orders? keep loading until everything is fetched, so if theres an error the loading stays
-//^^also, loading on only main pages (after logged in, before main component rendered aka sidebar and topbar are there tho)? or different loading for individual components/fullscreen (like from login)
-//findOneAndUpdate where possible,
-//const vs let
-//backtick for variable + text stuff
-//styling errors like: prefs not centering when small, review page bleeds when small, etc.
-//get rid of xs={12} sm={6} stuff maybe (basically applies to cards and input fields), get rid of card variant="outlined", standard elevation
-//standard typography sizes/color/boldness (default color is grey, prob located in theme somewhere) (maybe take a look at the order table card vs review cards vs order status card)...standardize cards
-//standard btn sizes
-//authorization for either pages/routes/both
-//make sure loads show for driver, cost is updated when charged. show weight for washer?
-//error when: drop both order collections, place new order, cancel? doesnt cancel? check
-//configure: account, history, for washer/driver
 //for order tables, left align the cells, not center
-//sorting the orders by date in order history,
 
-//method for loading: do all data fetching in main parent component, apply loading bool
-//hold child components that rely on loaded data in state as null first, then change after gathered loaded data
-//render this.state.childComponent
-
-//-individual components (use helpers and loading component)
-//-implement update token helper
-//-fix places autocomplete on address
-//-imports (use index.js) from root for images, styles, deep components, etc.
-//-styles restructure folders and change file names, also restructure components folder
 //fix MUI grid spacing causing negative margin (horizontal scrollbar), explicit spacing={0} or none? see GH issues.
 //standardize space between title and waves on pages, also from top
-//errors: caught (use showConsole and this.context.showAlert(caughtError(stuff))), res.data.success=false (use this.context.showalert(res.data.message))
-//overhaul styles (destructure into components when available, remove unecessary styles, style structure like personal site)
 
-//FLOW: close dialog before showing success/error of successful request to backend, keep it open if its a caught error on frontend
-//make sure this is established for everything.
-
-//todo: fix white line appearing when small mobile for border
 //todo: implement admin stuff...later
-//handle student subscription
-//handle special cases for pricing
-//add error message to enable cookies (and therefore localstorage) to laundr shi
-//store token in cookies
-//make it expire and stuff.
-//todo: research efficient querying. look into usestaticquery
-//todo: maybe move logout button since if on mobile hitting sidebar button is close
-//todo: add isUser? maybe when im less lazy
-//todo: stripe self-serve portal handles all the payment info stuff??
-//todo: maybe just store their payment id, check if it exists every time a on-demand charge is made, use the id to modify method. sub is separate card?
-//todo: sort out customer email thing (different: login vs stripe - can be changed with checkout session)
-//todo: move moment to higher level package.json
-//todo: add progress circle to buttons for submission actions? or reg loading
-//pagination
-//add order ID to driver available etc?
-//remove class inlinetext
-//mainbutton (yellow) for ordercards too
-//standard sizes for stuff (text etc)
-//move account into one folder (either top level or in user, atm theres two)
-// /https://www.npmjs.com/package/react-infinite-scroll-component
+//add error message to enable cookies
 
-//notes:
-/*
--sometime use zapier with wordpress 
-doing .add(something) changes the object itself with moment
-*/
-
-//todo: limit input length for text boxes!
+//todo: limit input length for text boxes! frontend and backend
+//add "type" to textfields?
 
 const baseURL =
   process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;

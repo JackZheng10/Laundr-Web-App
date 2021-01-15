@@ -24,6 +24,7 @@ import compose from "recompose/compose";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import DateFnsUtils from "@date-io/date-fns";
 import axios from "axios";
+import LoadingButton from "../../../other/LoadingButton";
 import MainAppContext from "../../../../contexts/MainAppContext";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
 import QueryBuilderIcon from "@material-ui/icons/QueryBuilder";
@@ -126,7 +127,7 @@ class OrderStatus extends Component {
   };
 
   handleSetDropoffTime = async (order) => {
-    if (this.handleTimeCheck(order.orderInfo.weight, order.pickupInfo)) {
+    if (await this.handleTimeCheck(order.orderInfo.weight, order.pickupInfo)) {
       try {
         const response = await axios.put(
           "/api/order/setDropoff",
@@ -487,15 +488,13 @@ class OrderStatus extends Component {
                 >
                   Cancel
                 </Button>
-                <Button
-                  onClick={() => {
-                    this.handleSetDropoffTime(order);
-                  }}
+                <LoadingButton
+                  onClick={async () => await this.handleSetDropoffTime(order)}
                   variant="contained"
                   className={classes.mainButton}
                 >
                   Confirm
-                </Button>
+                </LoadingButton>
               </DialogActions>
             </Dialog>
             <CardContent id="orderStatusContainer">

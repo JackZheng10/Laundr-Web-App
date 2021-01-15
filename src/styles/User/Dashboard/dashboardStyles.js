@@ -40,7 +40,7 @@ const dashboardStyles = (theme) => ({
   carouselTitle: {
     color: "white",
     textAlign: "center",
-    paddingTop: 10,
+    paddingTop: 25,
   },
   cardHeader: {
     backgroundColor: "#01c9e1",

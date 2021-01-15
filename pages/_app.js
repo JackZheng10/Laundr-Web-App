@@ -13,19 +13,28 @@ import {
   Modal,
 } from "@material-ui/core";
 import { ThemeProvider } from "@material-ui/core/styles";
-import { useRouter } from "next/router";
+import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import Head from "next/head";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import MainAppContext from "../src/contexts/MainAppContext";
+import LoadingButton from "../src/components/other/LoadingButton";
 import theme from "../src/theme";
 import "../src/styles/borders.css";
+
+const useStyles = makeStyles((theme) => ({
+  mainButton: {
+    backgroundColor: "#FFB600",
+    color: "white",
+  },
+}));
 
 const MyApp = (props) => {
   const { Component, pageProps } = props;
   const isDesktop = useMediaQuery(() => theme.breakpoints.up("lg"), {
     defaultMatches: true,
   });
+  const classes = useStyles();
 
   if (process.env.MAINTENANCE_MODE === "true") {
     return (
@@ -78,7 +87,6 @@ const MyApp = (props) => {
   //alert with no confirmation
   //todo: look into promises, how setstate is chained in hooks, etc. since ideally youd want:
   //dialog to close, THEN callback. alert message and callback set, THEN show dialog
-  //todo: await on this? ex: fetchorderinfo in orderstatus
   const showAlert = (message, callback) => {
     setAlertMessage_NC(message);
     setShowAlertDialog_NC(true);
@@ -89,9 +97,9 @@ const MyApp = (props) => {
     setShowAlertDialog_NC(false);
   };
 
-  const closeAlertDialogWithCallback_NC = () => {
+  const closeAlertDialogWithCallback_NC = async () => {
     setShowAlertDialog_NC(false);
-    dialogCallback_NC();
+    await dialogCallback_NC();
   };
 
   //alert with confirmation
@@ -105,9 +113,9 @@ const MyApp = (props) => {
     setShowAlertDialog_C(false);
   };
 
-  const closeAlertDialogWithCallback_C = () => {
+  const closeAlertDialogWithCallback_C = async () => {
     setShowAlertDialog_C(false);
-    dialogCallback_C();
+    await dialogCallback_C();
   };
 
   //loading
@@ -196,13 +204,13 @@ const MyApp = (props) => {
             >
               Cancel
             </Button>
-            <Button
+            <LoadingButton
               onClick={closeAlertDialogWithCallback_C}
+              className={classes.mainButton}
               variant="contained"
-              style={{ backgroundColor: "#FFB600", color: "white" }}
             >
               Confirm
-            </Button>
+            </LoadingButton>
           </DialogActions>
         </Dialog>
         {/*LOADING DIALOG (for component pages, not fullscreen like login/register. todo: adjust for it should be ez)*/}

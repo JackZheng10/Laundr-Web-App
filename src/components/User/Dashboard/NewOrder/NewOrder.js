@@ -14,6 +14,7 @@ import PropTypes from "prop-types";
 import Geocode from "react-geocode";
 import axios from "axios";
 import MainAppContext from "../../../../contexts/MainAppContext";
+import LoadingButton from "../../../../components/other/LoadingButton";
 import Scheduling from "./components/Scheduling";
 import Preferences from "./components/Preferences/Preferences";
 import Address from "./components/Address/Address";
@@ -541,7 +542,7 @@ class NewOrder extends Component {
                           Back
                         </Button>
                       )}
-                      <Button
+                      <LoadingButton
                         variant="contained"
                         onClick={this.handleNext}
                         className={classes.mainButton}
@@ -549,7 +550,7 @@ class NewOrder extends Component {
                         {this.state.activeStep === steps.length - 1
                           ? "Place order"
                           : "Next"}
-                      </Button>
+                      </LoadingButton>
                     </div>
                   </React.Fragment>
                 )}

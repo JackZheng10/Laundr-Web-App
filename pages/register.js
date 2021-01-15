@@ -31,6 +31,7 @@ import { getExistingOrder_SSR, getCurrentUser_SSR } from "../src/helpers/ssr";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import MainAppContext from "../src/contexts/MainAppContext";
+import LoadingButton from "../src/components/other/LoadingButton";
 import registerStyles from "../src/styles/registerStyles";
 import axios from "axios";
 
@@ -274,15 +275,10 @@ class Register extends Component {
           break;
 
         case "password":
-          if (
-            value.length < 6 ||
-            /[A-Z]+/.test(value) === false ||
-            /[\s~`!@#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?()\._]/g.test(value) ===
-              false
-          ) {
+          if (value.length < 6 || /[A-Z]+/.test(value) === false) {
             this.setState({
               [input.name +
-              "ErrorMsg"]: "*Passwords must be at least 6 characters long, contain one capital letter, and contain one special character.",
+              "ErrorMsg"]: "*Passwords must be at least 6 characters long and contain one capital letter.",
               [input.name + "Error"]: true,
             });
             valid = false;
@@ -380,8 +376,26 @@ class Register extends Component {
     }
   };
 
-  handleResendCode = () => {
-    alert("work in progress");
+  handleResendCode = async () => {
+    try {
+      const response = await axios.post(
+        "/api/twilio/sendVerification",
+        {
+          to: this.state.phone,
+        },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        this.context.showAlert("Verification code resent.");
+      } else {
+        this.context.showAlert(response.data.message);
+      }
+    } catch (error) {
+      showConsoleError("sending verification code", error);
+      this.context.showAlert(
+        caughtError("sending verification code", error, 99)
+      );
+    }
   };
 
   toggleVerifyDialog = () => {
@@ -449,26 +463,28 @@ class Register extends Component {
                   onClick={this.toggleVerifyDialog}
                   variant="contained"
                   className={classes.secondaryButton}
+                  style={{ marginRight: 10 }}
                 >
                   Cancel
                 </Button>
-              </Grid>
-              <Grid item>
-                <Button
+                <LoadingButton
                   onClick={this.handleResendCode}
                   variant="contained"
                   className={classes.secondaryButton}
-                  style={{ marginRight: 10 }}
+                  timer={true}
+                  time={60}
                 >
                   Resend
-                </Button>
-                <Button
+                </LoadingButton>
+              </Grid>
+              <Grid item>
+                <LoadingButton
                   onClick={this.handleRegister}
                   variant="contained"
                   className={classes.mainButton}
                 >
                   Submit
-                </Button>
+                </LoadingButton>
               </Grid>
             </Grid>
           </DialogActions>
@@ -488,20 +504,22 @@ class Register extends Component {
                   className={classes.logo}
                 />
               </Grid>
-              <Paper elevation={0}>
-                <Typography
-                  variant="h1"
-                  style={{
-                    color: "#01c9e1",
-                    textAlign: "center",
-                    padding: 10,
-                  }}
-                >
-                  Register
-                </Typography>
-              </Paper>
-              <form>
-                <Grid item>
+              <Grid item>
+                <Paper elevation={0}>
+                  <Typography
+                    variant="h1"
+                    style={{
+                      color: "#01c9e1",
+                      textAlign: "center",
+                      padding: 10,
+                    }}
+                  >
+                    Register
+                  </Typography>
+                </Paper>
+              </Grid>
+              <Grid item>
+                <form>
                   <Grid container justify="center">
                     <Grid item xs={6} sm={6} style={{ paddingRight: 10 }}>
                       <TextField
@@ -509,7 +527,7 @@ class Register extends Component {
                         margin="normal"
                         fullWidth
                         label="First Name"
-                        autoComplete="fname"
+                        autoComplete="given-name"
                         error={this.state.fnameError}
                         helperText={this.state.fnameErrorMsg}
                         value={this.state.fname}
@@ -525,7 +543,7 @@ class Register extends Component {
                         margin="normal"
                         fullWidth
                         label="Last Name"
-                        autoComplete="lname"
+                        autoComplete="family-name"
                         error={this.state.lnameError}
                         helperText={this.state.lnameErrorMsg}
                         value={this.state.lname}
@@ -578,7 +596,7 @@ class Register extends Component {
                         fullWidth
                         label="Password"
                         type="password"
-                        autoComplete="current-password"
+                        autoComplete="new-password"
                         error={this.state.passwordError}
                         value={this.state.password}
                         helperText={this.state.passwordErrorMsg}
@@ -597,6 +615,7 @@ class Register extends Component {
                         margin="normal"
                         fullWidth
                         label="Phone Number"
+                        autoComplete="tel-national"
                         error={this.state.phoneError}
                         helperText={this.state.phoneErrorMsg}
                         value={this.state.phone}
@@ -663,7 +682,7 @@ class Register extends Component {
                       </Paper>
                     </Grid>
                     <Grid item xs={12}>
-                      <Button
+                      <LoadingButton
                         type="submit"
                         fullWidth
                         variant="contained"
@@ -671,9 +690,8 @@ class Register extends Component {
                         onClick={this.handleSendVerification}
                       >
                         Create Account
-                      </Button>
+                      </LoadingButton>
                     </Grid>
-
                     <Grid item style={{ paddingBottom: 50 }}>
                       <Link
                         href="/"
@@ -684,8 +702,8 @@ class Register extends Component {
                       </Link>
                     </Grid>
                   </Grid>
-                </Grid>
-              </form>
+                </form>
+              </Grid>
             </Grid>
           </div>
         </Grid>

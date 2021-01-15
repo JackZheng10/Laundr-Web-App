@@ -14,6 +14,7 @@ import { PieChart, Pie, Sector, Cell } from "recharts";
 import { getCurrentUser, updateToken } from "../../../../helpers/session";
 import { caughtError, showConsoleError } from "../../../../helpers/errors";
 import { withRouter } from "next/router";
+import LoadingButton from "../../../other/LoadingButton";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import axios from "axios";
@@ -39,8 +40,6 @@ class SubscriptionStatus extends Component {
 
   handleManageSub = async () => {
     try {
-      const { currentUser } = this.props;
-
       const response = await axios.post(
         "/api/stripe/createSelfPortal",
         {},
@@ -235,14 +234,14 @@ class SubscriptionStatus extends Component {
               style={{ justifyContent: "center" }}
               className={classes.cardHeader}
             >
-              <Button
+              <LoadingButton
                 size="medium"
                 variant="contained"
                 className={classes.mainButton}
                 onClick={this.handleManageSub}
               >
                 Manage
-              </Button>
+              </LoadingButton>
             </CardActions>
           </Card>
         </Grid>

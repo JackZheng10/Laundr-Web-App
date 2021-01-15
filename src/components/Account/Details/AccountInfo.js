@@ -96,9 +96,7 @@ class AccountInfo extends Component {
                   size="medium"
                   variant="contained"
                   className={classes.secondaryButton}
-                  onClick={async () => {
-                    this.context.showLoading();
-                    setTimeout(this.context.hideLoading, 2000);
+                  onClick={() => {
                     alert("work in progress");
                   }}
                 >

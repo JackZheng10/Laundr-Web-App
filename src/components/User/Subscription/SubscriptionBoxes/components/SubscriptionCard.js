@@ -16,6 +16,7 @@ import { caughtError, showConsoleError } from "../../../../../helpers/errors";
 import { withRouter } from "next/router";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
+import LoadingButton from "../../../../other/LoadingButton";
 import axios from "axios";
 import MainAppContext from "../../../../../contexts/MainAppContext";
 import subscriptionCardStyles from "../../../../../styles/User/Subscription/components/SubscriptionBoxes/components/subscriptionCardStyles";
@@ -109,14 +110,14 @@ class SubscriptionCard extends Component {
               style={{ justifyContent: "center" }}
               className={classes.cardHeader}
             >
-              <Button
+              <LoadingButton
                 size="medium"
                 variant="contained"
                 className={classes.mainButton}
                 onClick={this.handlePurchase}
               >
                 Purchase
-              </Button>
+              </LoadingButton>
             </CardActions>
           </Card>
         </div>

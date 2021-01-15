@@ -24,6 +24,7 @@ import { withRouter } from "next/router";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import OrderCard from "./components/OrderCard";
+import LoadingButton from "../../../components/other/LoadingButton";
 import OrderCell from "./components/OrderCell";
 import Close from "@material-ui/icons/Close";
 import orderTableStyles from "../../../styles/Driver/components/OrderTable/orderTableStyles";
@@ -239,7 +240,7 @@ class OrderTable extends Component {
               >
                 Cancel
               </Button>
-              <Button
+              <LoadingButton
                 onClick={async () => {
                   const response = await this.props.handlePickupAccept(
                     this.state.currentOrder
@@ -258,7 +259,7 @@ class OrderTable extends Component {
                 className={classes.mainButton}
               >
                 Confirm
-              </Button>
+              </LoadingButton>
             </React.Fragment>
           );
 
@@ -272,13 +273,13 @@ class OrderTable extends Component {
               >
                 Cancel
               </Button>
-              <Button
+              <LoadingButton
                 onClick={this.handleWeightEntered}
                 variant="contained"
                 className={classes.mainButton}
               >
                 Confirm
-              </Button>
+              </LoadingButton>
             </React.Fragment>
           );
 
@@ -292,7 +293,7 @@ class OrderTable extends Component {
               >
                 Cancel
               </Button>
-              <Button
+              <LoadingButton
                 onClick={async () => {
                   const response = await this.props.handleWasherReceived(
                     this.state.currentOrder
@@ -311,7 +312,7 @@ class OrderTable extends Component {
                 className={classes.mainButton}
               >
                 Confirm
-              </Button>
+              </LoadingButton>
             </React.Fragment>
           );
 
@@ -325,7 +326,7 @@ class OrderTable extends Component {
               >
                 Cancel
               </Button>
-              <Button
+              <LoadingButton
                 onClick={async () => {
                   const response = await this.props.handleDropoffAccept(
                     this.state.currentOrder
@@ -344,7 +345,7 @@ class OrderTable extends Component {
                 className={classes.mainButton}
               >
                 Confirm
-              </Button>
+              </LoadingButton>
             </React.Fragment>
           );
 
@@ -358,7 +359,7 @@ class OrderTable extends Component {
               >
                 Cancel
               </Button>
-              <Button
+              <LoadingButton
                 onClick={async () => {
                   const response = await this.props.handleUserReceived(
                     this.state.currentOrder
@@ -377,7 +378,7 @@ class OrderTable extends Component {
                 className={classes.mainButton}
               >
                 Confirm
-              </Button>
+              </LoadingButton>
             </React.Fragment>
           );
       }

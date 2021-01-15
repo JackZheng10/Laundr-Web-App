@@ -170,11 +170,7 @@ const OrderCell = (props) => {
         />
       </TableCell>
       <TableCell>{order.orderInfo.loads}</TableCell>
-      <TableCell>
-        <Typography variant="body1" style={{ textAlign: "center" }}>
-          {stage}
-        </Typography>
-      </TableCell>
+      <TableCell>{stage}</TableCell>
       <TableCell>
         <Button
           variant="contained"

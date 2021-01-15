@@ -113,11 +113,13 @@ class History extends Component {
   };
 
   handleChangePage = async (event, newPage) => {
+    this.context.showLoading();
     const response = await this.fetchPage(
       newPage,
       this.state.limit,
       this.getFilterConfig(this.props.fetch_SSR.userInfo)
     );
+    this.context.hideLoading();
 
     if (!response.data.success) {
       if (response.data.redirect) {
@@ -135,11 +137,13 @@ class History extends Component {
   };
 
   handleChangeRowsPerPage = async (event) => {
+    this.context.showLoading();
     const response = await this.fetchPage(
       this.state.page,
       event.target.value,
       this.getFilterConfig(this.props.fetch_SSR.userInfo)
     );
+    this.context.hideLoading();
 
     if (!response.data.success) {
       if (response.data.redirect) {

@@ -23,6 +23,7 @@ import {
   Hidden,
 } from "@material-ui/core";
 import { withRouter } from "next/router";
+import LoadingButton from "../../../components/other/LoadingButton";
 import compose from "recompose/compose";
 import Close from "@material-ui/icons/Close";
 import OrderCell from "./components/OrderCell";
@@ -138,7 +139,7 @@ class OrderTable extends Component {
             >
               Cancel
             </Button>
-            <Button
+            <LoadingButton
               onClick={async () => {
                 const response = await this.props.handleWasherDone(
                   this.state.currentOrder
@@ -157,7 +158,7 @@ class OrderTable extends Component {
               className={classes.mainButton}
             >
               Confirm
-            </Button>
+            </LoadingButton>
           </React.Fragment>
         );
       }

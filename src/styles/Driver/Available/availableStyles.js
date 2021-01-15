@@ -14,6 +14,7 @@ const availableDashboardStyles = (theme) => ({
   componentName: {
     color: "white",
     textAlign: "center",
+    paddingBottom: 10,
   },
 });
 

@@ -10,6 +10,7 @@ const dashboardStyles = (theme) => ({
   orderComponentName: {
     color: "white",
     textAlign: "center",
+    paddingBottom: 10,
   },
   root: {
     width: "100%",

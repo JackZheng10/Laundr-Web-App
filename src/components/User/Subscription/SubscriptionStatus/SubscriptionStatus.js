@@ -98,9 +98,12 @@ class SubscriptionStatus extends Component {
 
     return (
       <React.Fragment>
-        <Grid item style={{ marginBottom: 10 }}>
+        <Grid item style={{ marginBottom: 10, position: "relative" }}>
           <div className={classes.infoCard}>
-            <CardHeader
+            <Typography variant="h2" style={{ color: "#01c9e1" }} gutterBottom>
+              Current Plan: {currentUser.subscription.plan}
+            </Typography>
+            {/* <CardHeader
               title={`Current Plan: ${currentUser.subscription.plan}`}
               titleTypographyProps={{
                 variant: "h2",
@@ -108,7 +111,7 @@ class SubscriptionStatus extends Component {
                   color: "#01c9e1",
                 },
               }}
-            />
+            /> */}
             <CardContent
               style={{
                 display: "flex",
@@ -116,7 +119,13 @@ class SubscriptionStatus extends Component {
                 marginTop: -60,
               }}
             >
-              <PieChart width={310} height={400}>
+              <PieChart
+                width={310}
+                height={400}
+                // style={{
+                //   position: "relative",
+                // }}
+              >
                 <Pie
                   data={this.getLbsData(currentUser.subscription)}
                   innerRadius={130}
@@ -138,45 +147,38 @@ class SubscriptionStatus extends Component {
               </PieChart>
               <div
                 style={{
-                  position: "relative",
+                  top: "60%",
+                  left: "28%",
+                  position: "absolute",
                 }}
               >
-                <div
-                  style={{
-                    top: 215,
-                    left: -220,
-                    position: "absolute",
-                  }}
-                >
-                  <Typography variant="h3">Pounds Left</Typography>
-                </div>
-                <div
-                  style={{
-                    top: 80,
-                    left: -260,
-                    position: "absolute",
-                  }}
-                >
-                  <img
-                    style={{ height: 133, width: 214 }}
-                    src="/images/Subscription/Box.png"
-                    alt="Box"
-                  />
-                </div>
-                <div
-                  style={{
-                    top: 260,
-                    left: -190,
-                    position: "absolute",
-                  }}
-                >
-                  <Typography variant="h1" style={{ color: "#01c9e1" }}>
-                    {/*todo: fix centering of this based on the number*/}
-                    {`${currentUser.subscription.lbsLeft}/${this.getMaxLbs(
-                      currentUser.subscription
-                    )}`}
-                  </Typography>
-                </div>
+                <Typography variant="h3">Pounds Left</Typography>
+              </div>
+              <div
+                style={{
+                  top: "23%",
+                  left: "14%",
+                  position: "absolute",
+                }}
+              >
+                <img
+                  style={{ height: 133, width: 214 }}
+                  src="/images/Subscription/Box.png"
+                  alt="Box"
+                />
+              </div>
+              <div
+                style={{
+                  top: "70%",
+                  left: "35%",
+                  position: "absolute",
+                }}
+              >
+                <Typography variant="h1" style={{ color: "#01c9e1" }}>
+                  {`${currentUser.subscription.lbsLeft}/${this.getMaxLbs(
+                    currentUser.subscription
+                  )}`}
+                </Typography>
               </div>
             </CardContent>
           </div>

@@ -7,6 +7,7 @@ const subscriptionStyles = (theme) => ({
   componentName: {
     color: "white",
     textAlign: "center",
+    padding: 10,
   },
   infoCard: {
     width: 500,

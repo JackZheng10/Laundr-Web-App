@@ -2,6 +2,7 @@ const historyStyles = (theme) => ({
   componentName: {
     color: "white",
     textAlign: "center",
+    padding: 10,
   },
   tableHeader: {
     backgroundColor: "#01c9e1",

@@ -28,6 +28,7 @@ import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
 import { GetServerSideProps } from "next";
 import { getExistingOrder_SSR, getCurrentUser_SSR } from "../src/helpers/ssr";
+import Head from "next/head";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import MainAppContext from "../src/contexts/MainAppContext";
@@ -409,305 +410,322 @@ class Register extends Component {
     const classes = this.props.classes;
 
     return (
-      <Grid
-        container
-        direction="column"
-        justify="center"
-        alignItems="center"
-        className={classes.pageContainer}
-      >
-        <Dialog
-          open={this.state.showVerifyDialog}
-          onClose={this.toggleVerifyDialog}
-          style={{ zIndex: 19 }}
+      <React.Fragment>
+        <Head>
+          <title>Register</title>
+          {/* <meta
+          name="description"
+          content="Register for a Laundr account."
+        /> */}
+          {/* <link rel="canonical" href="" /> */}
+        </Head>
+
+        <Grid
+          container
+          direction="column"
+          justify="center"
+          alignItems="center"
+          className={classes.pageContainer}
         >
-          <DialogTitle disableTypography>
-            <Typography variant="h4" style={{ color: "#01c9e1" }}>
-              Verification
-            </Typography>
-          </DialogTitle>
-          <DialogContent>
-            <Typography
-              variant="body1"
-              style={{ textAlign: "center" }}
-              gutterBottom
-            >
-              To finish registering, please enter the verification code we just
-              sent to your phone. If you didn't receive a code, make sure your
-              entered phone number is correct and sign up again. The code will
-              expire in 10 minutes.
-            </Typography>
-            <div style={{ textAlign: "center" }}>
-              <TextField
-                variant="outlined"
-                label="Code"
-                size="small"
-                value={this.state.enteredCode}
-                onChange={(event) => {
-                  this.handleInputChange("enteredCode", event.target.value);
-                }}
-                className={classes.input}
-                style={{ width: 100 }}
-              />
-            </div>
-          </DialogContent>
-          <DialogActions>
-            <Grid
-              container
-              direction="row"
-              justify="space-between"
-              alignItems="center"
-            >
-              <Grid item>
-                <Button
-                  onClick={this.toggleVerifyDialog}
-                  variant="contained"
-                  className={classes.secondaryButton}
-                  style={{ marginRight: 10 }}
-                >
-                  Cancel
-                </Button>
-                <LoadingButton
-                  onClick={this.handleResendCode}
-                  variant="contained"
-                  className={classes.secondaryButton}
-                  timer={true}
-                  time={60}
-                >
-                  Resend
-                </LoadingButton>
-              </Grid>
-              <Grid item>
-                <LoadingButton
-                  onClick={this.handleRegister}
-                  variant="contained"
-                  className={classes.mainButton}
-                >
-                  Submit
-                </LoadingButton>
-              </Grid>
-            </Grid>
-          </DialogActions>
-        </Dialog>
-        <Grid item style={{ maxHeight: "100%" }}>
-          <div className={classes.layout}>
-            <Grid
-              container
-              direction="column"
-              justify="center"
-              alignItems="center"
-            >
-              <Grid item>
-                <img
-                  alt="Company Logo"
-                  src="/images/LogRegLogo.png"
-                  className={classes.logo}
+          <Dialog
+            open={this.state.showVerifyDialog}
+            onClose={this.toggleVerifyDialog}
+            style={{ zIndex: 19 }}
+          >
+            <DialogTitle disableTypography>
+              <Typography variant="h4" style={{ color: "#01c9e1" }}>
+                Verification
+              </Typography>
+            </DialogTitle>
+            <DialogContent>
+              <Typography
+                variant="body1"
+                style={{ textAlign: "center" }}
+                gutterBottom
+              >
+                To finish registering, please enter the verification code we
+                just sent to your phone. If you didn't receive a code, make sure
+                your entered phone number is correct and sign up again. The code
+                will expire in 10 minutes.
+              </Typography>
+              <div style={{ textAlign: "center" }}>
+                <TextField
+                  variant="outlined"
+                  label="Code"
+                  size="small"
+                  value={this.state.enteredCode}
+                  onChange={(event) => {
+                    this.handleInputChange("enteredCode", event.target.value);
+                  }}
+                  className={classes.input}
+                  style={{ width: 100 }}
                 />
-              </Grid>
-              <Grid item>
-                <Paper elevation={0}>
-                  <Typography
-                    variant="h1"
-                    style={{
-                      color: "#01c9e1",
-                      textAlign: "center",
-                      padding: 10,
-                    }}
+              </div>
+            </DialogContent>
+            <DialogActions>
+              <Grid
+                container
+                direction="row"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item>
+                  <Button
+                    onClick={this.toggleVerifyDialog}
+                    variant="contained"
+                    className={classes.secondaryButton}
+                    style={{ marginRight: 10 }}
                   >
-                    Register
-                  </Typography>
-                </Paper>
+                    Cancel
+                  </Button>
+                  <LoadingButton
+                    onClick={this.handleResendCode}
+                    variant="contained"
+                    className={classes.secondaryButton}
+                    timer={true}
+                    time={60}
+                  >
+                    Resend
+                  </LoadingButton>
+                </Grid>
+                <Grid item>
+                  <LoadingButton
+                    onClick={this.handleRegister}
+                    variant="contained"
+                    className={classes.mainButton}
+                  >
+                    Submit
+                  </LoadingButton>
+                </Grid>
               </Grid>
-              <Grid item>
-                <form>
-                  <Grid container justify="center">
-                    <Grid item xs={6} sm={6} style={{ paddingRight: 10 }}>
-                      <TextField
-                        variant="filled"
-                        margin="normal"
-                        fullWidth
-                        label="First Name"
-                        autoComplete="given-name"
-                        error={this.state.fnameError}
-                        helperText={this.state.fnameErrorMsg}
-                        value={this.state.fname}
-                        onChange={(event) => {
-                          this.handleInputChange("fname", event.target.value);
-                        }}
-                        classes={{ root: classes.coloredField }}
-                      />
-                    </Grid>
-                    <Grid item xs={6} sm={6} style={{ paddingLeft: 10 }}>
-                      <TextField
-                        variant="filled"
-                        margin="normal"
-                        fullWidth
-                        label="Last Name"
-                        autoComplete="family-name"
-                        error={this.state.lnameError}
-                        helperText={this.state.lnameErrorMsg}
-                        value={this.state.lname}
-                        onChange={(event) => {
-                          this.handleInputChange("lname", event.target.value);
-                        }}
-                        classes={{ root: classes.coloredField }}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <FormControl
-                        fullWidth
-                        variant="filled"
-                        margin="normal"
-                        classes={{ root: classes.coloredField }}
-                      >
-                        <InputLabel>City</InputLabel>
-                        <Select
-                          native
-                          label="City"
-                          value={this.state.city}
+            </DialogActions>
+          </Dialog>
+          <Grid item style={{ maxHeight: "100%" }}>
+            <div className={classes.layout}>
+              <Grid
+                container
+                direction="column"
+                justify="center"
+                alignItems="center"
+              >
+                <Grid item>
+                  <img
+                    alt="Company Logo"
+                    src="/images/LogRegLogo.png"
+                    className={classes.logo}
+                  />
+                </Grid>
+                <Grid item>
+                  <Paper elevation={0}>
+                    <Typography
+                      variant="h1"
+                      style={{
+                        color: "#01c9e1",
+                        textAlign: "center",
+                        padding: 10,
+                      }}
+                    >
+                      Register
+                    </Typography>
+                  </Paper>
+                </Grid>
+                <Grid item>
+                  <form>
+                    <Grid container justify="center">
+                      <Grid item xs={6} sm={6} style={{ paddingRight: 10 }}>
+                        <TextField
+                          variant="filled"
+                          margin="normal"
+                          fullWidth
+                          label="First Name"
+                          autoComplete="given-name"
+                          error={this.state.fnameError}
+                          helperText={this.state.fnameErrorMsg}
+                          value={this.state.fname}
                           onChange={(event) => {
-                            this.handleInputChange("city", event.target.value);
+                            this.handleInputChange("fname", event.target.value);
                           }}
-                        >
-                          <option>Gainesville</option>
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        variant="filled"
-                        margin="normal"
-                        fullWidth
-                        label="Email Address"
-                        autoComplete="email"
-                        error={this.state.emailError}
-                        helperText={this.state.emailErrorMsg}
-                        value={this.state.email}
-                        onChange={(event) => {
-                          this.handleInputChange("email", event.target.value);
-                        }}
-                        classes={{ root: classes.coloredField }}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        variant="filled"
-                        margin="normal"
-                        fullWidth
-                        label="Password"
-                        type="password"
-                        autoComplete="new-password"
-                        error={this.state.passwordError}
-                        value={this.state.password}
-                        helperText={this.state.passwordErrorMsg}
-                        onChange={(event) => {
-                          this.handleInputChange(
-                            "password",
-                            event.target.value
-                          );
-                        }}
-                        classes={{ root: classes.coloredField }}
-                      />
-                    </Grid>
-                    <Grid item xs={7} sm={7} style={{ paddingRight: 10 }}>
-                      <TextField
-                        variant="filled"
-                        margin="normal"
-                        fullWidth
-                        label="Phone Number"
-                        autoComplete="tel-national"
-                        error={this.state.phoneError}
-                        helperText={this.state.phoneErrorMsg}
-                        value={this.state.phone}
-                        onChange={(event) => {
-                          this.handleInputChange("phone", event.target.value);
-                        }}
-                        classes={{ root: classes.coloredField }}
-                      />
-                    </Grid>
-                    <Grid item xs={5} sm={5} style={{ paddingLeft: 10 }}>
-                      <TextField
-                        variant="filled"
-                        margin="normal"
-                        label="Referral Code"
-                        helperText="*Optional"
-                        fullWidth
-                        value={this.state.referral}
-                        onChange={(event) => {
-                          this.handleInputChange(
-                            "referral",
-                            event.target.value
-                          );
-                        }}
-                        classes={{ root: classes.coloredField }}
-                      />
-                    </Grid>
-                    <Grid align="center" item xs={12}>
-                      <Paper
-                        style={{
-                          paddingLeft: 15,
-                          paddingTop: 10,
-                          paddingBottom: 10,
-                        }}
-                      >
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              onChange={() => {
-                                this.handleInputChange("tos", null);
-                              }}
-                              value={this.state.tos}
-                              style={{ color: "#01c9e1" }}
-                            />
-                          }
-                          label="I have read and agree to the Terms of Service."
+                          classes={{ root: classes.coloredField }}
                         />
-                        <Grid item>
-                          <Link
-                            variant="h6"
-                            target="_blank"
-                            rel="noopener"
-                            href="https://www.laundr.io/termsofservice/"
-                            style={{
-                              color: "#01c9e1",
-                              textAlign: "center",
+                      </Grid>
+                      <Grid item xs={6} sm={6} style={{ paddingLeft: 10 }}>
+                        <TextField
+                          variant="filled"
+                          margin="normal"
+                          fullWidth
+                          label="Last Name"
+                          autoComplete="family-name"
+                          error={this.state.lnameError}
+                          helperText={this.state.lnameErrorMsg}
+                          value={this.state.lname}
+                          onChange={(event) => {
+                            this.handleInputChange("lname", event.target.value);
+                          }}
+                          classes={{ root: classes.coloredField }}
+                        />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <FormControl
+                          fullWidth
+                          variant="filled"
+                          margin="normal"
+                          classes={{ root: classes.coloredField }}
+                        >
+                          <InputLabel>City</InputLabel>
+                          <Select
+                            native
+                            label="City"
+                            value={this.state.city}
+                            onChange={(event) => {
+                              this.handleInputChange(
+                                "city",
+                                event.target.value
+                              );
                             }}
                           >
-                            Terms of Service
-                          </Link>
-                          <Typography variant="body2" className={classes.error}>
-                            {this.state.tosErrorMsg}
-                          </Typography>
-                        </Grid>
-                      </Paper>
+                            <option>Gainesville</option>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField
+                          variant="filled"
+                          margin="normal"
+                          fullWidth
+                          label="Email Address"
+                          autoComplete="email"
+                          error={this.state.emailError}
+                          helperText={this.state.emailErrorMsg}
+                          value={this.state.email}
+                          onChange={(event) => {
+                            this.handleInputChange("email", event.target.value);
+                          }}
+                          classes={{ root: classes.coloredField }}
+                        />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField
+                          variant="filled"
+                          margin="normal"
+                          fullWidth
+                          label="Password"
+                          type="password"
+                          autoComplete="new-password"
+                          error={this.state.passwordError}
+                          value={this.state.password}
+                          helperText={this.state.passwordErrorMsg}
+                          onChange={(event) => {
+                            this.handleInputChange(
+                              "password",
+                              event.target.value
+                            );
+                          }}
+                          classes={{ root: classes.coloredField }}
+                        />
+                      </Grid>
+                      <Grid item xs={7} sm={7} style={{ paddingRight: 10 }}>
+                        <TextField
+                          variant="filled"
+                          margin="normal"
+                          fullWidth
+                          label="Phone Number"
+                          autoComplete="tel-national"
+                          error={this.state.phoneError}
+                          helperText={this.state.phoneErrorMsg}
+                          value={this.state.phone}
+                          onChange={(event) => {
+                            this.handleInputChange("phone", event.target.value);
+                          }}
+                          classes={{ root: classes.coloredField }}
+                        />
+                      </Grid>
+                      <Grid item xs={5} sm={5} style={{ paddingLeft: 10 }}>
+                        <TextField
+                          variant="filled"
+                          margin="normal"
+                          label="Referral Code"
+                          helperText="*Optional"
+                          fullWidth
+                          value={this.state.referral}
+                          onChange={(event) => {
+                            this.handleInputChange(
+                              "referral",
+                              event.target.value
+                            );
+                          }}
+                          classes={{ root: classes.coloredField }}
+                        />
+                      </Grid>
+                      <Grid align="center" item xs={12}>
+                        <Paper
+                          style={{
+                            paddingLeft: 15,
+                            paddingTop: 10,
+                            paddingBottom: 10,
+                          }}
+                        >
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                onChange={() => {
+                                  this.handleInputChange("tos", null);
+                                }}
+                                value={this.state.tos}
+                                style={{ color: "#01c9e1" }}
+                              />
+                            }
+                            label="I have read and agree to the Terms of Service."
+                          />
+                          <Grid item>
+                            <Link
+                              variant="h6"
+                              target="_blank"
+                              rel="noopener"
+                              href="https://www.laundr.io/termsofservice/"
+                              style={{
+                                color: "#01c9e1",
+                                textAlign: "center",
+                              }}
+                            >
+                              Terms of Service
+                            </Link>
+                            <Typography
+                              variant="body2"
+                              className={classes.error}
+                            >
+                              {this.state.tosErrorMsg}
+                            </Typography>
+                          </Grid>
+                        </Paper>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <LoadingButton
+                          type="submit"
+                          fullWidth
+                          variant="contained"
+                          className={classes.submit}
+                          onClick={this.handleSendVerification}
+                        >
+                          Create Account
+                        </LoadingButton>
+                      </Grid>
+                      <Grid item style={{ paddingBottom: 50 }}>
+                        <Link
+                          href="/"
+                          variant="h6"
+                          style={{ color: "#01c9e1", textAlign: "center" }}
+                        >
+                          Already have an account?
+                        </Link>
+                      </Grid>
                     </Grid>
-                    <Grid item xs={12}>
-                      <LoadingButton
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        className={classes.submit}
-                        onClick={this.handleSendVerification}
-                      >
-                        Create Account
-                      </LoadingButton>
-                    </Grid>
-                    <Grid item style={{ paddingBottom: 50 }}>
-                      <Link
-                        href="/"
-                        variant="h6"
-                        style={{ color: "#01c9e1", textAlign: "center" }}
-                      >
-                        Already have an account?
-                      </Link>
-                    </Grid>
-                  </Grid>
-                </form>
+                  </form>
+                </Grid>
               </Grid>
-            </Grid>
-          </div>
+            </div>
+          </Grid>
         </Grid>
-      </Grid>
+      </React.Fragment>
     );
   }
 }

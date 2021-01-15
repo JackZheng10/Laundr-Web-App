@@ -40,15 +40,48 @@ const MyApp = (props) => {
     return (
       <React.Fragment>
         <Head>
-          <title>Laundr</title>
+          <title>Maintenance</title>
         </Head>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <h1>Currently under maintenance</h1>
+          <h1>Currently under maintenance (placeholder)</h1>
         </ThemeProvider>
       </React.Fragment>
     );
   }
+
+  const getPageTitle = () => {
+    if (typeof window !== "undefined") {
+      const path = window.location.href.split("/");
+      const directPath = `${path[3]}/${path[4]}`;
+
+      switch (directPath) {
+        case "account/details":
+          return "Account";
+
+        case "account/history":
+          return "History";
+
+        case "driver/accepted":
+          return "Accepted";
+
+        case "driver/available":
+          return "Available";
+
+        case "user/dashboard":
+          return "Dashboard";
+
+        case "user/help":
+          return "Help";
+
+        case "user/subscription":
+          return "Subscription";
+
+        case "washer/assigned":
+          return "Assigned";
+      }
+    }
+  };
 
   //loading
   const [showLoadingDialog, setShowLoadingDialog] = useState(false);
@@ -130,11 +163,7 @@ const MyApp = (props) => {
   return (
     <React.Fragment>
       <Head>
-        <title>Laundr</title>
-        {/* <meta
-          name="viewport"
-          content="minimum-scale=1, initial-scale=1, width=device-width"
-        /> */}
+        <title>{getPageTitle()}</title>
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />

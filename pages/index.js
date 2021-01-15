@@ -18,6 +18,7 @@ import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
 import { GetServerSideProps } from "next";
 import { getExistingOrder_SSR, getCurrentUser_SSR } from "../src/helpers/ssr";
+import Head from "next/head";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import LoadingButton from "../src/components/other/LoadingButton";
@@ -156,108 +157,118 @@ class Login extends Component {
     const classes = this.props.classes;
 
     return (
-      <Grid
-        container
-        direction="column"
-        justify="center"
-        alignItems="center"
-        className={classes.pageContainer}
-      >
-        <Grid item style={{ maxHeight: "100%" }}>
-          <div className={classes.layout}>
-            <Grid
-              container
-              direction="column"
-              justify="center"
-              alignItems="center"
-            >
-              <Grid item>
-                <img
-                  alt="Company Logo"
-                  src="/images/LogRegLogo.png"
-                  className={classes.logo}
-                />
-              </Grid>
-              <Grid item>
-                <Paper elevation={0}>
-                  <Typography
-                    variant="h1"
-                    style={{
-                      color: "#01c9e1",
-                      textAlign: "center",
-                      padding: 10,
-                    }}
-                  >
-                    Login
-                  </Typography>
-                </Paper>
-              </Grid>
-              <Grid item>
-                <form>
-                  <TextField
-                    variant="filled"
-                    margin="normal"
-                    fullWidth
-                    label="Email Address"
-                    autoComplete="email"
-                    error={this.state.emailError}
-                    helperText={this.state.emailErrorMsg}
-                    onChange={(event) => {
-                      this.handleInputChange("email", event.target.value);
-                    }}
-                    value={this.state.email}
-                    className={classes.coloredField}
+      <React.Fragment>
+        <Head>
+          <title>Login</title>
+          {/* <meta
+          name="description"
+          content="Login to your Laundr account."
+        /> */}
+          {/* <link rel="canonical" href="" /> */}
+        </Head>
+        <Grid
+          container
+          direction="column"
+          justify="center"
+          alignItems="center"
+          className={classes.pageContainer}
+        >
+          <Grid item style={{ maxHeight: "100%" }}>
+            <div className={classes.layout}>
+              <Grid
+                container
+                direction="column"
+                justify="center"
+                alignItems="center"
+              >
+                <Grid item>
+                  <img
+                    alt="Company Logo"
+                    src="/images/LogRegLogo.png"
+                    className={classes.logo}
                   />
-                  <TextField
-                    variant="filled"
-                    margin="normal"
-                    fullWidth
-                    label="Password"
-                    type="password"
-                    autoComplete="current-password"
-                    error={this.state.passwordError}
-                    helperText={this.state.passwordErrorMsg}
-                    onChange={(event) => {
-                      this.handleInputChange("password", event.target.value);
-                    }}
-                    value={this.state.password}
-                    classes={{ root: classes.coloredField }}
-                  />
-                  <LoadingButton
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    className={classes.submit}
-                    onClick={this.handleLogin}
-                  >
-                    Sign In
-                  </LoadingButton>
-                </form>
-              </Grid>
-              <Grid container>
-                <Grid item xs style={{ paddingBottom: 10 }}>
-                  <Link
-                    href="#"
-                    variant="h6"
-                    style={{ color: "#01c9e1", textAlign: "center" }}
-                  >
-                    Forgot password?
-                  </Link>
                 </Grid>
-                <Grid item style={{ paddingBottom: 50 }}>
-                  <Link
-                    href="/register"
-                    variant="h6"
-                    style={{ color: "#01c9e1", textAlign: "center" }}
-                  >
-                    Don't have an account?
-                  </Link>
+                <Grid item>
+                  <Paper elevation={0}>
+                    <Typography
+                      variant="h1"
+                      style={{
+                        color: "#01c9e1",
+                        textAlign: "center",
+                        padding: 10,
+                      }}
+                    >
+                      Login
+                    </Typography>
+                  </Paper>
+                </Grid>
+                <Grid item>
+                  <form>
+                    <TextField
+                      variant="filled"
+                      margin="normal"
+                      fullWidth
+                      label="Email Address"
+                      autoComplete="email"
+                      error={this.state.emailError}
+                      helperText={this.state.emailErrorMsg}
+                      onChange={(event) => {
+                        this.handleInputChange("email", event.target.value);
+                      }}
+                      value={this.state.email}
+                      className={classes.coloredField}
+                    />
+                    <TextField
+                      variant="filled"
+                      margin="normal"
+                      fullWidth
+                      label="Password"
+                      type="password"
+                      autoComplete="current-password"
+                      error={this.state.passwordError}
+                      helperText={this.state.passwordErrorMsg}
+                      onChange={(event) => {
+                        this.handleInputChange("password", event.target.value);
+                      }}
+                      value={this.state.password}
+                      classes={{ root: classes.coloredField }}
+                    />
+                    <LoadingButton
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                      className={classes.submit}
+                      onClick={this.handleLogin}
+                    >
+                      Sign In
+                    </LoadingButton>
+                  </form>
+                </Grid>
+                <Grid container>
+                  <Grid item xs style={{ paddingBottom: 10 }}>
+                    <Link
+                      href="#"
+                      variant="h6"
+                      style={{ color: "#01c9e1", textAlign: "center" }}
+                    >
+                      Forgot password?
+                    </Link>
+                  </Grid>
+                  <Grid item style={{ paddingBottom: 50 }}>
+                    <Link
+                      href="/register"
+                      variant="h6"
+                      style={{ color: "#01c9e1", textAlign: "center" }}
+                    >
+                      Don't have an account?
+                    </Link>
+                  </Grid>
                 </Grid>
               </Grid>
-            </Grid>
-          </div>
+            </div>
+          </Grid>
         </Grid>
-      </Grid>
+      </React.Fragment>
     );
   }
 }

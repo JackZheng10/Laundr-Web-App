@@ -44,8 +44,10 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //todo: implement admin stuff...later
 //add error message to enable cookies
 
-//todo: limit input length for text boxes! frontend and backend
+//todo: limit input length for text boxes! frontend and backend. also validation on backend as well.
 //add "type" to textfields?
+//Head component for pages w/SEO
+//overhaul styling organization
 
 const baseURL =
   process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;

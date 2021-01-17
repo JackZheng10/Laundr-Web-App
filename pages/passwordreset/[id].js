@@ -16,11 +16,58 @@ import LoadingButton from "../../src/components/other/LoadingButton";
 import loginStyles from "../../src/styles/loginStyles";
 
 class PasswordReset extends Component {
+  state = {
+    password: "",
+    confirmedPassword: "",
+    passwordError: false,
+    passwordErrorMsg: "",
+  };
+
   sleep = (milliseconds) =>
     new Promise((resolve) => setTimeout(resolve, milliseconds));
 
+  handleInputChange = (property, value) => {
+    this.setState({ [property]: value });
+  };
+
   handleResetPassword = async () => {
     await this.sleep(1000);
+    console.log(this.handleInputValidation());
+  };
+
+  handleInputValidation = () => {
+    const password = this.state.password;
+    const confirmedPassword = this.state.confirmedPassword;
+    let valid = true;
+
+    if (password.length < 6 || /[A-Z]+/.test(password) === false) {
+      this.setState({
+        passwordErrorMsg:
+          "*Passwords must be at least 6 characters long and contain one capital letter.",
+        passwordError: true,
+      });
+      valid = false;
+    } else {
+      this.setState({
+        passwordErrorMsg: "",
+        passwordError: false,
+      });
+    }
+
+    if (password != confirmedPassword) {
+      this.setState({
+        confirmedPasswordErrorMsg: "*Passwords do not match.",
+        confirmedPasswordError: true,
+      });
+      valid = false;
+    } else {
+      this.setState({
+        confirmedPasswordErrorMsg: "",
+        confirmedPasswordError: false,
+      });
+    }
+
+    return valid;
   };
 
   render() {
@@ -72,12 +119,12 @@ class PasswordReset extends Component {
                     label="New Password"
                     type="password"
                     autoComplete="new-password"
-                    //error={this.state.emailError}
-                    //helperText={this.state.emailErrorMsg}
-                    // onChange={(event) => {
-                    //   this.handleInputChange("email", event.target.value);
-                    // }}
-                    //value={this.state.email}
+                    error={this.state.passwordError}
+                    helperText={this.state.passwordErrorMsg}
+                    onChange={(event) => {
+                      this.handleInputChange("password", event.target.value);
+                    }}
+                    value={this.state.password}
                     className={classes.coloredField}
                   />
                   <TextField
@@ -87,12 +134,15 @@ class PasswordReset extends Component {
                     label="Confirm Password"
                     type="password"
                     autoComplete="new-password"
-                    // error={this.state.passwordError}
-                    // helperText={this.state.passwordErrorMsg}
-                    // onChange={(event) => {
-                    //   this.handleInputChange("password", event.target.value);
-                    // }}
-                    // value={this.state.password}
+                    error={this.state.confirmedPasswordError}
+                    helperText={this.state.confirmedPasswordErrorMsg}
+                    onChange={(event) => {
+                      this.handleInputChange(
+                        "confirmedPassword",
+                        event.target.value
+                      );
+                    }}
+                    value={this.state.confirmedPassword}
                     className={classes.coloredField}
                   />
                   <LoadingButton

@@ -1,18 +1,16 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router-dom";
 import {
   Button,
-  CssBaseline,
   TextField,
   Link,
   Grid,
-  Box,
+  Dialog,
   Typography,
-  Container,
   withStyles,
   Paper,
-  FormControlLabel,
-  Checkbox,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
 } from "@material-ui/core";
 import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
@@ -23,7 +21,7 @@ import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import LoadingButton from "../src/components/other/LoadingButton";
 import MainAppContext from "../src/contexts/MainAppContext";
-import loginStyles from "../src/styles/loginStyles";
+import registerStyles from "../src/styles/registerStyles";
 import axios from "axios";
 
 const baseURL =
@@ -62,10 +60,23 @@ class Login extends Component {
     errorDialogMsg: "",
     emailErrorMsg: "",
     passwordErrorMsg: "",
+    showResetDialog: false,
+    enteredPhone: "",
   };
 
   handleInputChange = (property, value) => {
-    this.setState({ [property]: value });
+    const phoneRegex = /^[0-9\b]+$/;
+
+    if (property === "enteredPhone") {
+      if (value === "" || phoneRegex.test(value)) {
+        if (value.length > 10) {
+          value = value.substr(0, 10);
+        }
+        this.setState({ [property]: value });
+      }
+    } else {
+      this.setState({ [property]: value });
+    }
   };
 
   handleLogin = async (event) => {
@@ -90,7 +101,6 @@ class Login extends Component {
           this.context.showAlert(response.data.message);
         }
       } catch (error) {
-        this.context.hideLoading();
         showConsoleError("logging in", error);
         this.context.showAlert(caughtError("logging in", error, 99));
       }
@@ -149,8 +159,34 @@ class Login extends Component {
     return valid;
   };
 
-  toggleDialog = () => {
-    this.setState({ showErrorDialog: !this.state.showErrorDialog });
+  toggleResetDialog = () => {
+    this.handleInputChange("enteredPhone", "");
+    this.setState({ showResetDialog: !this.state.showResetDialog });
+  };
+
+  handlePasswordReset = async () => {
+    if (this.state.enteredPhone.length < 10) {
+      return this.context.showAlert("Please enter a valid phone number.");
+    }
+
+    try {
+      const response = await axios.post(
+        "/api/user/sendPasswordReset",
+        {
+          phone: this.state.enteredPhone,
+        },
+        { withCredentials: true }
+      );
+
+      this.setState({ showResetDialog: false }, () => {
+        this.context.showAlert(response.data.message);
+      });
+    } catch (error) {
+      showConsoleError("sending password reset link", error);
+      this.context.showAlert(
+        caughtError("sending password reset link", error, 99)
+      );
+    }
   };
 
   render() {
@@ -173,6 +209,68 @@ class Login extends Component {
           alignItems="center"
           className={classes.pageContainer}
         >
+          <Dialog
+            open={this.state.showResetDialog}
+            onClose={this.toggleResetDialog}
+            style={{ zIndex: 19 }}
+          >
+            <DialogTitle disableTypography>
+              <Typography variant="h4" style={{ color: "#01c9e1" }}>
+                Reset Password
+              </Typography>
+            </DialogTitle>
+            <DialogContent>
+              <Typography
+                variant="body1"
+                style={{ textAlign: "center" }}
+                gutterBottom
+              >
+                Enter your phone number and we'll text you a link to rest your
+                password.
+              </Typography>
+              <div style={{ textAlign: "center" }}>
+                <TextField
+                  variant="outlined"
+                  label="Phone"
+                  size="small"
+                  value={this.state.enteredPhone}
+                  onChange={(event) => {
+                    this.handleInputChange("enteredPhone", event.target.value);
+                  }}
+                  className={classes.input}
+                  style={{ width: 110 }}
+                />
+              </div>
+            </DialogContent>
+            <DialogActions>
+              <Grid
+                container
+                direction="row"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item>
+                  <Button
+                    onClick={this.toggleResetDialog}
+                    variant="contained"
+                    className={classes.secondaryButton}
+                    style={{ marginRight: 10 }}
+                  >
+                    Cancel
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <LoadingButton
+                    onClick={this.handlePasswordReset}
+                    variant="contained"
+                    className={classes.mainButton}
+                  >
+                    Submit
+                  </LoadingButton>
+                </Grid>
+              </Grid>
+            </DialogActions>
+          </Dialog>
           <Grid item style={{ maxHeight: "100%" }}>
             <div className={classes.layout}>
               <Grid
@@ -247,9 +345,13 @@ class Login extends Component {
                 <Grid container>
                   <Grid item xs style={{ paddingBottom: 10 }}>
                     <Link
-                      href="#"
+                      onClick={this.toggleResetDialog}
                       variant="h6"
-                      style={{ color: "#01c9e1", textAlign: "center" }}
+                      style={{
+                        color: "#01c9e1",
+                        textAlign: "center",
+                        cursor: "pointer",
+                      }}
                     >
                       Forgot password?
                     </Link>
@@ -311,4 +413,4 @@ export async function getServerSideProps(context) {
   };
 }
 
-export default compose(withRouter, withStyles(loginStyles))(Login);
+export default compose(withRouter, withStyles(registerStyles))(Login);

@@ -55,6 +55,10 @@ const MyApp = (props) => {
       const path = window.location.href.split("/");
       const directPath = `${path[3]}/${path[4]}`;
 
+      if (path[3] === "passwordreset") {
+        return "Reset Password";
+      }
+
       switch (directPath) {
         case "account/details":
           return "Account";
@@ -109,7 +113,7 @@ const MyApp = (props) => {
     if (typeof window !== "undefined") {
       const path = window.location.href.split("/");
 
-      if (path[3] === "login" || path[3] === "register") {
+      if (path[3] === "" || path[3] === "register") {
         return false;
       }
     }

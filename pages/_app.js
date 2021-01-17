@@ -113,7 +113,11 @@ const MyApp = (props) => {
     if (typeof window !== "undefined") {
       const path = window.location.href.split("/");
 
-      if (path[3] === "" || path[3] === "register") {
+      if (
+        path[3] === "" ||
+        path[3] === "register" ||
+        path[3] === "passwordreset"
+      ) {
         return false;
       }
     }

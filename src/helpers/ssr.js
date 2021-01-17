@@ -238,4 +238,28 @@ export const fetchCardDetails_SSR = async (context, currentUser) => {
   }
 };
 
+export const getPasswordResetSession = async (context, id) => {
+  try {
+    const response = await axios.get(
+      `${baseURL}/api/user/getPasswordResetSession`,
+      {
+        params: { id: id },
+        headers: context.req.headers.cookie
+          ? { cookie: context.req.headers.cookie }
+          : null,
+      }
+    );
+
+    return response;
+  } catch (error) {
+    showConsoleError("getting password reset session", error);
+    return {
+      data: {
+        success: false,
+        message: caughtError("getting password reset session", error, 99),
+      },
+    };
+  }
+};
+
 //when doing authorization, pay attention to if youre using userid from body/query or the authentication part...

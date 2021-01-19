@@ -23,6 +23,7 @@ import { caughtError, showConsoleError } from "../../../helpers/errors";
 import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../../contexts/MainAppContext";
+import LoadingButton from "../../../components/other/LoadingButton";
 import paymentInfoStyles from "../../../styles/User/Account/components/paymentInfoStyles";
 
 //todo: maybe use the red/green for other confirms/cancels
@@ -70,8 +71,6 @@ class PaymentInfo extends Component {
 
   handleSetupIntent = async () => {
     try {
-      const currentUser = this.props.user;
-
       const response = await axios.post(
         "/api/stripe/createSetupIntent",
         {},
@@ -81,11 +80,6 @@ class PaymentInfo extends Component {
       );
 
       return response;
-      // if (response.data.success) {
-      //   secret = response.data.message;
-      // } else {
-      //   return this.context.showAlert(response.data.message);
-      // }
     } catch (error) {
       showConsoleError("creating setup intent", error);
       return {
@@ -184,7 +178,7 @@ class PaymentInfo extends Component {
           <Button
             size="medium"
             variant="contained"
-            className={classes.secondaryButton}
+            className={classes.mainButton}
             onClick={this.toggleShowPaymentUpdate}
           >
             Update
@@ -205,14 +199,14 @@ class PaymentInfo extends Component {
             </Button>
           </Grid>
           <Grid item>
-            <Button
+            <LoadingButton
               size="medium"
               variant="contained"
               className={classes.greenButton}
               onClick={this.handleCardSetup}
             >
               Confirm
-            </Button>
+            </LoadingButton>
           </Grid>
         </React.Fragment>
       );

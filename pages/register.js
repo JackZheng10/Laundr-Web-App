@@ -443,8 +443,7 @@ class Register extends Component {
               >
                 To finish registering, please enter the verification code we
                 just sent to your phone. If you didn't receive a code, make sure
-                your entered phone number is correct and sign up again. The code
-                will expire in 10 minutes.
+                your entered phone number is correct and sign up again.
               </Typography>
               <div style={{ textAlign: "center" }}>
                 <TextField
@@ -458,6 +457,17 @@ class Register extends Component {
                   className={classes.input}
                   style={{ width: 100 }}
                 />
+              </div>
+              <div style={{ textAlign: "center", marginTop: 10 }}>
+                <LoadingButton
+                  onClick={this.handleResendCode}
+                  variant="contained"
+                  className={classes.secondaryButton}
+                  timer={true}
+                  time={60}
+                >
+                  Resend
+                </LoadingButton>
               </div>
             </DialogContent>
             <DialogActions>
@@ -476,15 +486,6 @@ class Register extends Component {
                   >
                     Cancel
                   </Button>
-                  <LoadingButton
-                    onClick={this.handleResendCode}
-                    variant="contained"
-                    className={classes.secondaryButton}
-                    timer={true}
-                    time={60}
-                  >
-                    Resend
-                  </LoadingButton>
                 </Grid>
                 <Grid item>
                   <LoadingButton

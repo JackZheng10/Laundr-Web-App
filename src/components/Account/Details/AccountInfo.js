@@ -34,7 +34,6 @@ class AccountInfo extends Component {
             }}
             className={classes.cardHeader}
           />
-          {/* <Divider /> */}
           <CardContent>
             <Grid //main column
               container
@@ -71,15 +70,36 @@ class AccountInfo extends Component {
                   className={classes.input}
                 />
               </Grid>
-              <Grid item xs={6} sm={6}>
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  label="Phone Number"
-                  size="small"
-                  value={user.phone}
-                  className={classes.input}
-                />
+              <Grid item xs={12} sm={12}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="space-between"
+                  alignItems="center"
+                >
+                  <Grid item>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      label="Phone Number"
+                      size="small"
+                      value={user.phone}
+                      className={classes.input}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Button
+                      size="medium"
+                      variant="contained"
+                      className={classes.mainButton}
+                      onClick={() => {
+                        alert("work in progress");
+                      }}
+                    >
+                      Update
+                    </Button>
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
           </CardContent>
@@ -88,14 +108,15 @@ class AccountInfo extends Component {
             <Grid
               container
               direction="row"
-              justify="space-between"
+              // justify="space-between"
+              justify="center"
               alignItems="center"
             >
               <Grid item>
                 <Button
                   size="medium"
                   variant="contained"
-                  className={classes.secondaryButton}
+                  className={classes.mainButton}
                   onClick={() => {
                     alert("work in progress");
                   }}
@@ -103,18 +124,18 @@ class AccountInfo extends Component {
                   Update Password
                 </Button>
               </Grid>
-              <Grid item>
+              {/* <Grid item>
                 <Button
                   size="medium"
                   variant="contained"
-                  className={classes.secondaryButton}
+                  className={classes.mainButton}
                   onClick={() => {
                     alert("work in progress");
                   }}
                 >
                   Update Profile
                 </Button>
-              </Grid>
+              </Grid> */}
             </Grid>
           </CardActions>
         </Card>

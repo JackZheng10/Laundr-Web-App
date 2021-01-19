@@ -48,6 +48,7 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //add "type" to textfields?
 //Head component for pages w/SEO
 //overhaul styling organization
+//weirdness with the carousel
 
 const baseURL =
   process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;

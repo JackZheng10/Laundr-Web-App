@@ -171,7 +171,7 @@ class PaymentInfo extends Component {
     }
   };
 
-  renderPaymentButtons = (classes) => {
+  renderCardActions = (classes) => {
     if (!this.state.showPaymentUpdate) {
       return (
         <Grid item>
@@ -283,7 +283,7 @@ class PaymentInfo extends Component {
               alignItems="center"
               spacing={2}
             >
-              {this.renderPaymentButtons(classes)}
+              {this.renderCardActions(classes)}
             </Grid>
           </CardActions>
           <Collapse

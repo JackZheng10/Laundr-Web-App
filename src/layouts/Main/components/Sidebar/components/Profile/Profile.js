@@ -14,7 +14,7 @@ import profileStyles from "../../../../../../styles/layouts/Main/components/Side
 class Profile extends Component {
   renderBio = (currentUser) => {
     if (!currentUser) {
-      return "User";
+      return "";
     } else if (currentUser.isWasher) {
       return "Washer";
     } else if (currentUser.isDriver) {
@@ -22,7 +22,7 @@ class Profile extends Component {
     } else if (currentUser.isAdmin) {
       return "Admin";
     } else {
-      return "User";
+      return "Customer";
     }
   };
 

@@ -49,6 +49,7 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //Head component for pages w/SEO
 //overhaul styling organization
 //weirdness with the carousel
+//center alert texts
 
 const baseURL =
   process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;

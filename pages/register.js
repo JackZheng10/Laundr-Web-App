@@ -412,14 +412,12 @@ class Register extends Component {
     return (
       <React.Fragment>
         <Head>
-          <title>Register</title>
           {/* <meta
           name="description"
           content="Register for a Laundr account."
         /> */}
           {/* <link rel="canonical" href="" /> */}
         </Head>
-
         <Grid
           container
           direction="column"

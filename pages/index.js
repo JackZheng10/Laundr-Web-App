@@ -195,7 +195,6 @@ class Login extends Component {
     return (
       <React.Fragment>
         <Head>
-          <title>Login</title>
           {/* <meta
           name="description"
           content="Login to your Laundr account."

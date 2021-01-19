@@ -12,7 +12,10 @@ import {
   Fade,
   Collapse,
 } from "@material-ui/core";
+import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../../../helpers/errors";
+import { getCurrentUser } from "../../../helpers/session";
+import compose from "recompose/compose";
 import axios from "axios";
 import PropTypes from "prop-types";
 import LoadingButton from "../../../components/other/LoadingButton";
@@ -30,11 +33,19 @@ class AccountInfo extends Component {
     const user = this.props.user;
 
     this.state = {
-      fname: user.fname,
+      fname: user.fname, //update details
+      fnameError: false,
+      fnameErrorMsg: "",
       lname: user.lname,
+      lnameError: false,
+      lnameErrorMsg: "",
       email: user.email,
+      emailError: false,
+      emailErrorMsg: "",
       phone: user.phone,
-      showPasswordUpdate: false,
+      phoneError: false,
+      phoneErrorMsg: "",
+      showPasswordUpdate: false, //update password
       password: "",
       confirmedPassword: "",
       passwordError: false,
@@ -88,8 +99,126 @@ class AccountInfo extends Component {
     }
   };
 
+  handleUpdateDetails = async () => {
+    const response = await getCurrentUser();
+
+    if (!response.data.success) {
+      if (response.data.redirect) {
+        return this.props.router.push(response.data.message);
+      } else {
+        return this.context.showAlert(response.data.message);
+      }
+    }
+
+    //or maybe update anyways and dont waste a server request?
+
+    //plan:
+    //if details have changed, update them and then check if phone needs to be changed
+    //if details havent changed, just check if phone needs to be changed
+    //if nothing changed, alert user
+
+    if (this.handleDetailsInputValidation()) {
+      try {
+        const response = await axios.post(
+          "/api/user/updateDetails",
+          {
+            fname: this.state.fname,
+            lname: this.state.lname,
+            email: this.state.email,
+          },
+          { withCredentials: true }
+        );
+
+        this.context.showAlert(response.data.message, () => {});
+      } catch (error) {
+        showConsoleError("jj", error);
+        this.context.showAlert(caughtError("jj", error, 99));
+      }
+    }
+  };
+
+  handleDetailsInputValidation = () => {
+    let valid = true;
+
+    const inputs = [
+      {
+        name: "fname",
+        whitespaceMsg: "*Please enter a first name.",
+      },
+      {
+        name: "lname",
+        whitespaceMsg: "*Please enter a last name.",
+      },
+      {
+        name: "email",
+        whitespaceMsg: "*Please enter a valid email.",
+      },
+      {
+        name: "phone",
+        whitespaceMsg: "*Please enter a 10-digit phone number.",
+      },
+    ];
+
+    for (let input of inputs) {
+      const value = this.state[input.name];
+
+      //whitespace checks
+      if (!value.replace(/\s/g, "").length) {
+        this.setState({
+          [input.name + "ErrorMsg"]: input.whitespaceMsg,
+          [input.name + "Error"]: true,
+        });
+        valid = false;
+        continue;
+      } else {
+        this.setState({
+          [input.name + "ErrorMsg"]: "",
+          [input.name + "Error"]: false,
+        });
+      }
+
+      //input-specific checks
+      switch (input.name) {
+        case "email":
+          if (
+            /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) === false
+          ) {
+            this.setState({
+              [input.name + "ErrorMsg"]: "*Please enter a valid email.",
+              [input.name + "Error"]: true,
+            });
+            valid = false;
+          } else {
+            this.setState({
+              [input.name + "ErrorMsg"]: "",
+              [input.name + "Error"]: false,
+            });
+          }
+          break;
+
+        case "phone":
+          if (value.length < 10) {
+            this.setState({
+              [input.name +
+              "ErrorMsg"]: "*Please enter a 10-digit phone number.",
+              [input.name + "Error"]: true,
+            });
+            valid = false;
+          } else {
+            this.setState({
+              [input.name + "ErrorMsg"]: "",
+              [input.name + "Error"]: false,
+            });
+          }
+          break;
+      }
+    }
+
+    return valid;
+  };
+
   handleUpdatePassword = async () => {
-    if (this.handleInputValidation()) {
+    if (this.handlePasswordInputValidation()) {
       try {
         const response = await axios.post(
           "/api/user/updatePassword",
@@ -112,7 +241,7 @@ class AccountInfo extends Component {
     }
   };
 
-  handleInputValidation = () => {
+  handlePasswordInputValidation = () => {
     const password = this.state.password;
     const confirmedPassword = this.state.confirmedPassword;
     let valid = true;
@@ -218,6 +347,9 @@ class AccountInfo extends Component {
                   label="First Name"
                   size="small"
                   value={this.state.fname}
+                  error={this.state.fnameError}
+                  helperText={this.state.fnameErrorMsg}
+                  autoComplete="given-name"
                   className={classes.input}
                   onChange={(event) => {
                     this.handleInputChange("fname", event.target.value);
@@ -231,6 +363,9 @@ class AccountInfo extends Component {
                   label="Last Name"
                   size="small"
                   value={this.state.lname}
+                  autoComplete="family-name"
+                  error={this.state.lnameError}
+                  helperText={this.state.lnameErrorMsg}
                   className={classes.input}
                   onChange={(event) => {
                     this.handleInputChange("lname", event.target.value);
@@ -244,6 +379,9 @@ class AccountInfo extends Component {
                   label="Email Address"
                   size="small"
                   value={this.state.email}
+                  autoComplete="email"
+                  error={this.state.emailError}
+                  helperText={this.state.emailErrorMsg}
                   className={classes.input}
                   onChange={(event) => {
                     this.handleInputChange("email", event.target.value);
@@ -264,6 +402,9 @@ class AccountInfo extends Component {
                       label="Phone Number"
                       size="small"
                       value={this.state.phone}
+                      autoComplete="tel-national"
+                      error={this.state.phoneError}
+                      helperText={this.state.phoneErrorMsg}
                       className={classes.input}
                       onChange={(event) => {
                         this.handleInputChange("phone", event.target.value);
@@ -271,16 +412,14 @@ class AccountInfo extends Component {
                     />
                   </Grid>
                   <Grid item>
-                    <Button
+                    <LoadingButton
                       size="medium"
                       variant="contained"
                       className={classes.mainButton}
-                      onClick={() => {
-                        alert("work in progress");
-                      }}
+                      onClick={this.handleUpdateDetails}
                     >
                       Update
-                    </Button>
+                    </LoadingButton>
                   </Grid>
                 </Grid>
               </Grid>
@@ -308,6 +447,7 @@ class AccountInfo extends Component {
                 variant="filled"
                 margin="normal"
                 fullWidth
+                size="small"
                 label="New Password"
                 type="password"
                 autoComplete="new-password"
@@ -323,6 +463,7 @@ class AccountInfo extends Component {
                 variant="filled"
                 margin="normal"
                 fullWidth
+                size="small"
                 label="Confirm Password"
                 type="password"
                 autoComplete="new-password"
@@ -349,4 +490,4 @@ AccountInfo.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(accountInfoStyles)(AccountInfo);
+export default compose(withRouter, withStyles(accountInfoStyles))(AccountInfo);

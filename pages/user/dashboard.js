@@ -50,6 +50,7 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //overhaul styling organization
 //weirdness with the carousel
 //center alert texts
+//all requests should follow the redirect check (check newly made ones)
 
 const baseURL =
   process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;

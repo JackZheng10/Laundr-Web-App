@@ -89,7 +89,7 @@ class Topbar extends Component {
             </Button>
           </Hidden>
           <Hidden lgUp>
-            <IconButton color="inherit" onClick={onSidebarOpen}>
+            <IconButton color="grey" onClick={onSidebarOpen}>
               <MenuIcon />
             </IconButton>
           </Hidden>

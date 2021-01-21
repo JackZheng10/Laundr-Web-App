@@ -9,7 +9,7 @@ import {
   Button,
   TextField,
   CardHeader,
-  Fade,
+  Typography,
   Collapse,
 } from "@material-ui/core";
 import { withRouter } from "next/router";
@@ -50,6 +50,7 @@ class AccountInfo extends Component {
       confirmedPassword: "",
       passwordError: false,
       passwordErrorMsg: "",
+      showVerifyDialog: false, //update phone
     };
   }
 
@@ -57,6 +58,10 @@ class AccountInfo extends Component {
     this.handleInputChange("password", "");
     this.handleInputChange("confirmedPassword", "");
     this.setState({ showPasswordUpdate: !this.state.showPasswordUpdate });
+  };
+
+  toggleVerifyDialog = () => {
+    this.setState({ showVerifyDialog: !this.state.showVerifyDialog });
   };
 
   handleInputChange = (property, value) => {
@@ -100,23 +105,6 @@ class AccountInfo extends Component {
   };
 
   handleUpdateDetails = async () => {
-    const response = await getCurrentUser();
-
-    if (!response.data.success) {
-      if (response.data.redirect) {
-        return this.props.router.push(response.data.message);
-      } else {
-        return this.context.showAlert(response.data.message);
-      }
-    }
-
-    //or maybe update anyways and dont waste a server request?
-
-    //plan:
-    //if details have changed, update them and then check if phone needs to be changed
-    //if details havent changed, just check if phone needs to be changed
-    //if nothing changed, alert user
-
     if (this.handleDetailsInputValidation()) {
       try {
         const response = await axios.post(
@@ -129,10 +117,22 @@ class AccountInfo extends Component {
           { withCredentials: true }
         );
 
-        this.context.showAlert(response.data.message, () => {});
+        if (!response.data.success) {
+          if (response.data.redirect) {
+            this.props.router.push(response.data.message);
+          } else {
+            this.context.showAlert(response.data.message);
+          }
+        } else {
+          this.context.showAlert(response.data.message, () => {
+            window.location.reload();
+          });
+        }
       } catch (error) {
-        showConsoleError("jj", error);
-        this.context.showAlert(caughtError("jj", error, 99));
+        showConsoleError("updating account details", error);
+        this.context.showAlert(
+          caughtError("updating account details", error, 99)
+        );
       }
     }
   };
@@ -241,6 +241,8 @@ class AccountInfo extends Component {
     }
   };
 
+  handleUpdatePhone = () => {};
+
   handlePasswordInputValidation = () => {
     const password = this.state.password;
     const confirmedPassword = this.state.confirmedPassword;
@@ -335,12 +337,26 @@ class AccountInfo extends Component {
             className={classes.cardHeader}
           />
           <CardContent>
-            <Grid //main column
+            <Typography
+              style={{
+                fontWeight: "bold",
+                color: "#01c9e1",
+                textAlign: "center",
+              }}
+              gutterBottom
+              variant="h5"
+            >
+              Account Details
+            </Typography>
+            <Divider variant="fullWidth" />
+            <Grid
               container
               spacing={2}
               justify="center"
+              direction="row"
+              style={{ marginTop: 10 }}
             >
-              <Grid item xs={6} sm={6}>
+              <Grid item xs={6}>
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -356,7 +372,7 @@ class AccountInfo extends Component {
                   }}
                 />
               </Grid>
-              <Grid item xs={6} sm={6}>
+              <Grid item xs={6}>
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -372,46 +388,24 @@ class AccountInfo extends Component {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} sm={12}>
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  label="Email Address"
-                  size="small"
-                  value={this.state.email}
-                  autoComplete="email"
-                  error={this.state.emailError}
-                  helperText={this.state.emailErrorMsg}
-                  className={classes.input}
-                  onChange={(event) => {
-                    this.handleInputChange("email", event.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12}>
-                <Grid
-                  container
-                  direction="row"
-                  justify="space-between"
-                  alignItems="center"
-                >
-                  <Grid item>
+              <Grid item xs={12}>
+                <Grid container justify="space-between">
+                  <Grid item xs={7}>
                     <TextField
-                      style={{ width: 110 }}
                       variant="outlined"
-                      label="Phone Number"
+                      label="Email Address"
                       size="small"
-                      value={this.state.phone}
-                      autoComplete="tel-national"
-                      error={this.state.phoneError}
-                      helperText={this.state.phoneErrorMsg}
+                      value={this.state.email}
+                      autoComplete="email"
+                      error={this.state.emailError}
+                      helperText={this.state.emailErrorMsg}
                       className={classes.input}
                       onChange={(event) => {
-                        this.handleInputChange("phone", event.target.value);
+                        this.handleInputChange("email", event.target.value);
                       }}
                     />
                   </Grid>
-                  <Grid item>
+                  <Grid item xs={3.5}>
                     <LoadingButton
                       size="medium"
                       variant="contained"
@@ -424,8 +418,54 @@ class AccountInfo extends Component {
                 </Grid>
               </Grid>
             </Grid>
+            <Typography
+              style={{
+                fontWeight: "bold",
+                color: "#01c9e1",
+                textAlign: "center",
+                marginTop: 10,
+              }}
+              gutterBottom
+              variant="h5"
+            >
+              Phone
+            </Typography>
+            <Divider variant="fullWidth" />
+            <Grid
+              container
+              spacing={2}
+              justify="center"
+              direction="row"
+              style={{ marginTop: 10 }}
+            >
+              <Grid item>
+                <TextField
+                  variant="outlined"
+                  label="Phone Number"
+                  size="small"
+                  value={this.state.phone}
+                  autoComplete="tel-national"
+                  error={this.state.phoneError}
+                  helperText={this.state.phoneErrorMsg}
+                  className={classes.input}
+                  style={{ width: 110 }}
+                  onChange={(event) => {
+                    this.handleInputChange("phone", event.target.value);
+                  }}
+                />
+              </Grid>
+              <Grid item>
+                <LoadingButton
+                  size="medium"
+                  variant="contained"
+                  className={classes.mainButton}
+                  onClick={this.handleUpdatePhone}
+                >
+                  Update
+                </LoadingButton>
+              </Grid>
+            </Grid>
           </CardContent>
-          {/* <Divider /> */}
           <CardActions className={classes.cardFooter}>
             <Grid
               container

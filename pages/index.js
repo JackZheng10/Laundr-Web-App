@@ -232,6 +232,7 @@ class Login extends Component {
                   variant="outlined"
                   label="Phone"
                   size="small"
+                  autoComplete="tel-national"
                   value={this.state.enteredPhone}
                   onChange={(event) => {
                     this.handleInputChange("enteredPhone", event.target.value);

@@ -38,18 +38,7 @@ import axios from "axios";
 
 //todo: referral code functionality when possible
 //todo: get city dropdown to have hover effect rather than native dropdown if possible
-//todo: get loading from resending code to hover rather than appear?
-//todo: change token time to infinite(?) when implementing
-//todo: logo cut off on s5/smaller iphones??
-//todo: add back <form> so can press enter to submit
-//todo: give error msg when wrong phone number entered (you get an error code from twilio controller) and disable verification dialog popup
-
-//todo: change underline:after during error to be red again, not the blue. check the new class thats applied?
-//todo: make city selector background white when clicked on
-//todo: study how the MuiOutlinedInput-root selector works with more specific fields
-
-//in backend, caught errors = return error.code and success false. in frontend, if success is false, print error: message from the response which should be said code
-//in frontend, caught errors = use error itself and alert error: error
+//move dupe check to registration
 
 function Copyright() {
   return (

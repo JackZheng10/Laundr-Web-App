@@ -1,6 +1,9 @@
 const accountInfoStyles = (theme) => ({
   root: {
-    maxWidth: 400,
+    width: 400,
+    [theme.breakpoints.down(400)]: {
+      width: "90vw",
+    },
   },
   secondaryButton: {
     color: "white",

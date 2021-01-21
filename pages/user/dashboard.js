@@ -51,6 +51,9 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //weirdness with the carousel
 //center alert texts
 //all requests should follow the redirect check (check newly made ones)
+//add form (enter = submit) for other stuff
+//redo register, login, forgot pwd, acc details, order notes validation (anywhere else that needs input like entering weight)
+//make sure all routes with authentication also have authorization
 
 const baseURL =
   process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;

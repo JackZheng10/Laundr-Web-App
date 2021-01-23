@@ -11,10 +11,15 @@ import {
   CardHeader,
   Typography,
   Collapse,
+  Dialog,
+  DialogContent,
+  DialogActions,
+  DialogTitle,
 } from "@material-ui/core";
 import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../../../helpers/errors";
 import { getCurrentUser } from "../../../helpers/session";
+import { withMediaQuery } from "./withMediaQuery";
 import compose from "recompose/compose";
 import axios from "axios";
 import PropTypes from "prop-types";
@@ -51,17 +56,39 @@ class AccountInfo extends Component {
       passwordError: false,
       passwordErrorMsg: "",
       showVerifyDialog: false, //update phone
+      enteredCode: "",
     };
   }
 
+  isSidebarPage = () => {
+    if (typeof window !== "undefined") {
+      const path = window.location.href.split("/");
+
+      if (
+        path[3] === "" ||
+        path[3] === "register" ||
+        path[3] === "passwordreset"
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   toggleShowPasswordUpdate = () => {
-    this.handleInputChange("password", "");
-    this.handleInputChange("confirmedPassword", "");
-    this.setState({ showPasswordUpdate: !this.state.showPasswordUpdate });
+    this.setState({
+      password: "",
+      showPasswordUpdate: !this.state.showPasswordUpdate,
+      confirmedPassword: "",
+    });
   };
 
   toggleVerifyDialog = () => {
-    this.setState({ showVerifyDialog: !this.state.showVerifyDialog });
+    this.setState({
+      showVerifyDialog: !this.state.showVerifyDialog,
+      enteredCode: "",
+    });
   };
 
   handleInputChange = (property, value) => {
@@ -101,13 +128,17 @@ class AccountInfo extends Component {
       case "confirmedPassword":
         this.setState({ [property]: value });
         break;
+
+      case "enteredCode":
+        this.setState({ [property]: value });
+        break;
     }
   };
 
   handleUpdateDetails = async () => {
     if (this.handleDetailsInputValidation()) {
       try {
-        const response = await axios.post(
+        const response = await axios.put(
           "/api/user/updateDetails",
           {
             fname: this.state.fname,
@@ -153,10 +184,6 @@ class AccountInfo extends Component {
         name: "email",
         whitespaceMsg: "*Please enter a valid email.",
       },
-      {
-        name: "phone",
-        whitespaceMsg: "*Please enter a 10-digit phone number.",
-      },
     ];
 
     for (let input of inputs) {
@@ -195,7 +222,119 @@ class AccountInfo extends Component {
             });
           }
           break;
+      }
+    }
 
+    return valid;
+  };
+
+  handleSendVerification = async () => {
+    if (this.handlePhoneInputValidation()) {
+      try {
+        const response = await axios.post(
+          "/api/twilio/sendUpdateVerification",
+          {
+            to: this.state.phone,
+          },
+          { withCredentials: true }
+        );
+
+        if (!response.data.success) {
+          if (response.data.redirect) {
+            this.props.router.push(response.data.message);
+          } else {
+            this.context.showAlert(response.data.message);
+          }
+        } else {
+          this.toggleVerifyDialog();
+        }
+      } catch (error) {
+        showConsoleError("updating phone", error);
+        this.context.showAlert(caughtError("updating phone", error, 99));
+      }
+    }
+  };
+
+  handleResendCode = async () => {
+    try {
+      const response = await axios.post(
+        "/api/twilio/sendVerification",
+        {
+          to: this.state.phone,
+        },
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        this.context.showAlert("Verification code resent.");
+      } else {
+        this.context.showAlert(response.data.message);
+      }
+    } catch (error) {
+      showConsoleError("sending verification code", error);
+      this.context.showAlert(
+        caughtError("sending verification code", error, 99)
+      );
+    }
+  };
+
+  handleUpdatePhone = async () => {
+    try {
+      const response = await axios.put(
+        "/api/user/updatePhone",
+        {
+          to: this.state.phone,
+          enteredCode: this.state.enteredCode,
+        },
+        { withCredentials: true }
+      );
+
+      if (!response.data.success) {
+        if (response.data.redirect) {
+          this.props.router.push(response.data.message);
+        } else {
+          this.context.showAlert(response.data.message);
+        }
+      } else {
+        this.context.showAlert(response.data.message, () => {
+          window.location.reload();
+        });
+      }
+    } catch (error) {
+      showConsoleError("updating phone", error);
+      this.context.showAlert(caughtError("updating phone", error, 99));
+    }
+  };
+
+  handlePhoneInputValidation = () => {
+    let valid = true;
+
+    const inputs = [
+      {
+        name: "phone",
+        whitespaceMsg: "*Please enter a 10-digit phone number.",
+      },
+    ];
+
+    for (let input of inputs) {
+      const value = this.state[input.name];
+
+      //whitespace checks
+      if (!value.replace(/\s/g, "").length) {
+        this.setState({
+          [input.name + "ErrorMsg"]: input.whitespaceMsg,
+          [input.name + "Error"]: true,
+        });
+        valid = false;
+        continue;
+      } else {
+        this.setState({
+          [input.name + "ErrorMsg"]: "",
+          [input.name + "Error"]: false,
+        });
+      }
+
+      switch (input.name) {
         case "phone":
           if (value.length < 10) {
             this.setState({
@@ -220,7 +359,7 @@ class AccountInfo extends Component {
   handleUpdatePassword = async () => {
     if (this.handlePasswordInputValidation()) {
       try {
-        const response = await axios.post(
+        const response = await axios.put(
           "/api/user/updatePassword",
           {
             password: this.state.password,
@@ -240,8 +379,6 @@ class AccountInfo extends Component {
       }
     }
   };
-
-  handleUpdatePhone = () => {};
 
   handlePasswordInputValidation = () => {
     const password = this.state.password;
@@ -321,10 +458,87 @@ class AccountInfo extends Component {
   };
 
   render() {
-    const { classes, user } = this.props;
+    const { classes, user, isDesktop } = this.props;
 
     return (
       <React.Fragment>
+        <Dialog
+          open={this.state.showVerifyDialog}
+          onClose={this.toggleVerifyDialog}
+          style={{
+            left: isDesktop && this.isSidebarPage() ? "13%" : "0%",
+            zIndex: 19,
+          }}
+        >
+          <DialogTitle disableTypography>
+            <Typography variant="h4" style={{ color: "#01c9e1" }}>
+              Verification
+            </Typography>
+          </DialogTitle>
+          <DialogContent>
+            <Typography
+              variant="body1"
+              style={{ textAlign: "center" }}
+              gutterBottom
+            >
+              To update your phone, please enter the verification code we just
+              sent to your phone. If you didn't receive a code, make sure your
+              entered phone number is correct and try again.
+            </Typography>
+            <div style={{ textAlign: "center" }}>
+              <TextField
+                variant="outlined"
+                label="Code"
+                size="small"
+                value={this.state.enteredCode}
+                onChange={(event) => {
+                  this.handleInputChange("enteredCode", event.target.value);
+                }}
+                className={classes.input}
+                style={{ width: 100 }}
+              />
+            </div>
+            <div style={{ textAlign: "center", marginTop: 10 }}>
+              <LoadingButton
+                onClick={this.handleResendCode}
+                variant="contained"
+                className={classes.secondaryButton}
+                timer={true}
+                time={60}
+              >
+                Resend
+              </LoadingButton>
+            </div>
+          </DialogContent>
+          <DialogActions>
+            <Grid
+              container
+              direction="row"
+              justify="space-between"
+              alignItems="center"
+            >
+              <Grid item>
+                <Button
+                  onClick={this.toggleVerifyDialog}
+                  variant="contained"
+                  className={classes.secondaryButton}
+                  style={{ marginRight: 10 }}
+                >
+                  Cancel
+                </Button>
+              </Grid>
+              <Grid item>
+                <LoadingButton
+                  onClick={this.handleUpdatePhone}
+                  variant="contained"
+                  className={classes.mainButton}
+                >
+                  Submit
+                </LoadingButton>
+              </Grid>
+            </Grid>
+          </DialogActions>
+        </Dialog>
         <Card className={classes.root} elevation={10}>
           <CardHeader
             title="Profile"
@@ -459,7 +673,7 @@ class AccountInfo extends Component {
                   size="medium"
                   variant="contained"
                   className={classes.mainButton}
-                  onClick={this.handleUpdatePhone}
+                  onClick={this.handleSendVerification}
                 >
                   Update
                 </LoadingButton>
@@ -530,4 +744,16 @@ AccountInfo.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default compose(withRouter, withStyles(accountInfoStyles))(AccountInfo);
+export default compose(
+  withRouter,
+  withStyles(accountInfoStyles),
+  withMediaQuery([
+    [
+      "isDesktop",
+      (theme) => theme.breakpoints.up("lg"),
+      {
+        defaultMatches: true,
+      },
+    ],
+  ])
+)(AccountInfo);

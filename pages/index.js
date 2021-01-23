@@ -160,8 +160,10 @@ class Login extends Component {
   };
 
   toggleResetDialog = () => {
-    this.handleInputChange("enteredPhone", "");
-    this.setState({ showResetDialog: !this.state.showResetDialog });
+    this.setState({
+      showResetDialog: !this.state.showResetDialog,
+      enteredPhone: "",
+    });
   };
 
   handlePasswordReset = async () => {

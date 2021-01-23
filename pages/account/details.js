@@ -76,7 +76,7 @@ class Details extends Component {
         <div style={{ padding: 16 }}>
           <Grid
             container
-            spacing={2}
+            spacing={4}
             direction="column"
             justify="center"
             alignItems="center" /*main page column*/

@@ -133,8 +133,6 @@ const MyApp = (props) => {
   };
 
   //alert with no confirmation
-  //todo: look into promises, how setstate is chained in hooks, etc. since ideally youd want:
-  //dialog to close, THEN callback. alert message and callback set, THEN show dialog
   const showAlert = (message, callback) => {
     setAlertMessage_NC(message);
     setShowAlertDialog_NC(true);

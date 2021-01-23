@@ -265,8 +265,12 @@ class AccountInfo extends Component {
         { withCredentials: true }
       );
 
-      if (response.data.success) {
-        this.context.showAlert("Verification code resent.");
+      if (!response.data.success) {
+        if (response.data.redirect) {
+          this.props.router.push(response.data.message);
+        } else {
+          this.context.showAlert(response.data.message);
+        }
       } else {
         this.context.showAlert(response.data.message);
       }
@@ -368,7 +372,11 @@ class AccountInfo extends Component {
         );
 
         if (!response.data.success) {
-          this.context.showAlert(response.data.message);
+          if (response.data.redirect) {
+            this.props.router.push(response.data.message);
+          } else {
+            this.context.showAlert(response.data.message);
+          }
         } else {
           this.toggleShowPasswordUpdate();
           this.context.showAlert(response.data.message);

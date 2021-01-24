@@ -33,7 +33,8 @@
     "react-scripts": "3.4.1",
     "react-swipeable-views": "^0.13.9",
     "recharts": "^1.8.5",
-    "recompose": "^0.30.0"
+    "recompose": "^0.30.0",
+    "validator": "^13.5.2"
   },
   "scripts": {
     "dev": "next dev",

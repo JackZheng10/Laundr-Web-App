@@ -1,5 +1,3 @@
-//todo: add to where whitespaces are checked
-
 export const evaluateWhitespaceBool = (text) => {
   if (!text.replace(/\s/g, "").length) {
     return true;
@@ -14,4 +12,12 @@ export const evaluateWhitespaceText = (text) => {
   }
 
   return text;
+};
+
+export const limitLength = (value, size) => {
+  if (value.length > size) {
+    value = value.substr(0, size);
+  }
+
+  return value;
 };

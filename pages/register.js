@@ -28,7 +28,9 @@ import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
 import { GetServerSideProps } from "next";
 import { getExistingOrder_SSR, getCurrentUser_SSR } from "../src/helpers/ssr";
+import { limitLength } from "../src/helpers/inputs";
 import Head from "next/head";
+import validator from "validator";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import MainAppContext from "../src/contexts/MainAppContext";
@@ -173,7 +175,6 @@ class Register extends Component {
           fname: this.state.fname,
           lname: this.state.lname,
           city: this.state.city,
-          phone: this.state.phone,
           password: this.state.password,
           referral: this.state.referral,
         },
@@ -231,7 +232,7 @@ class Register extends Component {
       const value = this.state[input.name];
 
       //whitespace checks
-      if (!value.replace(/\s/g, "").length) {
+      if (validator.isEmpty(value)) {
         this.setState({
           [input.name + "ErrorMsg"]: input.whitespaceMsg,
           [input.name + "Error"]: true,
@@ -248,9 +249,7 @@ class Register extends Component {
       //input-specific checks
       switch (input.name) {
         case "email":
-          if (
-            /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) === false
-          ) {
+          if (!validator.isEmail(value)) {
             this.setState({
               [input.name + "ErrorMsg"]: "*Please enter a valid email.",
               [input.name + "Error"]: true,
@@ -265,7 +264,7 @@ class Register extends Component {
           break;
 
         case "password":
-          if (value.length < 6 || /[A-Z]+/.test(value) === false) {
+          if (value.length < 6 || !/[A-Z]+/.test(value)) {
             this.setState({
               [input.name +
               "ErrorMsg"]: "*Passwords must be at least 6 characters long and contain one capital letter.",
@@ -315,18 +314,17 @@ class Register extends Component {
 
   //todo: limit character inputs. you dont want 1000 character names mayn.
   handleInputChange = (property, value) => {
-    const nameRegex = /^[a-zA-Z][a-zA-Z\s]*$/;
-    const phoneRegex = /^[0-9\b]+$/;
-
     switch (property) {
       case "fname":
-        if (value === "" || nameRegex.test(value)) {
+        if (validator.isAlpha(value)) {
+          value = limitLength(value, 20);
           this.setState({ [property]: value });
         }
         break;
 
       case "lname":
-        if (value === "" || nameRegex.test(value)) {
+        if (validator.isAlpha(value)) {
+          value = limitLength(value, 20);
           this.setState({ [property]: value });
         }
         break;
@@ -336,24 +334,31 @@ class Register extends Component {
         break;
 
       case "email":
-        this.setState({ [property]: value });
+        if (!validator.contains(value, " ")) {
+          value = limitLength(value, 64);
+          this.setState({ [property]: value });
+        }
         break;
 
       case "password":
-        this.setState({ [property]: value });
+        if (!validator.contains(value, " ")) {
+          value = limitLength(value, 64);
+          this.setState({ [property]: value });
+        }
         break;
 
       case "phone":
-        if (value === "" || phoneRegex.test(value)) {
-          if (value.length > 10) {
-            value = value.substr(0, 10);
-          }
+        if (validator.isNumeric(value)) {
+          value = limitLength(value, 10);
           this.setState({ [property]: value });
         }
         break;
 
       case "referral":
-        this.setState({ [property]: value });
+        if (!validator.contains(value, " ")) {
+          value = limitLength(value, 10);
+          this.setState({ [property]: value });
+        }
         break;
 
       case "tos":
@@ -361,7 +366,10 @@ class Register extends Component {
         break;
 
       case "enteredCode":
-        this.setState({ [property]: value });
+        if (!validator.contains(value, " ")) {
+          value = limitLength(value, 6);
+          this.setState({ [property]: value });
+        }
         break;
     }
   };

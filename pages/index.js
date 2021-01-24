@@ -16,9 +16,11 @@ import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
 import { GetServerSideProps } from "next";
 import { getExistingOrder_SSR, getCurrentUser_SSR } from "../src/helpers/ssr";
+import { limitLength } from "../src/helpers/inputs";
 import Head from "next/head";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
+import validator from "validator";
 import LoadingButton from "../src/components/other/LoadingButton";
 import MainAppContext from "../src/contexts/MainAppContext";
 import registerStyles from "../src/styles/registerStyles";
@@ -65,17 +67,27 @@ class Login extends Component {
   };
 
   handleInputChange = (property, value) => {
-    const phoneRegex = /^[0-9\b]+$/;
-
-    if (property === "enteredPhone") {
-      if (value === "" || phoneRegex.test(value)) {
-        if (value.length > 10) {
-          value = value.substr(0, 10);
+    switch (property) {
+      case "email":
+        if (!validator.contains(value, " ")) {
+          value = limitLength(value, 64);
+          this.setState({ [property]: value });
         }
-        this.setState({ [property]: value });
-      }
-    } else {
-      this.setState({ [property]: value });
+        break;
+
+      case "password":
+        if (!validator.contains(value, " ")) {
+          value = limitLength(value, 64);
+          this.setState({ [property]: value });
+        }
+        break;
+
+      case "enteredPhone":
+        if (validator.isNumeric(value)) {
+          value = limitLength(value, 10);
+          this.setState({ [property]: value });
+        }
+        break;
     }
   };
 
@@ -125,7 +137,7 @@ class Login extends Component {
       const value = this.state[input.name];
 
       //whitespace checks
-      if (!value.replace(/\s/g, "").length) {
+      if (validator.isEmpty(value)) {
         this.setState({
           [input.name + "ErrorMsg"]: input.whitespaceMsg,
           [input.name + "Error"]: true,
@@ -141,7 +153,7 @@ class Login extends Component {
 
       //input-specific checks
       if (input.name === "email") {
-        if (/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) === false) {
+        if (!validator.isEmail(value)) {
           this.setState({
             [input.name + "ErrorMsg"]: "*Please enter a valid email.",
             [input.name + "Error"]: true,

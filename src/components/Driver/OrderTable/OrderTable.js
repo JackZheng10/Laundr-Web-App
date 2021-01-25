@@ -417,19 +417,10 @@ class OrderTable extends Component {
           );
         }
       } else {
-        //charge successful, so update the weight of the order
-        const response_two = await this.props.handleUpdateWeight(
-          this.state.currentOrder
+        this.showNotification(
+          response_one.data.message,
+          response_one.data.success
         );
-
-        if (!response_two.data.success && response_two.data.redirect) {
-          this.props.router.push(response_two.data.message);
-        } else {
-          this.showNotification(
-            response_two.data.message,
-            response_two.data.success
-          );
-        }
       }
     }
   };

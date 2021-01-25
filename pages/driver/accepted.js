@@ -29,6 +29,7 @@ import {
 } from "../../src/helpers/ssr";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
+import validator from "validator";
 import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import OrderTable from "../../src/components/Driver/OrderTable/OrderTable";
@@ -177,22 +178,17 @@ class AcceptedDashboard extends Component {
   };
 
   handleWeightChange = (weight) => {
-    //todo: make sure decimal works
     const regex = /^\d*\.?\d*$/;
 
-    if (weight === "" || regex.test(weight)) {
+    if (!validator.contains(weight, " ") && regex.test(weight)) {
       this.setState({ weight: weight });
     }
   };
 
   validateWeightMinimum = () => {
-    if (!this.state.weight.replace(/\s/g, "").length) {
-      this.setState({
-        weightErrorMsg: "Please enter a weight.",
-      });
+    const weight = this.state.weight;
 
-      return false;
-    } else if (this.state.weight < 10) {
+    if (validator.contains(weight, " ") || this.state.weight < 10) {
       this.setState({
         weightErrorMsg: "Minimum weight to be entered is 10 lbs.",
       });
@@ -237,30 +233,30 @@ class AcceptedDashboard extends Component {
     }
   };
 
-  handleUpdateWeight = async (order) => {
-    try {
-      const orderID = order.orderInfo.orderID;
+  // handleUpdateWeight = async (order) => {
+  //   try {
+  //     const orderID = order.orderInfo.orderID;
 
-      const response = await axios.put(
-        "/api/driver/updateOrderWeight",
-        {
-          weight: this.state.weight,
-          orderID,
-        },
-        { withCredentials: true }
-      );
+  //     const response = await axios.put(
+  //       "/api/driver/updateOrderWeight",
+  //       {
+  //         weight: this.state.weight,
+  //         orderID,
+  //       },
+  //       { withCredentials: true }
+  //     );
 
-      return response;
-    } catch (error) {
-      showConsoleError("entering weight", error);
-      return {
-        data: {
-          success: false,
-          message: caughtError("entering weight", error, 99),
-        },
-      };
-    }
-  };
+  //     return response;
+  //   } catch (error) {
+  //     showConsoleError("entering weight", error);
+  //     return {
+  //       data: {
+  //         success: false,
+  //         message: caughtError("entering weight", error, 99),
+  //       },
+  //     };
+  //   }
+  // };
 
   handleWasherReceived = async (order) => {
     try {
@@ -365,7 +361,6 @@ class AcceptedDashboard extends Component {
               validateWeightMinimum={this.validateWeightMinimum}
               handleChargeCustomer={this.handleChargeCustomer}
               handleClearWeightError={this.handleClearWeightError}
-              handleUpdateWeight={this.handleUpdateWeight}
               handleWasherReceived={this.handleWasherReceived}
               handleUserReceived={this.handleUserReceived}
               refreshPage={this.refreshPage}

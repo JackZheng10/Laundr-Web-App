@@ -191,7 +191,6 @@ class NewOrder extends Component {
           loads: this.state.loads,
           pickupDate: this.state.date,
           pickupTime: this.state.formattedTime,
-          created: new Date(),
         },
         { withCredentials: true }
       );

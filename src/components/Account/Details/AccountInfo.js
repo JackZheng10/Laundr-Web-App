@@ -20,7 +20,9 @@ import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../../../helpers/errors";
 import { getCurrentUser } from "../../../helpers/session";
 import { withMediaQuery } from "./withMediaQuery";
+import { limitLength } from "../../../helpers/inputs";
 import compose from "recompose/compose";
+import validator from "validator";
 import axios from "axios";
 import PropTypes from "prop-types";
 import LoadingButton from "../../../components/other/LoadingButton";
@@ -81,6 +83,10 @@ class AccountInfo extends Component {
       password: "",
       showPasswordUpdate: !this.state.showPasswordUpdate,
       confirmedPassword: "",
+      passwordError: false,
+      passwordErrorMsg: "",
+      confirmedPasswordError: false,
+      confirmedPasswordErrorMsg: "",
     });
   };
 
@@ -97,40 +103,52 @@ class AccountInfo extends Component {
 
     switch (property) {
       case "fname":
-        if (value === "" || nameRegex.test(value)) {
+        if (validator.isAlpha(value)) {
+          value = limitLength(value, 20);
           this.setState({ [property]: value });
         }
         break;
 
       case "lname":
-        if (value === "" || nameRegex.test(value)) {
+        if (validator.isAlpha(value)) {
+          value = limitLength(value, 20);
           this.setState({ [property]: value });
         }
         break;
 
       case "email":
-        this.setState({ [property]: value });
+        if (!validator.contains(value, " ")) {
+          value = limitLength(value, 64);
+          this.setState({ [property]: value });
+        }
         break;
 
       case "phone":
-        if (value === "" || phoneRegex.test(value)) {
-          if (value.length > 10) {
-            value = value.substr(0, 10);
-          }
+        if (validator.isNumeric(value)) {
+          value = limitLength(value, 10);
           this.setState({ [property]: value });
         }
         break;
 
       case "password":
-        this.setState({ [property]: value });
+        if (!validator.contains(value, " ")) {
+          value = limitLength(value, 64);
+          this.setState({ [property]: value });
+        }
         break;
 
       case "confirmedPassword":
-        this.setState({ [property]: value });
+        if (!validator.contains(value, " ")) {
+          value = limitLength(value, 64);
+          this.setState({ [property]: value });
+        }
         break;
 
       case "enteredCode":
-        this.setState({ [property]: value });
+        if (!validator.contains(value, " ")) {
+          value = limitLength(value, 6);
+          this.setState({ [property]: value });
+        }
         break;
     }
   };
@@ -190,7 +208,7 @@ class AccountInfo extends Component {
       const value = this.state[input.name];
 
       //whitespace checks
-      if (!value.replace(/\s/g, "").length) {
+      if (validator.isEmpty(value)) {
         this.setState({
           [input.name + "ErrorMsg"]: input.whitespaceMsg,
           [input.name + "Error"]: true,
@@ -207,9 +225,7 @@ class AccountInfo extends Component {
       //input-specific checks
       switch (input.name) {
         case "email":
-          if (
-            /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) === false
-          ) {
+          if (!validator.isEmail(value)) {
             this.setState({
               [input.name + "ErrorMsg"]: "*Please enter a valid email.",
               [input.name + "Error"]: true,
@@ -324,7 +340,7 @@ class AccountInfo extends Component {
       const value = this.state[input.name];
 
       //whitespace checks
-      if (!value.replace(/\s/g, "").length) {
+      if (validator.isEmpty(value)) {
         this.setState({
           [input.name + "ErrorMsg"]: input.whitespaceMsg,
           [input.name + "Error"]: true,
@@ -389,35 +405,64 @@ class AccountInfo extends Component {
   };
 
   handlePasswordInputValidation = () => {
-    const password = this.state.password;
-    const confirmedPassword = this.state.confirmedPassword;
     let valid = true;
 
-    if (password.length < 6 || /[A-Z]+/.test(password) === false) {
-      this.setState({
-        passwordErrorMsg:
-          "*Passwords must be at least 6 characters long and contain one capital letter.",
-        passwordError: true,
-      });
-      valid = false;
-    } else {
-      this.setState({
-        passwordErrorMsg: "",
-        passwordError: false,
-      });
-    }
+    const inputs = [
+      {
+        name: "password",
+        whitespaceMsg: "*Please enter a password.",
+      },
+      {
+        name: "confirmedPassword",
+        whitespaceMsg: "*Please confirm your password.",
+      },
+    ];
 
-    if (password != confirmedPassword) {
-      this.setState({
-        confirmedPasswordErrorMsg: "*Passwords do not match.",
-        confirmedPasswordError: true,
-      });
-      valid = false;
-    } else {
-      this.setState({
-        confirmedPasswordErrorMsg: "",
-        confirmedPasswordError: false,
-      });
+    for (let input of inputs) {
+      const value = this.state[input.name];
+
+      //whitespace checks
+      if (validator.isEmpty(value)) {
+        this.setState({
+          [input.name + "ErrorMsg"]: input.whitespaceMsg,
+          [input.name + "Error"]: true,
+        });
+        valid = false;
+        continue;
+      } else {
+        this.setState({
+          [input.name + "ErrorMsg"]: "",
+          [input.name + "Error"]: false,
+        });
+      }
+
+      //input-specific checks
+      switch (input.name) {
+        case "password":
+          if (value.length < 6 || !/[A-Z]+/.test(value)) {
+            this.setState({
+              [input.name +
+              "ErrorMsg"]: "*Passwords must be at least 6 characters long and contain one capital letter.",
+              [input.name + "Error"]: true,
+            });
+            valid = false;
+          } else {
+            this.setState({
+              [input.name + "ErrorMsg"]: "",
+              [input.name + "Error"]: false,
+            });
+          }
+          break;
+
+        case "confirmedPassword":
+          if (value.length > 0 && value != this.state.password) {
+            this.setState({
+              [input.name + "ErrorMsg"]: "*Passwords must match.",
+              [input.name + "Error"]: true,
+            });
+            valid = false;
+          }
+      }
     }
 
     return valid;

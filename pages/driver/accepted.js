@@ -233,31 +233,6 @@ class AcceptedDashboard extends Component {
     }
   };
 
-  // handleUpdateWeight = async (order) => {
-  //   try {
-  //     const orderID = order.orderInfo.orderID;
-
-  //     const response = await axios.put(
-  //       "/api/driver/updateOrderWeight",
-  //       {
-  //         weight: this.state.weight,
-  //         orderID,
-  //       },
-  //       { withCredentials: true }
-  //     );
-
-  //     return response;
-  //   } catch (error) {
-  //     showConsoleError("entering weight", error);
-  //     return {
-  //       data: {
-  //         success: false,
-  //         message: caughtError("entering weight", error, 99),
-  //       },
-  //     };
-  //   }
-  // };
-
   handleWasherReceived = async (order) => {
     try {
       const orderID = order.orderInfo.orderID;

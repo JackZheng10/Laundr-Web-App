@@ -19,6 +19,7 @@ import {
   Avatar,
   Fade,
 } from "@material-ui/core";
+import validator from "validator";
 import TooltipButton from "../../../../Driver/OrderTable/components/TooltipButton";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
 import CreateIcon from "@material-ui/icons/Create";
@@ -70,14 +71,6 @@ class Review extends Component {
     this.setState({
       openWasherPrefs: true,
     });
-  };
-
-  evaluateWhitespace = (text) => {
-    if (!text.replace(/\s/g, "").length) {
-      return true;
-    }
-
-    return false;
   };
 
   render() {
@@ -142,7 +135,9 @@ class Review extends Component {
                   <CardActions className={classes.cardFooter}>
                     <TooltipButton
                       text={
-                        this.evaluateWhitespace(addressPreferences)
+                        validator.isEmpty(addressPreferences, {
+                          ignore_whitespace: true,
+                        })
                           ? "N/A"
                           : addressPreferences
                       }
@@ -351,7 +346,9 @@ class Review extends Component {
                   <CardActions className={classes.cardFooter}>
                     <TooltipButton
                       text={
-                        this.evaluateWhitespace(washerPreferences)
+                        validator.isEmpty(washerPreferences, {
+                          ignore_whitespace: true,
+                        })
                           ? "N/A"
                           : washerPreferences
                       }

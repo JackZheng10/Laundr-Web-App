@@ -13,7 +13,7 @@ class Preferences extends Component {
   };
 
   handleCharCount = (text) => {
-    let limit = 200;
+    const limit = 200;
     let count;
 
     if (text.length > limit) {

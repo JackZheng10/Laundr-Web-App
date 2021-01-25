@@ -9,9 +9,11 @@ import {
 import { getCurrentUser } from "../../../../helpers/session";
 import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../../../../helpers/errors";
+import { limitLength } from "../../../../../src/helpers/inputs";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import Geocode from "react-geocode";
+import validator from "validator";
 import axios from "axios";
 import MainAppContext from "../../../../contexts/MainAppContext";
 import LoadingButton from "../../../../components/other/LoadingButton";
@@ -84,7 +86,7 @@ class NewOrder extends Component {
         break;
 
       case 2:
-        if (this.evaluateWhitespace(this.state.address) === "N/A") {
+        if (validator.isEmpty(this.state.address)) {
           this.context.showAlert("Please enter an address.");
           canNext = false;
           break;
@@ -175,9 +177,17 @@ class NewOrder extends Component {
           delicates: this.state.delicates,
           separate: this.state.separate,
           towelsSheets: this.state.towelsSheets,
-          washerPrefs: this.evaluateWhitespace(this.state.washerPreferences),
+          washerPrefs: validator.isEmpty(this.state.washerPreferences, {
+            ignore_whitespace: true,
+          })
+            ? "N/A"
+            : this.state.washerPreferences,
           address: this.state.address,
-          addressPrefs: this.evaluateWhitespace(this.state.addressPreferences),
+          addressPrefs: validator.isEmpty(this.state.addressPreferences, {
+            ignore_whitespace: true,
+          })
+            ? "N/A"
+            : this.state.addressPreferences,
           loads: this.state.loads,
           pickupDate: this.state.date,
           pickupTime: this.state.formattedTime,
@@ -304,27 +314,16 @@ class NewOrder extends Component {
         break;
 
       case "washerPreferences":
-        const washerLimit = 200;
-
-        if (value.length > washerLimit) {
-          value = value.slice(0, washerLimit);
-        }
-
+        value = limitLength(value, 200);
         this.setState({ [property]: value });
         break;
 
       case "address":
         this.setState({ [property]: value });
-        console.log("value: ", value);
         break;
 
       case "addressPreferences":
-        const addressLimit = 200;
-
-        if (value.length > addressLimit) {
-          value = value.slice(0, addressLimit);
-        }
-
+        value = limitLength(value, 200);
         this.setState({ [property]: value });
         break;
 
@@ -379,14 +378,6 @@ class NewOrder extends Component {
         }
       );
     }
-  };
-
-  evaluateWhitespace = (text) => {
-    if (!text.replace(/\s/g, "").length) {
-      return "N/A";
-    }
-
-    return text;
   };
 
   render() {

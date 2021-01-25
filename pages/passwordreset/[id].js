@@ -12,6 +12,8 @@ import {
   Paper,
 } from "@material-ui/core";
 import { getPasswordResetSession } from "../../src/helpers/ssr";
+import { limitLength } from "../../src/helpers/inputs";
+import validator from "validator";
 import compose from "recompose/compose";
 import axios from "axios";
 import LoadingButton from "../../src/components/other/LoadingButton";
@@ -28,13 +30,29 @@ class PasswordReset extends Component {
     confirmedPassword: "",
     passwordError: false,
     passwordErrorMsg: "",
+    confirmedPasswordError: false,
+    confirmedPasswordErrorMsg: "",
   };
 
   sleep = (milliseconds) =>
     new Promise((resolve) => setTimeout(resolve, milliseconds));
 
   handleInputChange = (property, value) => {
-    this.setState({ [property]: value });
+    switch (property) {
+      case "password":
+        if (!validator.contains(value, " ")) {
+          value = limitLength(value, 64);
+          this.setState({ [property]: value });
+        }
+        break;
+
+      case "confirmedPassword":
+        if (!validator.contains(value, " ")) {
+          value = limitLength(value, 64);
+          this.setState({ [property]: value });
+        }
+        break;
+    }
   };
 
   handleResetPassword = async () => {
@@ -64,35 +82,64 @@ class PasswordReset extends Component {
   };
 
   handleInputValidation = () => {
-    const password = this.state.password;
-    const confirmedPassword = this.state.confirmedPassword;
     let valid = true;
 
-    if (password.length < 6 || /[A-Z]+/.test(password) === false) {
-      this.setState({
-        passwordErrorMsg:
-          "*Passwords must be at least 6 characters long and contain one capital letter.",
-        passwordError: true,
-      });
-      valid = false;
-    } else {
-      this.setState({
-        passwordErrorMsg: "",
-        passwordError: false,
-      });
-    }
+    const inputs = [
+      {
+        name: "password",
+        whitespaceMsg: "*Please enter a password.",
+      },
+      {
+        name: "confirmedPassword",
+        whitespaceMsg: "*Please confirm your password.",
+      },
+    ];
 
-    if (password != confirmedPassword) {
-      this.setState({
-        confirmedPasswordErrorMsg: "*Passwords do not match.",
-        confirmedPasswordError: true,
-      });
-      valid = false;
-    } else {
-      this.setState({
-        confirmedPasswordErrorMsg: "",
-        confirmedPasswordError: false,
-      });
+    for (let input of inputs) {
+      const value = this.state[input.name];
+
+      //whitespace checks
+      if (validator.isEmpty(value)) {
+        this.setState({
+          [input.name + "ErrorMsg"]: input.whitespaceMsg,
+          [input.name + "Error"]: true,
+        });
+        valid = false;
+        continue;
+      } else {
+        this.setState({
+          [input.name + "ErrorMsg"]: "",
+          [input.name + "Error"]: false,
+        });
+      }
+
+      //input-specific checks
+      switch (input.name) {
+        case "password":
+          if (value.length < 6 || !/[A-Z]+/.test(value)) {
+            this.setState({
+              [input.name +
+              "ErrorMsg"]: "*Passwords must be at least 6 characters long and contain one capital letter.",
+              [input.name + "Error"]: true,
+            });
+            valid = false;
+          } else {
+            this.setState({
+              [input.name + "ErrorMsg"]: "",
+              [input.name + "Error"]: false,
+            });
+          }
+          break;
+
+        case "confirmedPassword":
+          if (value.length > 0 && value != this.state.password) {
+            this.setState({
+              [input.name + "ErrorMsg"]: "*Passwords must match.",
+              [input.name + "Error"]: true,
+            });
+            valid = false;
+          }
+      }
     }
 
     return valid;

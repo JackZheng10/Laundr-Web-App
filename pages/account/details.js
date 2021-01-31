@@ -2,26 +2,15 @@ import React, { Component } from "react";
 import { withStyles, Grid, Typography } from "@material-ui/core";
 import { Layout } from "../../src/layouts";
 import { caughtError, showConsoleError } from "../../src/helpers/errors";
-import { getCurrentUser, updateToken } from "../../src/helpers/session";
-import {
-  TopBorderDarkPurple,
-  BottomBorderDarkPurple,
-  TopBorderLightPurple,
-  TopBorderBlue,
-  BottomBorderBlue,
-} from "../../src/utility/borders";
+import { BottomBorderBlue } from "../../src/utility/borders";
 import { GetServerSideProps } from "next";
 import { withRouter } from "next/router";
 import {
-  getExistingOrder_SSR,
   getCurrentUser_SSR,
-  fetchOrders_WA_SSR,
-  fetchOrders_DAV_SSR,
   fetchCardDetails_SSR,
 } from "../../src/helpers/ssr";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
-import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import AccountInfo from "../../src/components/Account/Details/AccountInfo";
 import PaymentInfo from "../../src/components/Account/Details/PaymentInfo";

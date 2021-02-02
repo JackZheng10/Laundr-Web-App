@@ -23,7 +23,7 @@ import validator from "validator";
 import TooltipButton from "../../../../Driver/OrderTable/components/TooltipButton";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
 import CreateIcon from "@material-ui/icons/Create";
-import ConfirmationNumberIcon from "@material-ui/icons/ConfirmationNumber";
+import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
 import SettingsIcon from "@material-ui/icons/Settings";
 import NotInterestedIcon from "@material-ui/icons/NotInterested";
 import QueryBuilderIcon from "@material-ui/icons/QueryBuilder";
@@ -371,13 +371,13 @@ class Review extends Component {
               <Card className={classes.root} elevation={5}>
                 <CardHeader
                   avatar={
-                    <ConfirmationNumberIcon
+                    <AttachMoneyIcon
                       fontSize="small"
                       style={{ marginBottom: -4 }}
                       htmlColor="white"
                     />
                   }
-                  title="Coupon Code"
+                  title="Price"
                   titleTypographyProps={{
                     variant: "h5",
                     style: {
@@ -387,38 +387,11 @@ class Review extends Component {
                   className={classes.cardHeader}
                 />
                 <CardContent className={classes.removePadding}>
-                  <div style={{ display: "flex" }}>
-                    <TextField
-                      label="Code"
-                      variant="outlined"
-                      size="small"
-                      className={classes.input}
-                    />
-                    {/*todo: to be changed when functionality added, typing in something atm breaks it*/}
-                    <Button
-                      className={classes.secondaryButton}
-                      variant="contained"
-                      size="small"
-                      onClick={() => {
-                        alert("work in progress");
-                      }}
-                      style={{ marginLeft: 10 }}
-                    >
-                      Apply
-                    </Button>
-                  </div>
                   <Grid container justify="center">
-                    <Typography
-                      variant="h4"
-                      style={{ fontWeight: 600, marginTop: 10 }}
-                    >
+                    <Typography variant="h4" style={{ fontWeight: 600 }}>
                       Estimated cost:&nbsp;
                     </Typography>
-                    {/*todo: factor in sub stuff + overage stuff etc?*/}
-                    <Typography
-                      variant="h4"
-                      style={{ textAlign: "center", marginTop: 10 }}
-                    >
+                    <Typography variant="h4" style={{ textAlign: "center" }}>
                       ${loads * 12 * 1.5}.00
                     </Typography>
                   </Grid>

@@ -1,5 +1,15 @@
 import React, { Component } from "react";
-import { withStyles, Grid, Typography } from "@material-ui/core";
+import {
+  withStyles,
+  Grid,
+  Typography,
+  Card,
+  CardHeader,
+  CardFooter,
+  CardContent,
+  TextField,
+  Button,
+} from "@material-ui/core";
 import { Layout } from "../../src/layouts";
 import { caughtError, showConsoleError } from "../../src/helpers/errors";
 import { BottomBorderBlue } from "../../src/utility/borders";
@@ -10,6 +20,7 @@ import {
   fetchCardDetails_SSR,
 } from "../../src/helpers/ssr";
 import compose from "recompose/compose";
+import ConfirmationNumberIcon from "@material-ui/icons/ConfirmationNumber";
 import PropTypes from "prop-types";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import AccountInfo from "../../src/components/Account/Details/AccountInfo";
@@ -82,6 +93,58 @@ class Details extends Component {
                   card={fetch_SSR.cardInfo}
                   fetchPaymentInfo={this.fetchPaymentInfo}
                 />
+              ) : null}
+            </Grid>
+            <Grid item>
+              {fetch_SSR.success ? (
+                <Card className={classes.root} elevation={10}>
+                  <CardHeader
+                    title="Credit"
+                    titleTypographyProps={{
+                      variant: "h4",
+                      style: {
+                        color: "white",
+                        textAlign: "center",
+                      },
+                    }}
+                    className={classes.cardHeader}
+                  />
+                  <CardContent className={classes.removePadding}>
+                    <div style={{ display: "flex" }}>
+                      <TextField
+                        label="Code"
+                        variant="outlined"
+                        size="small"
+                        className={classes.input}
+                      />
+                      <Button
+                        className={classes.mainButton}
+                        variant="contained"
+                        size="small"
+                        onClick={() => {
+                          alert("work in progress");
+                        }}
+                        style={{ marginLeft: 10 }}
+                      >
+                        Apply
+                      </Button>
+                    </div>
+                    <Grid container justify="center">
+                      <Typography
+                        variant="h4"
+                        style={{ fontWeight: 600, marginTop: 10 }}
+                      >
+                        Current balance:&nbsp;
+                      </Typography>
+                      <Typography
+                        variant="h4"
+                        style={{ textAlign: "center", marginTop: 10 }}
+                      >
+                        $10.00ph
+                      </Typography>
+                    </Grid>
+                  </CardContent>
+                </Card>
               ) : null}
             </Grid>
           </Grid>

@@ -679,7 +679,7 @@ class AccountInfo extends Component {
                       className={classes.mainButton}
                       onClick={this.handleUpdateDetails}
                     >
-                      Update
+                      Save
                     </LoadingButton>
                   </Grid>
                 </Grid>
@@ -728,7 +728,7 @@ class AccountInfo extends Component {
                   className={classes.mainButton}
                   onClick={this.handleSendVerification}
                 >
-                  Update
+                  Save
                 </LoadingButton>
               </Grid>
             </Grid>

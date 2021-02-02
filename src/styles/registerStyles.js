@@ -73,6 +73,7 @@ const registerStyles = (theme) => ({
     backgroundPosition: "center",
     backgroundImage: `url("/images/space.png")`,
     backgroundSize: "cover",
+    // backgroundAttachment: "fixed",
     // [theme.breakpoints.up(770)]: {
     //   backgroundImage: `url("/images/space.png")`,
     //   backgroundSize: "cover",

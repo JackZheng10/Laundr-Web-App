@@ -20,7 +20,8 @@ import {
   fetchCardDetails_SSR,
 } from "../../src/helpers/ssr";
 import compose from "recompose/compose";
-import ConfirmationNumberIcon from "@material-ui/icons/ConfirmationNumber";
+import axios from "axios";
+import LoadingButton from "../../src/components/other/LoadingButton";
 import PropTypes from "prop-types";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import AccountInfo from "../../src/components/Account/Details/AccountInfo";
@@ -32,6 +33,8 @@ import detailsStyles from "../../src/styles/User/Account/detailsStyles";
 class Details extends Component {
   static contextType = MainAppContext;
 
+  state = { code: "" };
+
   componentDidMount = async () => {
     const { fetch_SSR } = this.props;
 
@@ -40,8 +43,35 @@ class Details extends Component {
     }
   };
 
-  fetchPaymentInfo = () => {
-    window.location.reload();
+  handleInputChange = (property, value) => {
+    this.setState({ code: value });
+  };
+
+  redeemCode = async () => {
+    try {
+      const response = await axios.post(
+        "/api/stripe/redeemCoupon",
+        {
+          code: this.state.code,
+        },
+        { withCredentials: true }
+      );
+
+      if (!response.data.success) {
+        if (response.data.redirect) {
+          this.props.router.push(response.data.message);
+        } else {
+          this.context.showAlert(response.data.message);
+        }
+      } else {
+        this.context.showAlert(response.data.message, () => {
+          window.location.reload();
+        });
+      }
+    } catch (error) {
+      showConsoleError("redeeming code", error);
+      this.context.showAlert(caughtError("redeeming code", error, 99));
+    }
   };
 
   render() {
@@ -91,7 +121,6 @@ class Details extends Component {
                 <PaymentInfo
                   user={fetch_SSR.userInfo}
                   card={fetch_SSR.cardInfo}
-                  fetchPaymentInfo={this.fetchPaymentInfo}
                 />
               ) : null}
             </Grid>
@@ -116,18 +145,20 @@ class Details extends Component {
                         variant="outlined"
                         size="small"
                         className={classes.input}
+                        value={this.state.code}
+                        onChange={(event) => {
+                          this.handleInputChange("code", event.target.value);
+                        }}
+                        style={{ marginRight: 10 }}
                       />
-                      <Button
+                      <LoadingButton
                         className={classes.mainButton}
                         variant="contained"
                         size="small"
-                        onClick={() => {
-                          alert("work in progress");
-                        }}
-                        style={{ marginLeft: 10 }}
+                        onClick={this.redeemCode}
                       >
                         Apply
-                      </Button>
+                      </LoadingButton>
                     </div>
                     <Grid container justify="center">
                       <Typography

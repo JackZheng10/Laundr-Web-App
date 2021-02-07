@@ -19,8 +19,10 @@ import {
   getCurrentUser_SSR,
   fetchCardDetails_SSR,
 } from "../../src/helpers/ssr";
+import { limitLength } from "../../src/helpers/inputs";
 import compose from "recompose/compose";
 import axios from "axios";
+import validator from "validator";
 import LoadingButton from "../../src/components/other/LoadingButton";
 import PropTypes from "prop-types";
 import MainAppContext from "../../src/contexts/MainAppContext";
@@ -33,7 +35,7 @@ import detailsStyles from "../../src/styles/User/Account/detailsStyles";
 class Details extends Component {
   static contextType = MainAppContext;
 
-  state = { code: "" };
+  state = { code: "", codeError: false, codeErrorMsg: "" };
 
   componentDidMount = async () => {
     const { fetch_SSR } = this.props;
@@ -44,33 +46,58 @@ class Details extends Component {
   };
 
   handleInputChange = (property, value) => {
-    this.setState({ code: value });
+    if (!validator.contains(value, " ")) {
+      value = limitLength(value, 10);
+      this.setState({ code: value });
+    }
+  };
+
+  handleInputValidation = () => {
+    let valid = true;
+
+    //whitespace checks
+    if (validator.isEmpty(this.state.code)) {
+      this.setState({
+        codeErrorMsg: "*Please enter a code.",
+        codeError: true,
+      });
+      valid = false;
+    } else {
+      this.setState({
+        codeErrorMsg: "",
+        codeError: false,
+      });
+    }
+
+    return valid;
   };
 
   redeemCode = async () => {
-    try {
-      const response = await axios.post(
-        "/api/stripe/redeemCoupon",
-        {
-          code: this.state.code,
-        },
-        { withCredentials: true }
-      );
+    if (this.handleInputValidation()) {
+      try {
+        const response = await axios.post(
+          "/api/stripe/redeemCoupon",
+          {
+            code: this.state.code,
+          },
+          { withCredentials: true }
+        );
 
-      if (!response.data.success) {
-        if (response.data.redirect) {
-          this.props.router.push(response.data.message);
+        if (!response.data.success) {
+          if (response.data.redirect) {
+            this.props.router.push(response.data.message);
+          } else {
+            this.context.showAlert(response.data.message);
+          }
         } else {
-          this.context.showAlert(response.data.message);
+          this.context.showAlert(response.data.message, () => {
+            window.location.reload();
+          });
         }
-      } else {
-        this.context.showAlert(response.data.message, () => {
-          window.location.reload();
-        });
+      } catch (error) {
+        showConsoleError("redeeming code", error);
+        this.context.showAlert(caughtError("redeeming code", error, 99));
       }
-    } catch (error) {
-      showConsoleError("redeeming code", error);
-      this.context.showAlert(caughtError("redeeming code", error, 99));
     }
   };
 
@@ -150,6 +177,8 @@ class Details extends Component {
                           this.handleInputChange("code", event.target.value);
                         }}
                         style={{ marginRight: 10 }}
+                        error={this.state.codeError}
+                        helperText={this.state.codeErrorMsg}
                       />
                       <LoadingButton
                         className={classes.mainButton}
@@ -171,7 +200,7 @@ class Details extends Component {
                         variant="h4"
                         style={{ textAlign: "center", marginTop: 10 }}
                       >
-                        $10.00ph
+                        {fetch_SSR.balance}
                       </Typography>
                     </Grid>
                   </CardContent>
@@ -191,7 +220,7 @@ Details.propTypes = {
 
 export async function getServerSideProps(context) {
   //fetch current user
-  const response_one = await getCurrentUser_SSR(context);
+  const response_one = await getCurrentUser_SSR(context, { balance: true });
 
   //check for redirect needed due to invalid session or error in fetching
   if (!response_one.data.success) {
@@ -269,6 +298,7 @@ export async function getServerSideProps(context) {
         success: true,
         userInfo: currentUser,
         cardInfo: cardInfo,
+        balance: response_one.data.balance,
       },
     },
   };

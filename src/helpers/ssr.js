@@ -7,9 +7,12 @@ const baseURL =
 //test with cookies disabled (context.req is undefined) to see if null works
 
 //general - used to fetch current user in getServerSideProps - can be used for further data fetching, authorization etc.
-export const getCurrentUser_SSR = async (context) => {
+export const getCurrentUser_SSR = async (context, config) => {
   try {
     const response = await axios.get(`${baseURL}/api/user/getCurrentUser`, {
+      params: {
+        balance: config ? config.balance : null, //for use with account details
+      },
       headers: context.req.headers.cookie
         ? { cookie: context.req.headers.cookie }
         : null,

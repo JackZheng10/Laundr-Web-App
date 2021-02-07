@@ -166,29 +166,29 @@ class Details extends Component {
                     className={classes.cardHeader}
                   />
                   <CardContent className={classes.removePadding}>
-                    <div style={{ display: "flex" }}>
-                      <TextField
-                        label="Code"
-                        variant="outlined"
-                        size="small"
-                        className={classes.input}
-                        value={this.state.code}
-                        onChange={(event) => {
-                          this.handleInputChange("code", event.target.value);
-                        }}
-                        style={{ marginRight: 10 }}
-                        error={this.state.codeError}
-                        helperText={this.state.codeErrorMsg}
-                      />
-                      <LoadingButton
-                        className={classes.mainButton}
-                        variant="contained"
-                        size="small"
-                        onClick={this.redeemCode}
-                      >
-                        Apply
-                      </LoadingButton>
-                    </div>
+                    {/* <div style={{ display: "flex" }}> */}
+                    <TextField
+                      label="Code"
+                      variant="outlined"
+                      size="small"
+                      className={classes.input}
+                      value={this.state.code}
+                      onChange={(event) => {
+                        this.handleInputChange("code", event.target.value);
+                      }}
+                      style={{ marginRight: 10 }}
+                      error={this.state.codeError}
+                      helperText={this.state.codeErrorMsg}
+                    />
+                    <LoadingButton
+                      className={classes.mainButton}
+                      variant="contained"
+                      size="medium"
+                      onClick={this.redeemCode}
+                    >
+                      Apply
+                    </LoadingButton>
+                    {/* </div> */}
                     <Grid container justify="center">
                       <Typography
                         variant="h4"

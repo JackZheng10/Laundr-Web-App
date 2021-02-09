@@ -160,11 +160,15 @@ class SubscriptionStatus extends Component {
               <div
                 style={{
                   top: "70%",
-                  left: lbsLeft < 10 ? "38%" : "35%",
+                  left: "1%",
                   position: "absolute",
+                  width: 295,
                 }}
               >
-                <Typography variant="h1" style={{ color: "#01c9e1" }}>
+                <Typography
+                  variant="h1"
+                  style={{ color: "#01c9e1", textAlign: "center" }}
+                >
                   {`${currentUser.subscription.lbsLeft}/${this.getMaxLbs(
                     currentUser.subscription
                   )}`}

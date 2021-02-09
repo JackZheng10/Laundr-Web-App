@@ -13,7 +13,14 @@ import {
   ListItem,
   Divider,
 } from "@material-ui/core";
-import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Sector,
+  Cell,
+  ResponsiveContainer,
+  Label,
+} from "recharts";
 import SubscriptionStatus from "../../../../User/Subscription/SubscriptionStatus/SubscriptionStatus";
 import PropTypes from "prop-types";
 import pricingStyles from "../../../../../styles/User/Dashboard/components/NewOrder/components/pricingStyles";
@@ -287,11 +294,15 @@ class Pricing extends Component {
                     <div
                       style={{
                         top: "50%",
-                        left: estLbsLeft < 10 ? "40%" : "37%",
+                        left: "3%",
                         position: "absolute",
+                        width: 250,
                       }}
                     >
-                      <Typography variant="h2" style={{ color: "#01c9e1" }}>
+                      <Typography
+                        variant="h2"
+                        style={{ color: "#01c9e1", textAlign: "center" }}
+                      >
                         {`${estLbsLeft}/${maxLbs}`}
                       </Typography>
                     </div>

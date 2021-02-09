@@ -20,6 +20,25 @@ const pricingStyles = (theme) => ({
   title: {
     color: "white",
   },
+  removePadding: {
+    padding: 16,
+    "&:last-child": {
+      paddingBottom: 15,
+    },
+  },
+  cardHeader: {
+    backgroundColor: "#01c9e1",
+  },
+  subPriceAdText: {
+    padding: theme.spacing(1),
+    backgroundColor: "#FFB600",
+  },
+  subCard: {
+    [theme.breakpoints.down(400)]: {
+      width: "80vw",
+    },
+    width: "auto",
+  },
 });
 
 export default pricingStyles;

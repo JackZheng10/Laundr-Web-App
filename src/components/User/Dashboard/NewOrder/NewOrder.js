@@ -380,7 +380,7 @@ class NewOrder extends Component {
   };
 
   render() {
-    const classes = this.props.classes;
+    const { classes, currentUser } = this.props;
 
     return (
       <React.Fragment>
@@ -424,7 +424,7 @@ class NewOrder extends Component {
                       }}
                     >
                       <div>
-                        <Scheduling
+                        {/* <Scheduling
                           today={this.today}
                           tomorrow={this.tomorrow}
                           todaySelected={this.state.todaySelected}
@@ -432,6 +432,11 @@ class NewOrder extends Component {
                           formattedTime={this.state.formattedTime}
                           rawTime={this.state.rawTime}
                           handleInputChange={this.handleInputChange}
+                        /> */}
+                        <Pricing
+                          loads={this.state.loads}
+                          handleInputChange={this.handleInputChange}
+                          currentUser={currentUser}
                         />
                       </div>
                     </Fade>
@@ -491,10 +496,10 @@ class NewOrder extends Component {
                       }}
                     >
                       <div>
-                        <Pricing
+                        {/* <Pricing
                           loads={this.state.loads}
                           handleInputChange={this.handleInputChange}
-                        />
+                        /> */}
                       </div>
                     </Fade>
                     <Fade

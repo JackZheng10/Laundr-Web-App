@@ -9,7 +9,9 @@ import {
   CardHeader,
   CardContent,
   List,
+  Collapse,
   ListItem,
+  Divider,
 } from "@material-ui/core";
 import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from "recharts";
 import SubscriptionStatus from "../../../../User/Subscription/SubscriptionStatus/SubscriptionStatus";
@@ -118,12 +120,24 @@ class Pricing extends Component {
     const estLbsCost = loads * 18;
 
     return [
-      { value: lbsLeft - estLbsCost, color: "#01c9e1", opacity: 1 },
-      { value: estLbsCost, color: "red", opacity: 0.2 },
+      {
+        value: lbsLeft - estLbsCost >= 0 ? lbsLeft - estLbsCost : 0,
+        color: "#01c9e1",
+        opacity: 1,
+      },
+      {
+        value: estLbsCost <= lbsLeft ? estLbsCost : lbsLeft,
+        color: "red",
+        opacity: 0.7,
+      },
       {
         value: maxLbs - lbsLeft,
         color: "#828282",
         opacity: 0.2,
+      },
+      {
+        overage: lbsLeft - estLbsCost >= 0 ? false : true,
+        overageLbs: estLbsCost - lbsLeft,
       },
     ];
   };
@@ -153,21 +167,22 @@ class Pricing extends Component {
                 container
                 direction="row"
                 justify="center"
+                spacing={2}
                 alignItems="center"
               >
                 <Grid item>
-                  <List>
-                    <ListItem>
-                      <Typography variant="h4">
-                        Estimated Pounds: {loads * 18} lbs
-                      </Typography>
-                    </ListItem>
-                    <ListItem>
-                      <Typography variant="h4">
-                        Estimated Cost: ${(loads * 18 * 1.5).toFixed(2)}
-                      </Typography>
-                    </ListItem>
-                  </List>
+                  {/* <List>
+                    <ListItem> */}
+                  <Typography variant="h5">
+                    Estimated pounds: {loads * 18} lbs
+                  </Typography>
+                  {/* </ListItem>
+                    <ListItem> */}
+                  <Typography variant="h5">
+                    Estimated cost: ${(loads * 18 * 1.5).toFixed(2)}
+                  </Typography>
+                  {/* </ListItem>
+                  </List> */}
                 </Grid>
                 <Grid item>
                   <Button
@@ -201,6 +216,7 @@ class Pricing extends Component {
       );
     } else {
       const lbsData = this.getLbsData();
+      const overageData = lbsData[3];
       const maxLbs = this.getMaxLbs(currentUser.subscription);
       const estLbsLeft = lbsData[0].value > 0 ? lbsData[0].value : 0;
 
@@ -231,7 +247,14 @@ class Pricing extends Component {
                   justify="center"
                   alignItems="center"
                 >
-                  <Grid item style={{ position: "relative" }}>
+                  <Grid
+                    item
+                    style={{
+                      position: "relative",
+                      marginTop: -15,
+                      marginBottom: -15,
+                    }}
+                  >
                     <PieChart width={265} height={265}>
                       <Pie
                         data={lbsData}
@@ -241,7 +264,7 @@ class Pricing extends Component {
                         startAngle={180}
                         endAngle={-180}
                       >
-                        {lbsData.map((entry, index) => (
+                        {lbsData.slice(0, 3).map((entry, index) => (
                           <Cell
                             key={`cell-${index}`}
                             fill={entry.color}
@@ -274,38 +297,28 @@ class Pricing extends Component {
                     </div>
                   </Grid>
                 </Grid>
-
-                {/* <SubscriptionStatus
-                currentUser={currentUser}
-                forPricing={true}
-                lbsLeft={10}
-              /> */}
               </CardContent>
+              <Divider />
+              <Collapse in={overageData.overage} timeout="auto" unmountOnExit>
+                <CardContent className={classes.removePadding}>
+                  <React.Fragment>
+                    <Typography
+                      variant="h5"
+                      gutterBottom
+                      style={{ textAlign: "center" }}
+                    >
+                      Estimated overage pounds: {overageData.overageLbs}
+                    </Typography>
+                    <Typography variant="h5" style={{ textAlign: "center" }}>
+                      Estimated overage charge: $
+                      {(overageData.overageLbs * 1.2).toFixed(2)}
+                    </Typography>
+                  </React.Fragment>
+                </CardContent>
+              </Collapse>
             </Card>
           </Grid>
         </Grid>
-        // <Grid
-        //   container
-        //   spacing={0}
-        //   direction="column"
-        //   justify="center"
-        //   alignItems="center"
-        // >
-        //   <Grid item>
-        //     <Typography
-        //       variant="h4"
-        //       style={{ marginTop: 25, color: "#01c9e1" }}
-        //       gutterBottom
-        //     >
-        //       Subscription Pounds Info
-        //     </Typography>
-        //   </Grid>
-        //   <SubscriptionStatus
-        //     currentUser={currentUser}
-        //     forPricing={true}
-        //     lbsLeft={10}
-        //   />
-        // </Grid>
       );
     }
   };

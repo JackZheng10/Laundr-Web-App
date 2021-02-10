@@ -183,12 +183,12 @@ class Pricing extends Component {
                         <List>
                           <ListItem>
                             <Typography variant="h4">
-                              Estimated Pounds: {loads * 18} lbs.
+                              Estimated Pounds: {loads * 12} lbs.
                             </Typography>
                           </ListItem>
                           <ListItem>
                             <Typography variant="h4">
-                              Estimated Cost: ${(loads * 18 * 1.5).toFixed(2)}
+                              Estimated Cost: ${(loads * 12 * 1.5).toFixed(2)}
                             </Typography>
                           </ListItem>
                         </List>
@@ -213,7 +213,7 @@ class Pricing extends Component {
                             </Grid>
                             <Grid item>
                               <Typography variant="h4">
-                                ${(loads * 18 * 1.2).toFixed(2)} →
+                                ${(loads * 12 * 1.2).toFixed(2)} →
                               </Typography>
                             </Grid>
                           </Grid>
@@ -289,15 +289,15 @@ class Pricing extends Component {
                           position: "absolute",
                         }}
                       >
-                        {subscription.lbsLeft - loads * 18 >= 0 && (
+                        {subscription.lbsLeft - loads * 12 >= 0 && (
                           <Typography variant="h1" style={{ color: "#01c9e1" }}>
                             {/*todo: fix centering of this based on the number*/}
                             {`${
-                              subscription.lbsLeft - loads * 18
+                              subscription.lbsLeft - loads * 12
                             }/${this.getMaxLbs(subscription)}`}
                           </Typography>
                         )}
-                        {subscription.lbsLeft - loads * 18 < 0 && (
+                        {subscription.lbsLeft - loads * 12 < 0 && (
                           <Typography variant="h1" style={{ color: "#01c9e1" }}>
                             {/*todo: fix centering of this based on the number*/}
                             {`0/${this.getMaxLbs(subscription)}`}
@@ -337,11 +337,11 @@ class Pricing extends Component {
                       <List>
                         <ListItem>
                           <Typography variant="h4">
-                            Estimated Pounds: {loads * 18} lbs.
+                            Estimated Pounds: {loads * 12} lbs.
                           </Typography>
                         </ListItem>
                         <ListItem>
-                          {subscription.lbsLeft - loads * 18 >= 0 && (
+                          {subscription.lbsLeft - loads * 12 >= 0 && (
                             <Typography
                               variant="subtitle1"
                               style={{ fontSize: "20px" }}
@@ -349,22 +349,22 @@ class Pricing extends Component {
                               Estimated Cost: $0.00
                             </Typography>
                           )}
-                          {subscription.lbsLeft - loads * 18 < 0 &&
+                          {subscription.lbsLeft - loads * 12 < 0 &&
                             subscription.plan != "Family" && (
                               <Typography variant="h4">
                                 Estimated Cost: $
                                 {(
-                                  (loads * 18 - subscription.lbsLeft) *
+                                  (loads * 12 - subscription.lbsLeft) *
                                   1.5
                                 ).toFixed(2)}
                               </Typography>
                             )}
-                          {subscription.lbsLeft - loads * 18 < 0 &&
+                          {subscription.lbsLeft - loads * 12 < 0 &&
                             subscription.plan == "Family" && (
                               <Typography variant="h4">
                                 Estimated Cost: $
                                 {(
-                                  (loads * 18 - subscription.lbsLeft) *
+                                  (loads * 12 - subscription.lbsLeft) *
                                   1.2
                                 ).toFixed(2)}
                               </Typography>

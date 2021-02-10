@@ -124,7 +124,7 @@ class Pricing extends Component {
 
     const maxLbs = this.getMaxLbs(currentUser.subscription);
     const lbsLeft = currentUser.subscription.lbsLeft;
-    const estLbsCost = loads * 18;
+    const estLbsCost = loads * 12;
 
     return [
       {
@@ -181,12 +181,12 @@ class Pricing extends Component {
                   {/* <List>
                     <ListItem> */}
                   <Typography variant="h5">
-                    Estimated pounds: {loads * 18} lbs
+                    Estimated pounds: {loads * 12} lbs
                   </Typography>
                   {/* </ListItem>
                     <ListItem> */}
                   <Typography variant="h5">
-                    Estimated cost: ${(loads * 18 * 1.5).toFixed(2)}
+                    Estimated cost: ${(loads * 12 * 1.5).toFixed(2)}
                   </Typography>
                   {/* </ListItem>
                   </List> */}
@@ -210,7 +210,7 @@ class Pricing extends Component {
                       </Grid>
                       <Grid item>
                         <Typography variant="h4">
-                          ${(loads * 18 * 1.2).toFixed(2)} →
+                          ${(loads * 12 * 1.2).toFixed(2)} →
                         </Typography>
                       </Grid>
                     </Grid>

@@ -73,6 +73,147 @@ class Review extends Component {
     });
   };
 
+  renderPriceComponent = () => {
+    const { currentUser, classes, loads } = this.props;
+
+    const priceMultiplier =
+      currentUser.subscription.status === "active" ? 1.2 : 1.5;
+    const balance = parseInt(this.props.balance.slice(1));
+    const subtotal = loads * 12 * priceMultiplier;
+
+    if (
+      currentUser.subscription.status != "active" &&
+      currentUser.subscription.lbsLeft <= 0
+    ) {
+      const balanceDiscount = subtotal >= balance ? balance : subtotal;
+
+      return (
+        <React.Fragment>
+          <CardContent
+            className={classes.removePadding}
+            style={{ marginTop: -15, marginBottom: -15 }}
+          >
+            <List disablePadding>
+              <ListItem>
+                <ListItemText
+                  primary={"Subtotal"}
+                  secondary={`${loads * 12} lbs`}
+                  primaryTypographyProps={{ variant: "h6" }}
+                />
+                <Typography variant="body1">${subtotal.toFixed(2)}</Typography>
+              </ListItem>
+              {balance > 0 && balanceDiscount > 0 && (
+                <ListItem>
+                  <ListItemText
+                    primary={"Credit"}
+                    primaryTypographyProps={{ variant: "h6" }}
+                  />
+
+                  <Typography variant="body1">
+                    - ${balanceDiscount.toFixed(2)}
+                  </Typography>
+                </ListItem>
+              )}
+            </List>
+          </CardContent>
+          <Divider />
+          <CardContent className={classes.removePadding}>
+            <Grid
+              container
+              direction="column"
+              justify="center"
+              alignItems="center"
+            >
+              <Grid item>
+                <Grid container justify="center">
+                  <Typography variant="h4" style={{ fontWeight: 600 }}>
+                    Total:&nbsp;
+                  </Typography>
+                  <Typography variant="h4" style={{ textAlign: "center" }}>
+                    ${(subtotal - balanceDiscount).toFixed(2)}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </React.Fragment>
+      );
+    } else {
+      const lbsData = this.props.getLbsData();
+      const subLbsUsed = lbsData[1].value;
+      const subLbsDiscount = subLbsUsed * priceMultiplier;
+      const balanceDiscount =
+        subtotal - subLbsDiscount >= balance
+          ? balance
+          : subtotal - subLbsDiscount;
+
+      return (
+        <React.Fragment>
+          <CardContent
+            className={classes.removePadding}
+            style={{ marginTop: -15, marginBottom: -15 }}
+          >
+            <List disablePadding>
+              <ListItem>
+                <ListItemText
+                  primary={"Subtotal"}
+                  secondary={`${loads * 12} lbs`}
+                  primaryTypographyProps={{ variant: "h6" }}
+                />
+                <Typography variant="body1">${subtotal.toFixed(2)}</Typography>
+              </ListItem>
+              {subLbsUsed > 0 && (
+                <ListItem>
+                  <ListItemText
+                    primary={"Subscription Lbs"}
+                    secondary={`${subLbsUsed} lbs`}
+                    primaryTypographyProps={{ variant: "h6" }}
+                  />
+
+                  <Typography variant="body1">
+                    - ${subLbsDiscount.toFixed(2)}
+                  </Typography>
+                </ListItem>
+              )}
+              {balance > 0 && balanceDiscount > 0 && (
+                <ListItem>
+                  <ListItemText
+                    primary={"Credit"}
+                    primaryTypographyProps={{ variant: "h6" }}
+                  />
+
+                  <Typography variant="body1">
+                    - ${balanceDiscount.toFixed(2)}
+                  </Typography>
+                </ListItem>
+              )}
+            </List>
+          </CardContent>
+          <Divider />
+          <CardContent className={classes.removePadding}>
+            <Grid
+              container
+              direction="column"
+              justify="center"
+              alignItems="center"
+            >
+              <Grid item>
+                <Grid container justify="center">
+                  <Typography variant="h4" style={{ fontWeight: 600 }}>
+                    Total:&nbsp;
+                  </Typography>
+                  <Typography variant="h4" style={{ textAlign: "center" }}>
+                    ${(subtotal - subLbsDiscount - balanceDiscount).toFixed(2)}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </React.Fragment>
+      );
+    }
+  };
+
   render() {
     const {
       classes,
@@ -86,6 +227,7 @@ class Review extends Component {
       separate,
       towelsSheets,
       loads,
+      currentUser,
     } = this.props;
 
     return (
@@ -377,7 +519,7 @@ class Review extends Component {
                       htmlColor="white"
                     />
                   }
-                  title="Price"
+                  title="Estimated Price"
                   titleTypographyProps={{
                     variant: "h5",
                     style: {
@@ -386,16 +528,7 @@ class Review extends Component {
                   }}
                   className={classes.cardHeader}
                 />
-                <CardContent className={classes.removePadding}>
-                  <Grid container justify="center">
-                    <Typography variant="h4" style={{ fontWeight: 600 }}>
-                      Estimated cost:&nbsp;
-                    </Typography>
-                    <Typography variant="h4" style={{ textAlign: "center" }}>
-                      ${loads * 12 * 1.5}.00
-                    </Typography>
-                  </Grid>
-                </CardContent>
+                {this.renderPriceComponent()}
               </Card>
             </Grid>
           </Grid>

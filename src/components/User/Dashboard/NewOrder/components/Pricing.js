@@ -100,57 +100,11 @@ const marks = [
 ];
 
 class Pricing extends Component {
-  getMaxLbs = (subscription) => {
-    switch (subscription.plan) {
-      case "Student":
-        return 40;
-
-      case "Standard":
-        return 48;
-
-      case "Plus":
-        return 66;
-
-      case "Family":
-        return 84;
-
-      default:
-        return 0;
-    }
-  };
-
-  getLbsData = () => {
-    const { currentUser, loads } = this.props;
-
-    const maxLbs = this.getMaxLbs(currentUser.subscription);
-    const lbsLeft = currentUser.subscription.lbsLeft;
-    const estLbsCost = loads * 12;
-
-    return [
-      {
-        value: lbsLeft - estLbsCost >= 0 ? lbsLeft - estLbsCost : 0,
-        color: "#01c9e1",
-        opacity: 1,
-      },
-      {
-        value: estLbsCost <= lbsLeft ? estLbsCost : lbsLeft,
-        color: "red",
-        opacity: 0.7,
-      },
-      {
-        value: maxLbs - lbsLeft,
-        color: "#828282",
-        opacity: 0.2,
-      },
-      {
-        overage: lbsLeft - estLbsCost >= 0 ? false : true,
-        overageLbs: estLbsCost - lbsLeft,
-      },
-    ];
-  };
-
   renderPricingComponent = (classes) => {
     const { currentUser, loads } = this.props;
+
+    const priceMultiplier =
+      currentUser.subscription.status === "active" ? 1.2 : 1.5;
 
     if (
       currentUser.subscription.status != "active" &&
@@ -178,18 +132,12 @@ class Pricing extends Component {
                 alignItems="center"
               >
                 <Grid item>
-                  {/* <List>
-                    <ListItem> */}
                   <Typography variant="h5">
                     Estimated pounds: {loads * 12} lbs
                   </Typography>
-                  {/* </ListItem>
-                    <ListItem> */}
                   <Typography variant="h5">
-                    Estimated cost: ${(loads * 12 * 1.5).toFixed(2)}
+                    Estimated cost: ${(loads * 12 * priceMultiplier).toFixed(2)}
                   </Typography>
-                  {/* </ListItem>
-                  </List> */}
                 </Grid>
                 <Grid item>
                   <Button
@@ -222,10 +170,10 @@ class Pricing extends Component {
         </Grid>
       );
     } else {
-      const lbsData = this.getLbsData();
+      const lbsData = this.props.getLbsData();
       const overageData = lbsData[3];
-      const maxLbs = this.getMaxLbs(currentUser.subscription);
-      const estLbsLeft = lbsData[0].value > 0 ? lbsData[0].value : 0;
+      const maxLbs = this.props.getMaxLbs(currentUser.subscription);
+      const estLbsLeft = lbsData[0].value;
 
       return (
         <Grid
@@ -322,7 +270,7 @@ class Pricing extends Component {
                     </Typography>
                     <Typography variant="h5" style={{ textAlign: "center" }}>
                       Estimated overage charge: $
-                      {(overageData.overageLbs * 1.2).toFixed(2)}
+                      {(overageData.overageLbs * priceMultiplier).toFixed(2)}
                     </Typography>
                   </React.Fragment>
                 </CardContent>

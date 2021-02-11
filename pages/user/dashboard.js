@@ -127,6 +127,7 @@ class Dashboard extends Component {
           <NewOrder
             fetchOrderInfo={this.fetchOrderInfo}
             currentUser={fetch_SSR.userInfo}
+            balance={fetch_SSR.balance}
           />
         );
 
@@ -311,7 +312,7 @@ Dashboard.propTypes = {
 
 export async function getServerSideProps(context) {
   //fetch current user
-  const response_one = await getCurrentUser_SSR(context);
+  const response_one = await getCurrentUser_SSR(context, { balance: true });
 
   //check for redirect needed due to invalid session or error in fetching
   if (!response_one.data.success) {
@@ -422,6 +423,7 @@ export async function getServerSideProps(context) {
         success: true,
         orderInfo: response_two.data,
         userInfo: currentUser,
+        balance: response_one.data.balance,
       },
     },
   };

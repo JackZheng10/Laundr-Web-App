@@ -286,7 +286,7 @@ class AvailableDashboard extends Component {
               limit={this.state.limit}
               page={this.state.page}
             />
-            {fetch_SSR.success && (
+            {fetch_SSR.success && totalCount > 0 && (
               <TablePagination
                 rowsPerPageOptions={[10, 25, 50]}
                 component="div"
@@ -296,6 +296,18 @@ class AvailableDashboard extends Component {
                 onChangePage={this.handleChangePage}
                 onChangeRowsPerPage={this.handleChangeRowsPerPage}
               />
+            )}
+            {totalCount <= 0 && (
+              <Typography
+                style={{
+                  textAlign: "center",
+                  color: "#01c9e1",
+                  paddingTop: 15,
+                }}
+                variant="h2"
+              >
+                There are no available orders.
+              </Typography>
             )}
           </Grid>
         </Grid>

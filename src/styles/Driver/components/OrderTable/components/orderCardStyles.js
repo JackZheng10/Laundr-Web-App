@@ -37,6 +37,15 @@ const orderCardStyles = (theme) => ({
     color: "white",
     backgroundColor: "#01c9e1",
   },
+  priceCard: {
+    minWidth: 275,
+  },
+  removePadding: {
+    padding: 16,
+    "&:last-child": {
+      paddingBottom: 15,
+    },
+  },
 });
 
 export default orderCardStyles;

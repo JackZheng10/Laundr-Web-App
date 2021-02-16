@@ -11,9 +11,14 @@ import {
   CardContent,
   CardActions,
   Button,
+  List,
+  ListItemText,
+  ListItem,
+  Divider,
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import TooltipButton from "../../../../Driver/OrderTable/components/TooltipButton";
+import PopoverButton from "./PopoverButton";
 import orderCardStyles from "../../../../../styles/Driver/components/OrderTable/components/orderCardStyles";
 
 const NameCard = (order) => {
@@ -153,20 +158,102 @@ const WeightCard = (order) => {
 };
 
 //price
-const PriceCard = (order) => {
+const PriceCard = (order, classes, currentUser) => {
+  const subtotal = order.pricingInfo.subtotal;
+  const subLbsDiscount = order.pricingInfo.subLbsDiscount;
+  const balanceDiscount = order.pricingInfo.balanceDiscount;
+  const priceMultiplier =
+    currentUser.subscription.status === "active" ? 1.2 : 1.5;
+
   return (
     <Grid item>
-      <Grid container justify="center">
-        <Typography
-          variant="body1"
-          style={{ fontWeight: 600, color: "#01C9E1" }}
-          gutterBottom
-        >
-          Price:&nbsp;
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          {order.orderInfo.cost === "-1" ? "N/A" : `${order.orderInfo.cost}`}
-        </Typography>
+      <Grid container direction="row" justify="center" alignItems="center">
+        <Grid item>
+          <Typography
+            variant="body1"
+            style={{ fontWeight: 600, color: "#01C9E1" }}
+            gutterBottom
+          >
+            Price:&nbsp;
+          </Typography>
+        </Grid>
+        <Grid item style={{ marginBottom: 5 }}>
+          <PopoverButton
+            className={classes.secondaryButton}
+            buttonText="View"
+            size="small"
+            content={
+              <Card className={classes.priceCard} elevation={5}>
+                <CardContent
+                  className={classes.removePadding}
+                  style={{ marginTop: -15, marginBottom: -15 }}
+                >
+                  <List disablePadding>
+                    <ListItem>
+                      <ListItemText
+                        primary={"Subtotal"}
+                        secondary={`${order.orderInfo.weight} lbs`}
+                        primaryTypographyProps={{ variant: "h6" }}
+                      />
+                      <Typography variant="body1">{subtotal}</Typography>
+                    </ListItem>
+                    {parseFloat(subLbsDiscount.slice(1)) > 0 && (
+                      <ListItem>
+                        <ListItemText
+                          primary={"Subscription Lbs"}
+                          secondary={`${
+                            subLbsDiscount.slice(1) / priceMultiplier
+                          } lbs`}
+                          primaryTypographyProps={{ variant: "h6" }}
+                        />
+                        <Typography variant="body1">
+                          -{subLbsDiscount}
+                        </Typography>
+                      </ListItem>
+                    )}
+                    {parseFloat(balanceDiscount.slice(1)) > 0 && (
+                      <ListItem>
+                        <ListItemText
+                          primary={"Credit"}
+                          primaryTypographyProps={{ variant: "h6" }}
+                        />
+                        <Typography variant="body1">
+                          -{balanceDiscount}
+                        </Typography>
+                      </ListItem>
+                    )}
+                  </List>
+                </CardContent>
+                <Divider />
+                <CardContent
+                  className={classes.removePadding}
+                  style={{ marginTop: -5, marginBottom: -5 }}
+                >
+                  <Grid
+                    container
+                    direction="column"
+                    justify="center"
+                    alignItems="center"
+                  >
+                    <Grid item>
+                      <Grid container justify="center">
+                        <Typography variant="h4" style={{ fontWeight: 600 }}>
+                          Total:&nbsp;
+                        </Typography>
+                        <Typography
+                          variant="h4"
+                          style={{ textAlign: "center" }}
+                        >
+                          {order.pricingInfo.total}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            }
+          />
+        </Grid>
       </Grid>
     </Grid>
   );
@@ -299,7 +386,7 @@ const renderWasherPrefs = (order) => {
 const OrderCard = (props) => {
   const { classes, order, config, currentUser } = props;
 
-  const renderCardConfig = (config, classes) => {
+  const renderCardConfig = (config, classes, currentUser) => {
     switch (config) {
       case "none":
         return null;
@@ -393,7 +480,7 @@ const OrderCard = (props) => {
                 justify="center"
                 alignItems="center"
               >
-                {PriceCard(order)}
+                {PriceCard(order, classes, currentUser)}
                 {WeightCard(order)}
                 {StatusCardDriver(order)}
                 {DateTimeCard(order)}
@@ -419,7 +506,9 @@ const OrderCard = (props) => {
   };
 
   return (
-    <div className={classes.layout}>{renderCardConfig(config, classes)}</div>
+    <div className={classes.layout}>
+      {renderCardConfig(config, classes, currentUser)}
+    </div>
   );
 };
 

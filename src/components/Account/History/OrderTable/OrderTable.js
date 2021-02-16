@@ -139,7 +139,7 @@ class OrderTable extends Component {
   };
 
   render() {
-    const { classes, orders, config } = this.props;
+    const { classes, orders, config, currentUser } = this.props;
 
     return (
       <React.Fragment>
@@ -158,7 +158,7 @@ class OrderTable extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {this.renderOrderCells(orders, config, this.props.currentUser)}
+                {this.renderOrderCells(orders, config, currentUser)}
               </TableBody>
             </Table>
           </TableContainer>
@@ -172,7 +172,7 @@ class OrderTable extends Component {
               justify="center"
               alignItems="center"
             >
-              {this.renderOrderCards(orders, config, this.props.currentUser)}
+              {this.renderOrderCards(orders, config, currentUser)}
             </Grid>
           </div>
         </Hidden>

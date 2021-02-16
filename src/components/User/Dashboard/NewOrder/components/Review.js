@@ -78,7 +78,7 @@ class Review extends Component {
 
     const priceMultiplier =
       currentUser.subscription.status === "active" ? 1.2 : 1.5;
-    const balance = parseInt(this.props.balance.slice(1));
+    const balance = parseFloat(this.props.balance.slice(1));
     const subtotal = loads * 12 * priceMultiplier;
 
     if (

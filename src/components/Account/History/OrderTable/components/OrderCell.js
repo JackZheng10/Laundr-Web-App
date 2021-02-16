@@ -166,49 +166,67 @@ const PriceCell = (order, classes, currentUser) => {
 
   return (
     <TableCell>
-      <PopoverButton
-        className={classes.secondaryButton}
-        buttonText={"View"}
-        content={
-          <Card className={classes.root} elevation={5}>
-            <CardContent
-              className={classes.removePadding}
-              style={{ marginTop: -15, marginBottom: -15 }}
-            >
-              <List disablePadding>
-                <ListItem>
-                  <ListItemText
-                    primary={"Subtotal"}
-                    secondary={`${order.orderInfo.weight} lbs`}
-                    primaryTypographyProps={{ variant: "h6" }}
-                  />
-                  <Typography variant="body1">{subtotal}</Typography>
-                </ListItem>
-                {parseFloat(subLbsDiscount.slice(1)) > 0 && (
-                  <ListItem>
-                    <ListItemText
-                      primary={"Subscription Lbs"}
-                      secondary={`${
-                        subLbsDiscount.slice(1) / priceMultiplier
-                      } lbs`}
-                      primaryTypographyProps={{ variant: "h6" }}
-                    />
-                    <Typography variant="body1">-{subLbsDiscount}</Typography>
-                  </ListItem>
-                )}
-                {parseFloat(balanceDiscount.slice(1)) > 0 && (
-                  <ListItem>
-                    <ListItemText
-                      primary={"Credit"}
-                      primaryTypographyProps={{ variant: "h6" }}
-                    />
-                    <Typography variant="body1">-{balanceDiscount}</Typography>
-                  </ListItem>
-                )}
-              </List>
-            </CardContent>
-            <Divider />
-            {/* <CardContent
+      <Grid
+        container
+        direction="row"
+        justify="flex-start"
+        alignItems="center"
+        spacing={1}
+      >
+        <Grid item>
+          <Typography variant="body1">
+            {order.orderInfo.cost === "-1" ? "N/A" : order.orderInfo.cost}
+          </Typography>
+        </Grid>
+        {order.orderInfo.cost != "-1" && (
+          <Grid item>
+            <PopoverButton
+              className={classes.secondaryButton}
+              icon={true}
+              content={
+                <Card className={classes.root} elevation={5}>
+                  <CardContent
+                    className={classes.removePadding}
+                    style={{ marginTop: -15, marginBottom: -15 }}
+                  >
+                    <List disablePadding>
+                      <ListItem>
+                        <ListItemText
+                          primary={"Subtotal"}
+                          secondary={`${order.orderInfo.weight} lbs`}
+                          primaryTypographyProps={{ variant: "h6" }}
+                        />
+                        <Typography variant="body1">{subtotal}</Typography>
+                      </ListItem>
+                      {parseFloat(subLbsDiscount.slice(1)) > 0 && (
+                        <ListItem>
+                          <ListItemText
+                            primary={"Subscription Lbs"}
+                            secondary={`${
+                              subLbsDiscount.slice(1) / priceMultiplier
+                            } lbs`}
+                            primaryTypographyProps={{ variant: "h6" }}
+                          />
+                          <Typography variant="body1">
+                            -{subLbsDiscount}
+                          </Typography>
+                        </ListItem>
+                      )}
+                      {parseFloat(balanceDiscount.slice(1)) > 0 && (
+                        <ListItem>
+                          <ListItemText
+                            primary={"Credit"}
+                            primaryTypographyProps={{ variant: "h6" }}
+                          />
+                          <Typography variant="body1">
+                            -{balanceDiscount}
+                          </Typography>
+                        </ListItem>
+                      )}
+                    </List>
+                  </CardContent>
+                  <Divider />
+                  {/* <CardContent
               className={classes.removePadding}
               style={{ marginTop: -15, marginBottom: -15 }}
             >
@@ -222,31 +240,37 @@ const PriceCell = (order, classes, currentUser) => {
                 </Typography>
               </ListItem>
             </CardContent> */}
-            <CardContent
-              className={classes.removePadding}
-              style={{ marginTop: -5, marginBottom: -5 }}
-            >
-              <Grid
-                container
-                direction="column"
-                justify="center"
-                alignItems="center"
-              >
-                <Grid item>
-                  <Grid container justify="center">
-                    <Typography variant="h4" style={{ fontWeight: 600 }}>
-                      Total:&nbsp;
-                    </Typography>
-                    <Typography variant="h4" style={{ textAlign: "center" }}>
-                      {order.pricingInfo.total}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        }
-      />
+                  <CardContent
+                    className={classes.removePadding}
+                    style={{ marginTop: -5, marginBottom: -5 }}
+                  >
+                    <Grid
+                      container
+                      direction="column"
+                      justify="center"
+                      alignItems="center"
+                    >
+                      <Grid item>
+                        <Grid container justify="center">
+                          <Typography variant="h4" style={{ fontWeight: 600 }}>
+                            Total:&nbsp;
+                          </Typography>
+                          <Typography
+                            variant="h4"
+                            style={{ textAlign: "center" }}
+                          >
+                            {order.pricingInfo.total}
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
+              }
+            />
+          </Grid>
+        )}
+      </Grid>
     </TableCell>
   );
 };

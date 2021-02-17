@@ -68,19 +68,19 @@ const registerStyles = (theme) => ({
     },
   },
   pageContainer: {
-    height: "100vh",
+    height: "100%",
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",
     backgroundImage: `url("/images/space.png")`,
     backgroundSize: "cover",
-    // [theme.breakpoints.up(770)]: {
-    //   backgroundImage: `url("/images/space.png")`,
-    //   backgroundSize: "cover",
-    // },
-    // [theme.breakpoints.down(770)]: {
-    //   backgroundImage: `url("/images/space_mobilev2.png")`,
-    //   backgroundSize: "contain",
-    // },
+    [theme.breakpoints.up(770)]: {
+      backgroundImage: `url("/images/space.png")`,
+      backgroundSize: "cover",
+    },
+    [theme.breakpoints.down(770)]: {
+      backgroundImage: `url("/images/space_mobilev2.png")`,
+      backgroundSize: "cover",
+    },
   },
   error: {
     color: "red",

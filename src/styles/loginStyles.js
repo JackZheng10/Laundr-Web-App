@@ -49,11 +49,9 @@ const loginStyles = (theme) => ({
     backgroundSize: "cover",
     [theme.breakpoints.up(770)]: {
       backgroundImage: `url("/images/space.png")`,
-      backgroundSize: "cover",
     },
     [theme.breakpoints.down(770)]: {
       backgroundImage: `url("/images/space_mobilev2.png")`,
-      backgroundSize: "cover",
     },
   },
   input: {

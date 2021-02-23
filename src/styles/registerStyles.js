@@ -73,36 +73,15 @@ const registerStyles = (theme) => ({
     backgroundPosition: "center",
     backgroundImage: `url("/images/space.png")`,
     backgroundSize: "cover",
-    // backgroundAttachment: "fixed",
-    // [theme.breakpoints.up(770)]: {
-    //   backgroundImage: `url("/images/space.png")`,
-    //   backgroundSize: "cover",
-    // },
-    // [theme.breakpoints.down(770)]: {
-    //   backgroundImage: `url("/images/space_mobilev2.png")`,
-    //   backgroundSize: "contain",
-    // },
+    [theme.breakpoints.up(770)]: {
+      backgroundImage: `url("/images/space.png")`,
+    },
+    [theme.breakpoints.down(770)]: {
+      backgroundImage: `url("/images/space_mobilev2.png")`,
+    },
   },
   error: {
     color: "red",
-  },
-  input: {
-    "& label.Mui-focused": {
-      color: "#01c9e1",
-    },
-    "& .MuiOutlinedInput-root": {
-      "&.Mui-focused fieldset": {
-        borderColor: "#01c9e1",
-      },
-    },
-  },
-  secondaryButton: {
-    color: "white",
-    backgroundColor: "#01c9e1",
-  },
-  mainButton: {
-    color: "white",
-    backgroundColor: "#FFB600",
   },
 });
 

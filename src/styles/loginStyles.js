@@ -20,35 +20,13 @@ const loginStyles = (theme) => ({
     "& label.Mui-focused": {
       color: "#01c9e1",
     },
-    // "& .MuiInput-underline:after": {
-    //   borderBottomColor: "green",
-    // },
-    "& .MuiOutlinedInput-root": {
-      // "& fieldset": {
-      //   borderColor: "red",
-      // },
-      // "&:hover fieldset": {
-      //   borderColor: "#01c9e1",
-      // },
-      // "&.Mui-focused fieldset": {
-      //   borderColor: "#01c9e1",
-      // },
-    },
-    // "& .MuiFormLabel-root": {
-    //   color: "#01c9e1",
-    // },
-    // "& .MuiFormLabel-filled": {
-    //   color: "#01c9e1",
-    // },
     "& .MuiFilledInput-underline:after": {
       borderBottom: "2px solid #01c9e1",
     },
     "& .MuiFilledInput-underline.Mui-error:after": {
       borderBottom: "2px solid #e53935",
     },
-    // "& .MuiFilledInput-underline:before": {
-    //   borderBottom: "1px solid #01c9e1",
-    // },
+
     "& .MuiFilledInput-root": {
       backgroundColor: "white",
       boxShadow:
@@ -69,15 +47,30 @@ const loginStyles = (theme) => ({
     backgroundPosition: "center",
     backgroundImage: `url("/images/space.png")`,
     backgroundSize: "cover",
-    // backgroundAttachment: "fixed",
-    // [theme.breakpoints.up(770)]: {
-    //   backgroundImage: `url("/images/space.png")`,
-    //   backgroundSize: "cover",
-    // },
-    // [theme.breakpoints.down(770)]: {
-    //   backgroundImage: `url("/images/space_mobilev2.png")`,
-    //   backgroundSize: "contain",
-    // },
+    [theme.breakpoints.up(770)]: {
+      backgroundImage: `url("/images/space.png")`,
+    },
+    [theme.breakpoints.down(770)]: {
+      backgroundImage: `url("/images/space_mobilev2.png")`,
+    },
+  },
+  input: {
+    "& label.Mui-focused": {
+      color: "#01c9e1",
+    },
+    "& .MuiOutlinedInput-root": {
+      "&.Mui-focused fieldset": {
+        borderColor: "#01c9e1",
+      },
+    },
+  },
+  secondaryButton: {
+    color: "white",
+    backgroundColor: "#01c9e1",
+  },
+  mainButton: {
+    color: "white",
+    backgroundColor: "#FFB600",
   },
 });
 

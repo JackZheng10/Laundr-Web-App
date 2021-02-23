@@ -23,7 +23,7 @@ import PropTypes from "prop-types";
 import validator from "validator";
 import LoadingButton from "../src/components/other/LoadingButton";
 import MainAppContext from "../src/contexts/MainAppContext";
-import registerStyles from "../src/styles/registerStyles";
+import loginStyles from "../src/styles/loginStyles";
 import axios from "axios";
 
 const baseURL =
@@ -427,4 +427,4 @@ export async function getServerSideProps(context) {
   };
 }
 
-export default compose(withRouter, withStyles(registerStyles))(Login);
+export default compose(withRouter, withStyles(loginStyles))(Login);

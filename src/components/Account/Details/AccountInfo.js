@@ -103,14 +103,14 @@ class AccountInfo extends Component {
 
     switch (property) {
       case "fname":
-        if (validator.isAlpha(value)) {
+        if (validator.isAlpha(value) || value === "") {
           value = limitLength(value, 20);
           this.setState({ [property]: value });
         }
         break;
 
       case "lname":
-        if (validator.isAlpha(value)) {
+        if (validator.isAlpha(value) || value === "") {
           value = limitLength(value, 20);
           this.setState({ [property]: value });
         }
@@ -679,7 +679,7 @@ class AccountInfo extends Component {
                       className={classes.mainButton}
                       onClick={this.handleUpdateDetails}
                     >
-                      Update
+                      Save
                     </LoadingButton>
                   </Grid>
                 </Grid>
@@ -728,7 +728,7 @@ class AccountInfo extends Component {
                   className={classes.mainButton}
                   onClick={this.handleSendVerification}
                 >
-                  Update
+                  Save
                 </LoadingButton>
               </Grid>
             </Grid>

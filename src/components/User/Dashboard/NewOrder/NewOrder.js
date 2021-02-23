@@ -379,8 +379,57 @@ class NewOrder extends Component {
     }
   };
 
+  getLbsData = () => {
+    const { currentUser } = this.props;
+    const loads = this.state.loads;
+    const maxLbs = this.getMaxLbs(currentUser.subscription);
+    const lbsLeft = currentUser.subscription.lbsLeft;
+    const estLbsCost = loads * 12;
+
+    return [
+      {
+        value: lbsLeft - estLbsCost >= 0 ? lbsLeft - estLbsCost : 0, //remaining sub lbs
+        color: "#01c9e1",
+        opacity: 1,
+      },
+      {
+        value: estLbsCost <= lbsLeft ? estLbsCost : lbsLeft, //sub lbs used
+        color: "red",
+        opacity: 0.7,
+      },
+      {
+        value: maxLbs - lbsLeft, //previously used sub lbs
+        color: "#828282",
+        opacity: 0.2,
+      },
+      {
+        overage: lbsLeft - estLbsCost >= 0 ? false : true,
+        overageLbs: estLbsCost - lbsLeft,
+      },
+    ];
+  };
+
+  getMaxLbs = (subscription) => {
+    switch (subscription.plan) {
+      case "Student":
+        return 40;
+
+      case "Standard":
+        return 48;
+
+      case "Plus":
+        return 66;
+
+      case "Family":
+        return 84;
+
+      default:
+        return 0;
+    }
+  };
+
   render() {
-    const classes = this.props.classes;
+    const { classes, currentUser, balance } = this.props;
 
     return (
       <React.Fragment>
@@ -494,6 +543,9 @@ class NewOrder extends Component {
                         <Pricing
                           loads={this.state.loads}
                           handleInputChange={this.handleInputChange}
+                          currentUser={currentUser}
+                          getLbsData={this.getLbsData}
+                          getMaxLbs={this.getMaxLbs}
                         />
                       </div>
                     </Fade>
@@ -519,6 +571,10 @@ class NewOrder extends Component {
                           pickupDate={this.state.date}
                           pickupTime={this.state.formattedTime}
                           loads={this.state.loads}
+                          currentUser={currentUser}
+                          getLbsData={this.getLbsData}
+                          getMaxLbs={this.getMaxLbs}
+                          balance={balance}
                         />
                       </div>
                     </Fade>

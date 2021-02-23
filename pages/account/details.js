@@ -1,5 +1,15 @@
 import React, { Component } from "react";
-import { withStyles, Grid, Typography } from "@material-ui/core";
+import {
+  withStyles,
+  Grid,
+  Typography,
+  Card,
+  CardHeader,
+  CardFooter,
+  CardContent,
+  TextField,
+  Button,
+} from "@material-ui/core";
 import { Layout } from "../../src/layouts";
 import { caughtError, showConsoleError } from "../../src/helpers/errors";
 import { BottomBorderBlue } from "../../src/utility/borders";
@@ -9,7 +19,11 @@ import {
   getCurrentUser_SSR,
   fetchCardDetails_SSR,
 } from "../../src/helpers/ssr";
+import { limitLength } from "../../src/helpers/inputs";
 import compose from "recompose/compose";
+import axios from "axios";
+import validator from "validator";
+import LoadingButton from "../../src/components/other/LoadingButton";
 import PropTypes from "prop-types";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import AccountInfo from "../../src/components/Account/Details/AccountInfo";
@@ -21,6 +35,8 @@ import detailsStyles from "../../src/styles/User/Account/detailsStyles";
 class Details extends Component {
   static contextType = MainAppContext;
 
+  state = { code: "", codeError: false, codeErrorMsg: "" };
+
   componentDidMount = async () => {
     const { fetch_SSR } = this.props;
 
@@ -29,8 +45,60 @@ class Details extends Component {
     }
   };
 
-  fetchPaymentInfo = () => {
-    window.location.reload();
+  handleInputChange = (property, value) => {
+    if (!validator.contains(value, " ")) {
+      value = limitLength(value, 10);
+      this.setState({ code: value });
+    }
+  };
+
+  handleInputValidation = () => {
+    let valid = true;
+
+    //whitespace checks
+    if (validator.isEmpty(this.state.code)) {
+      this.setState({
+        codeErrorMsg: "*Please enter a code.",
+        codeError: true,
+      });
+      valid = false;
+    } else {
+      this.setState({
+        codeErrorMsg: "",
+        codeError: false,
+      });
+    }
+
+    return valid;
+  };
+
+  redeemCode = async () => {
+    if (this.handleInputValidation()) {
+      try {
+        const response = await axios.post(
+          "/api/stripe/redeemCoupon",
+          {
+            code: this.state.code,
+          },
+          { withCredentials: true }
+        );
+
+        if (!response.data.success) {
+          if (response.data.redirect) {
+            this.props.router.push(response.data.message);
+          } else {
+            this.context.showAlert(response.data.message);
+          }
+        } else {
+          this.context.showAlert(response.data.message, () => {
+            window.location.reload();
+          });
+        }
+      } catch (error) {
+        showConsoleError("redeeming code", error);
+        this.context.showAlert(caughtError("redeeming code", error, 99));
+      }
+    }
   };
 
   render() {
@@ -80,8 +148,63 @@ class Details extends Component {
                 <PaymentInfo
                   user={fetch_SSR.userInfo}
                   card={fetch_SSR.cardInfo}
-                  fetchPaymentInfo={this.fetchPaymentInfo}
                 />
+              ) : null}
+            </Grid>
+            <Grid item>
+              {fetch_SSR.success ? (
+                <Card className={classes.root} elevation={10}>
+                  <CardHeader
+                    title="Credit"
+                    titleTypographyProps={{
+                      variant: "h4",
+                      style: {
+                        color: "white",
+                        textAlign: "center",
+                      },
+                    }}
+                    className={classes.cardHeader}
+                  />
+                  <CardContent className={classes.removePadding}>
+                    {/* <div style={{ display: "flex" }}> */}
+                    <TextField
+                      label="Code"
+                      variant="outlined"
+                      size="small"
+                      className={classes.input}
+                      value={this.state.code}
+                      onChange={(event) => {
+                        this.handleInputChange("code", event.target.value);
+                      }}
+                      style={{ marginRight: 10 }}
+                      error={this.state.codeError}
+                      helperText={this.state.codeErrorMsg}
+                    />
+                    <LoadingButton
+                      className={classes.mainButton}
+                      variant="contained"
+                      size="medium"
+                      onClick={this.redeemCode}
+                    >
+                      Apply
+                    </LoadingButton>
+                    {/* </div> */}
+                    <Grid container justify="center">
+                      <Typography
+                        variant="h4"
+                        style={{ fontWeight: 600, marginTop: 10 }}
+                      >
+                        Current balance:&nbsp;
+                      </Typography>
+                      <Typography
+                        variant="h4"
+                        style={{ textAlign: "center", marginTop: 10 }}
+                      >
+                        {fetch_SSR.balance}
+                      </Typography>
+                    </Grid>
+                  </CardContent>
+                </Card>
               ) : null}
             </Grid>
           </Grid>
@@ -97,7 +220,7 @@ Details.propTypes = {
 
 export async function getServerSideProps(context) {
   //fetch current user
-  const response_one = await getCurrentUser_SSR(context);
+  const response_one = await getCurrentUser_SSR(context, { balance: true });
 
   //check for redirect needed due to invalid session or error in fetching
   if (!response_one.data.success) {
@@ -175,6 +298,7 @@ export async function getServerSideProps(context) {
         success: true,
         userInfo: currentUser,
         cardInfo: cardInfo,
+        balance: response_one.data.balance,
       },
     },
   };

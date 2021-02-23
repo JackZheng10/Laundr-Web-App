@@ -23,7 +23,7 @@ import validator from "validator";
 import TooltipButton from "../../../../Driver/OrderTable/components/TooltipButton";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
 import CreateIcon from "@material-ui/icons/Create";
-import ConfirmationNumberIcon from "@material-ui/icons/ConfirmationNumber";
+import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
 import SettingsIcon from "@material-ui/icons/Settings";
 import NotInterestedIcon from "@material-ui/icons/NotInterested";
 import QueryBuilderIcon from "@material-ui/icons/QueryBuilder";
@@ -73,6 +73,147 @@ class Review extends Component {
     });
   };
 
+  renderPriceComponent = () => {
+    const { currentUser, classes, loads } = this.props;
+
+    const priceMultiplier =
+      currentUser.subscription.status === "active" ? 1.2 : 1.5;
+    const balance = parseFloat(this.props.balance.slice(1));
+    const subtotal = loads * 12 * priceMultiplier;
+
+    if (
+      currentUser.subscription.status != "active" &&
+      currentUser.subscription.lbsLeft <= 0
+    ) {
+      const balanceDiscount = subtotal >= balance ? balance : subtotal;
+
+      return (
+        <React.Fragment>
+          <CardContent
+            className={classes.removePadding}
+            style={{ marginTop: -15, marginBottom: -15 }}
+          >
+            <List disablePadding>
+              <ListItem>
+                <ListItemText
+                  primary={"Subtotal"}
+                  secondary={`${loads * 12} lbs`}
+                  primaryTypographyProps={{ variant: "h6" }}
+                />
+                <Typography variant="body1">${subtotal.toFixed(2)}</Typography>
+              </ListItem>
+              {balance > 0 && balanceDiscount > 0 && (
+                <ListItem>
+                  <ListItemText
+                    primary={"Credit"}
+                    primaryTypographyProps={{ variant: "h6" }}
+                  />
+
+                  <Typography variant="body1">
+                    - ${balanceDiscount.toFixed(2)}
+                  </Typography>
+                </ListItem>
+              )}
+            </List>
+          </CardContent>
+          <Divider />
+          <CardContent className={classes.removePadding}>
+            <Grid
+              container
+              direction="column"
+              justify="center"
+              alignItems="center"
+            >
+              <Grid item>
+                <Grid container justify="center">
+                  <Typography variant="h4" style={{ fontWeight: 600 }}>
+                    Total:&nbsp;
+                  </Typography>
+                  <Typography variant="h4" style={{ textAlign: "center" }}>
+                    ${(subtotal - balanceDiscount).toFixed(2)}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </React.Fragment>
+      );
+    } else {
+      const lbsData = this.props.getLbsData();
+      const subLbsUsed = lbsData[1].value;
+      const subLbsDiscount = subLbsUsed * priceMultiplier;
+      const balanceDiscount =
+        subtotal - subLbsDiscount >= balance
+          ? balance
+          : subtotal - subLbsDiscount;
+
+      return (
+        <React.Fragment>
+          <CardContent
+            className={classes.removePadding}
+            style={{ marginTop: -15, marginBottom: -15 }}
+          >
+            <List disablePadding>
+              <ListItem>
+                <ListItemText
+                  primary={"Subtotal"}
+                  secondary={`${loads * 12} lbs`}
+                  primaryTypographyProps={{ variant: "h6" }}
+                />
+                <Typography variant="body1">${subtotal.toFixed(2)}</Typography>
+              </ListItem>
+              {subLbsUsed > 0 && (
+                <ListItem>
+                  <ListItemText
+                    primary={"Subscription Lbs"}
+                    secondary={`${subLbsUsed} lbs`}
+                    primaryTypographyProps={{ variant: "h6" }}
+                  />
+
+                  <Typography variant="body1">
+                    - ${subLbsDiscount.toFixed(2)}
+                  </Typography>
+                </ListItem>
+              )}
+              {balance > 0 && balanceDiscount > 0 && (
+                <ListItem>
+                  <ListItemText
+                    primary={"Credit"}
+                    primaryTypographyProps={{ variant: "h6" }}
+                  />
+
+                  <Typography variant="body1">
+                    - ${balanceDiscount.toFixed(2)}
+                  </Typography>
+                </ListItem>
+              )}
+            </List>
+          </CardContent>
+          <Divider />
+          <CardContent className={classes.removePadding}>
+            <Grid
+              container
+              direction="column"
+              justify="center"
+              alignItems="center"
+            >
+              <Grid item>
+                <Grid container justify="center">
+                  <Typography variant="h4" style={{ fontWeight: 600 }}>
+                    Total:&nbsp;
+                  </Typography>
+                  <Typography variant="h4" style={{ textAlign: "center" }}>
+                    ${(subtotal - subLbsDiscount - balanceDiscount).toFixed(2)}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </React.Fragment>
+      );
+    }
+  };
+
   render() {
     const {
       classes,
@@ -86,6 +227,7 @@ class Review extends Component {
       separate,
       towelsSheets,
       loads,
+      currentUser,
     } = this.props;
 
     return (
@@ -371,13 +513,13 @@ class Review extends Component {
               <Card className={classes.root} elevation={5}>
                 <CardHeader
                   avatar={
-                    <ConfirmationNumberIcon
+                    <AttachMoneyIcon
                       fontSize="small"
                       style={{ marginBottom: -4 }}
                       htmlColor="white"
                     />
                   }
-                  title="Coupon Code"
+                  title="Estimated Price"
                   titleTypographyProps={{
                     variant: "h5",
                     style: {
@@ -386,43 +528,7 @@ class Review extends Component {
                   }}
                   className={classes.cardHeader}
                 />
-                <CardContent className={classes.removePadding}>
-                  <div style={{ display: "flex" }}>
-                    <TextField
-                      label="Code"
-                      variant="outlined"
-                      size="small"
-                      className={classes.input}
-                    />
-                    {/*todo: to be changed when functionality added, typing in something atm breaks it*/}
-                    <Button
-                      className={classes.secondaryButton}
-                      variant="contained"
-                      size="small"
-                      onClick={() => {
-                        alert("work in progress");
-                      }}
-                      style={{ marginLeft: 10 }}
-                    >
-                      Apply
-                    </Button>
-                  </div>
-                  <Grid container justify="center">
-                    <Typography
-                      variant="h4"
-                      style={{ fontWeight: 600, marginTop: 10 }}
-                    >
-                      Estimated cost:&nbsp;
-                    </Typography>
-                    {/*todo: factor in sub stuff + overage stuff etc?*/}
-                    <Typography
-                      variant="h4"
-                      style={{ textAlign: "center", marginTop: 10 }}
-                    >
-                      ${loads * 12 * 1.5}.00
-                    </Typography>
-                  </Grid>
-                </CardContent>
+                {this.renderPriceComponent()}
               </Card>
             </Grid>
           </Grid>

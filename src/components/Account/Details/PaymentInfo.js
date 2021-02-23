@@ -158,7 +158,7 @@ class PaymentInfo extends Component {
           { showPaymentUpdate: !this.state.showPaymentUpdate },
           () => {
             this.context.showAlert(response.data.message, () => {
-              this.props.fetchPaymentInfo();
+              window.location.reload();
             });
           }
         );
@@ -326,7 +326,7 @@ class PaymentInfo extends Component {
 }
 
 function InjectedPaymentInfo(props) {
-  const { classes, card, fetchPaymentInfo, user } = props;
+  const { classes, card, user } = props;
 
   return (
     <Elements stripe={stripePromise}>
@@ -338,7 +338,6 @@ function InjectedPaymentInfo(props) {
             classes={classes}
             card={card}
             user={user}
-            fetchPaymentInfo={fetchPaymentInfo}
           />
         )}
       </ElementsConsumer>

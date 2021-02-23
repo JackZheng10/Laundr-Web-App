@@ -1,7 +1,4 @@
 const reviewStyles = (theme) => ({
-  total: {
-    fontWeight: 700,
-  },
   root: {
     minWidth: 275,
   },

@@ -67,32 +67,16 @@ const marks = [
     label: "1",
   },
   {
-    value: 1.5,
-    label: "1.5",
-  },
-  {
     value: 2,
     label: "2",
-  },
-  {
-    value: 2.5,
-    label: "2.5",
   },
   {
     value: 3,
     label: "3",
   },
   {
-    value: 3.5,
-    label: "3.5",
-  },
-  {
     value: 4,
     label: "4",
-  },
-  {
-    value: 4.5,
-    label: "4.5",
   },
   {
     value: 5,
@@ -141,9 +125,7 @@ class Pricing extends Component {
                   >
                     <Grid item style={{ marginBottom: 10 }}>
                       <img
-                        src={`/images/NewOrder/Bag${(loads - 0.1).toFixed(
-                          0
-                        )}.png`}
+                        src={`/images/NewOrder/Bag${loads.toFixed(0)}.png`}
                         style={{ height: 100 }}
                       />
                     </Grid>
@@ -246,7 +228,7 @@ class Pricing extends Component {
                     </PieChart>
                     <div
                       style={{
-                        top: "58%",
+                        top: "40%",
                         left: "20%",
                         position: "absolute",
                       }}
@@ -257,7 +239,7 @@ class Pricing extends Component {
                     </div>
                     <div
                       style={{
-                        top: "68%",
+                        top: "50%",
                         left: "3%",
                         position: "absolute",
                         width: 250,
@@ -270,7 +252,7 @@ class Pricing extends Component {
                         {`${estLbsLeft}/${maxLbs}`}
                       </Typography>
                     </div>
-                    <div
+                    {/* <div
                       style={{
                         top: "20%",
                         left: "31%",
@@ -284,7 +266,7 @@ class Pricing extends Component {
                         )}.png`}
                         style={{ height: 100 }}
                       />
-                    </div>
+                    </div> */}
                   </Grid>
                 </Grid>
               </CardContent>
@@ -323,7 +305,7 @@ class Pricing extends Component {
         <CustomSlider
           defaultValue={loads}
           valueLabelDisplay="off"
-          step={0.5}
+          step={1}
           min={1}
           max={5}
           marks={marks}

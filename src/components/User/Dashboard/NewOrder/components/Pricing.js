@@ -12,6 +12,7 @@ import {
   Collapse,
   ListItem,
   Divider,
+  ListItemText,
 } from "@material-ui/core";
 import {
   PieChart,
@@ -132,6 +133,21 @@ class Pricing extends Component {
                 alignItems="center"
               >
                 <Grid item>
+                  <Grid
+                    container
+                    direction="row"
+                    alignItems="center"
+                    justify="center"
+                  >
+                    <Grid item style={{ marginBottom: 10 }}>
+                      <img
+                        src={`/images/NewOrder/Bag${(loads - 0.1).toFixed(
+                          0
+                        )}.png`}
+                        style={{ height: 100 }}
+                      />
+                    </Grid>
+                  </Grid>
                   <Typography variant="h5">
                     Estimated pounds: {loads * 12} lbs
                   </Typography>
@@ -230,7 +246,7 @@ class Pricing extends Component {
                     </PieChart>
                     <div
                       style={{
-                        top: "40%",
+                        top: "58%",
                         left: "20%",
                         position: "absolute",
                       }}
@@ -241,7 +257,7 @@ class Pricing extends Component {
                     </div>
                     <div
                       style={{
-                        top: "50%",
+                        top: "68%",
                         left: "3%",
                         position: "absolute",
                         width: 250,
@@ -253,6 +269,21 @@ class Pricing extends Component {
                       >
                         {`${estLbsLeft}/${maxLbs}`}
                       </Typography>
+                    </div>
+                    <div
+                      style={{
+                        top: "20%",
+                        left: "31%",
+                        position: "absolute",
+                        width: 250,
+                      }}
+                    >
+                      <img
+                        src={`/images/NewOrder/Bag${(loads - 0.1).toFixed(
+                          0
+                        )}.png`}
+                        style={{ height: 100 }}
+                      />
                     </div>
                   </Grid>
                 </Grid>

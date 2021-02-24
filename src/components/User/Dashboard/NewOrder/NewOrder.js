@@ -473,7 +473,7 @@ class NewOrder extends Component {
                       }}
                     >
                       <div>
-                        {/* <Scheduling
+                        <Scheduling
                           today={this.today}
                           tomorrow={this.tomorrow}
                           todaySelected={this.state.todaySelected}
@@ -481,13 +481,6 @@ class NewOrder extends Component {
                           formattedTime={this.state.formattedTime}
                           rawTime={this.state.rawTime}
                           handleInputChange={this.handleInputChange}
-                        /> */}
-                        <Pricing
-                          loads={this.state.loads}
-                          handleInputChange={this.handleInputChange}
-                          currentUser={currentUser}
-                          getLbsData={this.getLbsData}
-                          getMaxLbs={this.getMaxLbs}
                         />
                       </div>
                     </Fade>

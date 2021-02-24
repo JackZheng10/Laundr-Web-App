@@ -89,7 +89,10 @@ class Pricing extends Component {
     const { currentUser, loads } = this.props;
 
     const priceMultiplier =
-      currentUser.subscription.status === "active" ? 1.2 : 1.5;
+      currentUser.subscription.status === "active" &&
+      currentUser.subscription.plan === "Family"
+        ? 1.2
+        : 1.5;
 
     if (
       currentUser.subscription.status != "active" &&

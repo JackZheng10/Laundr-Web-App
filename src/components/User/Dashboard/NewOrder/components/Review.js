@@ -77,7 +77,10 @@ class Review extends Component {
     const { currentUser, classes, loads } = this.props;
 
     const priceMultiplier =
-      currentUser.subscription.status === "active" ? 1.2 : 1.5;
+      currentUser.subscription.status === "active" &&
+      currentUser.subscription.plan === "Family"
+        ? 1.2
+        : 1.5;
     const balance = parseFloat(this.props.balance.slice(1));
     const subtotal = loads * 12 * priceMultiplier;
 

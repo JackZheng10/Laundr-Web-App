@@ -38,6 +38,16 @@ class SubscriptionCard extends Component {
     try {
       const { planName, currentUser } = this.props;
 
+      //check if student
+      if (
+        planName === "Student" &&
+        currentUser.email.substr(currentUser.email.length - 3) != "edu"
+      ) {
+        return this.context.showAlert(
+          "Sorry, you must have a valid student email (.edu) to purchase a Student subscription."
+        );
+      }
+
       const response = await axios.post(
         "/api/stripe/createCheckoutSession",
         {

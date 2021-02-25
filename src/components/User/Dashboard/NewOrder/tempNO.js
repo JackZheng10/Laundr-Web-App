@@ -7,16 +7,11 @@ import {
   CardContent,
 } from "@material-ui/core";
 import { getCurrentUser } from "../../../../helpers/session";
-import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../../../../helpers/errors";
-import { limitLength } from "../../../../../src/helpers/inputs";
-import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import Geocode from "react-geocode";
-import validator from "validator";
 import axios from "axios";
 import MainAppContext from "../../../../contexts/MainAppContext";
-import LoadingButton from "../../../../components/other/LoadingButton";
 import Scheduling from "./components/Scheduling";
 import Preferences from "./components/Preferences/Preferences";
 import Address from "./components/Address/Address";
@@ -26,12 +21,15 @@ import ProgressBar from "./components/ProgressBar";
 import newOrderStyles from "../../../../styles/User/Dashboard/components/NewOrder/newOrderStyles";
 
 const moment = require("moment-timezone");
-moment.tz.setDefault("America/New_York");
 const geolib = require("geolib");
 
 const apiKEY =
   process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ||
   require("../../../../config").google.mapsKEY;
+
+//todo: maybe scroll to top at advancing? or make size of pages same
+//todo: no new order when payment method not added yet
+//todo: refactoring styling/layout like i would do now. same as others. center everything?
 
 const steps = ["Scheduling", "Preferences", "Address", "Pricing", "Review"];
 
@@ -49,10 +47,8 @@ class NewOrder extends Component {
       date: "N/A", //scheduling
       todaySelected: false,
       tomorrowSelected: false,
-      formattedTime: "N/A",
-      selectValue: "",
-      lowerBound: null,
-      upperBound: null,
+      formattedTime: moment().format("LT"),
+      rawTime: new Date(),
       scented: false, //preferences
       delicates: false,
       separate: false,
@@ -73,6 +69,7 @@ class NewOrder extends Component {
   }
 
   handleNext = async () => {
+    //also handle validation in here!
     let canNext = true;
 
     switch (this.state.activeStep) {
@@ -84,7 +81,7 @@ class NewOrder extends Component {
         break;
 
       case 2:
-        if (validator.isEmpty(this.state.address)) {
+        if (this.evaluateWhitespace(this.state.address) === "N/A") {
           this.context.showAlert("Please enter an address.");
           canNext = false;
           break;
@@ -118,6 +115,8 @@ class NewOrder extends Component {
             "The address entered is not valid or is not within our service range. Make sure you've selected an address from the dropdown and try again."
           );
 
+          // console.log("distance: " + distance);
+          // console.log("====================================");
           canNext = false;
         }
         break;
@@ -137,15 +136,11 @@ class NewOrder extends Component {
           return;
         }
 
-        if (!response.data.success) {
-          if (response.data.redirect) {
-            return this.props.router.push(response.data.message);
-          } else {
-            this.context.showAlert(response.data.message);
-            canNext = false;
-          }
+        if (!response.success) {
+          this.context.showAlert(response.message);
+          canNext = false;
         } else {
-          this.setState({ orderID: response.data.orderID });
+          this.setState({ orderID: response.message });
         }
         break;
 
@@ -166,198 +161,139 @@ class NewOrder extends Component {
   };
 
   handlePlaceOrder = async () => {
-    try {
-      const response = await axios.post(
-        "/api/order/placeOrder",
-        {
-          coupon: "placeholder",
-          scented: this.state.scented,
-          delicates: this.state.delicates,
-          separate: this.state.separate,
-          towelsSheets: this.state.towelsSheets,
-          washerPrefs: validator.isEmpty(this.state.washerPreferences, {
-            ignore_whitespace: true,
-          })
-            ? "N/A"
-            : this.state.washerPreferences,
-          address: this.state.address,
-          addressPrefs: validator.isEmpty(this.state.addressPreferences, {
-            ignore_whitespace: true,
-          })
-            ? "N/A"
-            : this.state.addressPreferences,
-          loads: this.state.loads,
-          pickupDate: this.state.date,
-          pickupTime: this.state.formattedTime,
-        },
-        { withCredentials: true }
-      );
+    // axios.defaults.headers.common["token"] = token;
 
-      return response;
+    try {
+      const currentUser = getCurrentUser();
+
+      const response = await axios.post("/api/order/placeOrder", {
+        email: currentUser.email,
+        fname: currentUser.fname,
+        lname: currentUser.lname,
+        phone: currentUser.phone,
+        coupon: "placeholder",
+        scented: this.state.scented,
+        delicates: this.state.delicates,
+        separate: this.state.separate,
+        towelsSheets: this.state.towelsSheets,
+        washerPrefs: this.evaluateWhitespace(this.state.washerPreferences),
+        address: this.state.address,
+        addressPrefs: this.evaluateWhitespace(this.state.addressPreferences),
+        loads: this.state.loads,
+        pickupDate: this.state.date,
+        pickupTime: this.state.formattedTime,
+        pickupRawTime: this.state.rawTime,
+        created: new Date(),
+      });
+
+      if (response.data.success) {
+        return { success: true, message: response.data.orderID };
+      } else {
+        return { success: false, message: response.data.message };
+      }
     } catch (error) {
       showConsoleError("placing order: ", error);
       return {
-        data: {
-          success: false,
-          message: caughtError("placing order", error, 99),
-        },
+        success: false,
+        message: caughtError("placing order", error, 99),
       };
     }
   };
 
+  handleTimeCheck = () => {
+    // console.log("scheduled time:" + this.state.formattedTime);
+    // console.log("raw time:" + this.state.rawTime);
+
+    let canNext = true;
+    //time checks, military time format: check if logged in user is gainesville or etc, hardcode gnv for now
+    const scheduledTime = moment(this.state.rawTime, moment.ISO_8601); //note: converting Date() to moment obj
+
+    //not exact bounds since isBetween is non-inclusive of the bounds
+    const lowerBound = moment("9:59:59", "HH:mm:ss"); //want 10:00:00 to be true
+    const upperBound = moment("20:00:59", "HH:mm:ss"); //want 20:00:00 to be true
+
+    if (!this.state.todaySelected && !this.state.tomorrowSelected) {
+      //if no date selected
+      this.context.showAlert("Please select a pickup date.");
+      canNext = false;
+    } else if (
+      this.state.todaySelected &&
+      scheduledTime.isAfter(upperBound) //can replace with upperbound?
+    ) {
+      //if selected today and its after 8 PM
+      this.context.showAlert(
+        "Sorry! We are closed after 8 PM. Please select a different day."
+      );
+      canNext = false;
+    } else if (!scheduledTime.isBetween(lowerBound, upperBound)) {
+      //if pickup time isnt between 10 am and 8 pm
+      this.context.showAlert("The pickup time must be between 10 AM and 8 PM.");
+      canNext = false;
+    }
+
+    return canNext;
+  };
+
   getTimeAvailability = () => {
-    //todo: go over rules again...shouldnt today not available be if it's after 7:30 pm?
-    const lowerBound = moment("10:00:00", "HH:mm:ss");
-    const upperBound = moment("20:00:00", "HH:mm:ss");
-    const now = moment();
+    const lowerBound = moment("9:59:59", "HH:mm:ss"); //want 10:00:00 to be true
+    const upperBound = moment("20:00:59", "HH:mm:ss"); //want 20:00:00 to be true
+    //let currentTime =  moment(moment(), "HH:mm:ss");
 
     let todayNotAvailable = false;
-    if (now.isSameOrAfter(upperBound)) {
+    if (moment(moment(), "HH:mm:ss").isAfter(upperBound)) {
       todayNotAvailable = true;
     }
 
-    let possibleTimes = [
-      {
-        lowerBound: moment("10:00 AM", "h:mm A"),
-        upperBound: moment("10:30 AM", "h:mm A"),
-        string: "10:00 AM - 10:30 AM",
-      },
-      {
-        lowerBound: moment("10:30 AM", "h:mm A"),
-        upperBound: moment("11:00 AM", "h:mm A"),
-        string: "10:30 AM - 11:00 AM",
-      },
-      {
-        lowerBound: moment("11:00 AM", "h:mm A"),
-        upperBound: moment("11:30 AM", "h:mm A"),
-        string: "11:00 AM - 11:30 AM",
-      },
-      {
-        lowerBound: moment("11:30 AM", "h:mm A"),
-        upperBound: moment("12:00 PM", "h:mm A"),
-        string: "11:30 AM - 12:00 PM",
-      },
-      {
-        lowerBound: moment("12:00 PM", "h:mm A"),
-        upperBound: moment("12:30 PM", "h:mm A"),
-        string: "12:00 PM - 12:30 PM",
-      },
-      {
-        lowerBound: moment("12:30 PM", "h:mm A"),
-        upperBound: moment("1:00 PM", "h:mm A"),
-        string: "12:30 PM - 1:00 PM",
-      },
-      {
-        lowerBound: moment("1:00 PM", "h:mm A"),
-        upperBound: moment("1:30 AM", "h:mm A"),
-        string: "1:00 PM - 1:30 PM",
-      },
-      {
-        lowerBound: moment("1:30 PM", "h:mm A"),
-        upperBound: moment("2:00 PM", "h:mm A"),
-        string: "1:30 PM - 2:00 PM",
-      },
-      {
-        lowerBound: moment("6:00 PM", "h:mm A"),
-        upperBound: moment("6:30 PM", "h:mm A"),
-        string: "6:00 PM - 6:30 PM",
-      },
-      {
-        lowerBound: moment("6:30 PM", "h:mm A"),
-        upperBound: moment("7:00 PM", "h:mm A"),
-        string: "6:30 PM - 7:00 PM",
-      },
-      {
-        lowerBound: moment("7:00 PM", "h:mm A"),
-        upperBound: moment("7:30 PM", "h:mm A"),
-        string: "7:00 PM - 7:30 PM",
-      },
-      {
-        lowerBound: moment("7:30 PM", "h:mm A"),
-        upperBound: moment("8:00 PM", "h:mm A"),
-        string: "7:30 PM - 8:00 PM",
-      },
+    let times = [
+      { time: moment("10:00 AM", "h:mm A"), string: "10:00 AM - 10:30 AM" },
+      { time: moment("10:30 AM", "h:mm A"), string: "10:30 AM - 11:00 AM" },
+      { time: moment("11:00 AM", "h:mm A"), string: "11:00 AM - 11:30 AM" },
+      { time: moment("11:30 AM", "h:mm A"), string: "11:30 AM - 12:00 PM" },
+      { time: moment("12:00 PM", "h:mm A"), string: "12:00 PM - 12:30 PM" },
+      { time: moment("12:30 PM", "h:mm A"), string: "12:30 PM - 1:00 PM" },
+      { time: moment("1:00 PM", "h:mm A"), string: "1:00 PM - 1:30 PM" },
+      { time: moment("1:30 PM", "h:mm A"), string: "1:30 PM - 2:00 PM" },
+      { time: moment("6:00 PM", "h:mm A"), string: "6:00 PM - 6:30 PM" },
+      { time: moment("6:30 PM", "h:mm A"), string: "6:30 PM - 7:00 PM" },
+      { time: moment("7:00 PM", "h:mm A"), string: "7:00 PM - 7:30 PM" },
+      { time: moment("7:30 PM", "h:mm A"), string: "7:30 PM - 8:00 PM" },
     ];
 
-    let availableTimes = [];
-
-    //if before earliest pickup or after latest pickup (where todayNotAvailable would be true)
+    let startWindow = 0;
     if (
-      now.isSameOrBefore(lowerBound) ||
-      now.isSameOrAfter(upperBound) ||
+      moment(moment(), "HH:mm:ss").isBefore(lowerBound) ||
       this.state.tomorrowSelected
     ) {
-      availableTimes = possibleTimes;
-    } else {
-      for (let x = 0; x < possibleTimes.length; x++) {
-        //get the times starting at the first range where it's before or same as now
-        if (now.isBefore(possibleTimes[x].lowerBound)) {
-          //if its not at least 30 mins before
-          if (now.diff(possibleTimes[x].lowerBound, "minutes") >= -29) {
-            continue;
+      startWindow = 0;
+    } else if (this.state.todaySelected) {
+      for (var i = 1; i < times.length; i++) {
+        var duration = moment.duration(
+          times[i].time.diff(moment(moment(), "HH:mm:ss"))
+        );
+        let minutesBetween = parseInt(duration.asMinutes()) % 60;
+        if (minutesBetween < 0) {
+          continue;
+        } else {
+          if (minutesBetween <= 29) {
+            startWindow = i + 1;
+            break;
           } else {
-            availableTimes = possibleTimes.slice(x);
+            startWindow = i;
             break;
           }
         }
       }
     }
 
+    let availableTimes = [];
+    for (var j = startWindow; j < times.length; j++) {
+      availableTimes.push(times[j]);
+    }
+
     return {
       availableTimes,
       todayNotAvailable,
     };
-  };
-
-  handleTimeCheck = () => {
-    let canNext = true;
-
-    const scheduledLowerBound = this.state.lowerBound;
-    const scheduledUpperBound = this.state.upperBound;
-
-    //isBetween is non-inclusive of the bounds
-    const lowerBound = moment("10:00:00", "HH:mm:ss");
-    const upperBound = moment("19:30:00", "HH:mm:ss"); //last pickup time is 7:30 PM
-    const now = moment();
-
-    if (!this.state.todaySelected && !this.state.tomorrowSelected) {
-      //if no date selected
-      this.context.showAlert("Please select a pickup date.");
-      canNext = false;
-    } else if (!this.state.lowerBound || !this.state.upperBound) {
-      //if no time selected
-      this.context.showAlert("Please select a pickup time.");
-      canNext = false;
-    } else if (this.state.todaySelected && now.isSameOrAfter(upperBound)) {
-      this.context.showAlert(
-        "Sorry! We don't accept pickups after 7:30 PM. Please choose a pickup time for tomorrow."
-      );
-      canNext = false;
-    } else if (
-      this.state.todaySelected &&
-      now.diff(scheduledLowerBound, "minutes") >= -29
-    ) {
-      this.context.showAlert(
-        "Sorry! Pickup time must be at least 30 minutes in advance."
-      );
-      canNext = false;
-    }
-    // } else if (
-    //   this.state.todaySelected &&
-    //   scheduledTime.isAfter(upperBound) //can replace with upperbound?
-    // ) {
-    //   //if selected today and its after 8 PM
-    //   this.context.showAlert(
-    //     "Sorry! We are closed after 8 PM. Please select a different day."
-    //   );
-    //   canNext = false;
-    // } else if (!scheduledTime.isBetween(lowerBound, upperBound)) {
-    //   //if pickup time isnt between 10 am and 8 pm
-    //   this.context.showAlert("The pickup time must be between 10 AM and 8 PM.");
-    //   canNext = false;
-    // }
-
-    return canNext;
   };
 
   handleDone = () => {
@@ -367,31 +303,44 @@ class NewOrder extends Component {
   handleInputChange = (property, value) => {
     switch (property) {
       case "today":
-        this.setState({
-          todaySelected: true,
-          tomorrowSelected: false,
-          date: this.today,
-          selectValue: "",
-        });
+        const hourFromNow = moment(moment(), "HH:mm:ss").add(1, "hours");
+        const lowerBound = moment("9:59:59", "HH:mm:ss");
+        const upperBound = moment("19:00:59", "HH:mm:ss");
 
+        //if within operating times
+        if (hourFromNow.isBetween(lowerBound, upperBound)) {
+          this.setState({
+            todaySelected: true,
+            tomorrowSelected: false,
+            date: this.today,
+            rawTime: hourFromNow.toDate(),
+            formattedTime: hourFromNow.format("LT"),
+          });
+        } else {
+          this.setState({
+            todaySelected: true,
+            tomorrowSelected: false,
+            date: this.today,
+          });
+        }
         break;
 
       case "tomorrow":
+        const earliestTime = moment("10:00:00", "HH:mm:ss");
         this.setState({
           todaySelected: false,
           tomorrowSelected: true,
           date: this.tomorrow,
-          selectValue: "",
+          rawTime: earliestTime.toDate(),
+          formattedTime: earliestTime.format("LT"),
         });
         break;
 
       case "time":
-        this.setState({
-          lowerBound: value.lowerBound,
-          upperBound: value.upperBound,
-          formattedTime: value.string,
-          selectValue: value.selectValue,
-        });
+        //value is the index of the time selected
+        const rawTime = value.time.format();
+        const formattedTime = value.string;
+        this.setState({ rawTime, formattedTime });
         break;
 
       case "scented":
@@ -411,7 +360,12 @@ class NewOrder extends Component {
         break;
 
       case "washerPreferences":
-        value = limitLength(value, 200);
+        const washerLimit = 200;
+
+        if (value.length > washerLimit) {
+          value = value.slice(0, washerLimit);
+        }
+
         this.setState({ [property]: value });
         break;
 
@@ -420,7 +374,12 @@ class NewOrder extends Component {
         break;
 
       case "addressPreferences":
-        value = limitLength(value, 200);
+        const addressLimit = 200;
+
+        if (value.length > addressLimit) {
+          value = value.slice(0, addressLimit);
+        }
+
         this.setState({ [property]: value });
         break;
 
@@ -477,57 +436,16 @@ class NewOrder extends Component {
     }
   };
 
-  getLbsData = () => {
-    const { currentUser } = this.props;
-    const loads = this.state.loads;
-    const maxLbs = this.getMaxLbs(currentUser.subscription);
-    const lbsLeft = currentUser.subscription.lbsLeft;
-    const estLbsCost = loads * 12;
-
-    return [
-      {
-        value: lbsLeft - estLbsCost >= 0 ? lbsLeft - estLbsCost : 0, //remaining sub lbs
-        color: "#01c9e1",
-        opacity: 1,
-      },
-      {
-        value: estLbsCost <= lbsLeft ? estLbsCost : lbsLeft, //sub lbs used
-        color: "red",
-        opacity: 0.7,
-      },
-      {
-        value: maxLbs - lbsLeft, //previously used sub lbs
-        color: "#828282",
-        opacity: 0.2,
-      },
-      {
-        overage: lbsLeft - estLbsCost >= 0 ? false : true,
-        overageLbs: estLbsCost - lbsLeft,
-      },
-    ];
-  };
-
-  getMaxLbs = (subscription) => {
-    switch (subscription.plan) {
-      case "Student":
-        return 40;
-
-      case "Standard":
-        return 48;
-
-      case "Plus":
-        return 66;
-
-      case "Family":
-        return 84;
-
-      default:
-        return 0;
+  evaluateWhitespace = (text) => {
+    if (!text.replace(/\s/g, "").length) {
+      return "N/A";
     }
+
+    return text;
   };
 
   render() {
-    const { classes, currentUser, balance } = this.props;
+    const classes = this.props.classes;
 
     return (
       <React.Fragment>
@@ -576,7 +494,8 @@ class NewOrder extends Component {
                           tomorrow={this.tomorrow}
                           todaySelected={this.state.todaySelected}
                           tomorrowSelected={this.state.tomorrowSelected}
-                          selectValue={this.state.selectValue}
+                          formattedTime={this.state.formattedTime}
+                          rawTime={this.state.rawTime}
                           handleInputChange={this.handleInputChange}
                           getTimeAvailability={this.getTimeAvailability}
                         />
@@ -641,9 +560,6 @@ class NewOrder extends Component {
                         <Pricing
                           loads={this.state.loads}
                           handleInputChange={this.handleInputChange}
-                          currentUser={currentUser}
-                          getLbsData={this.getLbsData}
-                          getMaxLbs={this.getMaxLbs}
                         />
                       </div>
                     </Fade>
@@ -669,10 +585,6 @@ class NewOrder extends Component {
                           pickupDate={this.state.date}
                           pickupTime={this.state.formattedTime}
                           loads={this.state.loads}
-                          currentUser={currentUser}
-                          getLbsData={this.getLbsData}
-                          getMaxLbs={this.getMaxLbs}
-                          balance={balance}
                         />
                       </div>
                     </Fade>
@@ -686,7 +598,7 @@ class NewOrder extends Component {
                           Back
                         </Button>
                       )}
-                      <LoadingButton
+                      <Button
                         variant="contained"
                         onClick={this.handleNext}
                         className={classes.mainButton}
@@ -694,7 +606,7 @@ class NewOrder extends Component {
                         {this.state.activeStep === steps.length - 1
                           ? "Place order"
                           : "Next"}
-                      </LoadingButton>
+                      </Button>
                     </div>
                   </React.Fragment>
                 )}
@@ -711,4 +623,4 @@ NewOrder.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default compose(withRouter, withStyles(newOrderStyles))(NewOrder);
+export default withStyles(newOrderStyles)(NewOrder);

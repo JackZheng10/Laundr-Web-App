@@ -5,6 +5,7 @@ import {
   Fade,
   Tooltip,
   IconButton,
+  Typography,
 } from "@material-ui/core";
 import InfoIcon from "@material-ui/icons/Info";
 
@@ -63,7 +64,7 @@ class PopoverButton extends Component {
         <LightTooltip
           disableHoverListener
           disableTouchListener
-          title={text}
+          title={<Typography variant="body1">{text}</Typography>}
           open={this.state.open}
           placement="bottom"
           TransitionComponent={Fade}

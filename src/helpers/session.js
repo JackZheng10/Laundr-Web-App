@@ -1,6 +1,5 @@
 import { caughtError, showConsoleError } from "./errors";
 import axios from "axios";
-import jwtDecode from "jwt-decode";
 
 const baseURL =
   process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;

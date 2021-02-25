@@ -20,7 +20,8 @@ import LoadingButton from "../../src/components/other/LoadingButton";
 import loginStyles from "../../src/styles/loginStyles";
 import MainAppContext from "../../src/contexts/MainAppContext";
 
-const moment = require("moment");
+const moment = require("moment-timezone");
+moment.tz.setDefault("America/New_York");
 
 class PasswordReset extends Component {
   static contextType = MainAppContext;
@@ -293,7 +294,9 @@ export async function getServerSideProps(context) {
         },
       },
     };
-  } else if (moment(session.expires).isBefore(moment())) {
+  } else if (
+    moment(session.expires).tz("America/New_York").isBefore(moment())
+  ) {
     return {
       props: {
         fetch_SSR: {

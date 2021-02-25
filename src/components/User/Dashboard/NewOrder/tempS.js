@@ -32,8 +32,6 @@ const timeTheme = createMuiTheme({
 });
 
 class Scheduling extends Component {
-  state = { openTime: false };
-
   render() {
     const {
       classes,
@@ -41,23 +39,20 @@ class Scheduling extends Component {
       today,
       tomorrowSelected,
       tomorrow,
+      rawTime,
       handleInputChange,
       getTimeAvailability,
-      selectValue,
     } = this.props;
 
-    const timeAvailability = getTimeAvailability();
-    const todayNotAvailable = timeAvailability.todayNotAvailable;
-    const availableTimes = timeAvailability.availableTimes;
+    let timeAvailability = getTimeAvailability();
+    let todayNotAvailable = timeAvailability.todayNotAvailable;
+    let availableTimes = timeAvailability.availableTimes;
 
     const handleTimeSelect = (event) => {
-      const index = event.target.value;
-
+      let index = event.target.value;
       handleInputChange("time", {
-        lowerBound: availableTimes[index].lowerBound,
-        upperBound: availableTimes[index].upperBound,
+        time: availableTimes[index].time,
         string: availableTimes[index].string,
-        selectValue: index,
       });
     };
 
@@ -71,15 +66,15 @@ class Scheduling extends Component {
             {todayNotAvailable && (
               <Tooltip
                 title={
-                  <Typography variant="body1" style={{ color: "white" }}>
-                    Pickup is not available after 8 PM.
-                  </Typography>
+                  <React.Fragment>
+                    {"Pickup today is not available after 8 PM."}
+                  </React.Fragment>
                 }
                 arrow
               >
                 <span>
                   <Button
-                    disabled
+                    disabled="true"
                     variant="contained"
                     style={{ backgroundColor: "#d5d5d5", color: "white" }}
                     fullWidth
@@ -141,16 +136,10 @@ class Scheduling extends Component {
                 <Select
                   labelId="times"
                   displayEmpty
-                  variant="outlined"
-                  value={selectValue}
                   onChange={handleTimeSelect}
                 >
                   {availableTimes.map((time, index) => {
-                    return (
-                      <MenuItem value={index} key={index}>
-                        {time.string}
-                      </MenuItem>
-                    );
+                    return <MenuItem value={index}>{time.string}</MenuItem>;
                   })}
                 </Select>
               </FormControl>

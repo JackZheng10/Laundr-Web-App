@@ -17,6 +17,11 @@ const schedulingStyles = (theme) => ({
     color: "#01c9e1",
     // backgroundColor: "#01c9e1",
   },
+  formControl: {
+    minWidth: 197,
+    paddingBottom: 10,
+    paddingTop: 10,
+  },
 });
 
 export default schedulingStyles;

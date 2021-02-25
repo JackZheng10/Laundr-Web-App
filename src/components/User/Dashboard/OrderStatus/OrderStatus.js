@@ -46,7 +46,8 @@ import orderStatusStyles from "../../../../styles/User/Dashboard/components/Orde
 //todo: design like card for driver/washer or vice versa?
 //todo: gold button focus for dropoff and cancel
 
-const moment = require("moment");
+const moment = require("moment-timezone");
+moment.tz.setDefault("America/New_York");
 
 const timeTheme = createMuiTheme({
   palette: {

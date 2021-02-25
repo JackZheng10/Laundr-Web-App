@@ -101,10 +101,10 @@ class Help extends Component {
                 window.open("https://m.me/laundrofficial");
               }}
             >
-              Live Chat
+              Chat With Us
             </Button>
           </Grid>
-          <Grid item>
+          {/* <Grid item>
             <Typography variant="h5" gutterBottom>
               or
             </Typography>
@@ -133,7 +133,7 @@ class Help extends Component {
             >
               Submit
             </Button>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Layout>
     );

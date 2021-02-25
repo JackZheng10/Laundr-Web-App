@@ -36,7 +36,7 @@ class Preferences extends Component {
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
             <PreferenceCard
-              title="Scented"
+              title="Scented (Free)"
               info="Unscented detergent is hypoallergenic."
               unselectedImage="/images/NewOrder/ScentedUnselected.png"
               selectedImage="/images/NewOrder/ScentedSelected.png"
@@ -47,19 +47,19 @@ class Preferences extends Component {
           </Grid>
           <Grid item xs={12} sm={6}>
             <PreferenceCard
-              title="Delicates"
-              info="Delicate clothing is washed in a mesh bag and dried on low heat."
-              unselectedImage="/images/NewOrder/DelicatesUnselected.png"
-              selectedImage="/images/NewOrder/DelicatesSelected.png"
+              title="Low Temp. Tumble Dry (Free)"
+              info="Some clothes may not be completely dry when returned."
+              unselectedImage="/images/NewOrder/TowelsUnselected.png"
+              selectedImage="/images/NewOrder/TowelsSelected.png"
               handleInputChange={(selected) => {
-                handleInputChange("delicates", selected);
+                handleInputChange("tumbleDry", selected);
               }}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <PreferenceCard
-              title="Separate"
-              info="Separated clothing is divided into whites and colors."
+              title="Separate (+$2)"
+              info="Separated clothing is divided into whites and colors. Whites will be bleached."
               unselectedImage="/images/NewOrder/SeparateUnselected.png"
               selectedImage="/images/NewOrder/SeparateSelected.png"
               handleInputChange={(selected) => {
@@ -69,12 +69,23 @@ class Preferences extends Component {
           </Grid>
           <Grid item xs={12} sm={6}>
             <PreferenceCard
-              title="Towels and Sheets"
+              title="Comforter (+$5)"
               info="Towels and sheets are washed separately and dried on high heat."
               unselectedImage="/images/NewOrder/TowelsUnselected.png"
               selectedImage="/images/NewOrder/TowelsSelected.png"
               handleInputChange={(selected) => {
                 handleInputChange("towelsSheets", selected);
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <PreferenceCard
+              title="Delicates Bag (+$2)"
+              info="Please select this if you would like to purchase a delicates bag with your order."
+              unselectedImage="/images/NewOrder/DelicatesUnselected.png"
+              selectedImage="/images/NewOrder/DelicatesSelected.png"
+              handleInputChange={(selected) => {
+                handleInputChange("delicates", selected);
               }}
             />
           </Grid>

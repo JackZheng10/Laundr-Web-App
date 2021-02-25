@@ -85,6 +85,7 @@ class Review extends Component {
       delicates,
       separate,
       towelsSheets,
+      tumbleDry,
       loads,
     } = this.props;
 
@@ -229,7 +230,7 @@ class Review extends Component {
                           />
                         </ListItemAvatar>
                         <ListItemText
-                          primary="Scented"
+                          primary="Scented (Free)"
                           primaryTypographyProps={{
                             style: {
                               color: scented ? "black" : "grey",
@@ -253,23 +254,23 @@ class Review extends Component {
                         <ListItemAvatar>
                           <Avatar
                             src={
-                              delicates
-                                ? "/images/NewOrder/DelicatesSelectedCircle.png"
-                                : "/images/NewOrder/DelicatesUnselectedCircle.png"
+                              tumbleDry
+                                ? "/images/NewOrder/SeparateSelectedCircle.png"
+                                : "/images/NewOrder/SeparateUnselectedCircle.png"
                             }
                           />
                         </ListItemAvatar>
                         <ListItemText
-                          primary="Delicates"
+                          primary="Low Temp. Tumble Dry (Free)"
                           primaryTypographyProps={{
                             style: {
-                              color: delicates ? "black" : "grey",
+                              color: tumbleDry ? "black" : "grey",
                             },
                             variant: "body1",
                           }}
                         />
                         <ListItemSecondaryAction>
-                          {delicates ? (
+                          {tumbleDry ? (
                             <CheckCircleOutlineIcon
                               style={{ fill: "green" }}
                               edge="end"
@@ -291,7 +292,7 @@ class Review extends Component {
                           />
                         </ListItemAvatar>
                         <ListItemText
-                          primary="Separate"
+                          primary="Separate (+$2)"
                           primaryTypographyProps={{
                             style: {
                               color: separate ? "black" : "grey",
@@ -322,7 +323,7 @@ class Review extends Component {
                           />
                         </ListItemAvatar>
                         <ListItemText
-                          primary="Towels and Sheets"
+                          primary="Added Comforter (+$5)"
                           primaryTypographyProps={{
                             style: {
                               color: towelsSheets ? "black" : "grey",
@@ -332,6 +333,37 @@ class Review extends Component {
                         />
                         <ListItemSecondaryAction>
                           {towelsSheets ? (
+                            <CheckCircleOutlineIcon
+                              style={{ fill: "green" }}
+                              edge="end"
+                            />
+                          ) : (
+                            <NotInterestedIcon color="error" edge="end" />
+                          )}
+                        </ListItemSecondaryAction>
+                      </ListItem>
+                      <Divider variant="inset" component="li" />
+                      <ListItem>
+                        <ListItemAvatar>
+                          <Avatar
+                            src={
+                              delicates
+                                ? "/images/NewOrder/DelicatesSelectedCircle.png"
+                                : "/images/NewOrder/DelicatesUnselectedCircle.png"
+                            }
+                          />
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary="Delicates Bag (+$2)"
+                          primaryTypographyProps={{
+                            style: {
+                              color: delicates ? "black" : "grey",
+                            },
+                            variant: "body1",
+                          }}
+                        />
+                        <ListItemSecondaryAction>
+                          {delicates ? (
                             <CheckCircleOutlineIcon
                               style={{ fill: "green" }}
                               edge="end"
@@ -412,7 +444,7 @@ class Review extends Component {
                       variant="h4"
                       style={{ fontWeight: 600, marginTop: 10 }}
                     >
-                      Estimated cost:&nbsp;
+                      Estimated cost:&nbsp; 
                     </Typography>
                     {/*todo: factor in sub stuff + overage stuff etc?*/}
                     <Typography
@@ -421,6 +453,27 @@ class Review extends Component {
                     >
                       ${loads * 12 * 1.5}.00
                     </Typography>
+                    {separate ? 
+                     <Typography
+                     variant="h4"
+                      style={{ textAlign: "center", marginTop: 10 }}
+                    >
+                      +$2
+                    </Typography> : null }
+                    {delicates ? 
+                     <Typography
+                     variant="h4"
+                      style={{ textAlign: "center", marginTop: 10 }}
+                    >
+                      +$2
+                    </Typography> : null }
+                    {towelsSheets ? 
+                     <Typography
+                     variant="h4"
+                      style={{ textAlign: "center", marginTop: 10 }}
+                    >
+                      +$2
+                    </Typography> : null }
                   </Grid>
                 </CardContent>
               </Card>

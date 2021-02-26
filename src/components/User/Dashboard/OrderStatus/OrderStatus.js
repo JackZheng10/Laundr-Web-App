@@ -604,14 +604,23 @@ class OrderStatus extends Component {
                       variant="outlined"
                       value={this.state.selectValue}
                       onChange={handleTimeSelect}
+                      MenuProps={{
+                        anchorOrigin: {
+                          vertical: "bottom",
+                          horizontal: "left",
+                        },
+                        getContentAnchorEl: null,
+                      }}
                     >
-                      {availableTimes.map((time, index) => {
-                        return (
-                          <MenuItem value={index} key={index}>
-                            {time.string}
-                          </MenuItem>
-                        );
-                      })}
+                      <div style={{ maxHeight: 140 }}>
+                        {availableTimes.map((time, index) => {
+                          return (
+                            <MenuItem value={index} key={index}>
+                              {time.string}
+                            </MenuItem>
+                          );
+                        })}
+                      </div>
                     </Select>
                   </FormControl>
                 </ThemeProvider>

@@ -343,20 +343,6 @@ class NewOrder extends Component {
       );
       canNext = false;
     }
-    // } else if (
-    //   this.state.todaySelected &&
-    //   scheduledTime.isAfter(upperBound) //can replace with upperbound?
-    // ) {
-    //   //if selected today and its after 8 PM
-    //   this.context.showAlert(
-    //     "Sorry! We are closed after 8 PM. Please select a different day."
-    //   );
-    //   canNext = false;
-    // } else if (!scheduledTime.isBetween(lowerBound, upperBound)) {
-    //   //if pickup time isnt between 10 am and 8 pm
-    //   this.context.showAlert("The pickup time must be between 10 AM and 8 PM.");
-    //   canNext = false;
-    // }
 
     return canNext;
   };

@@ -53,7 +53,7 @@ class Scheduling extends Component {
 
     const handleTimeSelect = (event) => {
       const index = event.target.value;
-
+  
       handleInputChange("time", {
         lowerBound: availableTimes[index].lowerBound,
         upperBound: availableTimes[index].upperBound,
@@ -160,15 +160,13 @@ class Scheduling extends Component {
                     getContentAnchorEl: null,
                   }}
                 >
-                  <div style={{ maxHeight: 140 }}>
-                    {availableTimes.map((time, index) => {
-                      return (
-                        <MenuItem value={index} key={index}>
-                          {time.string}
-                        </MenuItem>
-                      );
-                    })}
-                  </div>
+                  {availableTimes.map((time, index) => {
+                    return (
+                      <MenuItem value={index} key={index}>
+                        {time.string}
+                      </MenuItem>
+                    );
+                  })}
                 </Select>
                 {!todaySelected && !tomorrowSelected && (
                   <FormHelperText>*Please select a date first.</FormHelperText>

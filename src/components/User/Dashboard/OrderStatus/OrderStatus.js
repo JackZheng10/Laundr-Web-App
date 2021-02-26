@@ -230,8 +230,31 @@ class OrderStatus extends Component {
           availableTimes = possibleTimes;
         }
       } else {
-        //can only get here if it's possible to do same-day, so only 6-8 window available
-        availableTimes = this.getClosestTimes(now, possibleTimes.slice(8));
+        //if today is the day after pickup
+        if (pickupLowerBound.add(1, "days").isSame(now, "day")) {
+          //if picked up within the 6-8 window
+          if (
+            pickupLowerBound.isSameOrAfter(sixPM) &&
+            pickupLowerBound.isSameOrBefore(eightPM)
+          ) {
+            console.log("3");
+            //only 6-8 window available
+            availableTimes = this.getClosestTimes(now, possibleTimes.slice(8));
+          } else {
+            console.log("4");
+            availableTimes = this.getClosestTimes(now, possibleTimes);
+          }
+        } else if (pickupLowerBound.isSame(now, "day")) {
+          console.log("1");
+          //if today is pickup, only 6-8 window available
+          availableTimes = this.getClosestTimes(now, possibleTimes.slice(8));
+        } else {
+          console.log("2");
+          console.log(pickupLowerBound.format());
+          console.log(now.format());
+          console.log(`${pickupDate} ${formattedPickupTime}`);
+          availableTimes = this.getClosestTimes(now, possibleTimes);
+        }
       }
     }
 
@@ -258,6 +281,7 @@ class OrderStatus extends Component {
           todaySelected: true,
           tomorrowSelected: false,
           date: this.today,
+          selectValue: "",
         });
         break;
 
@@ -266,6 +290,7 @@ class OrderStatus extends Component {
           todaySelected: false,
           tomorrowSelected: true,
           date: this.tomorrow,
+          selectValue: "",
         });
         break;
     }
@@ -623,15 +648,13 @@ class OrderStatus extends Component {
                         getContentAnchorEl: null,
                       }}
                     >
-                      <div style={{ maxHeight: 140 }}>
-                        {availableTimes.map((time, index) => {
-                          return (
-                            <MenuItem value={index} key={index}>
-                              {time.string}
-                            </MenuItem>
-                          );
-                        })}
-                      </div>
+                      {availableTimes.map((time, index) => {
+                        return (
+                          <MenuItem value={index} key={index}>
+                            {time.string}
+                          </MenuItem>
+                        );
+                      })}
                     </Select>
                     {!this.state.todaySelected &&
                       !this.state.tomorrowSelected && (

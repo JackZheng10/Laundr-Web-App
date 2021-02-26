@@ -214,7 +214,12 @@ class OrderStatus extends Component {
     if (this.state.tomorrowSelected || this.state.todaySelected) {
       if (this.state.tomorrowSelected) {
         //if tomorrow is the day after pickup
-        if (pickupLowerBound.add(1, "days").isSame(now.add(1, "days"), "day")) {
+        if (
+          pickupLowerBound
+            .clone()
+            .add(1, "days")
+            .isSame(now.clone().add(1, "days"), "day")
+        ) {
           //if picked up within the 6-8 window
           if (
             pickupLowerBound.isSameOrAfter(sixPM) &&
@@ -231,7 +236,7 @@ class OrderStatus extends Component {
         }
       } else {
         //if today is the day after pickup
-        if (pickupLowerBound.add(1, "days").isSame(now, "day")) {
+        if (pickupLowerBound.clone().add(1, "days").isSame(now, "day")) {
           //if picked up within the 6-8 window
           if (
             pickupLowerBound.isSameOrAfter(sixPM) &&
@@ -250,9 +255,14 @@ class OrderStatus extends Component {
           availableTimes = this.getClosestTimes(now, possibleTimes.slice(8));
         } else {
           console.log("2");
-          console.log(pickupLowerBound.format());
-          console.log(now.format());
-          console.log(`${pickupDate} ${formattedPickupTime}`);
+          console.log(pickupLowerBound.format("MM-DD-YYYY h:mm A"));
+          console.log(now.format("MM-DD-YYYY h:mm A"));
+          console.log(
+            moment(
+              `${pickupDate} ${formattedPickupTime}`,
+              "MM/DD/YYYY h:mm A"
+            ).format("MM-DD-YYYY h:mm A")
+          );
           availableTimes = this.getClosestTimes(now, possibleTimes);
         }
       }

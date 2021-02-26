@@ -206,9 +206,8 @@ class NewOrder extends Component {
   };
 
   getTimeAvailability = () => {
-    //todo: go over rules again...shouldnt today not available be if it's after 7:30 pm?
     const lowerBound = moment("10:00:00", "HH:mm:ss");
-    const upperBound = moment("20:00:00", "HH:mm:ss");
+    const upperBound = moment("19:30:00", "HH:mm:ss");
     const now = moment();
 
     let todayNotAvailable = false;
@@ -216,7 +215,7 @@ class NewOrder extends Component {
       todayNotAvailable = true;
     }
 
-    let possibleTimes = [
+    const possibleTimes = [
       {
         lowerBound: moment("10:00 AM", "h:mm A"),
         upperBound: moment("10:30 AM", "h:mm A"),
@@ -330,7 +329,7 @@ class NewOrder extends Component {
       canNext = false;
     } else if (this.state.todaySelected && now.isSameOrAfter(upperBound)) {
       this.context.showAlert(
-        "Sorry! We don't accept pickups after 7:30 PM. Please choose a pickup time for tomorrow."
+        "Sorry! Our last pickup window at 7:30 PM has passed. Please choose a pickup time for tomorrow."
       );
       canNext = false;
     } else if (

@@ -71,13 +71,18 @@ class Scheduling extends Component {
             {todayNotAvailable && (
               <Tooltip
                 title={
-                  <Typography variant="body1" style={{ color: "white" }}>
+                  <Typography
+                    variant="body1"
+                    style={{ color: "white", textAlign: "center" }}
+                  >
                     Pickup is not available after 8 PM.
                   </Typography>
                 }
                 arrow
+                enterTouchDelay={100}
+                leaveTouchDelay={5000}
               >
-                <span>
+                <div>
                   <Button
                     disabled
                     variant="contained"
@@ -88,7 +93,7 @@ class Scheduling extends Component {
                   >
                     Today: {today}
                   </Button>
-                </span>
+                </div>
               </Tooltip>
             )}
             {!todayNotAvailable && (

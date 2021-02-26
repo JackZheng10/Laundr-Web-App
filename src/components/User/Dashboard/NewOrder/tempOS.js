@@ -19,15 +19,11 @@ import {
   Tooltip,
 } from "@material-ui/core";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
-import { getCurrentUser } from "../../../../helpers/session";
 import { caughtError, showConsoleError } from "../../../../helpers/errors";
 import { MuiPickersUtilsProvider, TimePicker } from "@material-ui/pickers";
-import { withRouter } from "next/router";
-import compose from "recompose/compose";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import DateFnsUtils from "@date-io/date-fns";
 import axios from "axios";
-import LoadingButton from "../../../other/LoadingButton";
 import MainAppContext from "../../../../contexts/MainAppContext";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
 import QueryBuilderIcon from "@material-ui/icons/QueryBuilder";
@@ -45,10 +41,10 @@ import orderStatusStyles from "../../../../styles/User/Dashboard/components/Orde
 //7: canceled
 //8: fulfilled (user confirmed theyve seen the status on it)
 
-//todo: gold button focus for dropoff and cancel
+//todo: fix time picker dialog positioning for this and scheduling?
+//todo: design like card for driver/washer or vice versa?
 
-const moment = require("moment-timezone");
-moment.tz.setDefault("America/New_York");
+const moment = require("moment");
 
 const timeTheme = createMuiTheme({
   palette: {
@@ -72,177 +68,87 @@ class OrderStatus extends Component {
 
     this.state = {
       showDropoffDialog: false,
+      rawTime: new Date(),
+      formattedTime: moment().format("LT"),
       date: "N/A",
       todaySelected: false,
       tomorrowSelected: false,
-      formattedTime: "N/A",
-      selectValue: "",
-      lowerBound: null,
-      upperBound: null,
     };
   }
 
-  getClosestTimes = (now, possibleTimes) => {
-    let availableTimes = [];
-
-    for (let x = 0; x < possibleTimes.length; x++) {
-      //get the times starting at the first range where it's before or same as now
-      if (now.isBefore(possibleTimes[x].lowerBound)) {
-        //if its not at least 30 mins before
-        if (now.diff(possibleTimes[x].lowerBound, "minutes") >= -29) {
-          continue;
-        } else {
-          availableTimes = possibleTimes.slice(x);
-          break;
-        }
-      }
-    }
-
-    return availableTimes;
-  };
-
   getTimeAvailability = (order) => {
-    const possibleTimes = [
-      {
-        lowerBound: moment("10:00 AM", "h:mm A"),
-        upperBound: moment("10:30 AM", "h:mm A"),
-        string: "10:00 AM - 10:30 AM",
-      },
-      {
-        lowerBound: moment("10:30 AM", "h:mm A"),
-        upperBound: moment("11:00 AM", "h:mm A"),
-        string: "10:30 AM - 11:00 AM",
-      },
-      {
-        lowerBound: moment("11:00 AM", "h:mm A"),
-        upperBound: moment("11:30 AM", "h:mm A"),
-        string: "11:00 AM - 11:30 AM",
-      },
-      {
-        lowerBound: moment("11:30 AM", "h:mm A"),
-        upperBound: moment("12:00 PM", "h:mm A"),
-        string: "11:30 AM - 12:00 PM",
-      },
-      {
-        lowerBound: moment("12:00 PM", "h:mm A"),
-        upperBound: moment("12:30 PM", "h:mm A"),
-        string: "12:00 PM - 12:30 PM",
-      },
-      {
-        lowerBound: moment("12:30 PM", "h:mm A"),
-        upperBound: moment("1:00 PM", "h:mm A"),
-        string: "12:30 PM - 1:00 PM",
-      },
-      {
-        lowerBound: moment("1:00 PM", "h:mm A"),
-        upperBound: moment("1:30 AM", "h:mm A"),
-        string: "1:00 PM - 1:30 PM",
-      },
-      {
-        lowerBound: moment("1:30 PM", "h:mm A"),
-        upperBound: moment("2:00 PM", "h:mm A"),
-        string: "1:30 PM - 2:00 PM",
-      },
-      {
-        lowerBound: moment("6:00 PM", "h:mm A"),
-        upperBound: moment("6:30 PM", "h:mm A"),
-        string: "6:00 PM - 6:30 PM",
-      },
-      {
-        lowerBound: moment("6:30 PM", "h:mm A"),
-        upperBound: moment("7:00 PM", "h:mm A"),
-        string: "6:30 PM - 7:00 PM",
-      },
-      {
-        lowerBound: moment("7:00 PM", "h:mm A"),
-        upperBound: moment("7:30 PM", "h:mm A"),
-        string: "7:00 PM - 7:30 PM",
-      },
-      {
-        lowerBound: moment("7:30 PM", "h:mm A"),
-        upperBound: moment("8:00 PM", "h:mm A"),
-        string: "7:30 PM - 8:00 PM",
-      },
+    let times = [
+      { time: moment("10:00 AM", "h:mm A"), string: "10:00 AM - 10:30 AM" },
+      { time: moment("10:30 AM", "h:mm A"), string: "10:30 AM - 11:00 AM" },
+      { time: moment("11:00 AM", "h:mm A"), string: "11:00 AM - 11:30 AM" },
+      { time: moment("11:30 AM", "h:mm A"), string: "11:30 AM - 12:00 PM" },
+      { time: moment("12:00 PM", "h:mm A"), string: "12:00 PM - 12:30 PM" },
+      { time: moment("12:30 PM", "h:mm A"), string: "12:30 PM - 1:00 PM" },
+      { time: moment("1:00 PM", "h:mm A"), string: "1:00 PM - 1:30 PM" },
+      { time: moment("1:30 PM", "h:mm A"), string: "1:30 PM - 2:00 PM" },
+      { time: moment("6:00 PM", "h:mm A"), string: "6:00 PM - 6:30 PM" },
+      { time: moment("6:30 PM", "h:mm A"), string: "6:30 PM - 7:00 PM" },
+      { time: moment("7:00 PM", "h:mm A"), string: "7:00 PM - 7:30 PM" },
+      { time: moment("7:30 PM", "h:mm A"), string: "7:30 PM - 8:00 PM" },
     ];
 
     const weight = order.orderInfo.weight;
-    const pickupTime = order.pickupInfo.time.split("-")[0];
-    const formattedPickupTime = pickupTime.slice(0, pickupTime.length - 1);
-    const pickupDate = order.pickupInfo.date;
+    const pickupInfo = order.pickupInfo;
+    const pickupTime = moment(pickupInfo.rawTime, moment.ISO_8601);
 
-    const pickupLowerBound = moment(
-      `${pickupDate} ${formattedPickupTime}`,
-      "MM/DD/YYYY h:mm A"
-    );
-    const tenAM = moment(`${pickupDate} 10:00:00`, "MM/DD/YYYY HH:mm:ss");
-    const twoPM = moment(`${pickupDate} 14:00:00`, "MM/DD/YYYY HH:mm:ss");
-    const sixPM = moment(`${pickupDate} 18:00:00`, "MM/DD/YYYY HH:mm:ss");
-    const eightPM = moment(`${pickupDate} 20:00:00`, "MM/DD/YYYY HH:mm:ss");
-    const now = moment();
+    const twoPM = moment("14:00:00", "HH:mm:ss"); //2 PM
+    const sixPM = moment("18:00:00", "HH:mm:ss"); //6 PM
+    const eightPM = moment("20:00:00", "HH:mm:ss"); //8 PM
+    const currentTime = moment(moment(), "HH:mm:ss");
 
+    let startWindow = 0;
     let todayNotAvailable = false;
-    let availableTimes = [];
-    let unavailableMessage = "";
 
-    //if today is same day as pickup
-    if (now.isSameOrAfter(moment(`19:30:00`, "HH:mm:ss"))) {
+    if (
+      pickupTime.isSameOrBefore(twoPM) &&
+      currentTime.isSameOrAfter(eightPM) &&
+      weight < 40
+    ) {
       todayNotAvailable = true;
-      availableTimes = possibleTimes;
-      unavailableMessage =
-        "Sorry! Our last delivery window at 7:30 PM has passed. Please choose a delivery time for tomorrow.";
-    } else if (pickupLowerBound.isSame(now, "day")) {
-      if (weight > 29) {
-        todayNotAvailable = true;
-        availableTimes = possibleTimes;
-        unavailableMessage =
-          "Same-day delivery is not available for your order due to weight.";
-      } else if (
-        pickupLowerBound.isSameOrAfter(tenAM) &&
-        pickupLowerBound.isSameOrBefore(twoPM)
-      ) {
-        //if picked up in morning window, only 6-8 window available
-        availableTimes = this.getClosestTimes(now, possibleTimes.slice(8));
-      } else {
-        //picked up in night window
-        todayNotAvailable = true;
-        availableTimes = possibleTimes;
-        unavailableMessage =
-          "Same-day delivery is not available for your order due to the pickup time.";
-      }
-    } else if (pickupLowerBound.isSame(now.add(1, "days"), "day")) {
-      //if today is the day after pickup
+    } else if (pickupTime.isSameOrBefore(twoPM) && weight >= 40) {
+      todayNotAvailable = true;
+    } else if (pickupTime.isSameOrAfter(sixPM)) {
+      todayNotAvailable = true;
+    }
 
-      //if picked up within the 6-8 window
+    if (this.state.todaySelected && !this.state.tomorrowSelected) {
       if (
-        pickupLowerBound.isSameOrAfter(sixPM) &&
-        pickupLowerBound.isSameOrBefore(eightPM)
+        pickupTime.isSameOrBefore(twoPM) &&
+        currentTime.isBefore(eightPM) &&
+        weight < 40
       ) {
-        //only 6-8 window available
-        availableTimes = this.getClosestTimes(now, possibleTimes.slice(8));
-      } else {
-        availableTimes = this.getClosestTimes(now, possibleTimes);
+        startWindow = 8;
       }
-    } else {
-      //2 or more days after pickup
-      availableTimes = this.getClosestTimes(now, possibleTimes);
+    } else if (this.state.tomorrowSelected && !this.state.todaySelected) {
+      if (pickupTime.isSameOrBefore(twoPM)) {
+        startWindow = 0;
+      } else if (pickupTime.isSameOrAfter(sixPM)) {
+        startWindow = 8;
+      }
+    }
+
+    let availableTimes = [];
+    for (var j = startWindow; j < times.length; j++) {
+      availableTimes.push(times[j]);
     }
 
     return {
       availableTimes,
       todayNotAvailable,
-      unavailableMessage,
     };
   };
 
   handleInputChange = (property, value) => {
     switch (property) {
       case "time":
-        this.setState({
-          lowerBound: value.lowerBound,
-          upperBound: value.upperBound,
-          formattedTime: value.string,
-          selectValue: value.selectValue,
-        });
+        const rawTime = value.time;
+        const formattedTime = value.string;
+        this.setState({ rawTime, formattedTime });
         break;
 
       case "today":
@@ -269,17 +175,9 @@ class OrderStatus extends Component {
         params: {
           orderID: order.orderInfo.orderID,
         },
-        withCredentials: true,
       });
 
-      if (!response.data.success && response.data.redirect) {
-        this.props.router.push(response.data.message);
-      } else {
-        this.context.showAlert(
-          response.data.message,
-          this.props.fetchOrderInfo
-        );
-      }
+      this.context.showAlert(response.data.message, this.props.fetchOrderInfo);
     } catch (error) {
       showConsoleError("cancelling order", error);
       this.context.showAlert(caughtError("cancelling order", error, 99));
@@ -289,25 +187,16 @@ class OrderStatus extends Component {
   handleSetDropoffTime = async (order) => {
     if (this.handleTimeCheck()) {
       try {
-        const response = await axios.put(
-          "/api/order/setDropoff",
-          {
-            orderID: order.orderInfo.orderID,
-            date: this.state.date,
-            time: this.state.formattedTime,
-          },
-          { withCredentials: true }
-        );
-
+        const response = await axios.put("/api/order/setDropoff", {
+          orderID: order.orderInfo.orderID,
+          date: this.state.date,
+          time: this.state.formattedTime,
+        });
         this.setState({ showDropoffDialog: false }, () => {
-          if (!response.data.success && response.data.redirect) {
-            this.props.router.push(response.data.message);
-          } else {
-            this.context.showAlert(
-              response.data.message,
-              this.props.fetchOrderInfo
-            );
-          }
+          this.context.showAlert(
+            response.data.message,
+            this.props.fetchOrderInfo
+          );
         });
       } catch (error) {
         showConsoleError("setting dropoff", error);
@@ -320,29 +209,25 @@ class OrderStatus extends Component {
   handleTimeCheck = () => {
     let canNext = true;
 
-    const scheduledLowerBound = this.state.lowerBound;
-    const upperBound = moment("19:30:00", "HH:mm:ss"); //last pickup time is 7:30 PM
-    const now = moment();
+    const lowerBound = moment("10:00:00", "HH:mm:ss").add(1, "minutes"); //10 AM
+    const upperBound = moment("20:00:00", "HH:mm:ss").add(1, "minutes"); //8 PM
+    const hourFromNow = moment(moment(), "HH:mm:ss").add(1, "hours");
+    const dropoffTime = moment(this.state.rawTime);
 
     if (!this.state.todaySelected && !this.state.tomorrowSelected) {
       //if no date selected
-      this.context.showAlert("Please select a pickup date.");
+      this.context.showAlert("Please select a dropoff date.");
       canNext = false;
-    } else if (!this.state.lowerBound || !this.state.upperBound) {
-      //if no time selected
-      this.context.showAlert("Please select a pickup time.");
-      canNext = false;
-    } else if (this.state.todaySelected && now.isSameOrAfter(upperBound)) {
+    } else if (this.state.todaySelected && hourFromNow.isAfter(upperBound)) {
+      //if selected today and its after 8 PM
       this.context.showAlert(
-        "Sorry! Our last pickup window at 7:30 PM has passed. Please choose a pickup time for tomorrow."
+        "Sorry! We are closed after 8 PM. Please select a different day."
       );
       canNext = false;
-    } else if (
-      this.state.todaySelected &&
-      now.diff(scheduledLowerBound, "minutes") >= -29
-    ) {
+    } else if (!dropoffTime.isBetween(lowerBound, upperBound)) {
+      //if dropoff time isnt between 10 am and 8 pm
       this.context.showAlert(
-        "Sorry! Pickup time must be at least 30 minutes in advance."
+        "The dropoff time must be between 10 AM and 8 PM."
       );
       canNext = false;
     }
@@ -352,22 +237,14 @@ class OrderStatus extends Component {
 
   handleConfirmReceived = async (order) => {
     try {
-      const response = await axios.put(
-        "/api/order/confirmReceived",
-        {
-          orderID: order.orderInfo.orderID,
-        },
-        { withCredentials: true }
-      );
+      const response = await axios.put("/api/order/confirmReceived", {
+        orderID: order.orderInfo.orderID,
+      });
 
       if (response.data.success) {
-        this.props.fetchOrderInfo();
+        await this.props.fetchOrderInfo();
       } else {
-        if (response.data.redirect) {
-          this.props.router.push(response.data.message);
-        } else {
-          this.context.showAlert(response.data.message);
-        }
+        this.context.showAlert(response.data.message);
       }
     } catch (error) {
       showConsoleError("setting dropoff", error);
@@ -378,14 +255,11 @@ class OrderStatus extends Component {
   toggleDropoffDialog = () => {
     if (this.state.showDropoffDialog) {
       this.setState({
-        showDropoffDialog: !this.state.showDropoffDialog,
-        date: "N/A",
         todaySelected: false,
         tomorrowSelected: false,
-        formattedTime: "N/A",
-        selectValue: "",
-        lowerBound: null,
-        upperBound: null,
+        rawTime: new Date(),
+        formattedTime: moment(moment(), "HH:mm:ss").format("LT"),
+        showDropoffDialog: !this.state.showDropoffDialog,
       });
     } else {
       this.setState({ showDropoffDialog: !this.state.showDropoffDialog });
@@ -470,24 +344,22 @@ class OrderStatus extends Component {
     }
   };
 
+  handleTimeSelect = (event, order) => {
+    let index = event.target.value;
+    let timeAvailability = this.getTimeAvailability(order);
+    let availableTimes = timeAvailability.availableTimes;
+    this.handleInputChange("time", {
+      time: availableTimes[index].time,
+      string: availableTimes[index].string,
+    });
+  };
+
   render() {
     const { classes, order } = this.props;
 
-    const timeAvailability = this.getTimeAvailability(order);
-    const todayNotAvailable = timeAvailability.todayNotAvailable;
-    const availableTimes = timeAvailability.availableTimes;
-    const unavailableMessage = timeAvailability.unavailableMessage;
-
-    const handleTimeSelect = (event) => {
-      const index = event.target.value;
-
-      this.handleInputChange("time", {
-        lowerBound: availableTimes[index].lowerBound,
-        upperBound: availableTimes[index].upperBound,
-        string: availableTimes[index].string,
-        selectValue: index,
-      });
-    };
+    let timeAvailability = this.getTimeAvailability(order);
+    let todayNotAvailable = timeAvailability.todayNotAvailable;
+    let availableTimes = timeAvailability.availableTimes;
 
     return (
       <React.Fragment>
@@ -511,34 +383,24 @@ class OrderStatus extends Component {
                 },
               }}
             >
-              <DialogTitle disableTypography>
-                <Typography variant="h4" style={{ color: "#01c9e1" }}>
-                  Set Dropoff
-                </Typography>
-              </DialogTitle>
+              <DialogTitle>Set Dropoff</DialogTitle>
               <DialogContent>
-                <Typography variant="h5" gutterBottom>
-                  What day would you like your order to be dropped off??
-                </Typography>
                 <Grid container spacing={2} style={{ marginBottom: 5 }}>
                   <Grid item xs={12} sm={6}>
                     {todayNotAvailable && (
                       <Tooltip
                         title={
-                          <Typography
-                            variant="body1"
-                            style={{ color: "white", textAlign: "center" }}
-                          >
-                            {unavailableMessage}
-                          </Typography>
+                          <React.Fragment>
+                            {
+                              "Same-day dropoff is not available for this pickup time."
+                            }
+                          </React.Fragment>
                         }
                         arrow
-                        enterTouchDelay={100}
-                        leaveTouchDelay={5000}
                       >
-                        <div>
+                        <span>
                           <Button
-                            disabled
+                            disabled="true"
                             variant="contained"
                             style={{
                               backgroundColor: "#d5d5d5",
@@ -550,7 +412,7 @@ class OrderStatus extends Component {
                           >
                             {this.today}
                           </Button>
-                        </div>
+                        </span>
                       </Tooltip>
                     )}
                     {!todayNotAvailable && (
@@ -593,24 +455,15 @@ class OrderStatus extends Component {
                     </Button>
                   </Grid>
                 </Grid>
-                <Typography variant="h5" className={classes.title}>
-                  What's your preferred dropoff time?
-                </Typography>
                 <ThemeProvider theme={timeTheme}>
                   <FormControl className={classes.formControl}>
                     <Select
                       labelId="times"
                       displayEmpty
-                      variant="outlined"
-                      value={this.state.selectValue}
-                      onChange={handleTimeSelect}
+                      onChange={(e) => this.handleTimeSelect(e, order)}
                     >
                       {availableTimes.map((time, index) => {
-                        return (
-                          <MenuItem value={index} key={index}>
-                            {time.string}
-                          </MenuItem>
-                        );
+                        return <MenuItem value={index}>{time.string}</MenuItem>;
                       })}
                     </Select>
                   </FormControl>
@@ -624,13 +477,15 @@ class OrderStatus extends Component {
                 >
                   Cancel
                 </Button>
-                <LoadingButton
-                  onClick={async () => await this.handleSetDropoffTime(order)}
+                <Button
+                  onClick={() => {
+                    this.handleSetDropoffTime(order);
+                  }}
                   variant="contained"
                   className={classes.mainButton}
                 >
                   Confirm
-                </LoadingButton>
+                </Button>
               </DialogActions>
             </Dialog>
             <CardContent id="orderStatusContainer">
@@ -664,10 +519,10 @@ class OrderStatus extends Component {
                         size="medium"
                         variant="contained"
                         className={
-                          order.dropoffInfo.time === "N/A" &&
-                          order.orderInfo.status > 2
-                            ? classes.secondaryButton
-                            : classes.mainButton
+                          order.orderInfo.status < 2 &&
+                          order.dropoffInfo.time === "N/A"
+                            ? classes.mainButton
+                            : classes.secondaryButton
                         }
                         onClick={() => {
                           order.orderInfo.status === 6
@@ -698,4 +553,4 @@ OrderStatus.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default compose(withRouter, withStyles(orderStatusStyles))(OrderStatus);
+export default withStyles(orderStatusStyles)(OrderStatus);

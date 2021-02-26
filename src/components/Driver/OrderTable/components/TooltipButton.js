@@ -61,7 +61,7 @@ class PopoverButton extends Component {
 
     return (
       <React.Fragment>
-        <LightTooltip
+        {/* <LightTooltip
           disableHoverListener
           disableTouchListener
           title={<Typography variant="body1">{text}</Typography>}
@@ -72,7 +72,25 @@ class PopoverButton extends Component {
           arrow
         >
           {this.renderTrigger(icon, className, size, buttonText)}
-        </LightTooltip>
+        </LightTooltip> //this is the white background, laundr blue arrow tooltip. kinda clashes. */}
+        <Tooltip
+          disableHoverListener
+          disableTouchListener
+          title={
+            <Typography
+              variant="body1"
+              style={{ color: "white", textAlign: "center" }}
+            >
+              {text}
+            </Typography>
+          }
+          open={this.state.open}
+          placement="bottom"
+          onClose={this.togglePopover}
+          arrow
+        >
+          {this.renderTrigger(icon, className, size, buttonText)}
+        </Tooltip>
       </React.Fragment>
     );
   }

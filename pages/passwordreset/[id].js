@@ -295,7 +295,7 @@ export async function getServerSideProps(context) {
       },
     };
   } else if (
-    moment(session.expires).tz("America/New_York").isBefore(moment())
+    moment(session.expires).isBefore(moment()) //todo: test with deployed
   ) {
     return {
       props: {

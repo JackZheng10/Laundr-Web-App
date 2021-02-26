@@ -206,15 +206,6 @@ class NewOrder extends Component {
   };
 
   getTimeAvailability = () => {
-    const lowerBound = moment("10:00:00", "HH:mm:ss");
-    const upperBound = moment("19:30:00", "HH:mm:ss");
-    const now = moment();
-
-    let todayNotAvailable = false;
-    if (now.isSameOrAfter(upperBound)) {
-      todayNotAvailable = true;
-    }
-
     const possibleTimes = [
       {
         lowerBound: moment("10:00 AM", "h:mm A"),
@@ -278,25 +269,36 @@ class NewOrder extends Component {
       },
     ];
 
-    let availableTimes = [];
+    const lowerBound = moment("10:00:00", "HH:mm:ss");
+    const upperBound = moment("19:00:00", "HH:mm:ss");
+    const now = moment();
 
-    //if before earliest pickup or after latest pickup (where todayNotAvailable would be true)
-    if (
-      now.isSameOrBefore(lowerBound) ||
-      now.isSameOrAfter(upperBound) ||
-      this.state.tomorrowSelected
-    ) {
-      availableTimes = possibleTimes;
-    } else {
-      for (let x = 0; x < possibleTimes.length; x++) {
-        //get the times starting at the first range where it's before or same as now
-        if (now.isBefore(possibleTimes[x].lowerBound)) {
-          //if its not at least 30 mins before
-          if (now.diff(possibleTimes[x].lowerBound, "minutes") >= -29) {
-            continue;
-          } else {
-            availableTimes = possibleTimes.slice(x);
-            break;
+    let availableTimes = [];
+    let todayNotAvailable = false;
+
+    //when here, user has already chosen a date
+
+    //if after 7:00, since pickup needs to be at least 30 mins away and last window is 7:30
+    if (now.isSameOrAfter(upperBound)) {
+      todayNotAvailable = true;
+    }
+
+    //if date chosen
+    if (this.state.tomorrowSelected || this.state.todaySelected) {
+      //if before earliest pickup or after latest pickup (where todayNotAvailable would be true)
+      if (this.state.tomorrowSelected) {
+        availableTimes = possibleTimes;
+      } else {
+        for (let x = 0; x < possibleTimes.length; x++) {
+          //get the times starting at the first range where it's before or same as now
+          if (now.isBefore(possibleTimes[x].lowerBound)) {
+            //if its not at least 30 mins before
+            if (now.diff(possibleTimes[x].lowerBound, "minutes") >= -29) {
+              continue;
+            } else {
+              availableTimes = possibleTimes.slice(x);
+              break;
+            }
           }
         }
       }
@@ -316,7 +318,7 @@ class NewOrder extends Component {
 
     //isBetween is non-inclusive of the bounds
     const lowerBound = moment("10:00:00", "HH:mm:ss");
-    const upperBound = moment("19:30:00", "HH:mm:ss"); //last pickup time is 7:30 PM
+    const upperBound = moment("19:00:00", "HH:mm:ss");
     const now = moment();
 
     if (!this.state.todaySelected && !this.state.tomorrowSelected) {
@@ -329,7 +331,7 @@ class NewOrder extends Component {
       canNext = false;
     } else if (this.state.todaySelected && now.isSameOrAfter(upperBound)) {
       this.context.showAlert(
-        "Sorry! Our last pickup window at 7:30 PM has passed. Please choose a pickup time for tomorrow."
+        "Sorry! Our last pickup window today has passed. Please choose a time for tomorrow."
       );
       canNext = false;
     } else if (

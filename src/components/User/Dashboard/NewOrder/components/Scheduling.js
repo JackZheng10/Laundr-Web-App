@@ -8,6 +8,7 @@ import {
   MenuItem,
   FormControl,
   Tooltip,
+  FormHelperText,
 } from "@material-ui/core";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import { MuiPickersUtilsProvider, TimePicker } from "@material-ui/pickers";
@@ -75,7 +76,8 @@ class Scheduling extends Component {
                     variant="body1"
                     style={{ color: "white", textAlign: "center" }}
                   >
-                    Pickup is not available after 8 PM.
+                    Sorry! Our last pickup window today has passed. Please
+                    choose a time for tomorrow.
                   </Typography>
                 }
                 arrow
@@ -144,6 +146,7 @@ class Scheduling extends Component {
             <ThemeProvider theme={timeTheme}>
               <FormControl className={classes.formControl}>
                 <Select
+                  disabled={!todaySelected && !tomorrowSelected}
                   labelId="times"
                   displayEmpty
                   variant="outlined"
@@ -167,6 +170,9 @@ class Scheduling extends Component {
                     })}
                   </div>
                 </Select>
+                {!todaySelected && !tomorrowSelected && (
+                  <FormHelperText>*Please select a date first.</FormHelperText>
+                )}
               </FormControl>
             </ThemeProvider>
           </Grid>

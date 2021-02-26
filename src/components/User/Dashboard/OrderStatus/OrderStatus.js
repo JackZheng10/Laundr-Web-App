@@ -16,6 +16,7 @@ import {
   FormControl,
   Select,
   MenuItem,
+  FormHelperText,
   Tooltip,
 } from "@material-ui/core";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
@@ -184,47 +185,54 @@ class OrderStatus extends Component {
     let availableTimes = [];
     let unavailableMessage = "";
 
-    //if today is same day as pickup
-    if (now.isSameOrAfter(moment(`19:30:00`, "HH:mm:ss"))) {
+    //check for any case of unavailable same-day
+    if (now.isSameOrAfter(moment(`19:00:00`, "HH:mm:ss"))) {
       todayNotAvailable = true;
       availableTimes = possibleTimes;
       unavailableMessage =
-        "Sorry! Our last delivery window at 7:30 PM has passed. Please choose a delivery time for tomorrow.";
+        "Sorry! Our last delivery window today has passed. Please choose a time for tomorrow.";
     } else if (pickupLowerBound.isSame(now, "day")) {
-      if (weight > 29) {
-        todayNotAvailable = true;
-        availableTimes = possibleTimes;
-        unavailableMessage =
-          "Same-day delivery is not available for your order due to weight.";
-      } else if (
-        pickupLowerBound.isSameOrAfter(tenAM) &&
-        pickupLowerBound.isSameOrBefore(twoPM)
+      //today is the same day as pickup
+      if (
+        pickupLowerBound.isSameOrAfter(sixPM) &&
+        pickupLowerBound.isSameOrBefore(eightPM)
       ) {
-        //if picked up in morning window, only 6-8 window available
-        availableTimes = this.getClosestTimes(now, possibleTimes.slice(8));
-      } else {
         //picked up in night window
         todayNotAvailable = true;
         availableTimes = possibleTimes;
         unavailableMessage =
           "Same-day delivery is not available for your order due to the pickup time.";
+      } else if (weight > 29) {
+        todayNotAvailable = true;
+        availableTimes = possibleTimes;
+        unavailableMessage =
+          "Same-day delivery is not available for your order due to weight.";
       }
-    } else if (pickupLowerBound.isSame(now.add(1, "days"), "day")) {
-      //if today is the day after pickup
+    }
 
-      //if picked up within the 6-8 window
-      if (
-        pickupLowerBound.isSameOrAfter(sixPM) &&
-        pickupLowerBound.isSameOrBefore(eightPM)
-      ) {
-        //only 6-8 window available
-        availableTimes = this.getClosestTimes(now, possibleTimes.slice(8));
+    //if date chosen
+    if (this.state.tomorrowSelected || this.state.todaySelected) {
+      if (this.state.tomorrowSelected) {
+        //if tomorrow is the day after pickup
+        if (pickupLowerBound.add(1, "days").isSame(now.add(1, "days"), "day")) {
+          //if picked up within the 6-8 window
+          if (
+            pickupLowerBound.isSameOrAfter(sixPM) &&
+            pickupLowerBound.isSameOrBefore(eightPM)
+          ) {
+            //only 6-8 window available
+            availableTimes = this.getClosestTimes(now, possibleTimes.slice(8));
+          } else {
+            availableTimes = possibleTimes;
+          }
+        } else {
+          //2 or more days after pickup
+          availableTimes = possibleTimes;
+        }
       } else {
-        availableTimes = this.getClosestTimes(now, possibleTimes);
+        //can only get here if it's possible to do same-day, so only 6-8 window available
+        availableTimes = this.getClosestTimes(now, possibleTimes.slice(8));
       }
-    } else {
-      //2 or more days after pickup
-      availableTimes = this.getClosestTimes(now, possibleTimes);
     }
 
     return {
@@ -316,12 +324,11 @@ class OrderStatus extends Component {
     }
   };
 
-  //todo: test
   handleTimeCheck = () => {
     let canNext = true;
 
     const scheduledLowerBound = this.state.lowerBound;
-    const upperBound = moment("19:30:00", "HH:mm:ss"); //last pickup time is 7:30 PM
+    const upperBound = moment("19:00:00", "HH:mm:ss");
     const now = moment();
 
     if (!this.state.todaySelected && !this.state.tomorrowSelected) {
@@ -334,7 +341,7 @@ class OrderStatus extends Component {
       canNext = false;
     } else if (this.state.todaySelected && now.isSameOrAfter(upperBound)) {
       this.context.showAlert(
-        "Sorry! Our last pickup window at 7:30 PM has passed. Please choose a pickup time for tomorrow."
+        "Sorry! Our last dropoff window today has passed. Please choose a time for tomorrow."
       );
       canNext = false;
     } else if (
@@ -599,6 +606,10 @@ class OrderStatus extends Component {
                 <ThemeProvider theme={timeTheme}>
                   <FormControl className={classes.formControl}>
                     <Select
+                      disabled={
+                        !this.state.todaySelected &&
+                        !this.state.tomorrowSelected
+                      }
                       labelId="times"
                       displayEmpty
                       variant="outlined"
@@ -622,6 +633,12 @@ class OrderStatus extends Component {
                         })}
                       </div>
                     </Select>
+                    {!this.state.todaySelected &&
+                      !this.state.tomorrowSelected && (
+                        <FormHelperText>
+                          *Please select a date first.
+                        </FormHelperText>
+                      )}
                   </FormControl>
                 </ThemeProvider>
               </DialogContent>

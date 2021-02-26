@@ -130,13 +130,128 @@ class Details extends Component {
         <div style={{ position: "relative", marginBottom: 70 }}>
           <BottomBorderBlue />
         </div>
-        <div style={{ padding: 16 }}>
+        <div style={{ padding: 8 }}>
+          <Grid
+            container
+            direction="row"
+            justify="center"
+            alignItems="center"
+            spacing={2}
+          >
+            <Grid item>
+              <Grid
+                container
+                direction="column"
+                justify="center"
+                alignItems="center"
+                spacing={2}
+              >
+                <Grid item>
+                  {fetch_SSR.success ? (
+                    <AccountInfo user={fetch_SSR.userInfo} />
+                  ) : null}
+                </Grid>
+                <Grid item>
+                  {fetch_SSR.success ? (
+                    <PaymentInfo
+                      user={fetch_SSR.userInfo}
+                      card={fetch_SSR.cardInfo}
+                    />
+                  ) : null}
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item>
+              <Grid
+                container
+                direction="column"
+                justify="center"
+                alignItems="center"
+                spacing={2}
+              >
+                <Grid item>
+                  {fetch_SSR.success ? (
+                    <Card className={classes.root} elevation={5}>
+                      <CardHeader
+                        title="Credit"
+                        titleTypographyProps={{
+                          variant: "h4",
+                          style: {
+                            color: "white",
+                            textAlign: "center",
+                          },
+                        }}
+                        className={classes.cardHeader}
+                      />
+                      <CardContent className={classes.removePadding}>
+                        <TextField
+                          label="Code"
+                          variant="outlined"
+                          size="small"
+                          className={classes.input}
+                          value={this.state.code}
+                          onChange={(event) => {
+                            this.handleInputChange("code", event.target.value);
+                          }}
+                          style={{ marginRight: 10 }}
+                          error={this.state.codeError}
+                          helperText={this.state.codeErrorMsg}
+                        />
+                        <LoadingButton
+                          className={classes.mainButton}
+                          variant="contained"
+                          size="medium"
+                          onClick={this.redeemCode}
+                        >
+                          Apply
+                        </LoadingButton>
+                        <Grid container justify="center">
+                          <Typography
+                            variant="h4"
+                            style={{ fontWeight: 600, marginTop: 10 }}
+                          >
+                            Current balance:&nbsp;
+                          </Typography>
+                          <Typography
+                            variant="h4"
+                            style={{ textAlign: "center", marginTop: 10 }}
+                          >
+                            {fetch_SSR.balance}
+                          </Typography>
+                        </Grid>
+                      </CardContent>
+                    </Card>
+                  ) : null}
+                </Grid>
+                <Grid item>
+                  <Card className={classes.root} elevation={5}>
+                    <CardHeader
+                      title="Referrals"
+                      titleTypographyProps={{
+                        variant: "h4",
+                        style: {
+                          color: "white",
+                          textAlign: "center",
+                        },
+                      }}
+                      className={classes.cardHeader}
+                    />
+                    <CardContent className={classes.removePadding}>
+                      <h1>placeholder</h1>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </div>
+        {/* <div style={{ padding: 16 }}>
           <Grid
             container
             spacing={4}
             direction="column"
             justify="center"
-            alignItems="center" /*main page column*/
+            alignItems="center" 
           >
             <Grid item>
               {fetch_SSR.success ? (
@@ -166,7 +281,6 @@ class Details extends Component {
                     className={classes.cardHeader}
                   />
                   <CardContent className={classes.removePadding}>
-                    {/* <div style={{ display: "flex" }}> */}
                     <TextField
                       label="Code"
                       variant="outlined"
@@ -188,7 +302,6 @@ class Details extends Component {
                     >
                       Apply
                     </LoadingButton>
-                    {/* </div> */}
                     <Grid container justify="center">
                       <Typography
                         variant="h4"
@@ -208,7 +321,7 @@ class Details extends Component {
               ) : null}
             </Grid>
           </Grid>
-        </div>
+        </div> */}
       </Layout>
     );
   }

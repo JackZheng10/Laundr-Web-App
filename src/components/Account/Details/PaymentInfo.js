@@ -232,7 +232,7 @@ class PaymentInfo extends Component {
           <CardContent>
             <Grid //main column
               container
-              spacing={2}
+              spacing={1}
             >
               <Grid item xs={4} sm={4}>
                 <TextField

@@ -37,6 +37,9 @@ const accountStyles = (theme) => ({
         borderColor: "#01c9e1",
       },
     },
+    [theme.breakpoints.down(325)]: {
+      width: "50vw",
+    },
   },
   removePadding: {
     padding: 16,

@@ -518,7 +518,7 @@ class OrderStatus extends Component {
               </DialogTitle>
               <DialogContent>
                 <Typography variant="h5" gutterBottom>
-                  What day would you like your order to be dropped off??
+                  What day would you like your order to be dropped off?
                 </Typography>
                 <Grid container spacing={2} style={{ marginBottom: 5 }}>
                   <Grid item xs={12} sm={6}>

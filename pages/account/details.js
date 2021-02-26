@@ -6,9 +6,13 @@ import {
   Card,
   CardHeader,
   CardFooter,
+  Divider,
   CardContent,
+  CardActions,
   TextField,
   Button,
+  InputAdornment,
+  IconButton,
 } from "@material-ui/core";
 import { Layout } from "../../src/layouts";
 import { caughtError, showConsoleError } from "../../src/helpers/errors";
@@ -24,6 +28,8 @@ import compose from "recompose/compose";
 import axios from "axios";
 import validator from "validator";
 import LoadingButton from "../../src/components/other/LoadingButton";
+import FileCopyIcon from "@material-ui/icons/FileCopy";
+import TooltipButton from "../../src/components/Driver/OrderTable/components/TooltipButton";
 import PropTypes from "prop-types";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import AccountInfo from "../../src/components/Account/Details/AccountInfo";
@@ -224,22 +230,70 @@ class Details extends Component {
                   ) : null}
                 </Grid>
                 <Grid item>
-                  <Card className={classes.root} elevation={5}>
-                    <CardHeader
-                      title="Referrals"
-                      titleTypographyProps={{
-                        variant: "h4",
-                        style: {
-                          color: "white",
-                          textAlign: "center",
-                        },
-                      }}
-                      className={classes.cardHeader}
-                    />
-                    <CardContent className={classes.removePadding}>
-                      <h1>placeholder</h1>
-                    </CardContent>
-                  </Card>
+                  {fetch_SSR.success && (
+                    <Card className={classes.root} elevation={5}>
+                      <CardHeader
+                        title="Referrals"
+                        titleTypographyProps={{
+                          variant: "h4",
+                          style: {
+                            color: "white",
+                            textAlign: "center",
+                          },
+                        }}
+                        className={classes.cardHeader}
+                      />
+                      <CardContent className={classes.removePadding}>
+                        <TextField
+                          InputProps={{
+                            endAdornment: (
+                              // <IconButton
+                              //   size="small"
+                              //   style={{ color: "#01c9e1" }}
+                              // >
+                              //   <FileCopyIcon />
+                              // </IconButton>
+                              <Button
+                                style={{ marginLeft: -25, marginRight: -11 }}
+                                size="small"
+                                // variant="contained"
+                                variant="filled"
+                                onClick={() => alert("in progress")}
+                              >
+                                <Typography
+                                  variant="body1"
+                                  style={{
+                                    color: "#01c9e1",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  Copy
+                                </Typography>
+                              </Button>
+                            ),
+                            readOnly: true,
+                          }}
+                          label="Your Code"
+                          variant="outlined"
+                          size="small"
+                          className={classes.codeInput}
+                          defaultValue={fetch_SSR.userInfo.referralCode}
+                        />
+                      </CardContent>
+                      {/* <Divider /> */}
+                      <CardActions
+                        disableSpacing
+                        style={{ justifyContent: "center", marginTop: -18 }}
+                      >
+                        <TooltipButton
+                          icon={true}
+                          text={
+                            "Both you and a friend get a $10 credit when they use your code at sign up and place their first order!"
+                          }
+                        />
+                      </CardActions>
+                    </Card>
+                  )}
                 </Grid>
               </Grid>
             </Grid>

@@ -17,6 +17,8 @@ import PropTypes from "prop-types";
 import DateFnsUtils from "@date-io/date-fns";
 import schedulingStyles from "../../../../../styles/User/Dashboard/components/NewOrder/components/schedulingStyles";
 
+//REMEMBER: moment objects are mutable. creating one and then reusing it will change the original object (ex: if you do obj.add)
+
 const timeTheme = createMuiTheme({
   // overrides: {
   //   MuiDialogActions: {
@@ -53,7 +55,7 @@ class Scheduling extends Component {
 
     const handleTimeSelect = (event) => {
       const index = event.target.value;
-  
+
       handleInputChange("time", {
         lowerBound: availableTimes[index].lowerBound,
         upperBound: availableTimes[index].upperBound,

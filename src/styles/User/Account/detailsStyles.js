@@ -50,6 +50,16 @@ const accountStyles = (theme) => ({
   root: {
     maxWidth: 400,
   },
+  codeInput: {
+    "& label.Mui-focused": {
+      color: "#01c9e1",
+    },
+    "& .MuiOutlinedInput-root": {
+      "&.Mui-focused fieldset": {
+        borderColor: "#01c9e1",
+      },
+    },
+  },
 });
 
 export default accountStyles;

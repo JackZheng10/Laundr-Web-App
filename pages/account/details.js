@@ -53,7 +53,7 @@ class Details extends Component {
 
   handleInputChange = (property, value) => {
     if (!validator.contains(value, " ")) {
-      value = limitLength(value, 10);
+      value = limitLength(value, 15);
       this.setState({ code: value });
     }
   };
@@ -109,6 +109,7 @@ class Details extends Component {
 
   render() {
     const { classes, fetch_SSR } = this.props;
+    //const referralCodeArea = typeof window !== "unefined" ? React.createRef() : null;
 
     return (
       <Layout currentUser={fetch_SSR.success ? fetch_SSR.userInfo : null}>
@@ -177,7 +178,11 @@ class Details extends Component {
               >
                 <Grid item>
                   {fetch_SSR.success ? (
-                    <Card className={classes.root} elevation={5}>
+                    <Card
+                      className={classes.root}
+                      elevation={5}
+                      // style={{ borderRadius: "25px" }}
+                    >
                       <CardHeader
                         title="Credit"
                         titleTypographyProps={{
@@ -191,7 +196,7 @@ class Details extends Component {
                       />
                       <CardContent className={classes.removePadding}>
                         <TextField
-                          label="Code"
+                          label="Referral/Coupon"
                           variant="outlined"
                           size="small"
                           className={classes.input}
@@ -231,7 +236,11 @@ class Details extends Component {
                 </Grid>
                 <Grid item>
                   {fetch_SSR.success && (
-                    <Card className={classes.root} elevation={5}>
+                    <Card
+                      className={classes.root}
+                      elevation={5}
+                      // style={{ borderRadius: "25px" }}
+                    >
                       <CardHeader
                         title="Referrals"
                         titleTypographyProps={{
@@ -258,7 +267,11 @@ class Details extends Component {
                                 size="small"
                                 // variant="contained"
                                 variant="filled"
-                                onClick={() => alert("in progress")}
+                                onClick={() =>
+                                  navigator.clipboard.writeText(
+                                    fetch_SSR.userInfo.referralCode
+                                  )
+                                }
                               >
                                 <Typography
                                   variant="body1"
@@ -288,7 +301,7 @@ class Details extends Component {
                         <TooltipButton
                           icon={true}
                           text={
-                            "Both you and a friend get a $10 credit when they use your code at sign up and place their first order!"
+                            "Refer your friends! They get $10 off their first purchase and you get $10 after their first order. Code is redeemable at registration or on this page."
                           }
                         />
                       </CardActions>
@@ -299,83 +312,6 @@ class Details extends Component {
             </Grid>
           </Grid>
         </div>
-        {/* <div style={{ padding: 16 }}>
-          <Grid
-            container
-            spacing={4}
-            direction="column"
-            justify="center"
-            alignItems="center" 
-          >
-            <Grid item>
-              {fetch_SSR.success ? (
-                <AccountInfo user={fetch_SSR.userInfo} />
-              ) : null}
-            </Grid>
-            <Grid item>
-              {fetch_SSR.success ? (
-                <PaymentInfo
-                  user={fetch_SSR.userInfo}
-                  card={fetch_SSR.cardInfo}
-                />
-              ) : null}
-            </Grid>
-            <Grid item>
-              {fetch_SSR.success ? (
-                <Card className={classes.root} elevation={10}>
-                  <CardHeader
-                    title="Credit"
-                    titleTypographyProps={{
-                      variant: "h4",
-                      style: {
-                        color: "white",
-                        textAlign: "center",
-                      },
-                    }}
-                    className={classes.cardHeader}
-                  />
-                  <CardContent className={classes.removePadding}>
-                    <TextField
-                      label="Code"
-                      variant="outlined"
-                      size="small"
-                      className={classes.input}
-                      value={this.state.code}
-                      onChange={(event) => {
-                        this.handleInputChange("code", event.target.value);
-                      }}
-                      style={{ marginRight: 10 }}
-                      error={this.state.codeError}
-                      helperText={this.state.codeErrorMsg}
-                    />
-                    <LoadingButton
-                      className={classes.mainButton}
-                      variant="contained"
-                      size="medium"
-                      onClick={this.redeemCode}
-                    >
-                      Apply
-                    </LoadingButton>
-                    <Grid container justify="center">
-                      <Typography
-                        variant="h4"
-                        style={{ fontWeight: 600, marginTop: 10 }}
-                      >
-                        Current balance:&nbsp;
-                      </Typography>
-                      <Typography
-                        variant="h4"
-                        style={{ textAlign: "center", marginTop: 10 }}
-                      >
-                        {fetch_SSR.balance}
-                      </Typography>
-                    </Grid>
-                  </CardContent>
-                </Card>
-              ) : null}
-            </Grid>
-          </Grid>
-        </div> */}
       </Layout>
     );
   }

@@ -204,7 +204,9 @@ const MyApp = (props) => {
             </Typography>
           </DialogTitle>
           <DialogContent>
-            <Typography variant="body1">{alertMessage_NC}</Typography>
+            <Typography variant="body1" style={{ textAlign: "center" }}>
+              {alertMessage_NC}
+            </Typography>
           </DialogContent>
           <DialogActions>
             <Button
@@ -236,7 +238,9 @@ const MyApp = (props) => {
             </Typography>
           </DialogTitle>
           <DialogContent>
-            <Typography variant="body1">{alertMessage_C}</Typography>
+            <Typography variant="body1" style={{ textAlign: "center" }}>
+              {alertMessage_C}
+            </Typography>
           </DialogContent>
           <DialogActions>
             <Button

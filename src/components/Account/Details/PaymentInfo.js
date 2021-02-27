@@ -218,7 +218,11 @@ class PaymentInfo extends Component {
 
     return (
       <React.Fragment>
-        <Card className={classes.root} elevation={10}>
+        <Card
+          className={classes.root}
+          elevation={5}
+          // style={{ borderRadius: "25px" }}
+        >
           <CardHeader
             title="Payment Info"
             titleTypographyProps={{

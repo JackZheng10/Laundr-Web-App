@@ -26,6 +26,7 @@ import validator from "validator";
 import axios from "axios";
 import PropTypes from "prop-types";
 import LoadingButton from "../../../components/other/LoadingButton";
+import PopoverContent from "../../../components/other/PopoverContent";
 import accountInfoStyles from "../../../styles/User/Account/components/accountInfoStyles";
 import MainAppContext from "../../../contexts/MainAppContext";
 
@@ -78,7 +79,7 @@ class AccountInfo extends Component {
     return true;
   };
 
-  toggleShowPasswordUpdate = () => {
+  toggleShowPasswordUpdate = (event) => {
     this.setState({
       password: "",
       showPasswordUpdate: !this.state.showPasswordUpdate,
@@ -87,6 +88,7 @@ class AccountInfo extends Component {
       passwordErrorMsg: "",
       confirmedPasswordError: false,
       confirmedPasswordErrorMsg: "",
+      anchor: event.target,
     });
   };
 
@@ -469,45 +471,88 @@ class AccountInfo extends Component {
   };
 
   renderCardActions = (classes) => {
-    if (!this.state.showPasswordUpdate) {
-      return (
-        <Grid item>
-          <Button
-            size="medium"
-            variant="contained"
-            className={classes.mainButton}
-            onClick={this.toggleShowPasswordUpdate}
-          >
-            Update Password
-          </Button>
-        </Grid>
-      );
-    } else {
-      return (
-        <React.Fragment>
-          <Grid item>
-            <Button
-              size="medium"
-              variant="contained"
-              className={classes.redButton}
-              onClick={this.toggleShowPasswordUpdate}
-            >
-              Cancel
-            </Button>
-          </Grid>
-          <Grid item>
-            <LoadingButton
-              size="medium"
-              variant="contained"
-              className={classes.greenButton}
-              onClick={this.handleUpdatePassword}
-            >
-              Confirm
-            </LoadingButton>
-          </Grid>
-        </React.Fragment>
-      );
-    }
+    return (
+      <Grid item>
+        <PopoverContent
+          className={classes.mainButton}
+          open={this.state.showPasswordUpdate}
+          anchor={this.state.anchor}
+          onClose={this.toggleShowPasswordUpdate}
+          onClick={this.toggleShowPasswordUpdate}
+          buttonText="Update Password"
+          content={
+            <CardContent>
+              <Typography variant="h4" style={{ color: "#01c9e1" }}>
+                Update Password
+              </Typography>
+              <TextField
+                variant="filled"
+                margin="normal"
+                fullWidth
+                size="small"
+                label="New Password"
+                type="password"
+                autoComplete="new-password"
+                error={this.state.passwordError}
+                helperText={this.state.passwordErrorMsg}
+                onChange={(event) => {
+                  this.handleInputChange("password", event.target.value);
+                }}
+                value={this.state.password}
+                className={classes.coloredField}
+              />
+              <TextField
+                variant="filled"
+                margin="normal"
+                fullWidth
+                size="small"
+                label="Confirm Password"
+                type="password"
+                autoComplete="new-password"
+                error={this.state.confirmedPasswordError}
+                helperText={this.state.confirmedPasswordErrorMsg}
+                onChange={(event) => {
+                  this.handleInputChange(
+                    "confirmedPassword",
+                    event.target.value
+                  );
+                }}
+                value={this.state.confirmedPassword}
+                className={classes.coloredField}
+              />
+              <Grid
+                container
+                direction="row"
+                justify="space-between"
+                alignItems="center"
+                style={{ marginTop: 10 }}
+              >
+                <Grid item>
+                  <Button
+                    size="medium"
+                    variant="contained"
+                    className={classes.secondaryButton}
+                    onClick={this.toggleShowPasswordUpdate}
+                  >
+                    Cancel
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <LoadingButton
+                    size="medium"
+                    variant="contained"
+                    className={classes.mainButton}
+                    onClick={this.handleUpdatePassword}
+                  >
+                    Confirm
+                  </LoadingButton>
+                </Grid>
+              </Grid>
+            </CardContent>
+          }
+        />
+      </Grid>
+    );
   };
 
   render() {
@@ -592,7 +637,11 @@ class AccountInfo extends Component {
             </Grid>
           </DialogActions>
         </Dialog>
-        <Card className={classes.root} elevation={10}>
+        <Card
+          className={classes.root}
+          elevation={5}
+          //style={{ borderRadius: "25px" }}
+        >
           <CardHeader
             title="Profile"
             titleTypographyProps={{
@@ -744,7 +793,7 @@ class AccountInfo extends Component {
               {this.renderCardActions(classes)}
             </Grid>
           </CardActions>
-          <Collapse
+          {/* <Collapse
             in={this.state.showPasswordUpdate}
             timeout="auto"
             unmountOnExit
@@ -786,7 +835,7 @@ class AccountInfo extends Component {
                 className={classes.coloredField}
               />
             </CardContent>
-          </Collapse>
+          </Collapse> */}
         </Card>
       </React.Fragment>
     );

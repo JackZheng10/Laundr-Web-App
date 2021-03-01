@@ -31,13 +31,13 @@ class PopoverButton extends Component {
     this.setState({ open: !this.state.open });
   };
 
-  renderTrigger = (icon, className, size, buttonText) => {
+  renderTrigger = (icon, className, size, buttonText, color, style) => {
     if (icon) {
       return (
         <IconButton
           onClick={this.togglePopover}
           size="small"
-          style={{ color: "#01c9e1" }}
+          style={Object.assign({ color: color || "#01c9e1" }, style)}
         >
           <InfoIcon />
         </IconButton>
@@ -47,6 +47,7 @@ class PopoverButton extends Component {
         <Button
           variant="contained"
           className={className}
+          style={style}
           onClick={this.togglePopover}
           size={size || "medium"}
         >
@@ -57,7 +58,16 @@ class PopoverButton extends Component {
   };
 
   render() {
-    const { className, text, buttonText, size, icon } = this.props;
+    const {
+      className,
+      text,
+      buttonText,
+      size,
+      icon,
+      color,
+      placement,
+      style,
+    } = this.props;
 
     return (
       <React.Fragment>
@@ -85,11 +95,11 @@ class PopoverButton extends Component {
             </Typography>
           }
           open={this.state.open}
-          placement="bottom"
+          placement={placement || "bottom"}
           onClose={this.togglePopover}
           arrow
         >
-          {this.renderTrigger(icon, className, size, buttonText)}
+          {this.renderTrigger(icon, className, size, buttonText, color, style)}
         </Tooltip>
       </React.Fragment>
     );

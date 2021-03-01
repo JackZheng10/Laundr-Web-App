@@ -10,11 +10,10 @@ import {
   Tooltip,
   FormHelperText,
 } from "@material-ui/core";
-import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
-import { MuiPickersUtilsProvider, TimePicker } from "@material-ui/pickers";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import PropTypes from "prop-types";
-import DateFnsUtils from "@date-io/date-fns";
+import TooltipButton from "../../../../Driver/OrderTable/components/TooltipButton";
 import schedulingStyles from "../../../../../styles/User/Dashboard/components/NewOrder/components/schedulingStyles";
 
 //REMEMBER: moment objects are mutable. creating one and then reusing it will change the original object (ex: if you do obj.add)
@@ -141,7 +140,12 @@ class Scheduling extends Component {
           </Grid>
         </Grid>
         <Typography variant="h5" className={classes.title}>
-          What's your preferred pickup time?
+          What's your preferred pickup time?{" "}
+          <TooltipButton
+            icon={true}
+            style={{ marginTop: -8, marginBottom: -5 }}
+            text="Operating times are 10 AM to 8 PM, Monday to Friday. You will be able to schedule a delivery time after your clothes are weighed by the driver."
+          />
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
@@ -177,14 +181,15 @@ class Scheduling extends Component {
             </ThemeProvider>
           </Grid>
         </Grid>
-        <Typography variant="h6">Please note:</Typography>
+
+        {/* <Typography variant="h6">Please note:</Typography>
         <Typography variant="h6">
           •Operating times are 10 AM to 7 PM, Monday to Friday
         </Typography>
         <Typography variant="h6" gutterBottom>
           •You will be able to schedule a delivery time after your clothes are
           weighed by the driver
-        </Typography>
+        </Typography> */}
       </React.Fragment>
     );
   }

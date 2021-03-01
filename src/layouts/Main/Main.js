@@ -57,8 +57,16 @@ const Main = (props) => {
         currentUser={currentUser}
       />
       <main className={classes.content}>
-        {children}
-        <Footer />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "93vh",
+          }}
+        >
+          {children}
+          <Footer />
+        </div>
       </main>
     </div>
   );

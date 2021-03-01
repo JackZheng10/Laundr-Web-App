@@ -34,7 +34,7 @@ const Signature = (props) => {
 
   return (
     <React.Fragment>
-      <Typography variant="body1" align="center" style={{ marginBottom: 2 }}>
+      {/* <Typography variant="body1" align="center" style={{ marginBottom: 2 }}>
         {`© ${new Date().getFullYear()} `}
         <Link
           color="inherit"
@@ -44,7 +44,7 @@ const Signature = (props) => {
         >
           Laundr LLC
         </Link>
-      </Typography>
+      </Typography> */}
       <Typography variant="body2" align="center">
         Made with ❤️ by{" "}
         <Link

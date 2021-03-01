@@ -177,6 +177,7 @@ const MyApp = (props) => {
     <React.Fragment>
       <Head>
         <title>{getPageTitle()}</title>
+        <meta name="viewport" content="width=device-width" />
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />

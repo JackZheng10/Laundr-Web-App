@@ -11,6 +11,7 @@ const sidebarStyles = (theme) => ({
     display: "flex",
     flexDirection: "column",
     height: "100%",
+    justifyContent: "space-between",
     padding: theme.spacing(2),
   },
   divider: {

@@ -113,6 +113,7 @@ const SidebarNav = (props) => {
             style={{
               backgroundColor: "#FFB600",
               color: "white",
+              marginTop: 10,
             }}
             startIcon={<InputIcon />}
             onClick={() => {

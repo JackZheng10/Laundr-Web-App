@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Divider, Drawer, withStyles } from "@material-ui/core";
-import { Profile, SidebarNav /*UpgradePlan*/ } from "./components";
+import { Profile, SidebarNav, Signature } from "./components";
 import { getCurrentUser } from "../../../../helpers/session";
 import clsx from "clsx";
 import PropTypes from "prop-types";
@@ -126,13 +126,17 @@ class Sidebar extends Component {
         variant={variant}
       >
         <div {...rest} className={clsx(classes.root, className)}>
-          <Profile currentUser={currentUser} />
-          <Divider className={classes.divider} />
-          <SidebarNav
-            className={classes.nav}
-            pages={this.handlePagesConfig(currentUser)}
-          />
-          {/* <UpgradePlan /> */}
+          <div>
+            <Profile currentUser={currentUser} />
+            <Divider className={classes.divider} />
+            <SidebarNav
+              className={classes.nav}
+              pages={this.handlePagesConfig(currentUser)}
+            />
+          </div>
+          <div>
+            <Signature />
+          </div>
         </div>
       </Drawer>
     );

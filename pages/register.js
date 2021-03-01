@@ -38,24 +38,6 @@ import LoadingButton from "../src/components/other/LoadingButton";
 import registerStyles from "../src/styles/registerStyles";
 import axios from "axios";
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link
-        color="inherit"
-        target="_blank"
-        rel="noopener"
-        href="https://laundr.io/"
-      >
-        Laundr LLC
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
 class Register extends Component {
   static contextType = MainAppContext;
 

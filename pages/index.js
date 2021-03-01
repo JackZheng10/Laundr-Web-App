@@ -29,24 +29,6 @@ import axios from "axios";
 const baseURL =
   process.env.NEXT_PUBLIC_BASE_URL || require("../src/config").baseURL;
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link
-        color="inherit"
-        target="_blank"
-        rel="noopener"
-        href="https://laundr.io/"
-      >
-        Laundr LLC
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
 //todo: make login not case sensitive (typing W1@gmail.com) doesnt work (done, just test)
 //limit input length for login + registration
 

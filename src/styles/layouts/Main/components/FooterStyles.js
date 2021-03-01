@@ -2,7 +2,8 @@ const footerStyles = (theme) => ({
   footer: {
     marginTop: "auto",
     // backgroundColor: "red",
-    backgroundColor: "#EEEEEE",
+    // backgroundColor: "#EEEEEE",
+    backgroundColor: "white",
     // overflow: "hidden",
   },
   item: {

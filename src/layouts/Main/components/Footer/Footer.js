@@ -26,17 +26,32 @@ class Footer extends Component {
               <Grid container direction="column" alignItems="center">
                 <Typography variant="h5">Customer Care</Typography>
                 <Typography variant="h6" align="center">
-                  <Link href="/user.help" color="secondary">
+                  <Link
+                    target="_blank"
+                    rel="noopener"
+                    href="/user/help"
+                    color="secondary"
+                  >
                     FAQ
                   </Link>
                 </Typography>
                 <Typography variant="h6" align="center">
-                  <Link href="https://www.laundr.io/contact" color="secondary">
+                  <Link
+                    target="_blank"
+                    rel="noopener"
+                    href="https://www.laundr.io/contact"
+                    color="secondary"
+                  >
                     Contact
                   </Link>
                 </Typography>
                 <Typography variant="h6" align="center">
-                  <Link href="https://www.laundr.io/about" color="secondary">
+                  <Link
+                    target="_blank"
+                    rel="noopener"
+                    href="https://www.laundr.io/about"
+                    color="secondary"
+                  >
                     About
                   </Link>
                 </Typography>
@@ -47,6 +62,8 @@ class Footer extends Component {
                 <Typography variant="h5">Laundr Careers</Typography>
                 <Typography variant="h6" align="center">
                   <Link
+                    target="_blank"
+                    rel="noopener"
                     href="https://linktr.ee/laundrofficial"
                     color="secondary"
                   >
@@ -60,6 +77,8 @@ class Footer extends Component {
                 <Grid container justify="center">
                   <Link
                     href="https://linktr.ee/laundrofficial"
+                    target="_blank"
+                    rel="noopener"
                     color="secondary"
                     variant="h3"
                     style={{ padding: 10 }}
@@ -74,6 +93,8 @@ class Footer extends Component {
             <Grid container justify="center">
               <Grid item>
                 <Link
+                  target="_blank"
+                  rel="noopener"
                   href="https://www.laundr.io/termsofservice"
                   color="secondary"
                   style={{ padding: 20 }}
@@ -81,6 +102,8 @@ class Footer extends Component {
                   Terms of Service
                 </Link>
                 <Link
+                  target="_blank"
+                  rel="noopener"
                   href="https://www.laundr.io/privacy-policy"
                   color="secondary"
                   style={{ padding: 20 }}
@@ -92,18 +115,24 @@ class Footer extends Component {
                 </Typography>
                 <IconButton
                   color="secondary"
+                  target="_blank"
+                  rel="noopener"
                   href="https://www.facebook.com/laundrofficial"
                 >
                   <FacebookIcon />
                 </IconButton>
                 <IconButton
                   color="secondary"
+                  target="_blank"
+                  rel="noopener"
                   href="https://www.instagram.com/laundrofficial"
                 >
                   <InstagramIcon />
                 </IconButton>
                 <IconButton
                   color="secondary"
+                  target="_blank"
+                  rel="noopener"
                   href="https://www.twitter.com/laundrofficial"
                 >
                   <TwitterIcon />
@@ -115,6 +144,8 @@ class Footer extends Component {
             <Grid container justify="center">
               <Grid item>
                 <Link
+                  target="_blank"
+                  rel="noopener"
                   href="https://www.laundr.io/termsofservice"
                   color="secondary"
                   style={{ padding: 20 }}
@@ -122,6 +153,8 @@ class Footer extends Component {
                   Terms of Service
                 </Link>
                 <Link
+                  target="_blank"
+                  rel="noopener"
                   href="https://www.laundr.io/privacy-policy"
                   color="secondary"
                   style={{ padding: 20 }}
@@ -140,18 +173,24 @@ class Footer extends Component {
             <Grid container justify="center">
               <Grid item>
                 <IconButton
+                  target="_blank"
+                  rel="noopener"
                   color="secondary"
                   href="https://www.facebook.com/laundrofficial"
                 >
                   <FacebookIcon />
                 </IconButton>
                 <IconButton
+                  target="_blank"
+                  rel="noopener"
                   color="secondary"
                   href="https://www.instagram.com/laundrofficial"
                 >
                   <InstagramIcon />
                 </IconButton>
                 <IconButton
+                  target="_blank"
+                  rel="noopener"
                   color="secondary"
                   href="https://www.twitter.com/laundrofficial"
                 >

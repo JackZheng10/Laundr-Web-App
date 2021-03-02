@@ -1,19 +1,42 @@
 :root {
   --gradient: linear-gradient(90deg, #01c9e1, #d8f2f0, #01c9e1);
+  --gradient2: linear-gradient(
+    90deg,
+    rgba(1, 201, 225, 1) 0%,
+    rgba(9, 9, 121, 1) 50%,
+    rgba(1, 201, 225, 1) 100%
+  );
 }
 
 .gradientBackground {
-  background-image: var(--gradient);
+  background-image: var(--gradient2);
+  z-index: 9;
+  /* background-clip: content-box; */
   animation: bg-animation 10s infinite;
   background-size: 300%;
-  transform: skewY(-12deg);
-  height: 70vh;
-  margin-top: -220px;
+  /* transform: skewY(-12deg); */
+  /* height: 70vh; */
+  /* margin-top: -220px; */
 }
 
 .unskew {
-  transform: skewY(+12deg);
-  padding-top: 220px;
+  /* transform: skewY(+12deg);
+  padding-top: 220px; */
+  /* background-image: url("../public/images/Topbar/LaundrLogo_Blue.png");
+  background-repeat: no-repeat;
+  position: relative;
+  height: 100%;
+  height: 300px;
+  width: 960px; */
+}
+
+.unskew::before {
+  background-image: var(--gradient);
+  display: block;
+  content: "";
+  position: absolute;
+  height: inherit;
+  width: inherit;
 }
 
 @keyframes bg-animation {

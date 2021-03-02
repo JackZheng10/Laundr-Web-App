@@ -22,7 +22,7 @@ class Footer extends Component {
 
     return (
       <React.Fragment>
-        <div style={{ paddingTop: 40 }}>
+        <div>
           <Divider />
           <div className={classes.footer}>
             <Grid

@@ -68,7 +68,7 @@ const registerStyles = (theme) => ({
     },
   },
   pageContainer: {
-    height: "100vh",
+    minHeight: "100vh",
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",
     backgroundImage: `url("/images/space.png")`,
@@ -99,6 +99,14 @@ const registerStyles = (theme) => ({
       "&.Mui-focused fieldset": {
         borderColor: "#01c9e1",
       },
+    },
+  },
+  referralInput: {
+    [theme.breakpoints.down(350)]: {
+      fontSize: 12,
+    },
+    [theme.breakpoints.down(300)]: {
+      fontSize: 10,
     },
   },
 });

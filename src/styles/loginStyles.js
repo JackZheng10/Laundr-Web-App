@@ -42,7 +42,7 @@ const loginStyles = (theme) => ({
     },
   },
   pageContainer: {
-    height: "100vh",
+    minHeight: "100vh",
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",
     backgroundImage: `url("/images/space.png")`,

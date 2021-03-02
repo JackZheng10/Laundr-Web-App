@@ -23,6 +23,8 @@ import {
   DialogTitle,
   CircularProgress,
   Paper,
+  Card,
+  CardContent,
 } from "@material-ui/core";
 import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
@@ -523,6 +525,8 @@ class Register extends Component {
                     className={classes.logo}
                   />
                 </Grid>
+                {/* <Card>
+                  <CardContent> */}
                 <Grid item>
                   <Paper elevation={0}>
                     <Typography
@@ -662,6 +666,9 @@ class Register extends Component {
                               event.target.value
                             );
                           }}
+                          InputLabelProps={{
+                            className: classes.referralInput,
+                          }}
                           classes={{ root: classes.coloredField }}
                         />
                       </Grid>
@@ -730,6 +737,8 @@ class Register extends Component {
                     </Grid>
                   </form>
                 </Grid>
+                {/* </CardContent>
+                </Card> */}
               </Grid>
             </div>
           </Grid>

@@ -522,6 +522,7 @@ class Register extends Component {
                   <img
                     alt="Company Logo"
                     src="/images/LogRegLogo.png"
+                    //src="/images/Topbar/LaundrLogo_Blue.png"
                     className={classes.logo}
                   />
                 </Grid>

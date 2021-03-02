@@ -53,6 +53,7 @@ const loginStyles = (theme) => ({
     [theme.breakpoints.down(770)]: {
       backgroundImage: `url("/images/space_mobilev2.png")`,
     },
+    backgroundAttachment: "fixed",
   },
   input: {
     "& label.Mui-focused": {

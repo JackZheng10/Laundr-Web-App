@@ -43,16 +43,16 @@ const loginStyles = (theme) => ({
   },
   pageContainer: {
     minHeight: "100vh",
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "center",
-    backgroundImage: `url("/images/space.png")`,
-    backgroundSize: "cover",
-    [theme.breakpoints.up(770)]: {
-      backgroundImage: `url("/images/space.png")`,
-    },
-    [theme.breakpoints.down(770)]: {
-      backgroundImage: `url("/images/space_mobilev2.png")`,
-    },
+    // backgroundRepeat: "no-repeat",
+    // backgroundPosition: "center",
+    // backgroundImage: `url("/images/space.png")`,
+    // backgroundSize: "cover",
+    // [theme.breakpoints.up(770)]: {
+    //   backgroundImage: `url("/images/space.png")`,
+    // },
+    // [theme.breakpoints.down(770)]: {
+    //   backgroundImage: `url("/images/space_mobilev2.png")`,
+    // },
   },
   input: {
     "& label.Mui-focused": {

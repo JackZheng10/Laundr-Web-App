@@ -1,0 +1,29 @@
+:root {
+  --gradient: linear-gradient(90deg, #01c9e1, #d8f2f0, #01c9e1);
+}
+
+.gradientBackground {
+  background-image: var(--gradient);
+  animation: bg-animation 10s infinite;
+  background-size: 300%;
+  transform: skewY(-12deg);
+  height: 70vh;
+  margin-top: -220px;
+}
+
+.unskew {
+  transform: skewY(+12deg);
+  padding-top: 220px;
+}
+
+@keyframes bg-animation {
+  0% {
+    background-position: left;
+  }
+  50% {
+    background-position: right;
+  }
+  100% {
+    background-position: left;
+  }
+}

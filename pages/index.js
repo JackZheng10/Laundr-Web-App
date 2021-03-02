@@ -198,175 +198,185 @@ class Login extends Component {
         /> */}
           {/* <link rel="canonical" href="" /> */}
         </Head>
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignItems="center"
-          className={classes.pageContainer}
-        >
-          <Dialog
-            open={this.state.showResetDialog}
-            onClose={this.toggleResetDialog}
-            style={{ zIndex: 19 }}
-          >
-            <DialogTitle disableTypography>
-              <Typography variant="h4" style={{ color: "#01c9e1" }}>
-                Reset Password
-              </Typography>
-            </DialogTitle>
-            <DialogContent>
-              <Typography
-                variant="body1"
-                style={{ textAlign: "center" }}
-                gutterBottom
+        <div className="gradientBackground">
+          <div className="unskew">
+            <Grid
+              container
+              direction="column"
+              justify="center"
+              alignItems="center"
+              className={classes.pageContainer}
+            >
+              <Dialog
+                open={this.state.showResetDialog}
+                onClose={this.toggleResetDialog}
+                style={{ zIndex: 19 }}
               >
-                Enter your phone number and we'll text you a link to rest your
-                password.
-              </Typography>
-              <div style={{ textAlign: "center" }}>
-                <TextField
-                  variant="outlined"
-                  label="Phone"
-                  size="small"
-                  autoComplete="tel-national"
-                  value={this.state.enteredPhone}
-                  onChange={(event) => {
-                    this.handleInputChange("enteredPhone", event.target.value);
-                  }}
-                  className={classes.input}
-                  style={{ width: 110 }}
-                />
-              </div>
-            </DialogContent>
-            <DialogActions>
-              <Grid
-                container
-                direction="row"
-                justify="space-between"
-                alignItems="center"
-              >
-                <Grid item>
-                  <Button
-                    onClick={this.toggleResetDialog}
-                    variant="contained"
-                    className={classes.secondaryButton}
-                    style={{ marginRight: 10 }}
+                <DialogTitle disableTypography>
+                  <Typography variant="h4" style={{ color: "#01c9e1" }}>
+                    Reset Password
+                  </Typography>
+                </DialogTitle>
+                <DialogContent>
+                  <Typography
+                    variant="body1"
+                    style={{ textAlign: "center" }}
+                    gutterBottom
                   >
-                    Cancel
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <LoadingButton
-                    onClick={this.handlePasswordReset}
-                    variant="contained"
-                    className={classes.mainButton}
+                    Enter your phone number and we'll text you a link to rest
+                    your password.
+                  </Typography>
+                  <div style={{ textAlign: "center" }}>
+                    <TextField
+                      variant="outlined"
+                      label="Phone"
+                      size="small"
+                      autoComplete="tel-national"
+                      value={this.state.enteredPhone}
+                      onChange={(event) => {
+                        this.handleInputChange(
+                          "enteredPhone",
+                          event.target.value
+                        );
+                      }}
+                      className={classes.input}
+                      style={{ width: 110 }}
+                    />
+                  </div>
+                </DialogContent>
+                <DialogActions>
+                  <Grid
+                    container
+                    direction="row"
+                    justify="space-between"
+                    alignItems="center"
                   >
-                    Submit
-                  </LoadingButton>
-                </Grid>
-              </Grid>
-            </DialogActions>
-          </Dialog>
-          <Grid item style={{ maxHeight: "100%" }}>
-            <div className={classes.layout}>
-              <Grid
-                container
-                direction="column"
-                justify="center"
-                alignItems="center"
-              >
-                <Grid item>
-                  <img
-                    alt="Company Logo"
-                    src="/images/LogRegLogo.png"
-                    className={classes.logo}
-                  />
-                </Grid>
-                <Grid item>
-                  <Paper elevation={0}>
-                    <Typography
-                      variant="h1"
-                      style={{
-                        color: "#01c9e1",
-                        textAlign: "center",
-                        padding: 10,
-                      }}
-                    >
-                      Login
-                    </Typography>
-                  </Paper>
-                </Grid>
-                <Grid item>
-                  <form>
-                    <TextField
-                      variant="filled"
-                      margin="normal"
-                      fullWidth
-                      label="Email Address"
-                      autoComplete="email"
-                      error={this.state.emailError}
-                      helperText={this.state.emailErrorMsg}
-                      onChange={(event) => {
-                        this.handleInputChange("email", event.target.value);
-                      }}
-                      value={this.state.email}
-                      className={classes.coloredField}
-                    />
-                    <TextField
-                      variant="filled"
-                      margin="normal"
-                      fullWidth
-                      label="Password"
-                      type="password"
-                      autoComplete="current-password"
-                      error={this.state.passwordError}
-                      helperText={this.state.passwordErrorMsg}
-                      onChange={(event) => {
-                        this.handleInputChange("password", event.target.value);
-                      }}
-                      value={this.state.password}
-                      classes={{ root: classes.coloredField }}
-                    />
-                    <LoadingButton
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      className={classes.submit}
-                      onClick={this.handleLogin}
-                    >
-                      Sign In
-                    </LoadingButton>
-                  </form>
-                </Grid>
-                <Grid container>
-                  <Grid item xs style={{ paddingBottom: 10 }}>
-                    <Link
-                      onClick={this.toggleResetDialog}
-                      variant="h6"
-                      style={{
-                        color: "#01c9e1",
-                        textAlign: "center",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Forgot password?
-                    </Link>
+                    <Grid item>
+                      <Button
+                        onClick={this.toggleResetDialog}
+                        variant="contained"
+                        className={classes.secondaryButton}
+                        style={{ marginRight: 10 }}
+                      >
+                        Cancel
+                      </Button>
+                    </Grid>
+                    <Grid item>
+                      <LoadingButton
+                        onClick={this.handlePasswordReset}
+                        variant="contained"
+                        className={classes.mainButton}
+                      >
+                        Submit
+                      </LoadingButton>
+                    </Grid>
                   </Grid>
-                  <Grid item style={{ paddingBottom: 50 }}>
-                    <Link
-                      href="/register"
-                      variant="h6"
-                      style={{ color: "#01c9e1", textAlign: "center" }}
-                    >
-                      Don't have an account?
-                    </Link>
+                </DialogActions>
+              </Dialog>
+              <Grid item style={{ maxHeight: "100%" }}>
+                <div className={classes.layout}>
+                  <Grid
+                    container
+                    direction="column"
+                    justify="center"
+                    alignItems="center"
+                  >
+                    <Grid item>
+                      <img
+                        alt="Company Logo"
+                        src="/images/LogRegLogo.png"
+                        className={classes.logo}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Paper elevation={0}>
+                        <Typography
+                          variant="h1"
+                          style={{
+                            color: "#01c9e1",
+                            textAlign: "center",
+                            padding: 10,
+                          }}
+                        >
+                          Login
+                        </Typography>
+                      </Paper>
+                    </Grid>
+                    <Grid item>
+                      <form>
+                        <TextField
+                          variant="filled"
+                          margin="normal"
+                          fullWidth
+                          label="Email Address"
+                          autoComplete="email"
+                          error={this.state.emailError}
+                          helperText={this.state.emailErrorMsg}
+                          onChange={(event) => {
+                            this.handleInputChange("email", event.target.value);
+                          }}
+                          value={this.state.email}
+                          className={classes.coloredField}
+                        />
+                        <TextField
+                          variant="filled"
+                          margin="normal"
+                          fullWidth
+                          label="Password"
+                          type="password"
+                          autoComplete="current-password"
+                          error={this.state.passwordError}
+                          helperText={this.state.passwordErrorMsg}
+                          onChange={(event) => {
+                            this.handleInputChange(
+                              "password",
+                              event.target.value
+                            );
+                          }}
+                          value={this.state.password}
+                          classes={{ root: classes.coloredField }}
+                        />
+                        <LoadingButton
+                          type="submit"
+                          fullWidth
+                          variant="contained"
+                          className={classes.submit}
+                          onClick={this.handleLogin}
+                        >
+                          Sign In
+                        </LoadingButton>
+                      </form>
+                    </Grid>
+                    <Grid container>
+                      <Grid item xs style={{ paddingBottom: 10 }}>
+                        <Link
+                          onClick={this.toggleResetDialog}
+                          variant="h6"
+                          style={{
+                            color: "#01c9e1",
+                            textAlign: "center",
+                            cursor: "pointer",
+                          }}
+                        >
+                          Forgot password?
+                        </Link>
+                      </Grid>
+                      <Grid item style={{ paddingBottom: 50 }}>
+                        <Link
+                          href="/register"
+                          variant="h6"
+                          style={{ color: "#01c9e1", textAlign: "center" }}
+                        >
+                          Don't have an account?
+                        </Link>
+                      </Grid>
+                    </Grid>
                   </Grid>
-                </Grid>
+                </div>
               </Grid>
-            </div>
-          </Grid>
-        </Grid>
+            </Grid>
+          </div>
+        </div>
         {/* <Footer /> */}
       </React.Fragment>
     );

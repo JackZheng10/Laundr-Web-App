@@ -21,7 +21,7 @@ import MainAppContext from "../src/contexts/MainAppContext";
 import LoadingButton from "../src/components/other/LoadingButton";
 import theme from "../src/theme";
 import "../src/styles/borders.css";
-// import "./login.css";
+import "./login.css";
 
 const useStyles = makeStyles((theme) => ({
   mainButton: {

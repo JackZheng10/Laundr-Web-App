@@ -140,15 +140,20 @@ class Scheduling extends Component {
           </Grid>
         </Grid>
         <Typography variant="h5" className={classes.title}>
-          What's your preferred pickup time?{" "}
-          <TooltipButton
+          What's your preferred pickup time?
+          {/* <TooltipButton
             icon={true}
             style={{ marginTop: -8, marginBottom: -5 }}
             text="Operating times are 10 AM to 8 PM, Monday to Friday. You will be able to schedule a delivery time after your clothes are weighed by the driver."
-          />
+          /> */}
         </Typography>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
+        <Grid
+          container
+          direction="row"
+          justify="flex-start"
+          alignItems="center"
+        >
+          <Grid item>
             <ThemeProvider theme={timeTheme}>
               <FormControl className={classes.formControl}>
                 <Select
@@ -179,6 +184,13 @@ class Scheduling extends Component {
                 )}
               </FormControl>
             </ThemeProvider>
+          </Grid>
+          <Grid item style={{ marginBottom: 20, marginLeft: 5 }}>
+            <TooltipButton
+              icon={true}
+              style={{ marginTop: -8, marginBottom: -5 }}
+              text="Operating times are 10 AM to 8 PM, Monday to Friday. You'll be able to schedule a delivery time after your clothes are weighed by the driver."
+            />
           </Grid>
         </Grid>
 

@@ -82,7 +82,6 @@ class Footer extends Component {
                 </Grid>
               </Grid>
               <Grid item className={classes.item}>
-                {/* <Paper> */}
                 <Grid
                   container
                   container
@@ -91,16 +90,6 @@ class Footer extends Component {
                   alignItems="center"
                   spacing={2}
                 >
-                  {/* <Link
-                      href="https://linktr.ee/laundrofficial"
-                      target="_blank"
-                      rel="noopener"
-                      color="secondary"
-                      variant="h3"
-                      style={{ padding: 10 }}
-                    >
-                      Get the Laundr App
-                    </Link> */}
                   <Grid item>
                     <Link
                       href="https://play.google.com/store/apps/details?id=app.laundr2.main&hl=en_US&gl=US"
@@ -128,7 +117,6 @@ class Footer extends Component {
                     </Link>
                   </Grid>
                 </Grid>
-                {/* </Paper> */}
               </Grid>
             </Grid>
             <Hidden only={["xs"]}>
@@ -152,7 +140,7 @@ class Footer extends Component {
                   >
                     Privacy Policy
                   </Link>
-                  <Typography variant="b" style={{ padding: 20 }}>
+                  <Typography variant="body3" style={{ padding: 20 }}>
                     Copyright Laundr LLC, {new Date().getFullYear()}
                   </Typography>
                   <IconButton
@@ -207,7 +195,7 @@ class Footer extends Component {
               </Grid>
               <Grid container justify="center">
                 <Grid item>
-                  <Typography variant="b" style={{ padding: 20 }}>
+                  <Typography variant="body3" style={{ padding: 20 }}>
                     Copyright Laundr LLC, {new Date().getFullYear()}
                   </Typography>
                 </Grid>

@@ -9,6 +9,7 @@ import {
   IconButton,
   Divider,
 } from "@material-ui/core";
+//import { ReactComponent as AppleStore } from "../../../../../public/images/app-store-white.svg";
 import PropTypes from "prop-types";
 import footerStyles from "../../../../../src/styles/layouts/Main/components/FooterStyles";
 import FacebookIcon from "@material-ui/icons/Facebook";
@@ -81,9 +82,16 @@ class Footer extends Component {
                 </Grid>
               </Grid>
               <Grid item className={classes.item}>
-                <Paper>
-                  <Grid container justify="center">
-                    <Link
+                {/* <Paper> */}
+                <Grid
+                  container
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                  spacing={2}
+                >
+                  {/* <Link
                       href="https://linktr.ee/laundrofficial"
                       target="_blank"
                       rel="noopener"
@@ -92,9 +100,35 @@ class Footer extends Component {
                       style={{ padding: 10 }}
                     >
                       Get the Laundr App
+                    </Link> */}
+                  <Grid item>
+                    <Link
+                      href="https://play.google.com/store/apps/details?id=app.laundr2.main&hl=en_US&gl=US"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      <img
+                        src="/images/google-play.svg"
+                        height={40}
+                        width={135}
+                      />
                     </Link>
                   </Grid>
-                </Paper>
+                  <Grid item>
+                    <Link
+                      href="https://apps.apple.com/us/app/laundr-on-demand/id1289150426"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      <img
+                        src="/images/app-store-white.svg"
+                        height={40}
+                        width={121}
+                      />
+                    </Link>
+                  </Grid>
+                </Grid>
+                {/* </Paper> */}
               </Grid>
             </Grid>
             <Hidden only={["xs"]}>

@@ -17,6 +17,7 @@ import { caughtError, showConsoleError } from "../src/helpers/errors";
 import { GetServerSideProps } from "next";
 import { getExistingOrder_SSR, getCurrentUser_SSR } from "../src/helpers/ssr";
 import { limitLength } from "../src/helpers/inputs";
+import { Sidebar, Topbar, Footer } from "../src/layouts/Main/components";
 import Head from "next/head";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
@@ -366,6 +367,7 @@ class Login extends Component {
             </div>
           </Grid>
         </Grid>
+        {/* <Footer /> */}
       </React.Fragment>
     );
   }

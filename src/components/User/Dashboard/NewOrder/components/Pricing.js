@@ -8,9 +8,26 @@ import {
   Card,
   CardHeader,
   CardContent,
+  List,
+  Collapse,
+  ListItem,
+  Divider,
 } from "@material-ui/core";
+import {
+  PieChart,
+  Pie,
+  Sector,
+  Cell,
+  ResponsiveContainer,
+  Label,
+} from "recharts";
+import SubscriptionStatus from "../../../../User/Subscription/SubscriptionStatus/SubscriptionStatus";
 import PropTypes from "prop-types";
 import pricingStyles from "../../../../../styles/User/Dashboard/components/NewOrder/components/pricingStyles";
+
+const baseURL =
+  process.env.NEXT_PUBLIC_BASE_URL ||
+  require("../../../../../../src/config").baseURL;
 
 const CustomSlider = withStyles({
   root: {
@@ -83,8 +100,189 @@ const marks = [
 ];
 
 class Pricing extends Component {
+  renderPricingComponent = (classes) => {
+    const { currentUser, loads } = this.props;
+
+    const priceMultiplier =
+      currentUser.subscription.status === "active" ? 1.2 : 1.5;
+
+    if (
+      currentUser.subscription.status != "active" &&
+      currentUser.subscription.lbsLeft <= 0
+    ) {
+      return (
+        <Grid container direction="row" justify="center" alignItems="center">
+          <Card style={{ marginTop: 25 }} elevation={5}>
+            <CardHeader
+              title="Summary"
+              titleTypographyProps={{
+                variant: "h5",
+                style: {
+                  color: "white",
+                },
+              }}
+              className={classes.cardHeader}
+            />
+            <CardContent className={classes.removePadding}>
+              <Grid
+                container
+                direction="row"
+                justify="center"
+                spacing={2}
+                alignItems="center"
+              >
+                <Grid item>
+                  <Typography variant="h5">
+                    Estimated pounds: {loads * 12} lbs
+                  </Typography>
+                  <Typography variant="h5">
+                    Estimated cost: ${(loads * 12 * priceMultiplier).toFixed(2)}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    className={classes.subPriceAdText}
+                    href={"/user/subscription"}
+                  >
+                    <Grid
+                      container
+                      direction="column"
+                      justify="center"
+                      alignItems="center"
+                    >
+                      <Grid item>
+                        <Typography variant="overline">
+                          With a subscription:
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <Typography variant="h4">
+                          ${(loads * 12 * 1.2).toFixed(2)} →
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </Button>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+        </Grid>
+      );
+    } else {
+      const lbsData = this.props.getLbsData();
+      const overageData = lbsData[3];
+      const maxLbs = this.props.getMaxLbs(currentUser.subscription);
+      const estLbsLeft = lbsData[0].value;
+
+      return (
+        <Grid
+          container
+          spacing={0}
+          direction="column"
+          justify="center"
+          alignItems="center"
+        >
+          <Grid item>
+            <Card className={classes.subCard}>
+              <CardHeader
+                title="Subscription Pounds Summary"
+                titleTypographyProps={{
+                  variant: "h5",
+                  style: {
+                    color: "white",
+                  },
+                }}
+                className={classes.cardHeader}
+              />
+              <CardContent className={classes.removePadding}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <Grid
+                    item
+                    style={{
+                      position: "relative",
+                      marginTop: -15,
+                      marginBottom: -15,
+                    }}
+                  >
+                    <PieChart width={265} height={265}>
+                      <Pie
+                        data={lbsData}
+                        innerRadius={95}
+                        outerRadius={115}
+                        paddingAngle={1}
+                        startAngle={180}
+                        endAngle={-180}
+                      >
+                        {lbsData.slice(0, 3).map((entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={entry.color}
+                            style={{ opacity: entry.opacity }}
+                          />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                    <div
+                      style={{
+                        top: "40%",
+                        left: "20%",
+                        position: "absolute",
+                      }}
+                    >
+                      <Typography variant="h5">
+                        Estimated Pounds Left
+                      </Typography>
+                    </div>
+                    <div
+                      style={{
+                        top: "50%",
+                        left: "3%",
+                        position: "absolute",
+                        width: 250,
+                      }}
+                    >
+                      <Typography
+                        variant="h2"
+                        style={{ color: "#01c9e1", textAlign: "center" }}
+                      >
+                        {`${estLbsLeft}/${maxLbs}`}
+                      </Typography>
+                    </div>
+                  </Grid>
+                </Grid>
+              </CardContent>
+              <Divider />
+              <Collapse in={overageData.overage} timeout="auto" unmountOnExit>
+                <CardContent className={classes.removePadding}>
+                  <React.Fragment>
+                    <Typography
+                      variant="h5"
+                      gutterBottom
+                      style={{ textAlign: "center" }}
+                    >
+                      Estimated overage pounds: {overageData.overageLbs}
+                    </Typography>
+                    <Typography variant="h5" style={{ textAlign: "center" }}>
+                      Estimated overage charge: $
+                      {(overageData.overageLbs * priceMultiplier).toFixed(2)}
+                    </Typography>
+                  </React.Fragment>
+                </CardContent>
+              </Collapse>
+            </Card>
+          </Grid>
+        </Grid>
+      );
+    }
+  };
   render() {
-    const { classes, loads, handleInputChange } = this.props;
+    const { classes, loads, handleInputChange, currentUser } = this.props;
 
     return (
       <React.Fragment>
@@ -102,19 +300,7 @@ class Pricing extends Component {
             handleInputChange("loads", value);
           }}
         />
-        {/*card for change based on load size, prob will be unused in favor of different graphic*/}
-        {/* <div className={classes.layout}>
-          <Card className={classes.root} elevation={10}>
-            <CardContent className={classes.cardContent}>
-              <Grid container justify="center">
-                <img
-                  src="/images/NewOrder/OneLoad.png"
-                  style={{ height: 150 }}
-                />
-              </Grid>
-            </CardContent>
-          </Card>
-        </div> */}
+        {this.renderPricingComponent(classes)}
       </React.Fragment>
     );
   }

@@ -316,14 +316,14 @@ class Register extends Component {
   handleInputChange = (property, value) => {
     switch (property) {
       case "fname":
-        if (validator.isAlpha(value)) {
+        if (validator.isAlpha(value) || value === "") {
           value = limitLength(value, 20);
           this.setState({ [property]: value });
         }
         break;
 
       case "lname":
-        if (validator.isAlpha(value)) {
+        if (validator.isAlpha(value) || value === "") {
           value = limitLength(value, 20);
           this.setState({ [property]: value });
         }

@@ -10,7 +10,7 @@ import {
   CardContent,
   CardActions,
 } from "@material-ui/core";
-import { PieChart, Pie, Sector, Cell } from "recharts";
+import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from "recharts";
 import { getCurrentUser, updateToken } from "../../../../helpers/session";
 import { caughtError, showConsoleError } from "../../../../helpers/errors";
 import { withRouter } from "next/router";
@@ -93,7 +93,7 @@ class SubscriptionStatus extends Component {
   };
 
   render() {
-    const { classes, currentUser } = this.props;
+    const { classes, currentUser, forPricing } = this.props;
 
     return (
       <React.Fragment>
@@ -102,15 +102,6 @@ class SubscriptionStatus extends Component {
             <Typography variant="h2" style={{ color: "#01c9e1" }} gutterBottom>
               Current Plan: {currentUser.subscription.plan}
             </Typography>
-            {/* <CardHeader
-              title={`Current Plan: ${currentUser.subscription.plan}`}
-              titleTypographyProps={{
-                variant: "h2",
-                style: {
-                  color: "#01c9e1",
-                },
-              }}
-            /> */}
             <CardContent
               style={{
                 display: "flex",
@@ -169,11 +160,15 @@ class SubscriptionStatus extends Component {
               <div
                 style={{
                   top: "70%",
-                  left: "35%",
+                  left: "1%",
                   position: "absolute",
+                  width: 295,
                 }}
               >
-                <Typography variant="h1" style={{ color: "#01c9e1" }}>
+                <Typography
+                  variant="h1"
+                  style={{ color: "#01c9e1", textAlign: "center" }}
+                >
                   {`${currentUser.subscription.lbsLeft}/${this.getMaxLbs(
                     currentUser.subscription
                   )}`}
@@ -182,6 +177,7 @@ class SubscriptionStatus extends Component {
             </CardContent>
           </div>
         </Grid>
+
         <Grid item>
           <Card className={classes.subInfoCard} elevation={10}>
             <CardHeader

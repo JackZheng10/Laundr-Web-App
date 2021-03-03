@@ -201,7 +201,7 @@ class History extends Component {
               )}
               currentUser={fetch_SSR.success ? fetch_SSR.userInfo : null}
             />
-            {fetch_SSR.success && (
+            {fetch_SSR.success && totalCount > 0 && (
               <TablePagination
                 rowsPerPageOptions={[10, 25, 50]}
                 component="div"
@@ -211,6 +211,18 @@ class History extends Component {
                 onChangePage={this.handleChangePage}
                 onChangeRowsPerPage={this.handleChangeRowsPerPage}
               />
+            )}
+            {totalCount <= 0 && (
+              <Typography
+                style={{
+                  textAlign: "center",
+                  color: "#01c9e1",
+                  paddingTop: 15,
+                }}
+                variant="h2"
+              >
+                You have no completed orders.
+              </Typography>
             )}
           </Grid>
         </Grid>

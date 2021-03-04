@@ -560,64 +560,6 @@ class Review extends Component {
                   }}
                   className={classes.cardHeader}
                 />
-                <CardContent className={classes.removePadding}>
-                  <div style={{ display: "flex" }}>
-                    <TextField
-                      label="Code"
-                      variant="outlined"
-                      size="small"
-                      className={classes.input}
-                    />
-                    {/*todo: to be changed when functionality added, typing in something atm breaks it*/}
-                    <Button
-                      className={classes.secondaryButton}
-                      variant="contained"
-                      size="small"
-                      onClick={() => {
-                        alert("work in progress");
-                      }}
-                      style={{ marginLeft: 10 }}
-                    >
-                      Apply
-                    </Button>
-                  </div>
-                  <Grid container justify="center">
-                    <Typography
-                      variant="h4"
-                      style={{ fontWeight: 600, marginTop: 10 }}
-                    >
-                      Estimated cost:&nbsp; 
-                    </Typography>
-                    {/*todo: factor in sub stuff + overage stuff etc?*/}
-                    <Typography
-                      variant="h4"
-                      style={{ textAlign: "center", marginTop: 10 }}
-                    >
-                      ${loads * 12 * 1.5}.00
-                    </Typography>
-                    {separate ? 
-                     <Typography
-                     variant="h4"
-                      style={{ textAlign: "center", marginTop: 10 }}
-                    >
-                      +$2
-                    </Typography> : null }
-                    {delicates ? 
-                     <Typography
-                     variant="h4"
-                      style={{ textAlign: "center", marginTop: 10 }}
-                    >
-                      +$2
-                    </Typography> : null }
-                    {towelsSheets ? 
-                     <Typography
-                     variant="h4"
-                      style={{ textAlign: "center", marginTop: 10 }}
-                    >
-                      +$2
-                    </Typography> : null }
-                  </Grid>
-                </CardContent>
                 {this.renderPriceComponent()}
               </Card>
             </Grid>

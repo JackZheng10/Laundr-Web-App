@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Grid, Typography, TextField, withStyles } from "@material-ui/core";
+import { Grid, Typography, TextField, withStyles, Divider } from "@material-ui/core";
 import PropTypes from "prop-types";
 import preferencesStyles from "../../../../../../styles/User/Dashboard/components/NewOrder/components/Preferences/preferencesStyles";
 import PreferenceCard from "./components/PreferenceCard";
@@ -30,8 +30,8 @@ class Preferences extends Component {
 
     return (
       <React.Fragment>
-        <Typography variant="h5" gutterBottom>
-          Would you like any of these options?
+        <Typography variant="h3" gutterBottom>
+          Choose your preferences:
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
@@ -78,22 +78,11 @@ class Preferences extends Component {
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <PreferenceCard
-              title="Delicates Bag (+$2)"
-              info="Please select this if you would like to purchase a delicates bag with your order."
-              unselectedImage="/images/NewOrder/DelicatesUnselected.png"
-              selectedImage="/images/NewOrder/DelicatesSelected.png"
-              handleInputChange={(selected) => {
-                handleInputChange("delicates", selected);
-              }}
-            />
-          </Grid>
         </Grid>
         <Typography variant="h5" gutterBottom className={classes.title}>
           Do you have any special instructions for our washers?
         </Typography>
-        <Grid container spacing={3}>
+        <Grid container spacing={3} className={classes.instructions}>
           <Grid item xs={12}>
             <TextField
               label="Special Instructions"
@@ -108,6 +97,23 @@ class Preferences extends Component {
               }}
               className={classes.input}
             />
+          </Grid>
+        </Grid>
+        <Divider/>
+        <Typography variant="h3" gutterBottom className={classes.title}>
+          Add-Ons
+        </Typography>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6}>
+              <PreferenceCard
+                title="Delicates Bag (+$2)"
+                info="Please select this if you would like to purchase a delicates bag with your order."
+                unselectedImage="/images/NewOrder/DelicatesUnselected.png"
+                selectedImage="/images/NewOrder/DelicatesSelected.png"
+                handleInputChange={(selected) => {
+                  handleInputChange("delicates", selected);
+                }}
+              />
           </Grid>
         </Grid>
       </React.Fragment>

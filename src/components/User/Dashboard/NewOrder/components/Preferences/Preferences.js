@@ -48,7 +48,7 @@ class Preferences extends Component {
           <Grid item xs={12} sm={6}>
             <PreferenceCard
               title="Low Temp. Tumble Dry (Free)"
-              info="Some clothes may not be completely dry when returned."
+              info="A gentle alternative to hang drying. May cause thick fabrics to be slightly damp when returned."
               unselectedImage="/images/NewOrder/TowelsUnselected.png"
               selectedImage="/images/NewOrder/TowelsSelected.png"
               handleInputChange={(selected) => {
@@ -70,7 +70,7 @@ class Preferences extends Component {
           <Grid item xs={12} sm={6}>
             <PreferenceCard
               title="Comforter (+$5)"
-              info="Towels and sheets are washed separately and dried on high heat."
+              info="Large comforters require extra care and a longer dry cycle. Items containing real or synthetic down should not be sent."
               unselectedImage="/images/NewOrder/TowelsUnselected.png"
               selectedImage="/images/NewOrder/TowelsSelected.png"
               handleInputChange={(selected) => {

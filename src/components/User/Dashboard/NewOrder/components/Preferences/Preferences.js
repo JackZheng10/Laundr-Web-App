@@ -99,23 +99,7 @@ class Preferences extends Component {
             />
           </Grid>
         </Grid>
-        <Divider/>
-        <Typography variant="h3" gutterBottom className={classes.title}>
-          Add-Ons
-        </Typography>
-        <Grid container spacing={3}>
-          <Grid item xs={6} sm={6}>
-              <PreferenceCard
-                title="Delicates Bag (+$2)"
-                info="Please select this if you would like to purchase a delicates bag with your order."
-                unselectedImage="/images/NewOrder/DelicatesUnselected.png"
-                selectedImage="/images/NewOrder/DelicatesSelected.png"
-                handleInputChange={(selected) => {
-                  handleInputChange("delicates", selected);
-                }}
-              />
-          </Grid>
-        </Grid>
+       
       </React.Fragment>
     );
   }

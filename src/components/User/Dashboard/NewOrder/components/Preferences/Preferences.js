@@ -34,7 +34,7 @@ class Preferences extends Component {
           Choose your preferences:
         </Typography>
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6} sm={6}>
             <PreferenceCard
               title="Scented (Free)"
               info="Unscented detergent is hypoallergenic."
@@ -45,9 +45,9 @@ class Preferences extends Component {
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6} sm={6}>
             <PreferenceCard
-              title="Low Temp. Tumble Dry (Free)"
+              title="Low temp. Dry (Free)"
               info="A gentle alternative to hang drying. May cause thick fabrics to be slightly damp when returned."
               unselectedImage="/images/NewOrder/TowelsUnselected.png"
               selectedImage="/images/NewOrder/TowelsSelected.png"
@@ -56,7 +56,7 @@ class Preferences extends Component {
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6} sm={6}>
             <PreferenceCard
               title="Separate (+$2)"
               info="Separated clothing is divided into whites and colors. Whites will be bleached."
@@ -67,7 +67,7 @@ class Preferences extends Component {
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6} sm={6}>
             <PreferenceCard
               title="Comforter (+$5)"
               info="Large comforters require extra care and a longer dry cycle. Items containing real or synthetic down should not be sent."
@@ -104,7 +104,7 @@ class Preferences extends Component {
           Add-Ons
         </Typography>
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6} sm={6}>
               <PreferenceCard
                 title="Delicates Bag (+$2)"
                 info="Please select this if you would like to purchase a delicates bag with your order."

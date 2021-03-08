@@ -147,23 +147,7 @@ class Review extends Component {
                 </Typography>
               </ListItem>
             )}
-            {addOnCost > 0 && (
-              <ListItem>
-                <ListItemText
-                  primary={"Add-Ons"}
-                  secondary={
-                    <div>
-                        {delicates ? <div>Delicates Bag (+$2)</div> : null}
-                    </div>
-                  }
-                  primaryTypographyProps={{ variant: "h6" }}
-                />
-
-                <Typography variant="body1">
-                   ${addOnCost.toFixed(2)}
-                </Typography>
-              </ListItem>
-            )}
+            
             </List>
           </CardContent>
           <Divider />
@@ -257,23 +241,7 @@ class Review extends Component {
                 </Typography>
               </ListItem>
             )}
-            {addOnCost > 0 && (
-              <ListItem>
-                <ListItemText
-                  primary={"Add-Ons"}
-                  secondary={
-                    <div>
-                        {delicates ? <div>Delicates Bag (+$2)</div> : null}
-                    </div>
-                  }
-                  primaryTypographyProps={{ variant: "h6" }}
-                />
-
-                <Typography variant="body1">
-                   ${addOnCost.toFixed(2)}
-                </Typography>
-              </ListItem>
-            )}
+            
             </List>
           </CardContent>
           <Divider />
@@ -557,57 +525,7 @@ class Review extends Component {
                   size="small"
                 />
               </CardActions> */}
-              <CardHeader
-                avatar={
-                  <SettingsIcon
-                    fontSize="small"
-                    style={{ marginBottom: -4 }}
-                    htmlColor="white"
-                  />
-                }
-                title="Add-Ons"
-                titleTypographyProps={{
-                  variant: "h5",
-                  style: {
-                    color: "white",
-                  },
-                }}
-                className={classes.cardHeader}
-              />
-              <CardContent className={classes.removePadding}>
-                <List dense className={classes.listRoot}>
-                <ListItem>
-                    <ListItemAvatar>
-                      <Avatar
-                        src={
-                          delicates
-                            ? "/images/NewOrder/DelicatesSelectedCircle.png"
-                            : "/images/NewOrder/DelicatesUnselectedCircle.png"
-                        }
-                      />
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary="Delicates Bag (+$2)"
-                      primaryTypographyProps={{
-                        style: {
-                          color: delicates ? "black" : "grey",
-                        },
-                        variant: "body1",
-                      }}
-                    />
-                    <ListItemSecondaryAction>
-                      {delicates ? (
-                        <CheckCircleOutlineIcon
-                          style={{ fill: "green" }}
-                          edge="end"
-                        />
-                      ) : (
-                        <NotInterestedIcon color="error" edge="end" />
-                      )}
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                </List>
-              </CardContent>
+              
             </Card>
           </Grid>
           {/* <Grid item xs={1}>

@@ -74,7 +74,7 @@ class Review extends Component {
   };
 
   renderPriceComponent = () => {
-    const { currentUser, classes, loads, scented, tumbleDry, delicates, separate, towelsSheets } = this.props;
+    const { currentUser, classes, loads, scented, tumbleDry, delicates, separate, comforter } = this.props;
 
     const priceMultiplier =
       currentUser.subscription.status === "active" ? 1.2 : 1.5;
@@ -83,9 +83,9 @@ class Review extends Component {
 
       let preferencesCost = 0;
       if (separate == true) {
-        preferencesCost += 2;
+        preferencesCost += 5;
       }
-      if (towelsSheets == true) {
+      if (comforter == true) {
         preferencesCost += 5;
       }
 
@@ -127,7 +127,7 @@ class Review extends Component {
                   </Typography>
                 </ListItem>
               )}
-              {(scented || tumbleDry || separate || towelsSheets) && (
+              {(scented || tumbleDry || separate || comforter) && (
               <ListItem>
                 <ListItemText
                   primary={"Preferences"}
@@ -135,8 +135,8 @@ class Review extends Component {
                     <div>
                         {scented ? <div>Scented (Free)</div> : null}
                         {tumbleDry ? <div>Low Temp. Tumble Dry (Free)</div> : null}
-                        {separate ? <div>Separate (+$2)</div> : null}
-                        {towelsSheets ? <div>Added Comforter (+$5)</div> : null}
+                        {separate ? <div>Separate (+$5)</div> : null}
+                        {comforter ? <div>Added Comforter (+$5)</div> : null}
                     </div>
                   }
                   primaryTypographyProps={{ variant: "h6" }}
@@ -237,7 +237,7 @@ class Review extends Component {
                   </Typography>
                 </ListItem>
               )}
-               {(scented || tumbleDry || separate || towelsSheets) && (
+               {(scented || tumbleDry || separate || comforter) && (
               <ListItem>
                 <ListItemText
                   primary={"Preferences"}
@@ -245,8 +245,8 @@ class Review extends Component {
                     <div>
                         {scented ? <div>Scented (Free)</div> : null}
                         {tumbleDry ? <div>Low Temp. Tumble Dry (Free)</div> : null}
-                        {separate ? <div>Separate (+$2)</div> : null}
-                        {towelsSheets ? <div>Added Comforter (+$5)</div> : null}
+                        {separate ? <div>Separate (+$5)</div> : null}
+                        {comforter ? <div>Added Comforter (+$5)</div> : null}
                     </div>
                   }
                   primaryTypographyProps={{ variant: "h6" }}
@@ -312,7 +312,7 @@ class Review extends Component {
       scented,
       delicates,
       separate,
-      towelsSheets,
+      comforter,
       tumbleDry,
       loads,
       currentUser,
@@ -490,7 +490,7 @@ class Review extends Component {
                       />
                     </ListItemAvatar>
                     <ListItemText
-                      primary="Separate (+$2)"
+                      primary="Separate (+$5)"
                       primaryTypographyProps={{
                         style: {
                           color: separate ? "black" : "grey",
@@ -514,7 +514,7 @@ class Review extends Component {
                     <ListItemAvatar>
                       <Avatar
                         src={
-                          towelsSheets
+                          comforter
                             ? "/images/NewOrder/TowelsSelectedCircle.png"
                             : "/images/NewOrder/TowelsUnselectedCircle.png"
                         }
@@ -524,13 +524,13 @@ class Review extends Component {
                       primary="Added Comforter (+$5)"
                       primaryTypographyProps={{
                         style: {
-                          color: towelsSheets ? "black" : "grey",
+                          color: comforter ? "black" : "grey",
                         },
                         variant: "body1",
                       }}
                     />
                     <ListItemSecondaryAction>
-                      {towelsSheets ? (
+                      {comforter ? (
                         <CheckCircleOutlineIcon
                           style={{ fill: "green" }}
                           edge="end"

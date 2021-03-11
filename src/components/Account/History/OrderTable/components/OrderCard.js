@@ -359,7 +359,7 @@ const renderWasherPrefs = (order) => {
   const scented = order.washerInfo.scented;
   const delicates = order.washerInfo.delicates;
   const separate = order.washerInfo.separate;
-  const towelsSheets = order.washerInfo.towelsSheets;
+  const comforter = order.washerInfo.comforter;
 
   let prefs = "";
 
@@ -375,12 +375,12 @@ const renderWasherPrefs = (order) => {
     prefs += "Separate, ";
   }
 
-  if (towelsSheets) {
+  if (comforter) {
     prefs += "Towels and Sheets,";
   }
 
   //todo: test this, forget what it does lol
-  if (towelsSheets) {
+  if (comforter) {
     prefs = prefs.slice(0, prefs.length - 1);
   } else {
     prefs = prefs.slice(0, prefs.length - 2);

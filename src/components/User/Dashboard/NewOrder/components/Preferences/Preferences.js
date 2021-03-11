@@ -58,7 +58,7 @@ class Preferences extends Component {
           </Grid>
           <Grid item xs={6} sm={6}>
             <PreferenceCard
-              title="Separate (+$2)"
+              title="Separate (+$5)"
               info="Separated clothing is divided into whites and colors. Whites will be bleached."
               unselectedImage="/images/NewOrder/SeparateUnselected.png"
               selectedImage="/images/NewOrder/SeparateSelected.png"
@@ -74,7 +74,7 @@ class Preferences extends Component {
               unselectedImage="/images/NewOrder/TowelsUnselected.png"
               selectedImage="/images/NewOrder/TowelsSelected.png"
               handleInputChange={(selected) => {
-                handleInputChange("towelsSheets", selected);
+                handleInputChange("comforter", selected);
               }}
             />
           </Grid>

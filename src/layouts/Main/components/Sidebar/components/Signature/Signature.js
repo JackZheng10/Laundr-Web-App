@@ -65,7 +65,7 @@ const Signature = (props) => {
       </Typography>
       <Typography variant="body2" align="center">
         <Link
-          style={{ fontWeight: "500", color: "grey" }}
+          style={{ color: "grey" }}
           target="_blank"
           rel="noopener"
           href="/changelog"

@@ -82,7 +82,7 @@ class Review extends Component {
         ? 1.2
         : 1.5;
     const balance = parseFloat(this.props.balance.slice(1));
-    const subtotal = loads * 12 * priceMultiplier;
+    const subtotal = loads * 18 * priceMultiplier;
 
     if (
       currentUser.subscription.status != "active" &&
@@ -100,7 +100,7 @@ class Review extends Component {
               <ListItem>
                 <ListItemText
                   primary={"Subtotal"}
-                  secondary={`${loads * 12} lbs`}
+                  secondary={`${loads * 18} lbs`}
                   primaryTypographyProps={{ variant: "h6" }}
                 />
                 <Typography variant="body1">${subtotal.toFixed(2)}</Typography>
@@ -160,7 +160,7 @@ class Review extends Component {
               <ListItem>
                 <ListItemText
                   primary={"Subtotal"}
-                  secondary={`${loads * 12} lbs`}
+                  secondary={`${loads * 18} lbs`}
                   primaryTypographyProps={{ variant: "h6" }}
                 />
                 <Typography variant="body1">${subtotal.toFixed(2)}</Typography>

@@ -469,7 +469,7 @@ class NewOrder extends Component {
     const loads = this.state.loads;
     const maxLbs = this.getMaxLbs(currentUser.subscription);
     const lbsLeft = currentUser.subscription.lbsLeft;
-    const estLbsCost = loads * 12;
+    const estLbsCost = loads * 18;
 
     return [
       {
@@ -625,13 +625,13 @@ class NewOrder extends Component {
                       }}
                     >
                       <div>
-                        <Pricing
+                        {/* <Pricing
                           loads={this.state.loads}
                           handleInputChange={this.handleInputChange}
                           currentUser={currentUser}
                           getLbsData={this.getLbsData}
                           getMaxLbs={this.getMaxLbs}
-                        />
+                        /> */}
                       </div>
                     </Fade>
                     <Fade

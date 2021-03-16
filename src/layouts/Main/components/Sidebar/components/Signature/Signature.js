@@ -45,7 +45,7 @@ const Signature = (props) => {
           Laundr LLC
         </Link>
       </Typography> */}
-      <Typography variant="body2" align="center">
+      {/* <Typography variant="body2" align="center">
         Made with ❤️ by{" "}
         <Link
           style={{ color: "#01c9e1", fontWeight: "500" }}
@@ -54,6 +54,23 @@ const Signature = (props) => {
           href="https://github.com/JackZheng10"
         >
           Jack Zheng
+        </Link>
+      </Typography> */}
+      <Typography
+        variant="body1"
+        align="center"
+        style={{ fontWeight: 500, color: "#01c9e1" }}
+      >
+        App Version: 1.0
+      </Typography>
+      <Typography variant="body2" align="center">
+        <Link
+          style={{ fontWeight: "500", color: "grey" }}
+          target="_blank"
+          rel="noopener"
+          href="/changelog"
+        >
+          View Changelog
         </Link>
       </Typography>
     </React.Fragment>

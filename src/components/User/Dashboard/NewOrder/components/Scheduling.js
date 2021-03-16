@@ -184,14 +184,19 @@ class Scheduling extends Component {
                 )}
               </FormControl>
             </ThemeProvider>
+            <TooltipButton
+              icon={true}
+              style={{ marginTop: 20, marginLeft: 5 }}
+              text="Operating times are 10 AM to 8 PM, Monday to Friday. You'll be able to schedule a delivery time after your clothes are weighed by the driver."
+            />
           </Grid>
-          <Grid item style={{ marginBottom: 20, marginLeft: 5 }}>
+          {/* <Grid item style={{ marginLeft: 5 }}>
             <TooltipButton
               icon={true}
               style={{ marginTop: -8, marginBottom: -5 }}
               text="Operating times are 10 AM to 8 PM, Monday to Friday. You'll be able to schedule a delivery time after your clothes are weighed by the driver."
             />
-          </Grid>
+          </Grid> */}
         </Grid>
       </React.Fragment>
     );

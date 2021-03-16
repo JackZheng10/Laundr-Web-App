@@ -57,16 +57,16 @@ const Main = (props) => {
         currentUser={currentUser}
       />
       <main className={classes.content}>
-        {/* <div
+        <div
           style={{
             display: "flex",
             flexDirection: "column",
-            minHeight: "93vh",
+            minHeight: "72vh", //takes into account the smallest page with footer - so if that changes then so will this
           }}
-        > */}
-        {children}
+        >
+          {children}
+        </div>
         <Footer />
-        {/* </div> */}
       </main>
     </div>
   );

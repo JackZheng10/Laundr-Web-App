@@ -6,6 +6,11 @@ const footerStyles = (theme) => ({
     backgroundColor: "white",
     // overflow: "hidden",
   },
+  // footer: {
+  //   position: "absolute",
+  //   bottom: 0,
+  //   left: "50%",
+  // },
   item: {
     padding: 20,
   },

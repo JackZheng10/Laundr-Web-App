@@ -67,16 +67,32 @@ const marks = [
     label: "1",
   },
   {
+    value: 1.5,
+    label: "",
+  },
+  {
     value: 2,
     label: "2",
+  },
+  {
+    value: 2.5,
+    label: "",
   },
   {
     value: 3,
     label: "3",
   },
   {
+    value: 3.5,
+    label: "",
+  },
+  {
     value: 4,
     label: "4",
+  },
+  {
+    value: 4.5,
+    label: "",
   },
   {
     value: 5,
@@ -122,22 +138,27 @@ class Pricing extends Component {
                 <Grid item>
                   <Grid
                     container
-                    direction="row"
+                    direction="column"
                     alignItems="center"
                     justify="center"
                   >
-                    <Grid item style={{ marginBottom: 10 }}>
+                    <Grid item style={{ marginBottom: -5 }}>
                       <img
-                        src={`/images/NewOrder/Bag${loads.toFixed(0)}.png`}
+                        src={`/images/NewOrder/Bag${(loads - 0.1).toFixed(
+                          0
+                        )}.png`}
                         style={{ height: 100 }}
                       />
                     </Grid>
+                    <Grid item style={{ marginBottom: 5 }}>
+                      <Typography variant="overline">$1.50/lb</Typography>
+                    </Grid>
                   </Grid>
                   <Typography variant="h5">
-                    Estimated pounds: {loads * 12} lbs
+                    Estimated pounds: {loads * 18} lbs
                   </Typography>
                   <Typography variant="h5">
-                    Estimated cost: ${(loads * 12 * priceMultiplier).toFixed(2)}
+                    Estimated cost: ${(loads * 18 * priceMultiplier).toFixed(2)}
                   </Typography>
                 </Grid>
                 <Grid item>
@@ -159,7 +180,12 @@ class Pricing extends Component {
                       </Grid>
                       <Grid item>
                         <Typography variant="h4">
-                          ${(loads * 12 * 1.2).toFixed(2)} →
+                          ${(loads * 18 * 1.2).toFixed(2)} →
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <Typography variant="overline">
+                          (est. ~$1.25/lb)
                         </Typography>
                       </Grid>
                     </Grid>
@@ -303,12 +329,12 @@ class Pricing extends Component {
     return (
       <React.Fragment>
         <Typography variant="h5" gutterBottom>
-          About how many loads of laundry do you have?
+          About how many bags of laundry do you have?
         </Typography>
         <CustomSlider
           defaultValue={loads}
           valueLabelDisplay="off"
-          step={1}
+          step={0.5}
           min={1}
           max={5}
           marks={marks}

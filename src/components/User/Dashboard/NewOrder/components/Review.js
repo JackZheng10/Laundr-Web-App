@@ -421,8 +421,8 @@ class Review extends Component {
                       <Avatar
                         src={
                           tumbleDry
-                            ? "/images/NewOrder/SeparateSelectedCircle.png"
-                            : "/images/NewOrder/SeparateUnselectedCircle.png"
+                            ? "/images/NewOrder/LowTempSelectedCircle.png"
+                            : "/images/NewOrder/LowTempUnselectedCircle.png"
                         }
                       />
                     </ListItemAvatar>

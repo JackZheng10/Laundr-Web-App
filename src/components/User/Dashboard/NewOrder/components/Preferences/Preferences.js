@@ -49,8 +49,8 @@ class Preferences extends Component {
             <PreferenceCard
               title="Low temp. Dry (Free)"
               info="A gentle alternative to hang drying. May cause thick fabrics to be slightly damp when returned."
-              unselectedImage="/images/NewOrder/TowelsUnselected.png"
-              selectedImage="/images/NewOrder/TowelsSelected.png"
+              unselectedImage="/images/NewOrder/LowTempUnselected.png"
+              selectedImage="/images/NewOrder/LowTempSelected.png"
               handleInputChange={(selected) => {
                 handleInputChange("tumbleDry", selected);
               }}

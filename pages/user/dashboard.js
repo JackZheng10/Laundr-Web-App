@@ -9,6 +9,8 @@ import {
   CardContent,
   CardActions,
   Button,
+  Tabs,
+  Tab
 } from "@material-ui/core";
 import { Layout } from "../../src/layouts";
 import {
@@ -31,6 +33,7 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import NewOrder from "../../src/components/User/Dashboard/NewOrder/NewOrder";
+import LaundrDay from "../../src/components/User/Dashboard/LaundrDayOrder/LaundrDay";
 import OrderStatus from "../../src/components/User/Dashboard/OrderStatus/OrderStatus";
 import AutoRotatingCarousel from "../../src/components/User/Dashboard/Carousel/AutoRotatingCarousel";
 import Slide from "../../src/components/User/Dashboard/Carousel/Slide";
@@ -65,6 +68,7 @@ class Dashboard extends Component {
     orderComponent: null,
     orderComponentName: "",
     userFname: "",
+    orderTabState: "New Order"
   };
 
   componentDidMount = async () => {
@@ -123,13 +127,24 @@ class Dashboard extends Component {
         );
 
       case "new_order":
-        return (
-          <NewOrder
-            fetchOrderInfo={this.fetchOrderInfo}
-            currentUser={fetch_SSR.userInfo}
-            balance={fetch_SSR.balance}
-          />
-        );
+        if (this.state.orderTabState == "New Order") {
+          return (
+            <NewOrder
+              fetchOrderInfo={this.fetchOrderInfo}
+              currentUser={fetch_SSR.userInfo}
+              balance={fetch_SSR.balance}
+            />
+          );
+        }
+        else if (this.state.orderTabState == "Laundr Day")  {
+          return (
+            <LaundrDay
+              fetchOrderInfo={this.fetchOrderInfo}
+              currentUser={fetch_SSR.userInfo}
+              balance={fetch_SSR.balance}
+            />
+          );
+        }
 
       case "order_status":
         return (
@@ -138,7 +153,7 @@ class Dashboard extends Component {
             currentUser={fetch_SSR.userInfo}
             fetchOrderInfo={this.fetchOrderInfo}
           />
-        );
+      );
     }
   };
 
@@ -148,7 +163,13 @@ class Dashboard extends Component {
         return "Missing Payment Method";
 
       case "new_order":
-        return "New Order";
+        if (this.state.orderTabState == "New Order") {
+          return "New Order";
+        }
+        else if (this.state.orderTabState == "Laundr Day") {
+          return "Laundr Day";
+        }
+       
 
       case "order_status":
         return "Order Status";
@@ -156,6 +177,10 @@ class Dashboard extends Component {
       default:
         return "";
     }
+  };
+
+  handleTabChange = (event, value) => {
+    this.setState({ orderTabState: value });
   };
 
   render() {
@@ -208,6 +233,13 @@ class Dashboard extends Component {
           alignItems="center"
           // style={{ backgroundImage: `url("/images/space.png")` }}
         >
+            <Tabs
+              value={this.state.orderTabState}
+              onChange={this.handleTabChange}
+            >
+              <Tab value={"New Order"} label="New Order" />
+              <Tab value={"Laundr Day"} label="Laundr Day" />
+            </Tabs>
           <Grid item>{this.renderOrderComponent(classes)}</Grid>
         </Grid>
         {/* <div style={{ position: "relative", marginTop: 50 }}>

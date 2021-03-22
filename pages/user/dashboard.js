@@ -9,6 +9,8 @@ import {
   CardContent,
   CardActions,
   Button,
+  Tabs,
+  Tab
 } from "@material-ui/core";
 import { Layout } from "../../src/layouts";
 import {
@@ -29,6 +31,7 @@ import PropTypes from "prop-types";
 import axios from "../../src/helpers/axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import NewOrder from "../../src/components/User/Dashboard/NewOrder/NewOrder";
+import LaundrDay from "../../src/components/User/Dashboard/LaundrDayOrder/LaundrDay";
 import OrderStatus from "../../src/components/User/Dashboard/OrderStatus/OrderStatus";
 import AutoRotatingCarousel from "../../src/components/User/Dashboard/Carousel/AutoRotatingCarousel";
 import Slide from "../../src/components/User/Dashboard/Carousel/Slide";
@@ -55,6 +58,14 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 
 class Dashboard extends Component {
   static contextType = MainAppContext;
+
+  //STATE IS REMOVED IN PWA, FIGURE OUT HOW TO DETERMINE TAB STATE
+  state = {
+    orderComponent: null,
+    orderComponentName: "",
+    userFname: "",
+    orderTabState: "New Order"
+  };
 
   //to refresh order info, just reload the page
   fetchOrderInfo = () => {
@@ -114,7 +125,7 @@ class Dashboard extends Component {
             currentUser={currentUser}
             fetchOrderInfo={this.fetchOrderInfo}
           />
-        );
+      );
     }
   };
 
@@ -124,7 +135,13 @@ class Dashboard extends Component {
         return "Missing Payment Method";
 
       case "new_order":
-        return "New Order";
+        if (this.state.orderTabState == "New Order") {
+          return "New Order";
+        }
+        else if (this.state.orderTabState == "Laundr Day") {
+          return "Laundr Day";
+        }
+       
 
       case "order_status":
         return "Order Status";
@@ -132,6 +149,10 @@ class Dashboard extends Component {
       default:
         return "";
     }
+  };
+
+  handleTabChange = (event, value) => {
+    this.setState({ orderTabState: value });
   };
 
   render() {
@@ -179,6 +200,13 @@ class Dashboard extends Component {
           justify="center"
           alignItems="center"
         >
+            <Tabs
+              value={this.state.orderTabState}
+              onChange={this.handleTabChange}
+            >
+              <Tab value={"New Order"} label="New Order" />
+              <Tab value={"Laundr Day"} label="Laundr Day" />
+            </Tabs>
           <Grid item>{this.renderOrderComponent(classes)}</Grid>
         </Grid>
       </Layout>

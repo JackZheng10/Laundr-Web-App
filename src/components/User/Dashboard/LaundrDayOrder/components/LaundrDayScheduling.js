@@ -79,11 +79,11 @@ class Scheduling extends Component {
               <ButtonGroup variant="contained" style={{ backgroundColor: "#d5d5d5", color: "white" }}> 
                  <Button
                   onClick={() => {
-                    handleInputChange("laundrDayOfWeek", "Sunday");
+                    handleInputChange("laundrDayOfWeek", 0);
                   }}
                   variant="contained"
                   style={
-                    laundrDayOfWeek === "Sunday" 
+                    laundrDayOfWeek === 0 
                       ? { backgroundColor: "#01c9e1", color: "white" }
                       : { backgroundColor: "white", color: "#01c9e1" }
                   }
@@ -93,11 +93,11 @@ class Scheduling extends Component {
                 </Button>
                 <Button
                   onClick={() => {
-                    handleInputChange("laundrDayOfWeek", "Monday");
+                    handleInputChange("laundrDayOfWeek", 1);
                   }}
                   variant="contained"
                   style={
-                    laundrDayOfWeek === "Monday" 
+                    laundrDayOfWeek === 1 
                       ? { backgroundColor: "#01c9e1", color: "white" }
                       : { backgroundColor: "white", color: "#01c9e1" }
                   }
@@ -107,11 +107,11 @@ class Scheduling extends Component {
                 </Button>
                 <Button
                     onClick={() => {
-                      handleInputChange("laundrDayOfWeek", "Tuesday");
+                      handleInputChange("laundrDayOfWeek", 2);
                     }}
                   variant="contained"
                   style={
-                    laundrDayOfWeek === "Tuesday" 
+                    laundrDayOfWeek === 2 
                       ? { backgroundColor: "#01c9e1", color: "white" }
                       : { backgroundColor: "white", color: "#01c9e1" }
                   }
@@ -121,11 +121,11 @@ class Scheduling extends Component {
                 </Button>
                 <Button
                  onClick={() => {
-                  handleInputChange("laundrDayOfWeek", "Wednesday");
+                  handleInputChange("laundrDayOfWeek", 3);
                 }}
                   variant="contained"
                   style={
-                    laundrDayOfWeek === "Wednesday" 
+                    laundrDayOfWeek === 3
                       ? { backgroundColor: "#01c9e1", color: "white" }
                       : { backgroundColor: "white", color: "#01c9e1" }
                   }
@@ -135,11 +135,11 @@ class Scheduling extends Component {
                 </Button>
                 <Button
                   onClick={() => {
-                    handleInputChange("laundrDayOfWeek", "Thursday");
+                    handleInputChange("laundrDayOfWeek", 4);
                   }}
                   variant="contained"
                   style={
-                    laundrDayOfWeek === "Thursday" 
+                    laundrDayOfWeek === 4
                       ? { backgroundColor: "#01c9e1", color: "white" }
                       : { backgroundColor: "white", color: "#01c9e1" }
                   }
@@ -149,11 +149,11 @@ class Scheduling extends Component {
                 </Button>
                 <Button
                   onClick={() => {
-                    handleInputChange("laundrDayOfWeek", "Friday");
+                    handleInputChange("laundrDayOfWeek", 5);
                   }}
                   variant="contained"
                   style={
-                    laundrDayOfWeek === "Friday" 
+                    laundrDayOfWeek === 5
                       ? { backgroundColor: "#01c9e1", color: "white" }
                       : { backgroundColor: "white", color: "#01c9e1" }
                   }
@@ -163,11 +163,11 @@ class Scheduling extends Component {
                 </Button>
                 <Button
                   onClick={() => {
-                    handleInputChange("laundrDayOfWeek", "Saturday");
+                    handleInputChange("laundrDayOfWeek", 6);
                   }}
                   variant="contained"
                   style={
-                    laundrDayOfWeek === "Saturday" 
+                    laundrDayOfWeek === 6 
                       ? { backgroundColor: "#01c9e1", color: "white" }
                       : { backgroundColor: "white", color: "#01c9e1" }
                   }

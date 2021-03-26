@@ -17,11 +17,10 @@ import validator from "validator";
 import axios from "axios";
 import MainAppContext from "../../../../contexts/MainAppContext";
 import LoadingButton from "../../../other/LoadingButton";
-import Scheduling from "./components/LaundrDayScheduling";
+import LaundrDayScheduling from "./components/LaundrDayScheduling";
 import Preferences from "../NewOrder/components/Preferences/Preferences";
 import Address from "../NewOrder/components/Address/Address";
-import Pricing from "../NewOrder/components/Pricing";
-import Review from "../NewOrder/components/Review";
+import LaundrDayReview from "./components/LaundrDayReview";
 import ProgressBar from "./components/ProgressBar";
 import newOrderStyles from "../../../../styles/User/Dashboard/components/NewOrder/newOrderStyles";
 
@@ -50,15 +49,14 @@ class LaundrDay extends Component {
       todaySelected: false,
       tomorrowSelected: false,
       formattedTime: "N/A",
-      laundrDayOfWeek: "Sunday",
-      recurringPeriod: "Every 1 week",
       selectValue: "",
       lowerBound: null,
       upperBound: null,
       scented: false, //preferences
       delicates: false,
       separate: false,
-      towelsSheets: false,
+      comforter: false,
+      tumbleDry: false,
       washerPreferences: "",
       center: {
         //address
@@ -71,6 +69,8 @@ class LaundrDay extends Component {
       addressPreferences: "",
       loads: 1, //pricing
       orderID: -1, //done screen
+      laundrDayOfWeek: 0, //index for day of the week, 0 is Sunday, 1 is Monday ...
+      recurringPeriod: "Every 1 week"
     };
   }
 
@@ -126,9 +126,6 @@ class LaundrDay extends Component {
         break;
 
       case 3:
-        break;
-
-      case 4:
         //check time again in case they waited and then came back to continue their order
         // canNext = this.handleTimeCheck();
 
@@ -171,13 +168,14 @@ class LaundrDay extends Component {
   handlePlaceOrder = async () => {
     try {
       const response = await axios.post(
-        "/api/order/placeOrder",
+        "/api/order/setLaundrDay",
         {
           coupon: "placeholder",
           scented: this.state.scented,
           delicates: this.state.delicates,
           separate: this.state.separate,
-          towelsSheets: this.state.towelsSheets,
+          comforter: this.state.comforter,
+          tumbleDry: this.state.tumbleDry,
           washerPrefs: validator.isEmpty(this.state.washerPreferences, {
             ignore_whitespace: true,
           })
@@ -192,6 +190,7 @@ class LaundrDay extends Component {
           loads: this.state.loads,
           pickupDate: this.state.date,
           pickupTime: this.state.formattedTime,
+          recurringPeriod: this.state.recurringPeriod
         },
         { withCredentials: true }
       );
@@ -283,42 +282,19 @@ class LaundrDay extends Component {
     };
   };
 
-  // handleTimeCheck = () => {
-  //   let canNext = true;
+  nextDayOfWeek = (dayINeed) => {
+    const today = moment().isoWeekday();
+    const tomorrow = moment().add(1, 'days').isoWeekday();
 
-  //   const scheduledLowerBound = this.state.lowerBound;
-  //   const scheduledUpperBound = this.state.upperBound;
-
-  //   //isBetween is non-inclusive of the bounds
-  //   const lowerBound = moment("10:00:00", "HH:mm:ss");
-  //   const upperBound = moment("19:00:00", "HH:mm:ss");
-  //   const now = moment();
-
-  //   if (!this.state.todaySelected && !this.state.tomorrowSelected) {
-  //     //if no date selected
-  //     this.context.showAlert("Please select a pickup date.");
-  //     canNext = false;
-  //   } else if (!this.state.lowerBound || !this.state.upperBound) {
-  //     //if no time selected
-  //     this.context.showAlert("Please select a pickup time.");
-  //     canNext = false;
-  //   } else if (this.state.todaySelected && now.isSameOrAfter(upperBound)) {
-  //     this.context.showAlert(
-  //       "Sorry! Our last pickup window today has passed. Please choose a time for tomorrow."
-  //     );
-  //     canNext = false;
-  //   } else if (
-  //     this.state.todaySelected &&
-  //     now.diff(scheduledLowerBound, "minutes") >= -29
-  //   ) {
-  //     this.context.showAlert(
-  //       "Sorry! Pickup time must be at least 30 minutes in advance."
-  //     );
-  //     canNext = false;
-  //   }
-
-  //   return canNext;
-  // };
+    // if we haven't yet passed the day of the week that I need:
+    if (today < dayINeed && tomorrow < dayINeed) { 
+      // then just give me this week's instance of that day
+      return moment().isoWeekday(dayINeed).format("MM/DD/YYYY");
+    } else {
+      // otherwise, give me *next week's* instance of that same day
+      return moment().add(1, 'weeks').isoWeekday(dayINeed).format("MM/DD/YYYY");
+    }
+}
 
   handleDone = () => {
     this.props.fetchOrderInfo();
@@ -399,15 +375,17 @@ class LaundrDay extends Component {
 
       case "laundrDayOfWeek":
         this.setState({
+          date: this.nextDayOfWeek(value),
           laundrDayOfWeek: value
         });
+        console.log(this.state.date)
         break;
 
-        case "recurringPeriod":
-          this.setState({
-            recurringPeriod: value
-          });
-          break;
+      case "recurringPeriod":
+        this.setState({
+          recurringPeriod: value
+        });
+        break;
 
     }
   };
@@ -544,7 +522,7 @@ class LaundrDay extends Component {
                       }}
                     >
                       <div>
-                        <Scheduling
+                        <LaundrDayScheduling
                           today={this.today}
                           tomorrow={this.tomorrow}
                           todaySelected={this.state.todaySelected}
@@ -613,7 +591,7 @@ class LaundrDay extends Component {
                       }}
                     >
                       <div>
-                        <Review
+                        <LaundrDayReview
                           address={this.state.address}
                           addressPreferences={this.state.addressPreferences}
                           scented={this.state.scented}
@@ -628,6 +606,8 @@ class LaundrDay extends Component {
                           getLbsData={this.getLbsData}
                           getMaxLbs={this.getMaxLbs}
                           balance={balance}
+                          laundrDayOfWeek={this.state.laundrDayOfWeek}
+                          recurringPeriod={this.state.recurringPeriod}
                         />
                       </div>
                     </Fade>

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Grid, Typography, TextField, withStyles } from "@material-ui/core";
+import { Grid, Typography, TextField, withStyles, Divider } from "@material-ui/core";
 import PropTypes from "prop-types";
 import preferencesStyles from "../../../../../../styles/User/Dashboard/components/NewOrder/components/Preferences/preferencesStyles";
 import PreferenceCard from "./components/PreferenceCard";
@@ -30,13 +30,13 @@ class Preferences extends Component {
 
     return (
       <React.Fragment>
-        <Typography variant="h5" gutterBottom>
-          Would you like any of these options?
+        <Typography variant="h3" gutterBottom>
+          Choose your preferences:
         </Typography>
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6} sm={6}>
             <PreferenceCard
-              title="Scented"
+              title="Scented (Free)"
               info="Unscented detergent is hypoallergenic."
               unselectedImage="/images/NewOrder/ScentedUnselected.png"
               selectedImage="/images/NewOrder/ScentedSelected.png"
@@ -45,21 +45,21 @@ class Preferences extends Component {
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6} sm={6}>
             <PreferenceCard
-              title="Delicates"
-              info="Delicate clothing is washed in a mesh bag and dried on low heat."
-              unselectedImage="/images/NewOrder/DelicatesUnselected.png"
-              selectedImage="/images/NewOrder/DelicatesSelected.png"
+              title="Low temp. Dry (Free)"
+              info="A gentle alternative to hang drying. May cause thick fabrics to be slightly damp when returned."
+              unselectedImage="/images/NewOrder/TowelsUnselected.png"
+              selectedImage="/images/NewOrder/TowelsSelected.png"
               handleInputChange={(selected) => {
-                handleInputChange("delicates", selected);
+                handleInputChange("tumbleDry", selected);
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6} sm={6}>
             <PreferenceCard
-              title="Separate"
-              info="Separated clothing is divided into whites and colors."
+              title="Separate (+$5)"
+              info="Separated clothing is divided into whites and colors. Whites will be bleached."
               unselectedImage="/images/NewOrder/SeparateUnselected.png"
               selectedImage="/images/NewOrder/SeparateSelected.png"
               handleInputChange={(selected) => {
@@ -67,14 +67,14 @@ class Preferences extends Component {
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6} sm={6}>
             <PreferenceCard
-              title="Towels and Sheets"
-              info="Towels and sheets are washed separately and dried on high heat."
+              title="Comforter (+$5)"
+              info="Large comforters require extra care and a longer dry cycle. Items containing real or synthetic down should not be sent."
               unselectedImage="/images/NewOrder/TowelsUnselected.png"
               selectedImage="/images/NewOrder/TowelsSelected.png"
               handleInputChange={(selected) => {
-                handleInputChange("towelsSheets", selected);
+                handleInputChange("comforter", selected);
               }}
             />
           </Grid>
@@ -82,7 +82,7 @@ class Preferences extends Component {
         <Typography variant="h5" gutterBottom className={classes.title}>
           Do you have any special instructions for our washers?
         </Typography>
-        <Grid container spacing={3}>
+        <Grid container spacing={3} className={classes.instructions}>
           <Grid item xs={12}>
             <TextField
               label="Special Instructions"
@@ -99,6 +99,7 @@ class Preferences extends Component {
             />
           </Grid>
         </Grid>
+       
       </React.Fragment>
     );
   }

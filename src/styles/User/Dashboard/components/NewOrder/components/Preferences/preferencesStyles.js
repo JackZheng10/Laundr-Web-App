@@ -18,6 +18,9 @@ const preferencesStyles = (theme) => ({
       },
     },
   },
+  instructions: {
+    paddingBottom: 15
+  },
 });
 
 export default preferencesStyles;

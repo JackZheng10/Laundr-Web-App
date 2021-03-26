@@ -56,7 +56,8 @@ class NewOrder extends Component {
       scented: false, //preferences
       delicates: false,
       separate: false,
-      towelsSheets: false,
+      comforter: false,
+      tumbleDry: false,
       washerPreferences: "",
       center: {
         //address
@@ -174,7 +175,8 @@ class NewOrder extends Component {
           scented: this.state.scented,
           delicates: this.state.delicates,
           separate: this.state.separate,
-          towelsSheets: this.state.towelsSheets,
+          comforter: this.state.comforter,
+          tumbleDry: this.state.tumbleDry,
           washerPrefs: validator.isEmpty(this.state.washerPreferences, {
             ignore_whitespace: true,
           })
@@ -393,7 +395,11 @@ class NewOrder extends Component {
         this.setState({ [property]: value });
         break;
 
-      case "towelsSheets":
+      case "comforter":
+        this.setState({ [property]: value });
+        break;
+      
+      case "tumbleDry":
         this.setState({ [property]: value });
         break;
 
@@ -584,7 +590,8 @@ class NewOrder extends Component {
                           scented={this.state.scented}
                           delicates={this.state.delicates}
                           separate={this.state.separate}
-                          towelsSheets={this.state.towelsSheets}
+                          comforter={this.state.comforter}
+                          tumbleDry={this.state.tumbleDry}
                           washerPreferences={this.state.washerPreferences}
                           handleInputChange={this.handleInputChange}
                         />
@@ -651,7 +658,8 @@ class NewOrder extends Component {
                           scented={this.state.scented}
                           delicates={this.state.delicates}
                           separate={this.state.separate}
-                          towelsSheets={this.state.towelsSheets}
+                          comforter={this.state.comforter}
+                          tumbleDry={this.state.tumbleDry}
                           washerPreferences={this.state.washerPreferences}
                           pickupDate={this.state.date}
                           pickupTime={this.state.formattedTime}

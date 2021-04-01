@@ -18,7 +18,6 @@ import { GetServerSideProps } from "next";
 import { getExistingOrder_SSR, getCurrentUser_SSR } from "../src/helpers/ssr";
 import { limitLength } from "../src/helpers/inputs";
 import { Sidebar, Topbar, Footer } from "../src/layouts/Main/components";
-import useSWR from "swr";
 import Head from "next/head";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
@@ -417,38 +416,4 @@ export async function getServerSideProps(context) {
   };
 }
 
-/*
-https://swr.vercel.app/
-https://swr.vercel.app/docs/data-fetching#axios
-https://swr.vercel.app/getting-started
-https://nextjs.org/docs/basic-features/data-fetching
-https://nextjs.org/docs/authentication
-
-to-do:
--configure properly
--make reusable where possible
--loading screen
--clean up class code that hides elements if error fetching
--handle errors and redirects
--clean out ssr file
--combine what you need?
-*/
-
-const LoginCSR = () => {
-  const { data, error } = useSWR("/api/user/getCurrentUser", async (url) => {
-    const response = await axios.get(url, {
-      params: {
-        balance: null,
-      },
-      withCredentials: true,
-    });
-
-    return response;
-  });
-
-  if (!data) return <div>loading...</div>;
-  console.log(data);
-  return <h1>hello</h1>;
-};
-
-export default compose(withRouter, withStyles(loginStyles))(LoginCSR);
+export default compose(withRouter, withStyles(loginStyles))(Login);

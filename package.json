@@ -35,7 +35,6 @@
     "react-swipeable-views": "^0.13.9",
     "recharts": "^1.8.5",
     "recompose": "^0.30.0",
-    "swr": "^0.5.5",
     "validator": "^13.5.2"
   },
   "scripts": {

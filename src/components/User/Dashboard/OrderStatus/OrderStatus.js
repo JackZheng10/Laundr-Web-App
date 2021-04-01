@@ -5,7 +5,6 @@ import {
   Card,
   CardHeader,
   CardContent,
-  Divider,
   Grid,
   Typography,
   Button,
@@ -14,6 +13,11 @@ import {
   DialogContent,
   DialogTitle,
   CardActions,
+  FormControl,
+  Select,
+  MenuItem,
+  FormHelperText,
+  Tooltip,
 } from "@material-ui/core";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { getCurrentUser } from "../../../../helpers/session";
@@ -42,11 +46,10 @@ import orderStatusStyles from "../../../../styles/User/Dashboard/components/Orde
 //7: canceled
 //8: fulfilled (user confirmed theyve seen the status on it)
 
-//todo: fix time picker dialog positioning for this and scheduling?
-//todo: design like card for driver/washer or vice versa?
 //todo: gold button focus for dropoff and cancel
 
-const moment = require("moment");
+const moment = require("moment-timezone");
+moment.tz.setDefault("America/New_York");
 
 const timeTheme = createMuiTheme({
   palette: {
@@ -70,19 +73,217 @@ class OrderStatus extends Component {
 
     this.state = {
       showDropoffDialog: false,
-      rawTime: new Date(),
-      formattedTime: moment().format("LT"),
       date: "N/A",
       todaySelected: false,
       tomorrowSelected: false,
+      formattedTime: "N/A",
+      selectValue: "",
+      lowerBound: null,
+      upperBound: null,
     };
   }
+
+  getClosestTimes = (now, possibleTimes) => {
+    let availableTimes = [];
+
+    for (let x = 0; x < possibleTimes.length; x++) {
+      //get the times starting at the first range where it's before or same as now
+      if (now.isBefore(possibleTimes[x].lowerBound)) {
+        //if its not at least 30 mins before
+        if (now.diff(possibleTimes[x].lowerBound, "minutes") >= -29) {
+          continue;
+        } else {
+          availableTimes = possibleTimes.slice(x);
+          break;
+        }
+      }
+    }
+
+    return availableTimes;
+  };
+
+  getTimeAvailability = (order) => {
+    const possibleTimes = [
+      {
+        lowerBound: moment("10:00 AM", "h:mm A"),
+        upperBound: moment("10:30 AM", "h:mm A"),
+        string: "10:00 AM - 10:30 AM",
+      },
+      {
+        lowerBound: moment("10:30 AM", "h:mm A"),
+        upperBound: moment("11:00 AM", "h:mm A"),
+        string: "10:30 AM - 11:00 AM",
+      },
+      {
+        lowerBound: moment("11:00 AM", "h:mm A"),
+        upperBound: moment("11:30 AM", "h:mm A"),
+        string: "11:00 AM - 11:30 AM",
+      },
+      {
+        lowerBound: moment("11:30 AM", "h:mm A"),
+        upperBound: moment("12:00 PM", "h:mm A"),
+        string: "11:30 AM - 12:00 PM",
+      },
+      {
+        lowerBound: moment("12:00 PM", "h:mm A"),
+        upperBound: moment("12:30 PM", "h:mm A"),
+        string: "12:00 PM - 12:30 PM",
+      },
+      {
+        lowerBound: moment("12:30 PM", "h:mm A"),
+        upperBound: moment("1:00 PM", "h:mm A"),
+        string: "12:30 PM - 1:00 PM",
+      },
+      {
+        lowerBound: moment("1:00 PM", "h:mm A"),
+        upperBound: moment("1:30 AM", "h:mm A"),
+        string: "1:00 PM - 1:30 PM",
+      },
+      {
+        lowerBound: moment("1:30 PM", "h:mm A"),
+        upperBound: moment("2:00 PM", "h:mm A"),
+        string: "1:30 PM - 2:00 PM",
+      },
+      {
+        lowerBound: moment("6:00 PM", "h:mm A"),
+        upperBound: moment("6:30 PM", "h:mm A"),
+        string: "6:00 PM - 6:30 PM",
+      },
+      {
+        lowerBound: moment("6:30 PM", "h:mm A"),
+        upperBound: moment("7:00 PM", "h:mm A"),
+        string: "6:30 PM - 7:00 PM",
+      },
+      {
+        lowerBound: moment("7:00 PM", "h:mm A"),
+        upperBound: moment("7:30 PM", "h:mm A"),
+        string: "7:00 PM - 7:30 PM",
+      },
+      {
+        lowerBound: moment("7:30 PM", "h:mm A"),
+        upperBound: moment("8:00 PM", "h:mm A"),
+        string: "7:30 PM - 8:00 PM",
+      },
+    ];
+
+    const weight = order.orderInfo.weight;
+    const pickupTime = order.pickupInfo.time.split("-")[0];
+    const formattedPickupTime = pickupTime.slice(0, pickupTime.length - 1);
+    const pickupDate = order.pickupInfo.date;
+
+    const pickupLowerBound = moment(
+      `${pickupDate} ${formattedPickupTime}`,
+      "MM/DD/YYYY h:mm A"
+    );
+    const tenAM = moment(`${pickupDate} 10:00:00`, "MM/DD/YYYY HH:mm:ss");
+    const twoPM = moment(`${pickupDate} 14:00:00`, "MM/DD/YYYY HH:mm:ss");
+    const sixPM = moment(`${pickupDate} 18:00:00`, "MM/DD/YYYY HH:mm:ss");
+    const eightPM = moment(`${pickupDate} 20:00:00`, "MM/DD/YYYY HH:mm:ss");
+    const now = moment();
+
+    let todayNotAvailable = false;
+    let availableTimes = [];
+    let unavailableMessage = "";
+
+    //check for any case of unavailable same-day
+    if (now.isSameOrAfter(moment(`19:00:00`, "HH:mm:ss"))) {
+      todayNotAvailable = true;
+      availableTimes = possibleTimes;
+      unavailableMessage =
+        "Sorry! Our last delivery window today has passed. Please choose a time for tomorrow.";
+    } else if (pickupLowerBound.isSame(now, "day")) {
+      //today is the same day as pickup
+      if (
+        pickupLowerBound.isSameOrAfter(sixPM) &&
+        pickupLowerBound.isSameOrBefore(eightPM)
+      ) {
+        //picked up in night window
+        todayNotAvailable = true;
+        availableTimes = possibleTimes;
+        unavailableMessage =
+          "Same-day delivery is not available for your order due to the pickup time.";
+      } else if (weight > 29) {
+        todayNotAvailable = true;
+        availableTimes = possibleTimes;
+        unavailableMessage =
+          "Same-day delivery is not available for your order due to weight.";
+      }
+    }
+
+    //if date chosen
+    if (this.state.tomorrowSelected || this.state.todaySelected) {
+      if (this.state.tomorrowSelected) {
+        //if tomorrow is the day after pickup
+        if (
+          pickupLowerBound
+            .clone()
+            .add(1, "days")
+            .isSame(now.clone().add(1, "days"), "day")
+        ) {
+          //if picked up within the 6-8 window
+          if (
+            pickupLowerBound.isSameOrAfter(sixPM) &&
+            pickupLowerBound.isSameOrBefore(eightPM)
+          ) {
+            //only 6-8 window available
+            availableTimes = this.getClosestTimes(now, possibleTimes.slice(8));
+          } else {
+            availableTimes = possibleTimes;
+          }
+        } else {
+          //2 or more days after pickup
+          availableTimes = possibleTimes;
+        }
+      } else {
+        //if today is the day after pickup
+        if (pickupLowerBound.clone().add(1, "days").isSame(now, "day")) {
+          //if picked up within the 6-8 window
+          if (
+            pickupLowerBound.isSameOrAfter(sixPM) &&
+            pickupLowerBound.isSameOrBefore(eightPM)
+          ) {
+            console.log("3");
+            //only 6-8 window available
+            availableTimes = this.getClosestTimes(now, possibleTimes.slice(8));
+          } else {
+            console.log("4");
+            availableTimes = this.getClosestTimes(now, possibleTimes);
+          }
+        } else if (pickupLowerBound.isSame(now, "day")) {
+          console.log("1");
+          //if today is pickup, only 6-8 window available
+          availableTimes = this.getClosestTimes(now, possibleTimes.slice(8));
+        } else {
+          console.log("2");
+          console.log(pickupLowerBound.format("MM-DD-YYYY h:mm A"));
+          console.log(now.format("MM-DD-YYYY h:mm A"));
+          console.log(
+            moment(
+              `${pickupDate} ${formattedPickupTime}`,
+              "MM/DD/YYYY h:mm A"
+            ).format("MM-DD-YYYY h:mm A")
+          );
+          availableTimes = this.getClosestTimes(now, possibleTimes);
+        }
+      }
+    }
+
+    return {
+      availableTimes,
+      todayNotAvailable,
+      unavailableMessage,
+    };
+  };
 
   handleInputChange = (property, value) => {
     switch (property) {
       case "time":
-        const formattedTime = moment(value, "HH:mm:ss").format("LT");
-        this.setState({ rawTime: value, formattedTime });
+        this.setState({
+          lowerBound: value.lowerBound,
+          upperBound: value.upperBound,
+          formattedTime: value.string,
+          selectValue: value.selectValue,
+        });
         break;
 
       case "today":
@@ -90,6 +291,7 @@ class OrderStatus extends Component {
           todaySelected: true,
           tomorrowSelected: false,
           date: this.today,
+          selectValue: "",
         });
         break;
 
@@ -98,6 +300,7 @@ class OrderStatus extends Component {
           todaySelected: false,
           tomorrowSelected: true,
           date: this.tomorrow,
+          selectValue: "",
         });
         break;
     }
@@ -127,7 +330,7 @@ class OrderStatus extends Component {
   };
 
   handleSetDropoffTime = async (order) => {
-    if (await this.handleTimeCheck(order.orderInfo.weight, order.pickupInfo)) {
+    if (this.handleTimeCheck()) {
       try {
         const response = await axios.put(
           "/api/order/setDropoff",
@@ -156,115 +359,34 @@ class OrderStatus extends Component {
     }
   };
 
-  //todo: test
-  handleTimeCheck = async (weight, pickupInfo) => {
+  handleTimeCheck = () => {
     let canNext = true;
-    const response = await getCurrentUser();
 
-    if (!response.data.success) {
-      if (response.data.redirect) {
-        return this.props.router.push(response.data.message);
-      } else {
-        return this.context.showAlert(response.data.message);
-      }
-    }
-
-    const currentUser = response.data.message;
-
-    const lowerBound = moment("10:00:00", "HH:mm:ss").add(1, "minutes"); //10 AM
-    const upperBound = moment("19:00:00", "HH:mm:ss").add(1, "minutes"); //7 PM
-    const hourFromNow = moment(moment(), "HH:mm:ss").add(1, "hours");
-
-    const pickup = moment(
-      `${pickupInfo.date} ${pickupInfo.time}`,
-      "MM/DD/YYYY LT"
-    );
-    const dropoff = moment(
-      `${this.state.date} ${this.state.formattedTime}`,
-      "MM/DD/YYYY LT"
-    );
-    const pickupDate = moment(pickupInfo.date, "MM/DD/YYYY");
-    const dropoffDate = moment(this.state.date, "MM/DD/YYYY");
-    const dropoffTime = moment(this.state.formattedTime, "LT");
+    const scheduledLowerBound = this.state.lowerBound;
+    const upperBound = moment("19:00:00", "HH:mm:ss");
+    const now = moment();
 
     if (!this.state.todaySelected && !this.state.tomorrowSelected) {
       //if no date selected
-      this.context.showAlert("Please select a dropoff date.");
+      this.context.showAlert("Please select a pickup date.");
       canNext = false;
-    } else if (this.state.todaySelected && hourFromNow.isAfter(upperBound)) {
-      //if selected today and its after 7 PM
-      this.context.showAlert(
-        "Sorry! The dropoff time must be at least 1 hour from now and we are closed after 7 PM. Please select a different day."
-      );
+    } else if (!this.state.lowerBound || !this.state.upperBound) {
+      //if no time selected
+      this.context.showAlert("Please select a pickup time.");
       canNext = false;
-    } else if (!dropoffTime.isBetween(lowerBound, upperBound)) {
-      //if dropoff time isnt between 10 am and 7 pm
+    } else if (this.state.todaySelected && now.isSameOrAfter(upperBound)) {
       this.context.showAlert(
-        "The dropoff time must be between 10 AM and 7 PM."
+        "Sorry! Our last dropoff window today has passed. Please choose a time for tomorrow."
       );
       canNext = false;
     } else if (
-      hourFromNow.isBetween(lowerBound, upperBound) &&
-      dropoffTime.isBefore(hourFromNow) &&
-      this.state.todaySelected
+      this.state.todaySelected &&
+      now.diff(scheduledLowerBound, "minutes") >= -29
     ) {
-      //if now is between 10 and 7 AND dropoff time is before that AND the date selected is today
       this.context.showAlert(
-        "The dropoff time must be at least 1 hour hour from now."
+        "Sorry! Pickup time must be at least 30 minutes in advance."
       );
       canNext = false;
-    } else {
-      //passed general checks, move on to weight limitations
-      //if currentuser is a sub, handle checks for weight and same day hours
-      if (currentUser.subscription.status === "active") {
-        if (weight > 29) {
-          //if chosen dropoff time is before x hrs have passed from pickup
-          if (dropoff.isBefore(pickup.add(20, "hours"))) {
-            canNext = false;
-            this.context.showAlert(
-              "Due to your order's weight, the dropoff time must be at least 20 hours after pickup."
-            );
-          }
-        } else if (weight <= 29) {
-          if (weight >= 25 && weight <= 29) {
-            if (dropoff.isBefore(pickup.add(7, "hours"))) {
-              canNext = false;
-              this.context.showAlert(
-                "Due to your order's weight, the dropoff time must be at least 7 hours after pickup."
-              );
-            }
-          } else if (weight >= 19 && weight <= 24) {
-            if (dropoff.isBefore(pickup.add(6, "hours"))) {
-              canNext = false;
-              this.context.showAlert(
-                "Due to your order's weight, the dropoff time must be at least 6 hours after pickup."
-              );
-            }
-          } else if (weight >= 13 && weight <= 18) {
-            if (dropoff.isBefore(pickup.add(5, "hours"))) {
-              canNext = false;
-              this.context.showAlert(
-                "Due to your order's weight, the dropoff time must be at least 5 hours after pickup."
-              );
-            }
-          } else if (weight >= 10 && weight <= 12) {
-            if (dropoff.isBefore(pickup.add(4, "hours"))) {
-              canNext = false;
-              this.context.showAlert(
-                "Due to your order's weight, the dropoff time must be at least 4 hours after pickup."
-              );
-            }
-          }
-        }
-      } else {
-        //otherwise, it should just be at least the next day after picku
-        if (dropoffDate.isBefore(pickupDate.add(1, "days"))) {
-          canNext = false;
-          this.context.showAlert(
-            "Dropoff must be at least the day after pickup. Same-day-delivery is only available for subscribers."
-          );
-        }
-      }
     }
 
     return canNext;
@@ -298,11 +420,14 @@ class OrderStatus extends Component {
   toggleDropoffDialog = () => {
     if (this.state.showDropoffDialog) {
       this.setState({
+        showDropoffDialog: !this.state.showDropoffDialog,
+        date: "N/A",
         todaySelected: false,
         tomorrowSelected: false,
-        rawTime: new Date(),
-        formattedTime: moment(moment(), "HH:mm:ss").format("LT"),
-        showDropoffDialog: !this.state.showDropoffDialog,
+        formattedTime: "N/A",
+        selectValue: "",
+        lowerBound: null,
+        upperBound: null,
       });
     } else {
       this.setState({ showDropoffDialog: !this.state.showDropoffDialog });
@@ -390,6 +515,22 @@ class OrderStatus extends Component {
   render() {
     const { classes, order } = this.props;
 
+    const timeAvailability = this.getTimeAvailability(order);
+    const todayNotAvailable = timeAvailability.todayNotAvailable;
+    const availableTimes = timeAvailability.availableTimes;
+    const unavailableMessage = timeAvailability.unavailableMessage;
+
+    const handleTimeSelect = (event) => {
+      const index = event.target.value;
+
+      this.handleInputChange("time", {
+        lowerBound: availableTimes[index].lowerBound,
+        upperBound: availableTimes[index].upperBound,
+        string: availableTimes[index].string,
+        selectValue: index,
+      });
+    };
+
     return (
       <React.Fragment>
         <div className={classes.layout}>
@@ -412,27 +553,67 @@ class OrderStatus extends Component {
                 },
               }}
             >
-              <DialogTitle>Set Dropoff</DialogTitle>
+              <DialogTitle disableTypography>
+                <Typography variant="h4" style={{ color: "#01c9e1" }}>
+                  Set Dropoff
+                </Typography>
+              </DialogTitle>
               <DialogContent>
+                <Typography variant="h5" gutterBottom>
+                  What day would you like your order to be dropped off?
+                </Typography>
                 <Grid container spacing={2} style={{ marginBottom: 5 }}>
                   <Grid item xs={12} sm={6}>
-                    <Button
-                      disabled={this.state.todaySelected}
-                      onClick={() => {
-                        this.handleInputChange("today");
-                      }}
-                      variant="contained"
-                      style={
-                        this.state.todaySelected
-                          ? { backgroundColor: "#01c9e1", color: "white" }
-                          : { backgroundColor: "white", color: "#01c9e1" }
-                      }
-                      fullWidth
-                      size="large"
-                      startIcon={<CalendarTodayIcon />}
-                    >
-                      {this.today}
-                    </Button>
+                    {todayNotAvailable && (
+                      <Tooltip
+                        title={
+                          <Typography
+                            variant="body1"
+                            style={{ color: "white", textAlign: "center" }}
+                          >
+                            {unavailableMessage}
+                          </Typography>
+                        }
+                        arrow
+                        enterTouchDelay={100}
+                        leaveTouchDelay={5000}
+                      >
+                        <div>
+                          <Button
+                            disabled
+                            variant="contained"
+                            style={{
+                              backgroundColor: "#d5d5d5",
+                              color: "white",
+                            }}
+                            fullWidth
+                            size="large"
+                            startIcon={<CalendarTodayIcon />}
+                          >
+                            {this.today}
+                          </Button>
+                        </div>
+                      </Tooltip>
+                    )}
+                    {!todayNotAvailable && (
+                      <Button
+                        disabled={this.state.todaySelected}
+                        onClick={() => {
+                          this.handleInputChange("today");
+                        }}
+                        variant="contained"
+                        style={
+                          this.state.todaySelected
+                            ? { backgroundColor: "#01c9e1", color: "white" }
+                            : { backgroundColor: "white", color: "#01c9e1" }
+                        }
+                        fullWidth
+                        size="large"
+                        startIcon={<CalendarTodayIcon />}
+                      >
+                        {this.today}
+                      </Button>
+                    )}
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <Button
@@ -454,30 +635,44 @@ class OrderStatus extends Component {
                     </Button>
                   </Grid>
                 </Grid>
+                <Typography variant="h5" className={classes.title}>
+                  What's your preferred dropoff time?
+                </Typography>
                 <ThemeProvider theme={timeTheme}>
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <TimePicker
-                      margin="normal"
-                      variant="inline"
-                      label="Click to set a time"
-                      multiline
-                      onChange={(value) => {
-                        this.handleInputChange("time", value);
-                      }}
-                      value={this.state.rawTime}
-                      PopoverProps={{
+                  <FormControl className={classes.formControl}>
+                    <Select
+                      disabled={
+                        !this.state.todaySelected &&
+                        !this.state.tomorrowSelected
+                      }
+                      labelId="times"
+                      displayEmpty
+                      variant="outlined"
+                      value={this.state.selectValue}
+                      onChange={handleTimeSelect}
+                      MenuProps={{
                         anchorOrigin: {
-                          vertical: "center",
-                          horizontal: "center",
-                        },
-                        transformOrigin: {
                           vertical: "bottom",
-                          horizontal: "center",
+                          horizontal: "left",
                         },
+                        getContentAnchorEl: null,
                       }}
-                      style={{ width: 130, marginTop: 5 }}
-                    />
-                  </MuiPickersUtilsProvider>
+                    >
+                      {availableTimes.map((time, index) => {
+                        return (
+                          <MenuItem value={index} key={index}>
+                            {time.string}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                    {!this.state.todaySelected &&
+                      !this.state.tomorrowSelected && (
+                        <FormHelperText>
+                          *Please select a date first.
+                        </FormHelperText>
+                      )}
+                  </FormControl>
                 </ThemeProvider>
               </DialogContent>
               <DialogActions>

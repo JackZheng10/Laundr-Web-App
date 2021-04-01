@@ -210,16 +210,16 @@ class Dashboard extends Component {
         >
           <Grid item>{this.renderOrderComponent(classes)}</Grid>
         </Grid>
-        <div style={{ position: "relative", marginTop: 50 }}>
+        {/* <div style={{ position: "relative", marginTop: 50 }}>
           <TopBorderBlue />
-        </div>
+        </div> */}
         {/* </Grid> */}
-        <Grid
+        {/* <Grid
           container
           spacing={0}
           direction="column"
           justify="center"
-          alignItems="center" /*main page column*/
+          alignItems="center" 
           style={{ backgroundColor: "#01C9E1" }}
         >
           <Grid item>
@@ -297,10 +297,10 @@ class Dashboard extends Component {
               </div>
             </div>
           </Grid>
-        </Grid>
-        <div style={{ position: "relative", marginBottom: 50 }}>
+        </Grid> */}
+        {/* <div style={{ position: "relative", marginBottom: 50 }}>
           <BottomBorderBlue />
-        </div>
+        </div> */}
       </Layout>
     );
   }

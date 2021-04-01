@@ -37,6 +37,9 @@ const accountStyles = (theme) => ({
         borderColor: "#01c9e1",
       },
     },
+    [theme.breakpoints.down(325)]: {
+      width: "50vw",
+    },
   },
   removePadding: {
     padding: 16,
@@ -46,6 +49,16 @@ const accountStyles = (theme) => ({
   },
   root: {
     maxWidth: 400,
+  },
+  codeInput: {
+    "& label.Mui-focused": {
+      color: "#01c9e1",
+    },
+    "& .MuiOutlinedInput-root": {
+      "&.Mui-focused fieldset": {
+        borderColor: "#01c9e1",
+      },
+    },
   },
 });
 

@@ -12,10 +12,12 @@ export default class MyDocument extends Document {
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
           />
+          <link rel="icon" href="/icons/favicon.ico" />
           <link
-            rel="apple-touch-icon"
-            sizes="180x180"
-            href="/icons/apple-touch-icon.png"
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/icons/favicon-16x16.png"
           />
           <link
             rel="icon"
@@ -26,10 +28,39 @@ export default class MyDocument extends Document {
           <link
             rel="icon"
             type="image/png"
-            sizes="16x16"
-            href="/icons/favicon-16x16.png"
+            sizes="64x64"
+            href="/icons/favicon-64x64.png"
           />
-          {/* <link rel="manifest" href="/icons/site.webmanifest" /> prob redundant with manifest.json. decide which to use*/}
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="128x128"
+            href="/icons/favicon-128x128.png"
+          />
+          <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/icons/apple-touch-icon.png"
+          />
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="128x128"
+            href="/icons/favicon-128x128.png"
+          />
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="192x192"
+            href="/icons/android-chrome-192x192.png"
+          />
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="512x512"
+            href="/icons/android-chrome-512x512.png"
+          />
+          {/* <link rel="manifest" href="/icons/site.webmanifest" /> prob redundant with manifest.json. decide which to use. or is it just for safari*/}
           <link
             rel="mask-icon"
             href="/icons/safari-pinned-tab.svg"

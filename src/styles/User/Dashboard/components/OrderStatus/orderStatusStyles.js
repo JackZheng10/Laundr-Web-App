@@ -37,6 +37,14 @@ const orderStatusStyles = (theme) => ({
     backgroundColor: "#01c9e1",
     justifyContent: "center",
   },
+  formControl: {
+    minWidth: 197,
+    paddingBottom: 10,
+    paddingTop: 10,
+  },
+  title: {
+    marginTop: theme.spacing(2),
+  },
 });
 
 export default orderStatusStyles;

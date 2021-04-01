@@ -68,7 +68,7 @@ const registerStyles = (theme) => ({
     },
   },
   pageContainer: {
-    height: "100vh",
+    minHeight: "100vh",
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",
     backgroundImage: `url("/images/space.png")`,
@@ -79,9 +79,36 @@ const registerStyles = (theme) => ({
     [theme.breakpoints.down(770)]: {
       backgroundImage: `url("/images/space_mobilev2.png")`,
     },
+    backgroundAttachment: "fixed",
   },
   error: {
     color: "red",
+  },
+  secondaryButton: {
+    color: "white",
+    backgroundColor: "#01c9e1",
+  },
+  mainButton: {
+    color: "white",
+    backgroundColor: "#FFB600",
+  },
+  input: {
+    "& label.Mui-focused": {
+      color: "#01c9e1",
+    },
+    "& .MuiOutlinedInput-root": {
+      "&.Mui-focused fieldset": {
+        borderColor: "#01c9e1",
+      },
+    },
+  },
+  referralInput: {
+    [theme.breakpoints.down(350)]: {
+      fontSize: 12,
+    },
+    [theme.breakpoints.down(300)]: {
+      fontSize: 10,
+    },
   },
 });
 

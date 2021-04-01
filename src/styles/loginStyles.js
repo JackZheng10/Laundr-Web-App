@@ -42,7 +42,7 @@ const loginStyles = (theme) => ({
     },
   },
   pageContainer: {
-    height: "100vh",
+    minHeight: "100vh",
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",
     backgroundImage: `url("/images/space.png")`,
@@ -53,6 +53,7 @@ const loginStyles = (theme) => ({
     [theme.breakpoints.down(770)]: {
       backgroundImage: `url("/images/space_mobilev2.png")`,
     },
+    backgroundAttachment: "fixed",
   },
   input: {
     "& label.Mui-focused": {

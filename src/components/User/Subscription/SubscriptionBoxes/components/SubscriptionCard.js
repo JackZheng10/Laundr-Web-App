@@ -36,7 +36,30 @@ class SubscriptionCard extends Component {
     // When the customer clicks on the button, redirect them to Checkout.
     // Call your backend to create the Checkout session.
     try {
-      const { planName, currentUser } = this.props;
+      const { planName } = this.props;
+
+      //fetch current user when button clicked in case email changed in new tab, for example
+      const response_one = await getCurrentUser();
+
+      if (!response_one.data.success) {
+        if (response_one.data.redirect) {
+          return this.props.router.push(response_one.data.message);
+        } else {
+          return this.context.showAlert(response_one.data.message);
+        }
+      }
+
+      const currentUser = response_one.data.message;
+
+      //check if student
+      if (
+        planName === "Student" &&
+        currentUser.email.substr(currentUser.email.length - 3) != "edu"
+      ) {
+        return this.context.showAlert(
+          "Sorry, you must have a valid student email (.edu) to purchase a Student subscription."
+        );
+      }
 
       const response = await axios.post(
         "/api/stripe/createCheckoutSession",

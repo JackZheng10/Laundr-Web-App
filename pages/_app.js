@@ -21,6 +21,7 @@ import MainAppContext from "../src/contexts/MainAppContext";
 import LoadingButton from "../src/components/other/LoadingButton";
 import theme from "../src/theme";
 import "../src/styles/borders.css";
+// import "./login.css";
 
 const useStyles = makeStyles((theme) => ({
   mainButton: {
@@ -177,6 +178,7 @@ const MyApp = (props) => {
     <React.Fragment>
       <Head>
         <title>{getPageTitle()}</title>
+        <meta name="viewport" content="width=device-width" />
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
@@ -204,7 +206,9 @@ const MyApp = (props) => {
             </Typography>
           </DialogTitle>
           <DialogContent>
-            <Typography variant="body1">{alertMessage_NC}</Typography>
+            <Typography variant="body1" style={{ textAlign: "center" }}>
+              {alertMessage_NC}
+            </Typography>
           </DialogContent>
           <DialogActions>
             <Button
@@ -236,7 +240,9 @@ const MyApp = (props) => {
             </Typography>
           </DialogTitle>
           <DialogContent>
-            <Typography variant="body1">{alertMessage_C}</Typography>
+            <Typography variant="body1" style={{ textAlign: "center" }}>
+              {alertMessage_C}
+            </Typography>
           </DialogContent>
           <DialogActions>
             <Button

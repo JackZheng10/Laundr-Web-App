@@ -76,7 +76,11 @@ class Topbar extends Component {
           <Hidden mdDown>
             <Button
               variant="contained"
-              style={{ backgroundColor: "#FFB600", color: "white" }}
+              style={{
+                backgroundColor: "#FFB600",
+                color: "white",
+                // borderRadius: "20px",
+              }}
               onClick={() => {
                 this.context.showAlert_C(
                   "Are you sure you want to sign out?",

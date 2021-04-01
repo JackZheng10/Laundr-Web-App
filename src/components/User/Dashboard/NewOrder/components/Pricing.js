@@ -12,6 +12,7 @@ import {
   Collapse,
   ListItem,
   Divider,
+  ListItemText,
 } from "@material-ui/core";
 import {
   PieChart,
@@ -67,7 +68,7 @@ const marks = [
   },
   {
     value: 1.5,
-    label: "1.5",
+    label: "",
   },
   {
     value: 2,
@@ -75,7 +76,7 @@ const marks = [
   },
   {
     value: 2.5,
-    label: "2.5",
+    label: "",
   },
   {
     value: 3,
@@ -83,7 +84,7 @@ const marks = [
   },
   {
     value: 3.5,
-    label: "3.5",
+    label: "",
   },
   {
     value: 4,
@@ -91,7 +92,7 @@ const marks = [
   },
   {
     value: 4.5,
-    label: "4.5",
+    label: "",
   },
   {
     value: 5,
@@ -104,7 +105,10 @@ class Pricing extends Component {
     const { currentUser, loads } = this.props;
 
     const priceMultiplier =
-      currentUser.subscription.status === "active" ? 1.2 : 1.5;
+      currentUser.subscription.status === "active" &&
+      currentUser.subscription.plan === "Family"
+        ? 1.2
+        : 1.5;
 
     if (
       currentUser.subscription.status != "active" &&
@@ -132,11 +136,29 @@ class Pricing extends Component {
                 alignItems="center"
               >
                 <Grid item>
+                  <Grid
+                    container
+                    direction="column"
+                    alignItems="center"
+                    justify="center"
+                  >
+                    <Grid item style={{ marginBottom: -5 }}>
+                      <img
+                        src={`/images/NewOrder/Bag${(loads - 0.1).toFixed(
+                          0
+                        )}.png`}
+                        style={{ height: 100 }}
+                      />
+                    </Grid>
+                    <Grid item style={{ marginBottom: 5 }}>
+                      <Typography variant="overline">$1.50/lb</Typography>
+                    </Grid>
+                  </Grid>
                   <Typography variant="h5">
-                    Estimated pounds: {loads * 12} lbs
+                    Estimated pounds: {loads * 18} lbs
                   </Typography>
                   <Typography variant="h5">
-                    Estimated cost: ${(loads * 12 * priceMultiplier).toFixed(2)}
+                    Estimated cost: ${(loads * 18 * priceMultiplier).toFixed(2)}
                   </Typography>
                 </Grid>
                 <Grid item>
@@ -158,7 +180,12 @@ class Pricing extends Component {
                       </Grid>
                       <Grid item>
                         <Typography variant="h4">
-                          ${(loads * 12 * 1.2).toFixed(2)} →
+                          ${(loads * 18 * 1.2).toFixed(2)} →
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <Typography variant="overline">
+                          (est. ~$1.25/lb)
                         </Typography>
                       </Grid>
                     </Grid>
@@ -254,6 +281,21 @@ class Pricing extends Component {
                         {`${estLbsLeft}/${maxLbs}`}
                       </Typography>
                     </div>
+                    {/* <div
+                      style={{
+                        top: "20%",
+                        left: "31%",
+                        position: "absolute",
+                        width: 250,
+                      }}
+                    >
+                      <img
+                        src={`/images/NewOrder/Bag${(loads - 0.1).toFixed(
+                          0
+                        )}.png`}
+                        style={{ height: 100 }}
+                      />
+                    </div> */}
                   </Grid>
                 </Grid>
               </CardContent>
@@ -287,7 +329,7 @@ class Pricing extends Component {
     return (
       <React.Fragment>
         <Typography variant="h5" gutterBottom>
-          About how many loads of laundry do you have?
+          About how many bags of laundry do you have?
         </Typography>
         <CustomSlider
           defaultValue={loads}

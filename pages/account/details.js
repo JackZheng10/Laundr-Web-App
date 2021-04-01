@@ -6,9 +6,13 @@ import {
   Card,
   CardHeader,
   CardFooter,
+  Divider,
   CardContent,
+  CardActions,
   TextField,
   Button,
+  InputAdornment,
+  IconButton,
 } from "@material-ui/core";
 import { Layout } from "../../src/layouts";
 import { caughtError, showConsoleError } from "../../src/helpers/errors";
@@ -24,6 +28,8 @@ import compose from "recompose/compose";
 import axios from "axios";
 import validator from "validator";
 import LoadingButton from "../../src/components/other/LoadingButton";
+import FileCopyIcon from "@material-ui/icons/FileCopy";
+import TooltipButton from "../../src/components/Driver/OrderTable/components/TooltipButton";
 import PropTypes from "prop-types";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import AccountInfo from "../../src/components/Account/Details/AccountInfo";
@@ -47,7 +53,7 @@ class Details extends Component {
 
   handleInputChange = (property, value) => {
     if (!validator.contains(value, " ")) {
-      value = limitLength(value, 10);
+      value = limitLength(value, 15);
       this.setState({ code: value });
     }
   };
@@ -103,6 +109,7 @@ class Details extends Component {
 
   render() {
     const { classes, fetch_SSR } = this.props;
+    //const referralCodeArea = typeof window !== "unefined" ? React.createRef() : null;
 
     return (
       <Layout currentUser={fetch_SSR.success ? fetch_SSR.userInfo : null}>
@@ -130,82 +137,178 @@ class Details extends Component {
         <div style={{ position: "relative", marginBottom: 70 }}>
           <BottomBorderBlue />
         </div>
-        <div style={{ padding: 16 }}>
+        <div style={{ padding: 8 }}>
           <Grid
             container
-            spacing={4}
-            direction="column"
+            direction="row"
             justify="center"
-            alignItems="center" /*main page column*/
+            alignItems="center"
+            spacing={2}
           >
             <Grid item>
-              {fetch_SSR.success ? (
-                <AccountInfo user={fetch_SSR.userInfo} />
-              ) : null}
-            </Grid>
-            <Grid item>
-              {fetch_SSR.success ? (
-                <PaymentInfo
-                  user={fetch_SSR.userInfo}
-                  card={fetch_SSR.cardInfo}
-                />
-              ) : null}
-            </Grid>
-            <Grid item>
-              {fetch_SSR.success ? (
-                <Card className={classes.root} elevation={10}>
-                  <CardHeader
-                    title="Credit"
-                    titleTypographyProps={{
-                      variant: "h4",
-                      style: {
-                        color: "white",
-                        textAlign: "center",
-                      },
-                    }}
-                    className={classes.cardHeader}
-                  />
-                  <CardContent className={classes.removePadding}>
-                    {/* <div style={{ display: "flex" }}> */}
-                    <TextField
-                      label="Code"
-                      variant="outlined"
-                      size="small"
-                      className={classes.input}
-                      value={this.state.code}
-                      onChange={(event) => {
-                        this.handleInputChange("code", event.target.value);
-                      }}
-                      style={{ marginRight: 10 }}
-                      error={this.state.codeError}
-                      helperText={this.state.codeErrorMsg}
+              <Grid
+                container
+                direction="column"
+                justify="center"
+                alignItems="center"
+                spacing={2}
+              >
+                <Grid item>
+                  {fetch_SSR.success ? (
+                    <AccountInfo user={fetch_SSR.userInfo} />
+                  ) : null}
+                </Grid>
+                <Grid item>
+                  {fetch_SSR.success ? (
+                    <PaymentInfo
+                      user={fetch_SSR.userInfo}
+                      card={fetch_SSR.cardInfo}
                     />
-                    <LoadingButton
-                      className={classes.mainButton}
-                      variant="contained"
-                      size="medium"
-                      onClick={this.redeemCode}
+                  ) : null}
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item>
+              <Grid
+                container
+                direction="column"
+                justify="center"
+                alignItems="center"
+                spacing={2}
+              >
+                <Grid item>
+                  {fetch_SSR.success ? (
+                    <Card
+                      className={classes.root}
+                      elevation={5}
+                      // style={{ borderRadius: "25px" }}
                     >
-                      Apply
-                    </LoadingButton>
-                    {/* </div> */}
-                    <Grid container justify="center">
-                      <Typography
-                        variant="h4"
-                        style={{ fontWeight: 600, marginTop: 10 }}
+                      <CardHeader
+                        title="Credit"
+                        titleTypographyProps={{
+                          variant: "h4",
+                          style: {
+                            color: "white",
+                            textAlign: "center",
+                          },
+                        }}
+                        className={classes.cardHeader}
+                      />
+                      <CardContent className={classes.removePadding}>
+                        <TextField
+                          label="Referral/Coupon"
+                          variant="outlined"
+                          size="small"
+                          className={classes.input}
+                          value={this.state.code}
+                          onChange={(event) => {
+                            this.handleInputChange("code", event.target.value);
+                          }}
+                          style={{ marginRight: 10 }}
+                          error={this.state.codeError}
+                          helperText={this.state.codeErrorMsg}
+                        />
+                        <LoadingButton
+                          className={classes.mainButton}
+                          variant="contained"
+                          size="medium"
+                          onClick={this.redeemCode}
+                        >
+                          Apply
+                        </LoadingButton>
+                        <Grid container justify="center">
+                          <Typography
+                            variant="h4"
+                            style={{ fontWeight: 600, marginTop: 10 }}
+                          >
+                            Current balance:&nbsp;
+                          </Typography>
+                          <Typography
+                            variant="h4"
+                            style={{ textAlign: "center", marginTop: 10 }}
+                          >
+                            {fetch_SSR.balance}
+                          </Typography>
+                        </Grid>
+                      </CardContent>
+                    </Card>
+                  ) : null}
+                </Grid>
+                <Grid item>
+                  {fetch_SSR.success && (
+                    <Card
+                      className={classes.root}
+                      elevation={5}
+                      // style={{ borderRadius: "25px" }}
+                    >
+                      <CardHeader
+                        title="Referrals"
+                        titleTypographyProps={{
+                          variant: "h4",
+                          style: {
+                            color: "white",
+                            textAlign: "center",
+                          },
+                        }}
+                        className={classes.cardHeader}
+                      />
+                      <CardContent className={classes.removePadding}>
+                        <TextField
+                          InputProps={{
+                            endAdornment: (
+                              // <IconButton
+                              //   size="small"
+                              //   style={{ color: "#01c9e1" }}
+                              // >
+                              //   <FileCopyIcon />
+                              // </IconButton>
+                              <Button
+                                style={{ marginLeft: -25, marginRight: -11 }}
+                                size="small"
+                                // variant="contained"
+                                variant="filled"
+                                onClick={() =>
+                                  navigator.clipboard.writeText(
+                                    fetch_SSR.userInfo.referralCode
+                                  )
+                                }
+                              >
+                                <Typography
+                                  variant="body1"
+                                  style={{
+                                    color: "#01c9e1",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  Copy
+                                </Typography>
+                              </Button>
+                            ),
+                            readOnly: true,
+                          }}
+                          label="Your Code"
+                          variant="outlined"
+                          size="small"
+                          className={classes.codeInput}
+                          defaultValue={fetch_SSR.userInfo.referralCode}
+                        />
+                      </CardContent>
+                      {/* <Divider /> */}
+                      <CardActions
+                        disableSpacing
+                        style={{ justifyContent: "center", marginTop: -18 }}
                       >
-                        Current balance:&nbsp;
-                      </Typography>
-                      <Typography
-                        variant="h4"
-                        style={{ textAlign: "center", marginTop: 10 }}
-                      >
-                        {fetch_SSR.balance}
-                      </Typography>
-                    </Grid>
-                  </CardContent>
-                </Card>
-              ) : null}
+                        <TooltipButton
+                          icon={true}
+                          text={
+                            "Refer your friends! They get $10 off their first purchase and you get $10 after their first order. Code is redeemable at registration or on this page."
+                          }
+                        />
+                      </CardActions>
+                    </Card>
+                  )}
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         </div>

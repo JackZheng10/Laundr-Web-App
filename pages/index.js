@@ -17,6 +17,7 @@ import { caughtError, showConsoleError } from "../src/helpers/errors";
 import { GetServerSideProps } from "next";
 import { getExistingOrder_SSR, getCurrentUser_SSR } from "../src/helpers/ssr";
 import { limitLength } from "../src/helpers/inputs";
+import { Sidebar, Topbar, Footer } from "../src/layouts/Main/components";
 import Head from "next/head";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
@@ -28,24 +29,6 @@ import axios from "axios";
 
 const baseURL =
   process.env.NEXT_PUBLIC_BASE_URL || require("../src/config").baseURL;
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link
-        color="inherit"
-        target="_blank"
-        rel="noopener"
-        href="https://laundr.io/"
-      >
-        Laundr LLC
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
 
 //todo: make login not case sensitive (typing W1@gmail.com) doesnt work (done, just test)
 //limit input length for login + registration
@@ -297,17 +280,22 @@ class Login extends Component {
                   <img
                     alt="Company Logo"
                     src="/images/LogRegLogo.png"
+                    //src="/images/Topbar/LaundrLogo_Blue.png"
                     className={classes.logo}
                   />
                 </Grid>
                 <Grid item>
-                  <Paper elevation={0}>
+                  <Paper elevation={0} style={{ paddingBottom: 10 }}>
                     <Typography
                       variant="h1"
                       style={{
                         color: "#01c9e1",
                         textAlign: "center",
                         padding: 10,
+                        fontSize: 45,
+                        textDecorationLine: "underline",
+                        textUnderlineOffset: 10,
+                        textDecorationColor: "#FFB600",
                       }}
                     >
                       Login
@@ -384,6 +372,7 @@ class Login extends Component {
             </div>
           </Grid>
         </Grid>
+        {/* <Footer /> */}
       </React.Fragment>
     );
   }

@@ -25,16 +25,13 @@ import Review from "./components/Review";
 import ProgressBar from "./components/ProgressBar";
 import newOrderStyles from "../../../../styles/User/Dashboard/components/NewOrder/newOrderStyles";
 
-const moment = require("moment");
+const moment = require("moment-timezone");
+moment.tz.setDefault("America/New_York");
 const geolib = require("geolib");
 
 const apiKEY =
   process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ||
   require("../../../../config").google.mapsKEY;
-
-//todo: maybe scroll to top at advancing? or make size of pages same
-//todo: no new order when payment method not added yet
-//todo: refactoring styling/layout like i would do now. same as others. center everything?
 
 const steps = ["Scheduling", "Preferences", "Address", "Pricing", "Review"];
 
@@ -52,8 +49,10 @@ class NewOrder extends Component {
       date: "N/A", //scheduling
       todaySelected: false,
       tomorrowSelected: false,
-      formattedTime: moment().format("LT"),
-      rawTime: new Date(),
+      formattedTime: "N/A",
+      selectValue: "",
+      lowerBound: null,
+      upperBound: null,
       scented: false, //preferences
       delicates: false,
       separate: false,
@@ -74,7 +73,6 @@ class NewOrder extends Component {
   }
 
   handleNext = async () => {
-    //also handle validation in here!
     let canNext = true;
 
     switch (this.state.activeStep) {
@@ -207,43 +205,141 @@ class NewOrder extends Component {
     }
   };
 
+  getTimeAvailability = () => {
+    const possibleTimes = [
+      {
+        lowerBound: moment("10:00 AM", "h:mm A"),
+        upperBound: moment("10:30 AM", "h:mm A"),
+        string: "10:00 AM - 10:30 AM",
+      },
+      {
+        lowerBound: moment("10:30 AM", "h:mm A"),
+        upperBound: moment("11:00 AM", "h:mm A"),
+        string: "10:30 AM - 11:00 AM",
+      },
+      {
+        lowerBound: moment("11:00 AM", "h:mm A"),
+        upperBound: moment("11:30 AM", "h:mm A"),
+        string: "11:00 AM - 11:30 AM",
+      },
+      {
+        lowerBound: moment("11:30 AM", "h:mm A"),
+        upperBound: moment("12:00 PM", "h:mm A"),
+        string: "11:30 AM - 12:00 PM",
+      },
+      {
+        lowerBound: moment("12:00 PM", "h:mm A"),
+        upperBound: moment("12:30 PM", "h:mm A"),
+        string: "12:00 PM - 12:30 PM",
+      },
+      {
+        lowerBound: moment("12:30 PM", "h:mm A"),
+        upperBound: moment("1:00 PM", "h:mm A"),
+        string: "12:30 PM - 1:00 PM",
+      },
+      {
+        lowerBound: moment("1:00 PM", "h:mm A"),
+        upperBound: moment("1:30 AM", "h:mm A"),
+        string: "1:00 PM - 1:30 PM",
+      },
+      {
+        lowerBound: moment("1:30 PM", "h:mm A"),
+        upperBound: moment("2:00 PM", "h:mm A"),
+        string: "1:30 PM - 2:00 PM",
+      },
+      {
+        lowerBound: moment("6:00 PM", "h:mm A"),
+        upperBound: moment("6:30 PM", "h:mm A"),
+        string: "6:00 PM - 6:30 PM",
+      },
+      {
+        lowerBound: moment("6:30 PM", "h:mm A"),
+        upperBound: moment("7:00 PM", "h:mm A"),
+        string: "6:30 PM - 7:00 PM",
+      },
+      {
+        lowerBound: moment("7:00 PM", "h:mm A"),
+        upperBound: moment("7:30 PM", "h:mm A"),
+        string: "7:00 PM - 7:30 PM",
+      },
+      {
+        lowerBound: moment("7:30 PM", "h:mm A"),
+        upperBound: moment("8:00 PM", "h:mm A"),
+        string: "7:30 PM - 8:00 PM",
+      },
+    ];
+
+    const lowerBound = moment("10:00:00", "HH:mm:ss");
+    const upperBound = moment("19:00:00", "HH:mm:ss");
+    const now = moment();
+
+    let availableTimes = [];
+    let todayNotAvailable = false;
+
+    //when here, user has already chosen a date
+
+    //if after 7:00, since pickup needs to be at least 30 mins away and last window is 7:30
+    if (now.isSameOrAfter(upperBound)) {
+      todayNotAvailable = true;
+    }
+
+    //if date chosen
+    if (this.state.tomorrowSelected || this.state.todaySelected) {
+      //if before earliest pickup or after latest pickup (where todayNotAvailable would be true)
+      if (this.state.tomorrowSelected) {
+        availableTimes = possibleTimes;
+      } else {
+        for (let x = 0; x < possibleTimes.length; x++) {
+          //get the times starting at the first range where it's before or same as now
+          if (now.isBefore(possibleTimes[x].lowerBound)) {
+            //if its not at least 30 mins before
+            if (now.diff(possibleTimes[x].lowerBound, "minutes") >= -29) {
+              continue;
+            } else {
+              availableTimes = possibleTimes.slice(x);
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    return {
+      availableTimes,
+      todayNotAvailable,
+    };
+  };
+
   handleTimeCheck = () => {
     let canNext = true;
-    //time checks, military time format: check if logged in user is gainesville or etc, hardcode gnv for now
-    const scheduledTime = moment(this.state.rawTime, "HH:mm:ss"); //note: converting Date() to moment obj
 
-    //not exact bounds since isBetween is non-inclusive of the bounds
-    const lowerBound = moment("9:59:59", "HH:mm:ss"); //want 10:00:00 to be true
-    const upperBound = moment("19:00:59", "HH:mm:ss"); //want 19:00:00 to be true
+    const scheduledLowerBound = this.state.lowerBound;
+    const scheduledUpperBound = this.state.upperBound;
 
-    //universal 1 hour from now check
-    const hourFromNow = moment(moment(), "HH:mm:ss").add(1, "hours");
+    //isBetween is non-inclusive of the bounds
+    const lowerBound = moment("10:00:00", "HH:mm:ss");
+    const upperBound = moment("19:00:00", "HH:mm:ss");
+    const now = moment();
 
     if (!this.state.todaySelected && !this.state.tomorrowSelected) {
       //if no date selected
       this.context.showAlert("Please select a pickup date.");
       canNext = false;
-    } else if (
-      this.state.todaySelected &&
-      hourFromNow.isAfter(upperBound) //can replace with upperbound?
-    ) {
-      //if selected today and its after 7 PM
+    } else if (!this.state.lowerBound || !this.state.upperBound) {
+      //if no time selected
+      this.context.showAlert("Please select a pickup time.");
+      canNext = false;
+    } else if (this.state.todaySelected && now.isSameOrAfter(upperBound)) {
       this.context.showAlert(
-        "Sorry! The pickup time must be at least 1 hour from now and we are closed after 7 PM. Please select a different day."
+        "Sorry! Our last pickup window today has passed. Please choose a time for tomorrow."
       );
       canNext = false;
-    } else if (!scheduledTime.isBetween(lowerBound, upperBound)) {
-      //if pickup time isnt between 10 am and 7 pm
-      this.context.showAlert("The pickup time must be between 10 AM and 7 PM.");
-      canNext = false;
     } else if (
-      hourFromNow.isBetween(lowerBound, upperBound) &&
-      scheduledTime.isBefore(hourFromNow) &&
-      this.state.todaySelected
+      this.state.todaySelected &&
+      now.diff(scheduledLowerBound, "minutes") >= -29
     ) {
-      //if 1 hr in advance is between 10 and 7 AND pickup time is before that AND the date selected is today
       this.context.showAlert(
-        "The pickup time must be at least 1 hour from now."
+        "Sorry! Pickup time must be at least 30 minutes in advance."
       );
       canNext = false;
     }
@@ -258,42 +354,31 @@ class NewOrder extends Component {
   handleInputChange = (property, value) => {
     switch (property) {
       case "today":
-        const hourFromNow = moment(moment(), "HH:mm:ss").add(1, "hours");
-        const lowerBound = moment("9:59:59", "HH:mm:ss");
-        const upperBound = moment("19:00:59", "HH:mm:ss");
+        this.setState({
+          todaySelected: true,
+          tomorrowSelected: false,
+          date: this.today,
+          selectValue: "",
+        });
 
-        //if within operating times
-        if (hourFromNow.isBetween(lowerBound, upperBound)) {
-          this.setState({
-            todaySelected: true,
-            tomorrowSelected: false,
-            date: this.today,
-            rawTime: hourFromNow.toDate(),
-            formattedTime: hourFromNow.format("LT"),
-          });
-        } else {
-          this.setState({
-            todaySelected: true,
-            tomorrowSelected: false,
-            date: this.today,
-          });
-        }
         break;
 
       case "tomorrow":
-        const earliestTime = moment("10:00:00", "HH:mm:ss");
         this.setState({
           todaySelected: false,
           tomorrowSelected: true,
           date: this.tomorrow,
-          rawTime: earliestTime.toDate(),
-          formattedTime: earliestTime.format("LT"),
+          selectValue: "",
         });
         break;
 
       case "time":
-        const formattedTime = moment(value, "HH:mm:ss").format("LT");
-        this.setState({ rawTime: value, formattedTime });
+        this.setState({
+          lowerBound: value.lowerBound,
+          upperBound: value.upperBound,
+          formattedTime: value.string,
+          selectValue: value.selectValue,
+        });
         break;
 
       case "scented":
@@ -384,7 +469,7 @@ class NewOrder extends Component {
     const loads = this.state.loads;
     const maxLbs = this.getMaxLbs(currentUser.subscription);
     const lbsLeft = currentUser.subscription.lbsLeft;
-    const estLbsCost = loads * 12;
+    const estLbsCost = loads * 18;
 
     return [
       {
@@ -478,9 +563,9 @@ class NewOrder extends Component {
                           tomorrow={this.tomorrow}
                           todaySelected={this.state.todaySelected}
                           tomorrowSelected={this.state.tomorrowSelected}
-                          formattedTime={this.state.formattedTime}
-                          rawTime={this.state.rawTime}
+                          selectValue={this.state.selectValue}
                           handleInputChange={this.handleInputChange}
+                          getTimeAvailability={this.getTimeAvailability}
                         />
                       </div>
                     </Fade>
@@ -540,13 +625,13 @@ class NewOrder extends Component {
                       }}
                     >
                       <div>
-                        <Pricing
+                        {/* <Pricing
                           loads={this.state.loads}
                           handleInputChange={this.handleInputChange}
                           currentUser={currentUser}
                           getLbsData={this.getLbsData}
                           getMaxLbs={this.getMaxLbs}
-                        />
+                        /> */}
                       </div>
                     </Fade>
                     <Fade

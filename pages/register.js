@@ -23,6 +23,8 @@ import {
   DialogTitle,
   CircularProgress,
   Paper,
+  Card,
+  CardContent,
 } from "@material-ui/core";
 import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
@@ -37,28 +39,6 @@ import MainAppContext from "../src/contexts/MainAppContext";
 import LoadingButton from "../src/components/other/LoadingButton";
 import registerStyles from "../src/styles/registerStyles";
 import axios from "axios";
-
-//todo: referral code functionality when possible
-//todo: get city dropdown to have hover effect rather than native dropdown if possible
-//move dupe check to registration
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link
-        color="inherit"
-        target="_blank"
-        rel="noopener"
-        href="https://laundr.io/"
-      >
-        Laundr LLC
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
 
 class Register extends Component {
   static contextType = MainAppContext;
@@ -86,12 +66,14 @@ class Register extends Component {
     tosErrorMsg: "",
     enteredCode: "", //phone verification
     showVerifyDialog: false,
+    referralError: false, //coupon/referral
+    referralText: "*Optional",
   };
 
   handleSendVerification = async (event) => {
     event.preventDefault();
 
-    if (this.handleInputValidation()) {
+    if (await this.handleInputValidation()) {
       try {
         const response = await axios.post(
           "/api/user/checkDuplicate",
@@ -202,7 +184,7 @@ class Register extends Component {
     }
   };
 
-  handleInputValidation = () => {
+  handleInputValidation = async () => {
     let valid = true;
 
     const inputs = [
@@ -309,10 +291,41 @@ class Register extends Component {
       });
     }
 
+    //check for valid referral/coupon code
+    if (!validator.isEmpty(this.state.referral)) {
+      try {
+        const response = await axios.get("/api/user/checkCode", {
+          params: {
+            code: this.state.referral,
+          },
+          withCredentials: true,
+        });
+
+        if (response.data.success) {
+          this.setState({ referralError: false, referralText: "*Optional" });
+        } else {
+          if (response.data.reason === "invalid") {
+            this.setState({
+              referralError: true,
+              referralText: "*Please enter a valid code.",
+            });
+            valid = false;
+          } else {
+            this.context.showAlert(response.data.message);
+            valid = false;
+          }
+        }
+      } catch (error) {
+        showConsoleError("verifying referral/coupon", error);
+        this.context.showAlert(
+          caughtError("verifying referral/coupon", error, 99)
+        );
+      }
+    }
+
     return valid;
   };
 
-  //todo: limit character inputs. you dont want 1000 character names mayn.
   handleInputChange = (property, value) => {
     switch (property) {
       case "fname":
@@ -356,7 +369,7 @@ class Register extends Component {
 
       case "referral":
         if (!validator.contains(value, " ")) {
-          value = limitLength(value, 10);
+          value = limitLength(value, 15);
           this.setState({ [property]: value });
         }
         break;
@@ -383,6 +396,7 @@ class Register extends Component {
         },
         { withCredentials: true }
       );
+
       if (response.data.success) {
         this.context.showAlert("Verification code resent.");
       } else {
@@ -508,17 +522,24 @@ class Register extends Component {
                   <img
                     alt="Company Logo"
                     src="/images/LogRegLogo.png"
+                    //src="/images/Topbar/LaundrLogo_Blue.png"
                     className={classes.logo}
                   />
                 </Grid>
+                {/* <Card>
+                  <CardContent> */}
                 <Grid item>
-                  <Paper elevation={0}>
+                  <Paper elevation={0} style={{ paddingBottom: 10 }}>
                     <Typography
                       variant="h1"
                       style={{
                         color: "#01c9e1",
                         textAlign: "center",
                         padding: 10,
+                        fontSize: 45,
+                        textDecorationLine: "underline",
+                        textUnderlineOffset: 10,
+                        textDecorationColor: "#FFB600",
                       }}
                     >
                       Register
@@ -639,8 +660,9 @@ class Register extends Component {
                         <TextField
                           variant="filled"
                           margin="normal"
-                          label="Referral Code"
-                          helperText="*Optional"
+                          label="Referral/Coupon"
+                          error={this.state.referralError}
+                          helperText={this.state.referralText}
                           fullWidth
                           value={this.state.referral}
                           onChange={(event) => {
@@ -648,6 +670,9 @@ class Register extends Component {
                               "referral",
                               event.target.value
                             );
+                          }}
+                          InputLabelProps={{
+                            className: classes.referralInput,
                           }}
                           classes={{ root: classes.coloredField }}
                         />
@@ -717,6 +742,8 @@ class Register extends Component {
                     </Grid>
                   </form>
                 </Grid>
+                {/* </CardContent>
+                </Card> */}
               </Grid>
             </div>
           </Grid>

@@ -110,7 +110,11 @@ const SidebarNav = (props) => {
         <ListItem className={classes.logout} disableGutters>
           <Button
             variant="contained"
-            style={{ backgroundColor: "#FFB600", color: "white" }}
+            style={{
+              backgroundColor: "#FFB600",
+              color: "white",
+              marginTop: 10,
+            }}
             startIcon={<InputIcon />}
             onClick={() => {
               context.showAlert_C("Are you sure you want to sign out?", logout);

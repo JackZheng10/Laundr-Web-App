@@ -25,7 +25,8 @@ import subscriptionStatusStyles from "../../../../styles/User/Subscription/compo
 
 //todo: responsive
 
-const moment = require("moment");
+const moment = require("moment-timezone");
+moment.tz.setDefault("America/New_York");
 
 class SubscriptionStatus extends Component {
   static contextType = MainAppContext;
@@ -177,7 +178,6 @@ class SubscriptionStatus extends Component {
             </CardContent>
           </div>
         </Grid>
-
         <Grid item>
           <Card className={classes.subInfoCard} elevation={10}>
             <CardHeader

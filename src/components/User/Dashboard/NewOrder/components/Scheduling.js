@@ -1,11 +1,22 @@
 import React, { Component } from "react";
-import { Grid, Typography, Button, withStyles } from "@material-ui/core";
-import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
-import { MuiPickersUtilsProvider, TimePicker } from "@material-ui/pickers";
+import {
+  Grid,
+  Typography,
+  Button,
+  withStyles,
+  Select,
+  MenuItem,
+  FormControl,
+  Tooltip,
+  FormHelperText,
+} from "@material-ui/core";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import PropTypes from "prop-types";
-import DateFnsUtils from "@date-io/date-fns";
+import TooltipButton from "../../../../Driver/OrderTable/components/TooltipButton";
 import schedulingStyles from "../../../../../styles/User/Dashboard/components/NewOrder/components/schedulingStyles";
+
+//REMEMBER: moment objects are mutable. creating one and then reusing it will change the original object (ex: if you do obj.add)
 
 const timeTheme = createMuiTheme({
   // overrides: {
@@ -32,9 +43,25 @@ class Scheduling extends Component {
       today,
       tomorrowSelected,
       tomorrow,
-      rawTime,
       handleInputChange,
+      getTimeAvailability,
+      selectValue,
     } = this.props;
+
+    const timeAvailability = getTimeAvailability();
+    const todayNotAvailable = timeAvailability.todayNotAvailable;
+    const availableTimes = timeAvailability.availableTimes;
+
+    const handleTimeSelect = (event) => {
+      const index = event.target.value;
+
+      handleInputChange("time", {
+        lowerBound: availableTimes[index].lowerBound,
+        upperBound: availableTimes[index].upperBound,
+        string: availableTimes[index].string,
+        selectValue: index,
+      });
+    };
 
     return (
       <React.Fragment>
@@ -43,23 +70,54 @@ class Scheduling extends Component {
         </Typography>
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <Button
-              disabled={todaySelected}
-              onClick={() => {
-                handleInputChange("today");
-              }}
-              variant="contained"
-              style={
-                todaySelected
-                  ? { backgroundColor: "#01c9e1", color: "white" }
-                  : { backgroundColor: "white", color: "#01c9e1" }
-              }
-              fullWidth
-              size="large"
-              startIcon={<CalendarTodayIcon />}
-            >
-              Today: {today}
-            </Button>
+            {todayNotAvailable && (
+              <Tooltip
+                title={
+                  <Typography
+                    variant="body1"
+                    style={{ color: "white", textAlign: "center" }}
+                  >
+                    Sorry! Our last pickup window today has passed. Please
+                    choose a time for tomorrow.
+                  </Typography>
+                }
+                arrow
+                enterTouchDelay={100}
+                leaveTouchDelay={5000}
+              >
+                <div>
+                  <Button
+                    disabled
+                    variant="contained"
+                    style={{ backgroundColor: "#d5d5d5", color: "white" }}
+                    fullWidth
+                    size="large"
+                    startIcon={<CalendarTodayIcon />}
+                  >
+                    Today: {today}
+                  </Button>
+                </div>
+              </Tooltip>
+            )}
+            {!todayNotAvailable && (
+              <Button
+                disabled={todaySelected}
+                onClick={() => {
+                  handleInputChange("today");
+                }}
+                variant="contained"
+                style={
+                  todaySelected
+                    ? { backgroundColor: "#01c9e1", color: "white" }
+                    : { backgroundColor: "white", color: "#01c9e1" }
+                }
+                fullWidth
+                size="large"
+                startIcon={<CalendarTodayIcon />}
+              >
+                Today: {today}
+              </Button>
+            )}
           </Grid>
           <Grid item xs={12} sm={6}>
             <Button
@@ -83,40 +141,63 @@ class Scheduling extends Component {
         </Grid>
         <Typography variant="h5" className={classes.title}>
           What's your preferred pickup time?
+          {/* <TooltipButton
+            icon={true}
+            style={{ marginTop: -8, marginBottom: -5 }}
+            text="Operating times are 10 AM to 8 PM, Monday to Friday. You will be able to schedule a delivery time after your clothes are weighed by the driver."
+          /> */}
         </Typography>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
+        <Grid
+          container
+          direction="row"
+          justify="flex-start"
+          alignItems="center"
+        >
+          <Grid item>
             <ThemeProvider theme={timeTheme}>
-              <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <TimePicker
-                  margin="normal"
-                  variant="inline"
-                  label="Click to select a time"
-                  onChange={(value) => {
-                    handleInputChange("time", value);
+              <FormControl className={classes.formControl}>
+                <Select
+                  disabled={!todaySelected && !tomorrowSelected}
+                  labelId="times"
+                  displayEmpty
+                  variant="outlined"
+                  value={selectValue}
+                  onChange={handleTimeSelect}
+                  MenuProps={{
+                    anchorOrigin: {
+                      vertical: "bottom",
+                      horizontal: "left",
+                    },
+                    getContentAnchorEl: null,
                   }}
-                  helperText="*Must be at least 1 hour in advance"
-                  value={rawTime}
-                  onAccept={(value) => {
-                    handleInputChange("time", value);
-                  }}
-                  PopoverProps={{
-                    anchorOrigin: { vertical: "bottom", horizontal: "center" },
-                    transformOrigin: { vertical: "bottom", horizontal: "left" },
-                  }}
-                />
-              </MuiPickersUtilsProvider>
+                >
+                  {availableTimes.map((time, index) => {
+                    return (
+                      <MenuItem value={index} key={index}>
+                        {time.string}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+                {!todaySelected && !tomorrowSelected && (
+                  <FormHelperText>*Please select a date first.</FormHelperText>
+                )}
+              </FormControl>
             </ThemeProvider>
+            <TooltipButton
+              icon={true}
+              style={{ marginTop: 20, marginLeft: 5 }}
+              text="Operating times are 10 AM to 8 PM, Monday to Friday. You'll be able to schedule a delivery time after your clothes are weighed by the driver."
+            />
           </Grid>
+          {/* <Grid item style={{ marginLeft: 5 }}>
+            <TooltipButton
+              icon={true}
+              style={{ marginTop: -8, marginBottom: -5 }}
+              text="Operating times are 10 AM to 8 PM, Monday to Friday. You'll be able to schedule a delivery time after your clothes are weighed by the driver."
+            />
+          </Grid> */}
         </Grid>
-        <Typography variant="h6">Please note:</Typography>
-        <Typography variant="h6">
-          •Operating times are 10 AM to 7 PM, Monday to Friday
-        </Typography>
-        <Typography variant="h6" gutterBottom>
-          •You will be able to schedule a delivery time after your clothes are
-          weighed by the driver
-        </Typography>
       </React.Fragment>
     );
   }

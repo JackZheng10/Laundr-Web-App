@@ -74,6 +74,45 @@ export const getExistingOrder_SSR = async (context, currentUser) => {
   }
 };
 
+export const getExistingLaundrDay_SSR = async (context, currentUser) => {
+  try {
+    const response = await axios.get(`${baseURL}/api/order/getExistingLaundrDay`, {
+      headers: context.req.headers.cookie
+        ? { cookie: context.req.headers.cookie }
+        : null,
+    });
+
+    if (response.data.success) {
+      let componentName;
+
+      if (response.data.message === "N/A") {
+        componentName = "new_laundr_day";
+      } else {
+        componentName = "laundr_day_status";
+      }
+
+      //message = user object
+      return {
+        data: {
+          success: true,
+          componentName: componentName,
+          message: response.data.message,
+        },
+      };
+    } else {
+      return response;
+    }
+  } catch (error) {
+    showConsoleError("fetching order info", error);
+    return {
+      data: {
+        success: false,
+        message: caughtError("fetching order info", error, 99),
+      },
+    };
+  }
+};
+
 //washer - assigned (paginated)
 export const fetchOrders_WA_SSR = async (context, currentUser, limit, page) => {
   try {

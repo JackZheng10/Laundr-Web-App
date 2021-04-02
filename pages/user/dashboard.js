@@ -27,6 +27,7 @@ import { caughtError, showConsoleError } from "../../src/helpers/errors";
 import {
   getExistingOrder_SSR,
   getCurrentUser_SSR,
+  getExistingLaundrDay_SSR
 } from "../../src/helpers/ssr";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
@@ -92,42 +93,42 @@ class Dashboard extends Component {
       return <div></div>;
     }
 
-    switch (fetch_SSR.orderInfo.componentName) {
-      case "set_payment":
-        return (
-          <Card className={classes.infoCard} elevation={10}>
-            <CardHeader
-              title="Missing Payment Method"
-              titleTypographyProps={{
-                variant: "h4",
-                style: {
-                  color: "white",
-                },
-              }}
-              className={classes.cardHeader}
-            />
-            <CardContent>
-              <Typography variant="body1">
-                Please add a payment method to continue.
-              </Typography>
-            </CardContent>
-            <CardActions className={classes.cardFooter}>
-              <Button
-                size="medium"
-                variant="contained"
-                onClick={() => {
-                  this.props.router.push("/account/details");
+    if (this.state.orderTabState == "New Order") {
+      switch (fetch_SSR.orderInfo.componentName) {
+        case "set_payment":
+          return (
+            <Card className={classes.infoCard} elevation={10}>
+              <CardHeader
+                title="Missing Payment Method"
+                titleTypographyProps={{
+                  variant: "h4",
+                  style: {
+                    color: "white",
+                  },
                 }}
-                className={classes.mainButton}
-              >
-                Add
-              </Button>
-            </CardActions>
-          </Card>
-        );
-
-      case "new_order":
-        if (this.state.orderTabState == "New Order") {
+                className={classes.cardHeader}
+              />
+              <CardContent>
+                <Typography variant="body1">
+                  Please add a payment method to continue.
+                </Typography>
+              </CardContent>
+              <CardActions className={classes.cardFooter}>
+                <Button
+                  size="medium"
+                  variant="contained"
+                  onClick={() => {
+                    this.props.router.push("/account/details");
+                  }}
+                  className={classes.mainButton}
+                >
+                  Add
+                </Button>
+              </CardActions>
+            </Card>
+          );
+  
+        case "new_order":
           return (
             <NewOrder
               fetchOrderInfo={this.fetchOrderInfo}
@@ -135,25 +136,37 @@ class Dashboard extends Component {
               balance={fetch_SSR.balance}
             />
           );
-        }
-        else if (this.state.orderTabState == "Laundr Day")  {
+      
+        case "order_status":
+          return (
+            <OrderStatus
+              order={fetch_SSR.orderInfo.message}
+              currentUser={fetch_SSR.userInfo}
+              fetchOrderInfo={this.fetchOrderInfo}
+            />
+          );
+      }
+    }
+    else if (this.state.orderTabState == "Laundr Day")  {
+      switch (fetch_SSR.laundrDayInfo.componentName) {
+        case "new_laundr_day":
           return (
             <LaundrDay
               fetchOrderInfo={this.fetchOrderInfo}
               currentUser={fetch_SSR.userInfo}
               balance={fetch_SSR.balance}
             />
-          );
-        }
+          );  
 
-      case "order_status":
-        return (
-          <OrderStatus
-            order={fetch_SSR.orderInfo.message}
-            currentUser={fetch_SSR.userInfo}
-            fetchOrderInfo={this.fetchOrderInfo}
-          />
-      );
+        case "laundr_day_status":
+          return (
+            <NewOrder
+              fetchOrderInfo={this.fetchOrderInfo}
+              currentUser={fetch_SSR.userInfo}
+              balance={fetch_SSR.balance}
+            />
+          );  
+      }
     }
   };
 
@@ -170,7 +183,6 @@ class Dashboard extends Component {
           return "Laundr Day";
         }
        
-
       case "order_status":
         return "Order Status";
 
@@ -443,12 +455,34 @@ export async function getServerSideProps(context) {
     }
   }
 
+  //fetch current Laundr Day info via userID
+  const response_three = await getExistingLaundrDay_SSR(context, currentUser);
+  if (!response_three.data.success) {
+    if (response_three.data.redirect) {
+      return {
+        redirect: {
+          destination: response_three.data.message,
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        props: {
+          fetch_SSR: {
+            success: false,
+            message: response_three.data.message,
+          },
+        },
+      };
+    }
+  }
+
   // const newCookie = response_one.headers["set-cookie"];
 
   // console.log("COOKIE: ", newCookie);
   // context.res.setHeader("Set-Cookie", newCookie);
 
-  //finally, return info for fetched user + order info, available via props
+  //finally, return info for fetched user + order info + laundrDayInfo, available via props
   return {
     props: {
       fetch_SSR: {
@@ -456,6 +490,7 @@ export async function getServerSideProps(context) {
         orderInfo: response_two.data,
         userInfo: currentUser,
         balance: response_one.data.balance,
+        laundrDayInfo: response_three.data
       },
     },
   };

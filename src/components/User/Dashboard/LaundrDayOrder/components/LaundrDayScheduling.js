@@ -48,11 +48,13 @@ class Scheduling extends Component {
       getTimeAvailability,
       selectValue,
       laundrDayOfWeek,
-      recurringPeriod
+      recurringPeriod,
+      nextDayOfWeek
     } = this.props;
 
     const timeAvailability = getTimeAvailability();
     const availableTimes = timeAvailability.availableTimes;
+    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
     const handleTimeSelect = (event) => {
       const index = event.target.value;
@@ -74,7 +76,7 @@ class Scheduling extends Component {
         <Typography variant="h5" gutterBottom>
           What day would you like your order to be picked up?
         </Typography>
-        <Grid container spacing={3} className={classes.container}>
+        <Grid container direction='column' spacing={2} className={classes.container}>
           <Grid item xs={12} sm={6}>
               <ButtonGroup variant="contained" style={{ backgroundColor: "#d5d5d5", color: "white" }}> 
                  <Button
@@ -176,6 +178,11 @@ class Scheduling extends Component {
                   S
                 </Button>
               </ButtonGroup>
+          </Grid>
+          <Grid item xs={12} sm={8}>
+            <Typography variant="h6" gutterBottom>
+              Your first Laundr Day is {daysOfWeek[laundrDayOfWeek]}, {nextDayOfWeek(laundrDayOfWeek)}.
+            </Typography>
           </Grid>
         </Grid>
         <Typography variant="h5" className={classes.title}>

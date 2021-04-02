@@ -127,6 +127,27 @@ class Dashboard extends Component {
           />
       );
     }
+    // else if (this.state.orderTabState == "Laundr Day")  {
+    //   switch (fetch_SSR.laundrDayInfo.componentName) {
+    //     case "new_laundr_day":
+    //       return (
+    //         <LaundrDay
+    //           fetchOrderInfo={this.fetchOrderInfo}
+    //           currentUser={fetch_SSR.userInfo}
+    //           balance={fetch_SSR.balance}
+    //         />
+    //       );  
+
+    //     case "laundr_day_status":
+    //       return (
+    //         <NewOrder
+    //           fetchOrderInfo={this.fetchOrderInfo}
+    //           currentUser={fetch_SSR.userInfo}
+    //           balance={fetch_SSR.balance}
+    //         />
+    //       );  
+    //   }
+    // }
   };
 
   renderOrderComponentName = (componentName) => {
@@ -142,7 +163,6 @@ class Dashboard extends Component {
           return "Laundr Day";
         }
        
-
       case "order_status":
         return "Order Status";
 
@@ -292,5 +312,45 @@ const DashboardCSR = (props) => {
     />
   );
 };
+//   //fetch current Laundr Day info via userID
+//   const response_three = await getExistingLaundrDay_SSR(context, currentUser);
+//   if (!response_three.data.success) {
+//     if (response_three.data.redirect) {
+//       return {
+//         redirect: {
+//           destination: response_three.data.message,
+//           permanent: false,
+//         },
+//       };
+//     } else {
+//       return {
+//         props: {
+//           fetch_SSR: {
+//             success: false,
+//             message: response_three.data.message,
+//           },
+//         },
+//       };
+//     }
+//   }
+
+//   // const newCookie = response_one.headers["set-cookie"];
+
+//   // console.log("COOKIE: ", newCookie);
+//   // context.res.setHeader("Set-Cookie", newCookie);
+
+//   //finally, return info for fetched user + order info + laundrDayInfo, available via props
+//   return {
+//     props: {
+//       fetch_SSR: {
+//         success: true,
+//         orderInfo: response_two.data,
+//         userInfo: currentUser,
+//         balance: response_one.data.balance,
+//         laundrDayInfo: response_three.data
+//       },
+//     },
+//   };
+// }
 
 export default compose(withRouter, withStyles(dashboardStyles))(DashboardCSR);

@@ -32,7 +32,7 @@ const apiKEY =
   process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ||
   require("../../../../config").google.mapsKEY;
 
-const steps = ["Scheduling", "Preferences", "Address", "Pricing", "Review"];
+const steps = ["Scheduling", "Preferences", "Address", "Review"];
 
 class LaundrDay extends Component {
   static contextType = MainAppContext;
@@ -532,6 +532,7 @@ class LaundrDay extends Component {
                           getTimeAvailability={this.getTimeAvailability}
                           laundrDayOfWeek={this.state.laundrDayOfWeek}
                           recurringPeriod={this.state.recurringPeriod}
+                          nextDayOfWeek={this.nextDayOfWeek}
                         />
                       </div>
                     </Fade>
@@ -587,7 +588,7 @@ class LaundrDay extends Component {
                           ? "none"
                           : "block",
                         transitionDelay:
-                          this.state.activeStep === 4 ? "500ms" : "0ms",
+                          this.state.activeStep === 3 ? "500ms" : "0ms",
                       }}
                     >
                       <div>

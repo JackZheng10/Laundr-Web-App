@@ -425,6 +425,7 @@ const LoginCSR = (props) => {
     }
 
     props.router.push(redirectDestination);
+    return <div>redirecting...</div>;
   }
 
   return <Login {...props} />;

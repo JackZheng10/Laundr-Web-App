@@ -18,6 +18,7 @@ import { GetServerSideProps } from "next";
 import { getExistingOrder_SSR, getCurrentUser_SSR } from "../src/helpers/ssr";
 import { limitLength } from "../src/helpers/inputs";
 import { Sidebar, Topbar, Footer } from "../src/layouts/Main/components";
+import { GET_SWR } from "../src/helpers/swr";
 import useSWR from "swr";
 import Head from "next/head";
 import compose from "recompose/compose";
@@ -383,15 +384,34 @@ Login.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export async function getServerSideProps(context) {
-  //fetch current user if there exists one
-  const response_one = await getCurrentUser_SSR(context);
+/*
+https://swr.vercel.app/
+https://swr.vercel.app/docs/data-fetching#axios
+https://swr.vercel.app/getting-started
+https://nextjs.org/docs/basic-features/data-fetching
+https://nextjs.org/docs/authentication
 
-  //console.log(context);
+to-do:
+-configure properly (retrying, cache, etc...)
+-make reusable where possible
+-loading screen
+-clean up class code that hides elements if error fetching
+-handle errors and redirects
+-clean out ssr file
+-combine what you need?
+*/
 
-  //check for redirect needed due to a currently logged in user
-  if (response_one.data.success) {
-    const currentUser = response_one.data.message;
+const LoginCSR = (props) => {
+  const params = `{ "balance": false }`;
+  const { data, error } = useSWR(["/api/user/getCurrentUser", params], GET_SWR);
+
+  if (error) return <div>{error.message}</div>;
+  if (!data) return <div>loading...</div>;
+
+  //render or use data
+  //if there's a logged in user
+  if (data.data.success) {
+    const currentUser = data.data.message;
     let redirectDestination;
 
     if (currentUser.isDriver) {
@@ -404,51 +424,44 @@ export async function getServerSideProps(context) {
       redirectDestination = "/user/dashboard";
     }
 
-    return {
-      redirect: {
-        destination: redirectDestination,
-        permanent: false,
-      },
-    };
+    props.router.push(redirectDestination);
   }
 
-  return {
-    props: {},
-  };
-}
-
-/*
-https://swr.vercel.app/
-https://swr.vercel.app/docs/data-fetching#axios
-https://swr.vercel.app/getting-started
-https://nextjs.org/docs/basic-features/data-fetching
-https://nextjs.org/docs/authentication
-
-to-do:
--configure properly
--make reusable where possible
--loading screen
--clean up class code that hides elements if error fetching
--handle errors and redirects
--clean out ssr file
--combine what you need?
-*/
-
-const LoginCSR = () => {
-  const { data, error } = useSWR("/api/user/getCurrentUser", async (url) => {
-    const response = await axios.get(url, {
-      params: {
-        balance: null,
-      },
-      withCredentials: true,
-    });
-
-    return response;
-  });
-
-  if (!data) return <div>loading...</div>;
-  console.log(data);
-  return <h1>hello</h1>;
+  return <Login {...props} />;
 };
 
 export default compose(withRouter, withStyles(loginStyles))(LoginCSR);
+
+// export async function getServerSideProps(context) {
+//   //fetch current user if there exists one
+//   const response_one = await getCurrentUser_SSR(context);
+
+//   //console.log(context);
+
+//   //check for redirect needed due to a currently logged in user
+//   if (response_one.data.success) {
+//     const currentUser = response_one.data.message;
+//     let redirectDestination;
+
+//     if (currentUser.isDriver) {
+//       redirectDestination = "/driver/available";
+//     } else if (currentUser.isWasher) {
+//       redirectDestination = "/washer/assigned";
+//     } else if (currentUser.isAdmin) {
+//       redirectDestination = "/admin/placeholder";
+//     } else {
+//       redirectDestination = "/user/dashboard";
+//     }
+
+//     return {
+//       redirect: {
+//         destination: redirectDestination,
+//         permanent: false,
+//       },
+//     };
+//   }
+
+//   return {
+//     props: {},
+//   };
+// }

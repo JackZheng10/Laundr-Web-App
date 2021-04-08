@@ -31,6 +31,8 @@ import { caughtError, showConsoleError } from "../src/helpers/errors";
 import { GetServerSideProps } from "next";
 import { getExistingOrder_SSR, getCurrentUser_SSR } from "../src/helpers/ssr";
 import { limitLength } from "../src/helpers/inputs";
+import { GET_SWR } from "../src/helpers/swr";
+import useSWR from "swr";
 import Head from "next/head";
 import validator from "validator";
 import compose from "recompose/compose";
@@ -757,13 +759,17 @@ Register.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export async function getServerSideProps(context) {
-  //fetch current user if there exists one
-  const response_one = await getCurrentUser_SSR(context);
+const RegisterCSR = (props) => {
+  const params = `{ "balance": false }`;
+  const { data, error } = useSWR(["/api/user/getCurrentUser", params], GET_SWR);
 
-  //check for redirect needed due to a currently logged in user
-  if (response_one.data.success) {
-    const currentUser = response_one.data.message;
+  if (error) return <h1>{error.message}</h1>;
+  if (!data) return <h1>loading... (placeholder)</h1>;
+
+  //render or use data
+  //if there's a logged in user
+  if (data.data.success) {
+    const currentUser = data.data.message;
     let redirectDestination;
 
     if (currentUser.isDriver) {
@@ -776,17 +782,45 @@ export async function getServerSideProps(context) {
       redirectDestination = "/user/dashboard";
     }
 
-    return {
-      redirect: {
-        destination: redirectDestination,
-        permanent: false,
-      },
-    };
+    props.router.push(redirectDestination);
+
+    //since it takes a second before url is pushed
+    return <h1>redirecting... (placeholder)</h1>;
   }
 
-  return {
-    props: {},
-  };
-}
+  return <Register {...props} />;
+};
 
-export default compose(withRouter, withStyles(registerStyles))(Register);
+export default compose(withRouter, withStyles(registerStyles))(RegisterCSR);
+
+// export async function getServerSideProps(context) {
+//   //fetch current user if there exists one
+//   const response_one = await getCurrentUser_SSR(context);
+
+//   //check for redirect needed due to a currently logged in user
+//   if (response_one.data.success) {
+//     const currentUser = response_one.data.message;
+//     let redirectDestination;
+
+//     if (currentUser.isDriver) {
+//       redirectDestination = "/driver/available";
+//     } else if (currentUser.isWasher) {
+//       redirectDestination = "/washer/assigned";
+//     } else if (currentUser.isAdmin) {
+//       redirectDestination = "/admin/placeholder";
+//     } else {
+//       redirectDestination = "/user/dashboard";
+//     }
+
+//     return {
+//       redirect: {
+//         destination: redirectDestination,
+//         permanent: false,
+//       },
+//     };
+//   }
+
+//   return {
+//     props: {},
+//   };
+// }

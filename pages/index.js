@@ -405,8 +405,8 @@ const LoginCSR = (props) => {
   const params = `{ "balance": false }`;
   const { data, error } = useSWR(["/api/user/getCurrentUser", params], GET_SWR);
 
-  if (error) return <div>{error.message}</div>;
-  if (!data) return <div>loading...</div>;
+  if (error) return <h1>{error.message}</h1>;
+  if (!data) return <h1>loading... (placeholder)</h1>;
 
   //render or use data
   //if there's a logged in user
@@ -425,7 +425,9 @@ const LoginCSR = (props) => {
     }
 
     props.router.push(redirectDestination);
-    return <div>redirecting...</div>;
+
+    //since it takes a second before url is pushed
+    return <h1>redirecting... (placeholder)</h1>;
   }
 
   return <Login {...props} />;

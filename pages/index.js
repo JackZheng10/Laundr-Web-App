@@ -399,19 +399,23 @@ to-do:
 -handle errors and redirects
 -clean out ssr file
 -combine what you need?
+-clean up stuff
 */
 
 const LoginCSR = (props) => {
   const params = `{ "balance": false }`;
-  const { data, error } = useSWR(["/api/user/getCurrentUser", params], GET_SWR);
+  const { data: response, error } = useSWR(
+    ["/api/user/getCurrentUser", params],
+    GET_SWR
+  );
 
   if (error) return <h1>{error.message}</h1>;
-  if (!data) return <h1>loading... (placeholder)</h1>;
+  if (!response) return <h1>loading... (placeholder)</h1>;
 
   //render or use data
   //if there's a logged in user
-  if (data.data.success) {
-    const currentUser = data.data.message;
+  if (response.data.success) {
+    const currentUser = response.data.message;
     let redirectDestination;
 
     if (currentUser.isDriver) {
@@ -434,37 +438,3 @@ const LoginCSR = (props) => {
 };
 
 export default compose(withRouter, withStyles(loginStyles))(LoginCSR);
-
-// export async function getServerSideProps(context) {
-//   //fetch current user if there exists one
-//   const response_one = await getCurrentUser_SSR(context);
-
-//   //console.log(context);
-
-//   //check for redirect needed due to a currently logged in user
-//   if (response_one.data.success) {
-//     const currentUser = response_one.data.message;
-//     let redirectDestination;
-
-//     if (currentUser.isDriver) {
-//       redirectDestination = "/driver/available";
-//     } else if (currentUser.isWasher) {
-//       redirectDestination = "/washer/assigned";
-//     } else if (currentUser.isAdmin) {
-//       redirectDestination = "/admin/placeholder";
-//     } else {
-//       redirectDestination = "/user/dashboard";
-//     }
-
-//     return {
-//       redirect: {
-//         destination: redirectDestination,
-//         permanent: false,
-//       },
-//     };
-//   }
-
-//   return {
-//     props: {},
-//   };
-// }

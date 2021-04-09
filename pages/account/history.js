@@ -24,6 +24,8 @@ import {
   fetchOrders_DAV_SSR,
   fetchOrderHistory_SSR,
 } from "../../src/helpers/ssr";
+import { GET_SWR, getFilterConfig, hasPageAccess } from "../../src/helpers/swr";
+import useSWR from "swr";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import axios from "axios";
@@ -53,52 +55,28 @@ class History extends Component {
     super(props);
 
     //handle pagination
-    const { fetch_SSR } = this.props;
-    const paginationInfo = fetch_SSR.paginationInfo;
+    const { paginationInfo } = this.props;
     const initialLimit = 10;
     const initialPage = 0; //MUI uses 0-indexed
 
     this.state = {
-      orders: fetch_SSR.success ? fetch_SSR.orders : [],
+      orders: this.props.orders,
       limit: initialLimit,
       page: initialPage,
       totalCount: paginationInfo.totalCount,
     };
   }
 
-  componentDidMount = async () => {
-    const { fetch_SSR } = this.props;
-
-    if (!fetch_SSR.success) {
-      this.context.showAlert(fetch_SSR.message);
-    }
-  };
-
-  getFilterConfig = (currentUser) => {
-    if (!currentUser) {
-      return "none";
-    } else if (currentUser.isDriver) {
-      return "orderHistoryDriver";
-    } else if (currentUser.isWasher) {
-      return "orderHistoryWasher";
-    } else {
-      return "orderHistoryUser";
-    }
-  };
-
   fetchPage = async (page, limit, filter) => {
     try {
-      const response = await axios.post(
-        `/api/order/fetchOrders`,
-        {
+      const response = await axios.get(`/api/order/fetchOrders`, {
+        params: {
           filter: filter,
           limit: limit,
           page: page,
         },
-        {
-          withCredentials: true,
-        }
-      );
+        withCredentials: true,
+      });
 
       return response;
     } catch (error) {
@@ -117,7 +95,7 @@ class History extends Component {
     const response = await this.fetchPage(
       newPage,
       this.state.limit,
-      this.getFilterConfig(this.props.fetch_SSR.userInfo)
+      getFilterConfig(this.props.currentUser, window)
     );
     this.context.hideLoading();
 
@@ -141,7 +119,7 @@ class History extends Component {
     const response = await this.fetchPage(
       this.state.page,
       event.target.value,
-      this.getFilterConfig(this.props.fetch_SSR.userInfo)
+      getFilterConfig(this.props.currentUser, window)
     );
     this.context.hideLoading();
 
@@ -161,11 +139,11 @@ class History extends Component {
   };
 
   render() {
-    const { classes, fetch_SSR } = this.props;
+    const { classes, currentUser } = this.props;
     const { totalCount, limit, page } = this.state;
 
     return (
-      <Layout currentUser={fetch_SSR.success ? fetch_SSR.userInfo : null}>
+      <Layout currentUser={currentUser}>
         <Grid
           container
           direction="column"
@@ -196,12 +174,10 @@ class History extends Component {
           >
             <OrderTable
               orders={this.state.orders}
-              config={this.getFilterConfig(
-                fetch_SSR.success ? fetch_SSR.userInfo : null
-              )}
-              currentUser={fetch_SSR.success ? fetch_SSR.userInfo : null}
+              config={getFilterConfig(currentUser, window)}
+              currentUser={currentUser}
             />
-            {fetch_SSR.success && totalCount > 0 && (
+            {totalCount > 0 && (
               <TablePagination
                 rowsPerPageOptions={[10, 25, 50]}
                 component="div"
@@ -235,91 +211,70 @@ History.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export async function getServerSideProps(context) {
-  //fetch current user
-  const response_one = await getCurrentUser_SSR(context);
+const HistoryCSR = (props) => {
+  const historyElibility = (response_one) => {
+    if (response_one) {
+      if (response_one.data.message.email) {
+        const currentUser = response_one.data.message;
 
-  //check for redirect needed due to invalid session or error in fetching
-  if (!response_one.data.success) {
-    if (response_one.data.redirect) {
-      return {
-        redirect: {
-          destination: response_one.data.message,
-          permanent: false,
-        },
-      };
-    } else {
-      return {
-        props: {
-          fetch_SSR: {
-            success: false,
-            message: response_one.data.message,
-          },
-        },
-      };
-    }
-  }
+        if (!hasPageAccess(currentUser, window)) return null;
 
-  //check for permissions to access page if no error from fetching user
-  const currentUser = response_one.data.message;
-  const urlSections = context.resolvedUrl.split("/");
-  switch (urlSections[1]) {
-    case "account":
-      if (currentUser.isAdmin) {
-        return {
-          redirect: {
-            destination: "/accessDenied",
-            permanent: false,
-          },
-        };
+        return (
+          "/api/order/fetchOrders?filter=" +
+          getFilterConfig(currentUser, window)
+        );
+      } else {
+        return null;
       }
-      break;
-  }
+    } else {
+      return null;
+    }
+  };
 
-  //everything ok, so current user is fetched (currentUser is valid)
-
-  //fetch possible orders, paginated for first page and an initial limit of 10
-  const initialLimit = 10;
-  const initialPage = 0;
-  const response_two = await fetchOrderHistory_SSR(
-    context,
-    currentUser,
-    initialLimit,
-    initialPage
+  const params_one = `{ "balance": true }`;
+  const { data: response_one, error: error_one } = useSWR(
+    ["/api/user/getCurrentUser", params_one],
+    GET_SWR
   );
 
-  //check for error
-  if (!response_two.data.success) {
-    if (response_two.data.redirect) {
-      return {
-        redirect: {
-          destination: response_two.data.message,
-          permanent: false,
-        },
-      };
-    } else {
-      return {
-        props: {
-          fetch_SSR: {
-            success: false,
-            message: response_two.data.message,
-          },
-        },
-      };
-    }
+  const params_two = `{ "limit": 10, "page": 0 }`;
+  const { data: response_two, error: error_two } = useSWR(
+    historyElibility(response_one)
+      ? [historyElibility(response_one), params_two]
+      : null,
+    GET_SWR
+  );
+
+  if (error_one || error_two)
+    return <h1>{error_one ? error_one.message : error_two.message}</h1>;
+
+  //second conditional takes into account if second req. should even be ran
+  if (!response_one || (!response_two && historyElibility(response_one)))
+    return <h1>loading... (placeholder)</h1>;
+
+  //all necessary data fetched, now use it
+  const currentUser = response_one.data.message;
+
+  //check for redirect needed due to invalid session, could only be the case if user not logged in (other false successes throw an error in useSWR)
+  if (!response_one.data.success) {
+    props.router.push(response_one.data.message);
+    return <h1>redirecting... (placeholder)</h1>;
   }
 
-  //return info for fetched user, available via props
-  return {
-    props: {
-      fetch_SSR: {
-        success: true,
-        userInfo: currentUser,
-        orders: response_two.data.message.orders,
-        paginationInfo: response_two.data.message,
-      },
-    },
-  };
-}
+  //check for redirect needed due to no access to page
+  if (!hasPageAccess(currentUser, window)) {
+    props.router.push("/accessDenied");
+    return <h1>redirecting... (placeholder)</h1>;
+  }
 
-export default compose(withRouter, withStyles(historyStyles))(History);
+  return (
+    <History
+      currentUser={currentUser}
+      orders={response_two.data.message.orders}
+      paginationInfo={response_two.data.message}
+      {...props}
+    />
+  );
+};
+
+export default compose(withRouter, withStyles(historyStyles))(HistoryCSR);

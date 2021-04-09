@@ -80,17 +80,14 @@ class AcceptedDashboard extends Component {
 
   fetchPage = async (page, limit) => {
     try {
-      const response = await axios.post(
-        `/api/order/fetchOrders`,
-        {
+      const response = await axios.get(`/api/order/fetchOrders`, {
+        params: {
           filter: "driverAccepted",
           limit: limit,
           page: page,
         },
-        {
-          withCredentials: true,
-        }
-      );
+        withCredentials: true,
+      });
 
       return response;
     } catch (error) {
@@ -106,17 +103,14 @@ class AcceptedDashboard extends Component {
 
   refreshPage = async (page, limit) => {
     try {
-      const response = await axios.post(
-        `/api/order/fetchOrders`,
-        {
+      const response = await axios.get(`/api/order/fetchOrders`, {
+        params: {
           filter: "driverAccepted",
           limit: limit,
           page: page,
         },
-        {
-          withCredentials: true,
-        }
-      );
+        withCredentials: true,
+      });
 
       if (!response.data.success) {
         if (response.data.redirect) {

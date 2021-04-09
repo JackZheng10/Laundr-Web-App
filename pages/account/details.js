@@ -24,6 +24,8 @@ import {
   fetchCardDetails_SSR,
 } from "../../src/helpers/ssr";
 import { limitLength } from "../../src/helpers/inputs";
+import { GET_SWR } from "../../src/helpers/swr";
+import useSWR from "swr";
 import compose from "recompose/compose";
 import axios from "axios";
 import validator from "validator";
@@ -37,19 +39,13 @@ import PaymentInfo from "../../src/components/Account/Details/PaymentInfo";
 import detailsStyles from "../../src/styles/User/Account/detailsStyles";
 
 //todo: need to show payment info to only some users? (not admins/drivers/washers?)
+//be careful...<Link /> doesn't play well. when used on sidebar, caused clicking on this page to redirect sometimes
+//^test clicking the help page on footer, might not even be the cause...play around with swr settings maybe the focus?
 
 class Details extends Component {
   static contextType = MainAppContext;
 
   state = { code: "", codeError: false, codeErrorMsg: "" };
-
-  componentDidMount = async () => {
-    const { fetch_SSR } = this.props;
-
-    if (!fetch_SSR.success) {
-      this.context.showAlert(fetch_SSR.message);
-    }
-  };
 
   handleInputChange = (property, value) => {
     if (!validator.contains(value, " ")) {
@@ -108,11 +104,10 @@ class Details extends Component {
   };
 
   render() {
-    const { classes, fetch_SSR } = this.props;
-    //const referralCodeArea = typeof window !== "unefined" ? React.createRef() : null;
+    const { classes, currentUser, cardInfo, balance } = this.props;
 
     return (
-      <Layout currentUser={fetch_SSR.success ? fetch_SSR.userInfo : null}>
+      <Layout currentUser={currentUser}>
         <Grid
           container
           spacing={0}
@@ -154,17 +149,10 @@ class Details extends Component {
                 spacing={2}
               >
                 <Grid item>
-                  {fetch_SSR.success ? (
-                    <AccountInfo user={fetch_SSR.userInfo} />
-                  ) : null}
+                  <AccountInfo user={currentUser} />
                 </Grid>
                 <Grid item>
-                  {fetch_SSR.success ? (
-                    <PaymentInfo
-                      user={fetch_SSR.userInfo}
-                      card={fetch_SSR.cardInfo}
-                    />
-                  ) : null}
+                  <PaymentInfo user={currentUser} card={cardInfo} />
                 </Grid>
               </Grid>
             </Grid>
@@ -177,136 +165,132 @@ class Details extends Component {
                 spacing={2}
               >
                 <Grid item>
-                  {fetch_SSR.success ? (
-                    <Card
-                      className={classes.root}
-                      elevation={5}
-                      // style={{ borderRadius: "25px" }}
-                    >
-                      <CardHeader
-                        title="Credit"
-                        titleTypographyProps={{
-                          variant: "h4",
-                          style: {
-                            color: "white",
-                            textAlign: "center",
-                          },
+                  <Card
+                    className={classes.root}
+                    elevation={5}
+                    // style={{ borderRadius: "25px" }}
+                  >
+                    <CardHeader
+                      title="Credit"
+                      titleTypographyProps={{
+                        variant: "h4",
+                        style: {
+                          color: "white",
+                          textAlign: "center",
+                        },
+                      }}
+                      className={classes.cardHeader}
+                    />
+                    <CardContent className={classes.removePadding}>
+                      <TextField
+                        label="Referral/Coupon"
+                        variant="outlined"
+                        size="small"
+                        className={classes.input}
+                        value={this.state.code}
+                        onChange={(event) => {
+                          this.handleInputChange("code", event.target.value);
                         }}
-                        className={classes.cardHeader}
+                        style={{ marginRight: 10 }}
+                        error={this.state.codeError}
+                        helperText={this.state.codeErrorMsg}
                       />
-                      <CardContent className={classes.removePadding}>
-                        <TextField
-                          label="Referral/Coupon"
-                          variant="outlined"
-                          size="small"
-                          className={classes.input}
-                          value={this.state.code}
-                          onChange={(event) => {
-                            this.handleInputChange("code", event.target.value);
-                          }}
-                          style={{ marginRight: 10 }}
-                          error={this.state.codeError}
-                          helperText={this.state.codeErrorMsg}
-                        />
-                        <LoadingButton
-                          className={classes.mainButton}
-                          variant="contained"
-                          size="medium"
-                          onClick={this.redeemCode}
+                      <LoadingButton
+                        className={classes.mainButton}
+                        variant="contained"
+                        size="medium"
+                        onClick={this.redeemCode}
+                      >
+                        Apply
+                      </LoadingButton>
+                      <Grid container justify="center">
+                        <Typography
+                          variant="h4"
+                          style={{ fontWeight: 600, marginTop: 10 }}
                         >
-                          Apply
-                        </LoadingButton>
-                        <Grid container justify="center">
-                          <Typography
-                            variant="h4"
-                            style={{ fontWeight: 600, marginTop: 10 }}
-                          >
-                            Current balance:&nbsp;
-                          </Typography>
-                          <Typography
-                            variant="h4"
-                            style={{ textAlign: "center", marginTop: 10 }}
-                          >
-                            {fetch_SSR.balance}
-                          </Typography>
-                        </Grid>
-                      </CardContent>
-                    </Card>
-                  ) : null}
+                          Current balance:&nbsp;
+                        </Typography>
+                        <Typography
+                          variant="h4"
+                          style={{ textAlign: "center", marginTop: 10 }}
+                        >
+                          {balance}
+                        </Typography>
+                      </Grid>
+                    </CardContent>
+                  </Card>
                 </Grid>
                 <Grid item>
-                  {fetch_SSR.success && (
-                    <Card
-                      className={classes.root}
-                      elevation={5}
-                      // style={{ borderRadius: "25px" }}
-                    >
-                      <CardHeader
-                        title="Referrals"
-                        titleTypographyProps={{
-                          variant: "h4",
-                          style: {
-                            color: "white",
-                            textAlign: "center",
-                          },
-                        }}
-                        className={classes.cardHeader}
-                      />
-                      <CardContent className={classes.removePadding}>
-                        <TextField
-                          InputProps={{
-                            endAdornment: (
-                              // <IconButton
-                              //   size="small"
-                              //   style={{ color: "#01c9e1" }}
-                              // >
-                              //   <FileCopyIcon />
-                              // </IconButton>
-                              <Button
-                                style={{ marginLeft: -25, marginRight: -11 }}
-                                size="small"
-                                // variant="contained"
-                                variant="filled"
-                                onClick={() =>
-                                  navigator.clipboard.writeText(
-                                    fetch_SSR.userInfo.referralCode
-                                  )
-                                }
+                  <Card
+                    className={classes.root}
+                    elevation={5}
+                    // style={{ borderRadius: "25px" }}
+                  >
+                    <CardHeader
+                      title="Referrals"
+                      titleTypographyProps={{
+                        variant: "h4",
+                        style: {
+                          color: "white",
+                          textAlign: "center",
+                        },
+                      }}
+                      className={classes.cardHeader}
+                    />
+                    <CardContent className={classes.removePadding}>
+                      <TextField
+                        InputProps={{
+                          endAdornment: (
+                            // <IconButton
+                            //   size="small"
+                            //   style={{ color: "#01c9e1" }}
+                            // >
+                            //   <FileCopyIcon />
+                            // </IconButton>
+                            <Button
+                              style={{ marginLeft: -25, marginRight: -11 }}
+                              size="small"
+                              // variant="contained"
+                              variant="filled"
+                              onClick={() =>
+                                navigator.clipboard.writeText(
+                                  currentUser.referralCode
+                                )
+                              }
+                            >
+                              <Typography
+                                variant="body1"
+                                style={{
+                                  color: "#01c9e1",
+                                  fontWeight: "bold",
+                                }}
                               >
-                                <Typography
-                                  variant="body1"
-                                  style={{
-                                    color: "#01c9e1",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  Copy
-                                </Typography>
-                              </Button>
-                            ),
-                            readOnly: true,
-                          }}
-                          label="Your Code"
-                          variant="outlined"
-                          size="small"
-                          className={classes.codeInput}
-                          defaultValue={fetch_SSR.userInfo.referralCode}
-                        />
-                      </CardContent>
-                      {/* <Divider /> */}
-                      <CardActions
-                        disableSpacing
-                        style={{ justifyContent: "center", marginTop: -18 }}
-                      >
-                        <TooltipButton
-                          icon={true}
-                          text={
-                            "Refer your friends! They get $10 off their first purchase and you get $10 after their first order. Code is redeemable at registration or on this page."
-                          }
-                        />
-                      </CardActions>
-                    </Card>
-                  )}
+                                Copy
+                              </Typography>
+                            </Button>
+                          ),
+                          readOnly: true,
+                        }}
+                        label="Your Code"
+                        variant="outlined"
+                        size="small"
+                        className={classes.codeInput}
+                        defaultValue={currentUser.referralCode}
+                      />
+                    </CardContent>
+                    {/* <Divider /> */}
+                    <CardActions
+                      disableSpacing
+                      style={{ justifyContent: "center", marginTop: -18 }}
+                    >
+                      <TooltipButton
+                        icon={true}
+                        text={
+                          "Refer your friends! They get $10 off their first purchase and you get $10 after their first order. Code is redeemable at registration or on this page."
+                        }
+                      />
+                    </CardActions>
+                  </Card>
                 </Grid>
               </Grid>
             </Grid>
@@ -321,90 +305,79 @@ Details.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export async function getServerSideProps(context) {
-  //fetch current user
-  const response_one = await getCurrentUser_SSR(context, { balance: true });
-
-  //check for redirect needed due to invalid session or error in fetching
-  if (!response_one.data.success) {
-    if (response_one.data.redirect) {
-      return {
-        redirect: {
-          destination: response_one.data.message,
-          permanent: false,
-        },
-      };
-    } else {
-      return {
-        props: {
-          fetch_SSR: {
-            success: false,
-            message: response_one.data.message,
-          },
-        },
-      };
-    }
-  }
-
-  //any user can access this page
-  const currentUser = response_one.data.message;
-
-  //fetch card if user has one
-  let cardInfo;
-
-  if (currentUser.stripe.regPaymentID != "N/A") {
-    const response_two = await fetchCardDetails_SSR(context, currentUser);
-
-    //check for error in fetching (***will throw an error if payment method ID is incorrect)
-    if (!response_two.data.success) {
-      if (response_two.data.redirect) {
-        return {
-          redirect: {
-            destination: response_two.data.message,
-            permanent: false,
-          },
-        };
+const DetailsCSR = (props) => {
+  const cardDetailsEligibility = (response_one) => {
+    if (response_one) {
+      if (response_one.data.message.email) {
+        if (response_one.data.message.stripe.regPaymentID != "N/A") {
+          return "/api/stripe/getCardDetails";
+        } else {
+          return null;
+        }
       } else {
-        return {
-          props: {
-            fetch_SSR: {
-              success: false,
-              message: response_two.data.message,
-            },
-          },
-        };
+        return null;
       }
     } else {
-      //if successful, return the correct card info
-      const card = response_two.data.message.card;
-
-      cardInfo = {
-        brand: card.brand.toUpperCase(),
-        expMonth: card.exp_month,
-        expYear: card.exp_year,
-        lastFour: card.last4,
-      };
+      return null;
     }
-  } else {
-    //no card fetch needed? just return a default dummy card instead
+  };
+
+  //all hooks need to be ran on every render
+  const params_one = `{ "balance": true }`;
+  const { data: response_one, error: error_one } = useSWR(
+    ["/api/user/getCurrentUser", params_one],
+    GET_SWR
+  );
+
+  //fetch card if user has one. wait until: response_one resolves, it returns a logged in user, that user has a payment id
+  const { data: response_two, error: error_two } = useSWR(
+    cardDetailsEligibility(response_one),
+    GET_SWR
+  );
+
+  if (error_one || error_two)
+    return <h1>{error_one ? error_one.message : error_two.message}</h1>;
+
+  //second conditional takes into account if second req. should even be ran
+  if (!response_one || (!response_two && cardDetailsEligibility(response_one)))
+    return <h1>loading... (placeholder)</h1>;
+
+  //all necessary data fetched, now use it
+
+  //check for redirect needed due to invalid session, could only be the case if user not logged in (other false successes throw an error in useSWR)
+  if (!response_one.data.success) {
+    props.router.push(response_one.data.message);
+    return <h1>redirecting... (placeholder)</h1>;
+  }
+
+  const currentUser = response_one.data.message;
+
+  let cardInfo = {
+    brand: "N/A",
+    expMonth: "N/A",
+    expYear: "N/A",
+    lastFour: "N/A",
+  };
+
+  if (currentUser.stripe.regPaymentID != "N/A") {
+    const card = response_two.data.message.card;
+
     cardInfo = {
-      brand: "N/A",
-      expMonth: "N/A",
-      expYear: "N/A",
-      lastFour: "N/A",
+      brand: card.brand.toUpperCase(),
+      expMonth: card.exp_month,
+      expYear: card.exp_year,
+      lastFour: card.last4,
     };
   }
 
-  return {
-    props: {
-      fetch_SSR: {
-        success: true,
-        userInfo: currentUser,
-        cardInfo: cardInfo,
-        balance: response_one.data.balance,
-      },
-    },
-  };
-}
+  return (
+    <Details
+      currentUser={currentUser}
+      cardInfo={cardInfo}
+      balance={response_one.data.balance}
+      {...props}
+    />
+  );
+};
 
-export default compose(withRouter, withStyles(detailsStyles))(Details);
+export default compose(withRouter, withStyles(detailsStyles))(DetailsCSR);

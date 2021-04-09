@@ -77,18 +77,14 @@ class AvailableDashboard extends Component {
 
   fetchPage = async (page, limit) => {
     try {
-      const response = await axios.post(
-        `/api/order/fetchOrders`,
-        {
+      const response = await axios.get(`/api/order/fetchOrders`, {
+        params: {
           filter: "none",
-          statuses: [0, 4],
           limit: limit,
           page: page,
         },
-        {
-          withCredentials: true,
-        }
-      );
+        withCredentials: true,
+      });
 
       return response;
     } catch (error) {
@@ -104,18 +100,14 @@ class AvailableDashboard extends Component {
 
   refreshPage = async (page, limit) => {
     try {
-      const response = await axios.post(
-        `/api/order/fetchOrders`,
-        {
+      const response = await axios.get(`/api/order/fetchOrders`, {
+        params: {
           filter: "none",
-          statuses: [0, 4],
           limit: limit,
           page: page,
         },
-        {
-          withCredentials: true,
-        }
-      );
+        withCredentials: true,
+      });
 
       if (!response.data.success) {
         if (response.data.redirect) {

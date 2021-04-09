@@ -248,20 +248,16 @@ const HistoryCSR = (props) => {
   if (error_one || error_two)
     return <h1>{error_one ? error_one.message : error_two.message}</h1>;
 
-  //second conditional takes into account if second req. should even be ran
   if (!response_one || (!response_two && historyElibility(response_one)))
     return <h1>loading... (placeholder)</h1>;
 
-  //all necessary data fetched, now use it
   const currentUser = response_one.data.message;
 
-  //check for redirect needed due to invalid session, could only be the case if user not logged in (other false successes throw an error in useSWR)
   if (!response_one.data.success) {
     props.router.push(response_one.data.message);
     return <h1>redirecting... (placeholder)</h1>;
   }
 
-  //check for redirect needed due to no access to page
   if (!hasPageAccess(currentUser, window)) {
     props.router.push("/accessDenied");
     return <h1>redirecting... (placeholder)</h1>;

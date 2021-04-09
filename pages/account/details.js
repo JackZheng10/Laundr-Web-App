@@ -323,6 +323,8 @@ const DetailsCSR = (props) => {
   };
 
   //all hooks need to be ran on every render
+
+  //swr requires a "stable object", so passing in an actual object causes infinite renders
   const params_one = `{ "balance": true }`;
   const { data: response_one, error: error_one } = useSWR(
     ["/api/user/getCurrentUser", params_one],
@@ -330,6 +332,7 @@ const DetailsCSR = (props) => {
   );
 
   //fetch card if user has one. wait until: response_one resolves, it returns a logged in user, that user has a payment id
+  //if url passed to fetcher is null, swr knows to wait until it's not to start the request
   const { data: response_two, error: error_two } = useSWR(
     cardDetailsEligibility(response_one),
     GET_SWR
@@ -338,7 +341,7 @@ const DetailsCSR = (props) => {
   if (error_one || error_two)
     return <h1>{error_one ? error_one.message : error_two.message}</h1>;
 
-  //second conditional takes into account if second req. should even be ran
+  //second conditional takes into account if second req. should have even ran
   if (!response_one || (!response_two && cardDetailsEligibility(response_one)))
     return <h1>loading... (placeholder)</h1>;
 

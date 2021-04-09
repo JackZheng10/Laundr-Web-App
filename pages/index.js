@@ -403,11 +403,7 @@ to-do:
 */
 
 const LoginCSR = (props) => {
-  const params = `{ "balance": false }`;
-  const { data: response, error } = useSWR(
-    ["/api/user/getCurrentUser", params],
-    GET_SWR
-  );
+  const { data: response, error } = useSWR("/api/user/getCurrentUser", GET_SWR);
 
   if (error) return <h1>{error.message}</h1>;
   if (!response) return <h1>loading... (placeholder)</h1>;

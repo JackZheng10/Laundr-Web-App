@@ -297,9 +297,8 @@ const AssignedCSR = (props) => {
     }
   };
 
-  const params_one = `{ "balance": true }`;
   const { data: response_one, error: error_one } = useSWR(
-    ["/api/user/getCurrentUser", params_one],
+    "/api/user/getCurrentUser",
     GET_SWR
   );
 

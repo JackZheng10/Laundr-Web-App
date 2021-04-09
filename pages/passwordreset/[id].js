@@ -65,7 +65,7 @@ class PasswordReset extends Component {
           "/api/user/resetPassword",
           {
             password: this.state.password,
-            id: this.props.fetch_SSR.id,
+            id: this.props.id,
           },
           { withCredentials: true }
         );
@@ -293,7 +293,7 @@ const PasswordResetCSR = (props) => {
     return <h1>error: this link has expired</h1>;
   }
 
-  return <PasswordReset {...props} />;
+  return <PasswordReset id={getWindowEligibility()} {...props} />;
 };
 
 export default compose(withRouter, withStyles(loginStyles))(PasswordResetCSR);

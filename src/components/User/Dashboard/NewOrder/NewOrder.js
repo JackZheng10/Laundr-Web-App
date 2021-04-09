@@ -625,13 +625,13 @@ class NewOrder extends Component {
                       }}
                     >
                       <div>
-                        {/* <Pricing
+                        <Pricing
                           loads={this.state.loads}
                           handleInputChange={this.handleInputChange}
                           currentUser={currentUser}
                           getLbsData={this.getLbsData}
                           getMaxLbs={this.getMaxLbs}
-                        /> */}
+                        />
                       </div>
                     </Fade>
                     <Fade

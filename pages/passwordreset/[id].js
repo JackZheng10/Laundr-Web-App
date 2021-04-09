@@ -13,6 +13,8 @@ import {
 } from "@material-ui/core";
 import { getPasswordResetSession } from "../../src/helpers/ssr";
 import { limitLength } from "../../src/helpers/inputs";
+import { GET_SWR, getFilterConfig, hasPageAccess } from "../../src/helpers/swr";
+import useSWR from "swr";
 import validator from "validator";
 import compose from "recompose/compose";
 import axios from "axios";
@@ -147,7 +149,7 @@ class PasswordReset extends Component {
   };
 
   render() {
-    const { classes, fetch_SSR } = this.props;
+    const { classes } = this.props;
 
     return (
       <Grid
@@ -187,59 +189,57 @@ class PasswordReset extends Component {
                 </Paper>
               </Grid>
               <Grid item>
-                {fetch_SSR.success ? (
-                  <form>
-                    <TextField
-                      variant="filled"
-                      margin="normal"
-                      fullWidth
-                      label="New Password"
-                      type="password"
-                      autoComplete="new-password"
-                      error={this.state.passwordError}
-                      helperText={this.state.passwordErrorMsg}
-                      onChange={(event) => {
-                        this.handleInputChange("password", event.target.value);
-                      }}
-                      value={this.state.password}
-                      className={classes.coloredField}
-                    />
-                    <TextField
-                      variant="filled"
-                      margin="normal"
-                      fullWidth
-                      label="Confirm Password"
-                      type="password"
-                      autoComplete="new-password"
-                      error={this.state.confirmedPasswordError}
-                      helperText={this.state.confirmedPasswordErrorMsg}
-                      onChange={(event) => {
-                        this.handleInputChange(
-                          "confirmedPassword",
-                          event.target.value
-                        );
-                      }}
-                      value={this.state.confirmedPassword}
-                      className={classes.coloredField}
-                    />
-                    <LoadingButton
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      className={classes.submit}
-                      onClick={this.handleResetPassword}
-                    >
-                      Reset
-                    </LoadingButton>
-                  </form>
-                ) : (
-                  <Typography
+                <form>
+                  <TextField
+                    variant="filled"
+                    margin="normal"
+                    fullWidth
+                    label="New Password"
+                    type="password"
+                    autoComplete="new-password"
+                    error={this.state.passwordError}
+                    helperText={this.state.passwordErrorMsg}
+                    onChange={(event) => {
+                      this.handleInputChange("password", event.target.value);
+                    }}
+                    value={this.state.password}
+                    className={classes.coloredField}
+                  />
+                  <TextField
+                    variant="filled"
+                    margin="normal"
+                    fullWidth
+                    label="Confirm Password"
+                    type="password"
+                    autoComplete="new-password"
+                    error={this.state.confirmedPasswordError}
+                    helperText={this.state.confirmedPasswordErrorMsg}
+                    onChange={(event) => {
+                      this.handleInputChange(
+                        "confirmedPassword",
+                        event.target.value
+                      );
+                    }}
+                    value={this.state.confirmedPassword}
+                    className={classes.coloredField}
+                  />
+                  <LoadingButton
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    className={classes.submit}
+                    onClick={this.handleResetPassword}
+                  >
+                    Reset
+                  </LoadingButton>
+                </form>
+
+                {/* <Typography
                     variant="h4"
                     style={{ textAlign: "center", marginTop: 10 }}
                   >
                     {fetch_SSR.message}
-                  </Typography>
-                )}
+                  </Typography> */}
               </Grid>
             </Grid>
           </div>
@@ -253,68 +253,47 @@ PasswordReset.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export async function getServerSideProps(context) {
-  const id = context.query.id;
+const PasswordResetCSR = (props) => {
+  const getWindowEligibility = () => {
+    if (typeof window === "undefined") {
+      return null;
+    } else {
+      return window.location.pathname.split("/")[2];
+    }
+  };
 
-  const response_one = await getPasswordResetSession(context, id);
+  const { data: response, error } = useSWR(
+    `/api/user/getPasswordResetSession?id=${getWindowEligibility()}`,
+    GET_SWR
+  );
 
-  //no need to check for redirect since user shouldnt be logged in
-  if (!response_one.data.success) {
-    return {
-      props: {
-        fetch_SSR: {
-          success: false,
-          message: response_one.data.message,
-        },
-      },
-    };
-  }
+  if (error) return <h1>{error.message}</h1>;
+  if (!response) return <h1>loading... (placeholder)</h1>;
 
-  //succeeded in fetching
-  const session = response_one.data.message;
+  //render or use data
+  const session = response.data.message;
 
   //check to see if the session exists
   if (!session) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
+    props.router.push("/");
+    return <h1>redirecting... (placeholder)</h1>;
   }
 
   //check to see if it was used or expired
   if (session.used) {
-    return {
-      props: {
-        fetch_SSR: {
-          success: false,
-          message:
-            "This link has already been used. If this is a mistake, please contact us.",
-        },
-      },
-    };
+    return (
+      <h1>
+        error: This link has already been used. If this is a mistake, please
+        contact us.
+      </h1>
+    );
   } else if (
     moment(session.expires).isBefore(moment()) //todo: test with deployed
   ) {
-    return {
-      props: {
-        fetch_SSR: {
-          success: false,
-          message: "This link has expired.",
-        },
-      },
-    };
+    return <h1>error: this link has expired</h1>;
   }
 
-  //session is valid, so proceed
-  return {
-    props: {
-      fetch_SSR: {
-        success: true,
-        id: id,
-      },
-    },
-  };
-}
-export default compose(withRouter, withStyles(loginStyles))(PasswordReset);
+  return <PasswordReset {...props} />;
+};
+
+export default compose(withRouter, withStyles(loginStyles))(PasswordResetCSR);

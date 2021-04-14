@@ -27,7 +27,7 @@ import { withRouter } from "next/router";
 import compose from "recompose/compose";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import DateFnsUtils from "@date-io/date-fns";
-import axios from "axios";
+import axios from "../../../../helpers/axios";
 import LoadingButton from "../../../other/LoadingButton";
 import MainAppContext from "../../../../contexts/MainAppContext";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";

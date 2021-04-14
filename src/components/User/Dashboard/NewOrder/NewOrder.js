@@ -14,7 +14,7 @@ import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import Geocode from "react-geocode";
 import validator from "validator";
-import axios from "axios";
+import axios from "../../../../helpers/axios";
 import MainAppContext from "../../../../contexts/MainAppContext";
 import LoadingButton from "../../../../components/other/LoadingButton";
 import Scheduling from "./components/Scheduling";

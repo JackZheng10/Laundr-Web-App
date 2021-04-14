@@ -15,7 +15,6 @@ import {
 import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
 import { GetServerSideProps } from "next";
-import { getExistingOrder_SSR, getCurrentUser_SSR } from "../src/helpers/ssr";
 import { limitLength } from "../src/helpers/inputs";
 import { Sidebar, Topbar, Footer } from "../src/layouts/Main/components";
 import { GET_SWR } from "../src/helpers/swr";
@@ -27,10 +26,7 @@ import validator from "validator";
 import LoadingButton from "../src/components/other/LoadingButton";
 import MainAppContext from "../src/contexts/MainAppContext";
 import loginStyles from "../src/styles/loginStyles";
-import axios from "axios";
-
-const baseURL =
-  process.env.NEXT_PUBLIC_BASE_URL || require("../src/config").baseURL;
+import axios from "../src/helpers/axios";
 
 //todo: make login not case sensitive (typing W1@gmail.com) doesnt work (done, just test)
 //limit input length for login + registration

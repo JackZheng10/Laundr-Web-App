@@ -18,15 +18,11 @@ import {
 } from "../../src/components/User/Help/FAQAccordion/questions";
 import { GetServerSideProps } from "next";
 import { withRouter } from "next/router";
-import {
-  getExistingOrder_SSR,
-  getCurrentUser_SSR,
-} from "../../src/helpers/ssr";
 import { GET_SWR, getFilterConfig, hasPageAccess } from "../../src/helpers/swr";
 import useSWR from "swr";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
-import axios from "axios";
+import axios from "../../src/helpers/axios";
 import FAQAccordion from "../../src/components/User/Help/FAQAccordion/FAQAccordion";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import historyStyles from "../../src/styles/User/Account/historyStyles";

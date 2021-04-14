@@ -19,15 +19,11 @@ import { caughtError, showConsoleError } from "../../src/helpers/errors";
 import { BottomBorderBlue } from "../../src/utility/borders";
 import { GetServerSideProps } from "next";
 import { withRouter } from "next/router";
-import {
-  getCurrentUser_SSR,
-  fetchCardDetails_SSR,
-} from "../../src/helpers/ssr";
 import { limitLength } from "../../src/helpers/inputs";
 import { GET_SWR } from "../../src/helpers/swr";
 import useSWR from "swr";
 import compose from "recompose/compose";
-import axios from "axios";
+import axios from "../../src/helpers/axios";
 import validator from "validator";
 import LoadingButton from "../../src/components/other/LoadingButton";
 import FileCopyIcon from "@material-ui/icons/FileCopy";

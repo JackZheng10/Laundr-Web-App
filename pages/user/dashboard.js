@@ -22,15 +22,11 @@ import { withRouter } from "next/router";
 import { GetServerSideProps } from "next";
 import { getCurrentUser } from "../../src/helpers/session";
 import { caughtError, showConsoleError } from "../../src/helpers/errors";
-import {
-  getExistingOrder_SSR,
-  getCurrentUser_SSR,
-} from "../../src/helpers/ssr";
 import { GET_SWR, getFilterConfig, hasPageAccess } from "../../src/helpers/swr";
 import useSWR from "swr";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
-import axios from "axios";
+import axios from "../../src/helpers/axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import NewOrder from "../../src/components/User/Dashboard/NewOrder/NewOrder";
 import OrderStatus from "../../src/components/User/Dashboard/OrderStatus/OrderStatus";
@@ -56,9 +52,6 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //add form (enter = submit) for other stuff
 //redo register, login, forgot pwd, acc details, order notes validation (anywhere else that needs input like entering weight)
 //make sure all routes with authentication also have authorization
-
-const baseURL =
-  process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
 
 class Dashboard extends Component {
   static contextType = MainAppContext;

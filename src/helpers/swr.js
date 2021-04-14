@@ -1,5 +1,5 @@
 import { caughtError, showConsoleError } from "./errors";
-import axios from "axios";
+import axios from "../helpers/axios";
 
 export const GET_SWR = async (url, params) => {
   try {
@@ -17,7 +17,6 @@ export const GET_SWR = async (url, params) => {
     }
   } catch (err) {
     showConsoleError("processing request", err);
-    console.log(err);
     const error = new Error(caughtError("processing request", err, 99));
     throw error;
   }

@@ -11,16 +11,12 @@ import {
 } from "../../src/utility/borders";
 import { GetServerSideProps } from "next";
 import { withRouter } from "next/router";
-import {
-  getExistingOrder_SSR,
-  getCurrentUser_SSR,
-} from "../../src/helpers/ssr";
 import { GET_SWR, getFilterConfig, hasPageAccess } from "../../src/helpers/swr";
 import useSWR from "swr";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import jwtDecode from "jwt-decode";
-import axios from "axios";
+import axios from "../../src/helpers/axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import SubscriptionBoxes from "../../src/components/User/Subscription/SubscriptionBoxes/SubscriptionBoxes";
 import SubscriptionStatus from "../../src/components/User/Subscription/SubscriptionStatus/SubscriptionStatus";

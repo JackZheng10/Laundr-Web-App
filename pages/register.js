@@ -29,7 +29,6 @@ import {
 import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
 import { GetServerSideProps } from "next";
-import { getExistingOrder_SSR, getCurrentUser_SSR } from "../src/helpers/ssr";
 import { limitLength } from "../src/helpers/inputs";
 import { GET_SWR } from "../src/helpers/swr";
 import useSWR from "swr";
@@ -40,7 +39,7 @@ import PropTypes from "prop-types";
 import MainAppContext from "../src/contexts/MainAppContext";
 import LoadingButton from "../src/components/other/LoadingButton";
 import registerStyles from "../src/styles/registerStyles";
-import axios from "axios";
+import axios from "../src/helpers/axios";
 
 class Register extends Component {
   static contextType = MainAppContext;

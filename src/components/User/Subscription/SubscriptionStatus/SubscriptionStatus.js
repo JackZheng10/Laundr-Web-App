@@ -17,7 +17,7 @@ import { withRouter } from "next/router";
 import LoadingButton from "../../../other/LoadingButton";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
-import axios from "axios";
+import axios from "../../../../helpers/axios";
 import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import MainAppContext from "../../../../contexts/MainAppContext";

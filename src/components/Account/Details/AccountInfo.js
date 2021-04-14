@@ -23,7 +23,7 @@ import { withMediaQuery } from "./withMediaQuery";
 import { limitLength } from "../../../helpers/inputs";
 import compose from "recompose/compose";
 import validator from "validator";
-import axios from "axios";
+import axios from "../../../helpers/axios";
 import PropTypes from "prop-types";
 import LoadingButton from "../../../components/other/LoadingButton";
 import PopoverContent from "../../../components/other/PopoverContent";

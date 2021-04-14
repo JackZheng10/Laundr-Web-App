@@ -20,16 +20,11 @@ import { caughtError, showConsoleError } from "../../src/helpers/errors";
 import { Layout } from "../../src/layouts";
 import { GetServerSideProps } from "next";
 import { withRouter } from "next/router";
-import {
-  getExistingOrder_SSR,
-  getCurrentUser_SSR,
-  fetchOrders_WA_SSR,
-} from "../../src/helpers/ssr";
 import { GET_SWR, getFilterConfig, hasPageAccess } from "../../src/helpers/swr";
 import useSWR from "swr";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
-import axios from "axios";
+import axios from "../../src/helpers/axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import OrderTable from "../../src/components/Washer/OrderTable/OrderTable";
 import assignedStyles from "../../src/styles/Washer/Assigned/assignedStyles";
@@ -44,9 +39,6 @@ import assignedStyles from "../../src/styles/Washer/Assigned/assignedStyles";
 //7: canceled
 
 //only display status 0 and 4, ones able to be "accepted"
-
-const baseURL =
-  process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
 
 class AssignedDashboard extends Component {
   static contextType = MainAppContext;

@@ -20,17 +20,11 @@ import { showConsoleError, caughtError } from "../../src/helpers/errors";
 import { Layout } from "../../src/layouts";
 import { GetServerSideProps } from "next";
 import { withRouter } from "next/router";
-import {
-  getExistingOrder_SSR,
-  getCurrentUser_SSR,
-  fetchOrders_WA_SSR,
-  fetchOrders_DAV_SSR,
-} from "../../src/helpers/ssr";
 import { GET_SWR, getFilterConfig, hasPageAccess } from "../../src/helpers/swr";
 import useSWR from "swr";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
-import axios from "axios";
+import axios from "../../src/helpers/axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import OrderTable from "../../src/components/Driver/OrderTable/OrderTable";
 import availableStyles from "../../src/styles/Driver/Available/availableStyles";

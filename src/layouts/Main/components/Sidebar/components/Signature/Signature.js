@@ -63,7 +63,7 @@ const Signature = (props) => {
       >
         App Version: 1.0
       </Typography>
-      <Typography variant="body2" align="center">
+      {/* <Typography variant="body2" align="center">
         <Link
           style={{ color: "grey" }}
           target="_blank"
@@ -72,7 +72,7 @@ const Signature = (props) => {
         >
           View Changelog
         </Link>
-      </Typography>
+      </Typography> */}
     </React.Fragment>
   );
 };

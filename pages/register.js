@@ -7,7 +7,6 @@ import {
   FormControlLabel,
   Checkbox,
   withStyles,
-  Link,
   Grid,
   Box,
   Typography,
@@ -25,6 +24,7 @@ import {
   Paper,
   Card,
   CardContent,
+  Link as MUILink,
 } from "@material-ui/core";
 import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
@@ -33,6 +33,7 @@ import { limitLength } from "../src/helpers/inputs";
 import { GET_SWR } from "../src/helpers/swr";
 import useSWR from "swr";
 import Head from "next/head";
+import Link from "next/link";
 import validator from "validator";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
@@ -699,7 +700,7 @@ class Register extends Component {
                             label="I have read and agree to the Terms of Service."
                           />
                           <Grid item>
-                            <Link
+                            <MUILink
                               variant="h6"
                               target="_blank"
                               rel="noopener"
@@ -710,7 +711,7 @@ class Register extends Component {
                               }}
                             >
                               Terms of Service
-                            </Link>
+                            </MUILink>
                             <Typography
                               variant="body2"
                               className={classes.error}
@@ -732,12 +733,17 @@ class Register extends Component {
                         </LoadingButton>
                       </Grid>
                       <Grid item style={{ paddingBottom: 50 }}>
-                        <Link
-                          href="/"
-                          variant="h6"
-                          style={{ color: "#01c9e1", textAlign: "center" }}
-                        >
-                          Already have an account?
+                        <Link href="/" passHref={true}>
+                          <Typography
+                            variant="h6"
+                            style={{
+                              color: "#01c9e1",
+                              textAlign: "center",
+                              cursor: "pointer",
+                            }}
+                          >
+                            Already have an account?
+                          </Typography>
                         </Link>
                       </Grid>
                     </Grid>

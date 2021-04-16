@@ -36,6 +36,7 @@ import MainAppContext from "../../src/contexts/MainAppContext";
 import NewOrder from "../../src/components/User/Dashboard/NewOrder/NewOrder";
 import LaundrDay from "../../src/components/User/Dashboard/LaundrDayOrder/LaundrDay";
 import OrderStatus from "../../src/components/User/Dashboard/OrderStatus/OrderStatus";
+import LaundrDayStatus from "../../src/components/User/Dashboard/LaundrDayOrder/LaundrDayStatus"
 import AutoRotatingCarousel from "../../src/components/User/Dashboard/Carousel/AutoRotatingCarousel";
 import Slide from "../../src/components/User/Dashboard/Carousel/Slide";
 import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
@@ -69,7 +70,7 @@ class Dashboard extends Component {
     orderComponent: null,
     orderComponentName: "",
     userFname: "",
-    orderTabState: "New Order"
+    orderTabState: "Order"
   };
 
   componentDidMount = async () => {
@@ -93,7 +94,7 @@ class Dashboard extends Component {
       return <div></div>;
     }
 
-    if (this.state.orderTabState == "New Order") {
+    if (this.state.orderTabState == "Order") {
       switch (fetch_SSR.orderInfo.componentName) {
         case "set_payment":
           return (
@@ -160,10 +161,10 @@ class Dashboard extends Component {
 
         case "laundr_day_status":
           return (
-            <NewOrder
+            <LaundrDayStatus
               fetchOrderInfo={this.fetchOrderInfo}
               currentUser={fetch_SSR.userInfo}
-              balance={fetch_SSR.balance}
+              laundrDay={fetch_SSR.laundrDayInfo.message}
             />
           );  
       }
@@ -176,15 +177,16 @@ class Dashboard extends Component {
         return "Missing Payment Method";
 
       case "new_order":
-        if (this.state.orderTabState == "New Order") {
           return "New Order";
-        }
-        else if (this.state.orderTabState == "Laundr Day") {
-          return "Laundr Day";
-        }
        
       case "order_status":
         return "Order Status";
+      
+      case "new_laundr_day":
+        return "Laundr Day";
+      
+      case "laundr_day_status":
+        return "Laundr Day"
 
       default:
         return "";
@@ -228,7 +230,10 @@ class Dashboard extends Component {
               gutterBottom
             >
               {this.renderOrderComponentName(
-                fetch_SSR.success ? fetch_SSR.orderInfo.componentName : ""
+                fetch_SSR.success ? 
+                this.state.orderTabState === "Order" ?
+                fetch_SSR.orderInfo.componentName : fetch_SSR.laundrDayInfo.componentName
+                : ""
               )}
             </Typography>
           </Grid>
@@ -249,7 +254,7 @@ class Dashboard extends Component {
               value={this.state.orderTabState}
               onChange={this.handleTabChange}
             >
-              <Tab value={"New Order"} label="New Order" />
+              <Tab value={"Order"} label={fetch_SSR.orderInfo.componentName === "new_order" ? "New Order" : "Order Status"} />
               <Tab value={"Laundr Day"} label="Laundr Day" />
             </Tabs>
           <Grid item>{this.renderOrderComponent(classes)}</Grid>

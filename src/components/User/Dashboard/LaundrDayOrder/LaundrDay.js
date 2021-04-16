@@ -341,11 +341,15 @@ class LaundrDay extends Component {
       case "separate":
         this.setState({ [property]: value });
         break;
-
-      case "towelsSheets":
+     
+      case "comforter":
         this.setState({ [property]: value });
         break;
-
+      
+      case "tumbleDry":
+        this.setState({ [property]: value });
+        break;
+  
       case "washerPreferences":
         value = limitLength(value, 200);
         this.setState({ [property]: value });

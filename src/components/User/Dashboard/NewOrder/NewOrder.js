@@ -558,7 +558,7 @@ class NewOrder extends Component {
                       }}
                     >
                       <div>
-                        {/* <Scheduling
+                        <Scheduling
                           today={this.today}
                           tomorrow={this.tomorrow}
                           todaySelected={this.state.todaySelected}
@@ -566,15 +566,15 @@ class NewOrder extends Component {
                           selectValue={this.state.selectValue}
                           handleInputChange={this.handleInputChange}
                           getTimeAvailability={this.getTimeAvailability}
-                        /> */}
-                        <Preferences
+                        />
+                        {/* <Preferences
                           scented={this.state.scented}
                           delicates={this.state.delicates}
                           separate={this.state.separate}
                           towelsSheets={this.state.towelsSheets}
                           washerPreferences={this.state.washerPreferences}
                           handleInputChange={this.handleInputChange}
-                        />
+                        /> */}
                       </div>
                     </Fade>
                     <Fade

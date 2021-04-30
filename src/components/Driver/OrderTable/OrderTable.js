@@ -29,6 +29,8 @@ import OrderCell from "./components/OrderCell";
 import Close from "@material-ui/icons/Close";
 import orderTableStyles from "../../../styles/Driver/components/OrderTable/orderTableStyles";
 import MainAppContext from "../../../contexts/MainAppContext";
+import { caughtError, showConsoleError } from "../../../../src/helpers/errors";
+import axios from "../../../../src/helpers/axios";
 
 //todo: change snackbars to https://github.com/iamhosseindhv/notistack to make it prettier
 //todo: textalign center on snackbar text in case its scrunched
@@ -451,6 +453,7 @@ class OrderTable extends Component {
           }}
           stage={this.renderStage(order.orderInfo.status)}
           key={index}
+          handleOnTheWayClick={this.handleOnTheWayClick}
         />
       );
     });
@@ -469,11 +472,37 @@ class OrderTable extends Component {
             stage={this.renderStage(order.orderInfo.status)}
             key={index}
             showNotification={this.showNotification}
+            handleOnTheWayClick={this.handleOnTheWayClick}
           />
         </Grid>
       );
     });
   };
+
+  handleOnTheWayClick = async (order, type) => {
+    try {
+      const response = await axios.post(
+        "/api/twilio/sendOnMyWayMsg",
+        {
+          to: order.userInfo.phone,
+          fName: order.userInfo.fname,
+          type: type
+        },
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        this.context.showAlert(response.data.message);
+      } else {
+        this.context.showAlert(response.data.message);
+      }
+    } catch (error) {
+      showConsoleError("sending On The Way text", error);
+      this.context.showAlert(
+        caughtError("sending On The Way text", error, 99)
+      );
+    }
+  }
 
   render() {
     const { classes, orders } = this.props;

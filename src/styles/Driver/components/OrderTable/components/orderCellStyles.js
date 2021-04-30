@@ -12,6 +12,7 @@ const orderCardStyles = (theme) => ({
   mainButton: {
     color: "white",
     backgroundColor: "#FFB600",
+    margin: 3
   },
   secondaryButton: {
     color: "white",

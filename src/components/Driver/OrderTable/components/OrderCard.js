@@ -15,7 +15,7 @@ import TooltipButton from "./TooltipButton";
 import orderCardStyles from "../../../../styles/Driver/components/OrderTable/components/orderCardStyles";
 
 const OrderCard = (props) => {
-  const { classes, order, actionText, action, stage, showNotification } = props;
+  const { classes, order, actionText, action, stage, showNotification, handleOnTheWayClick } = props;
 
   return (
     <div className={classes.layout}>
@@ -214,7 +214,7 @@ const OrderCard = (props) => {
           </Grid>
         </CardContent>
         <CardActions className={classes.cardActions}>
-          <Grid container justify="center">
+          <Grid container justify="center" spacing={2}>
             <Grid item>
               <Button
                 variant="contained"
@@ -225,6 +225,30 @@ const OrderCard = (props) => {
                 {actionText}
               </Button>
             </Grid>
+            { stage === "Weighing" &&
+              <Grid item>
+              <Button
+                variant="contained"
+                size="large"
+                className={classes.mainButton}
+                onClick={()=> handleOnTheWayClick(order, "pickup")}
+              >
+                On the way!
+              </Button>
+            </Grid>
+            }
+            { stage === "Dropoff" &&
+              <Grid item>
+              <Button
+                variant="contained"
+                size="large"
+                className={classes.mainButton}
+                onClick={()=> handleOnTheWayClick(order, "dropoff")}
+              >
+                On the way!
+              </Button>
+            </Grid>
+            }
           </Grid>
         </CardActions>
       </Card>

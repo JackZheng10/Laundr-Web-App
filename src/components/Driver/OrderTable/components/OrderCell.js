@@ -20,7 +20,7 @@ import TooltipButton from "./TooltipButton";
 import orderCellStyles from "../../../../styles/Driver/components/OrderTable/components/orderCellStyles";
 
 const OrderCell = (props) => {
-  const { classes, order, actionText, action, stage } = props;
+  const { classes, order, actionText, action, stage, handleOnTheWayClick } = props;
 
   return (
     <TableRow>
@@ -179,6 +179,24 @@ const OrderCell = (props) => {
         >
           {actionText}
         </Button>
+        { stage === "Weighing" && 
+            <Button
+             variant="contained"
+             className={classes.mainButton}
+             onClick={()=>handleOnTheWayClick(order, "pickup")}
+           >
+             On the way!
+           </Button>
+        }
+        { stage === "Dropoff" && 
+            <Button
+             variant="contained"
+             className={classes.mainButton}
+             onClick={()=>handleOnTheWayClick(order, "dropoff")}
+           >
+             On the way!
+           </Button>
+        }
       </TableCell>
     </TableRow>
   );

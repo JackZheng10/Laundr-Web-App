@@ -468,6 +468,7 @@ class OrderTable extends Component {
             }}
             stage={this.renderStage(order.orderInfo.status)}
             key={index}
+            showNotification={this.showNotification}
           />
         </Grid>
       );

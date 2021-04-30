@@ -4,9 +4,6 @@ import PropTypes from "prop-types";
 import preferencesStyles from "../../../../../../styles/User/Dashboard/components/NewOrder/components/Preferences/preferencesStyles";
 import PreferenceCard from "./components/PreferenceCard";
 
-//todo: make the damn cards center. redo the layouts of everything based on how i would do it (ie personal site)
-//todo: make the tooltip clicking, not hover
-
 class Preferences extends Component {
   state = {
     charCount: 0,
@@ -33,8 +30,14 @@ class Preferences extends Component {
         <Typography variant="h5" gutterBottom>
           Would you like any of these options?
         </Typography>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
+        <Grid
+          container
+          spacing={3}
+          direction="row"
+          justify="center"
+          alignItems="center"
+        >
+          <Grid item>
             <PreferenceCard
               title="Scented"
               info="Unscented detergent is hypoallergenic."
@@ -45,7 +48,7 @@ class Preferences extends Component {
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item>
             <PreferenceCard
               title="Delicates"
               info="Delicate clothing is washed in a mesh bag and dried on low heat."
@@ -56,7 +59,7 @@ class Preferences extends Component {
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item>
             <PreferenceCard
               title="Separate"
               info="Separated clothing is divided into whites and colors."
@@ -67,7 +70,7 @@ class Preferences extends Component {
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item>
             <PreferenceCard
               title="Towels and Sheets"
               info="Towels and sheets are washed separately and dried on high heat."

@@ -74,18 +74,30 @@ class Footer extends Component {
               </Grid>
               <Grid item className={classes.item}>
                 <Grid container direction="column" alignItems="center">
-                  <Typography variant="h5">Laundr Careers</Typography>
+                  <Typography variant="h5">Laundr Bombs</Typography>
                   <MUILink
                     variant="h6"
                     target="_blank"
                     rel="noopener"
-                    href="https://linktr.ee/laundrofficial"
+                    href="https://laundr.io/shop"
                     style={{
                       color: "#01c9e1",
                       textAlign: "center",
                     }}
                   >
-                    Join the Operations Team
+                    Shop
+                  </MUILink>
+                  <MUILink
+                    variant="h6"
+                    target="_blank"
+                    rel="noopener"
+                    href="https://laundr.io"
+                    style={{
+                      color: "#01c9e1",
+                      textAlign: "center",
+                    }}
+                  >
+                    Learn More
                   </MUILink>
                 </Grid>
               </Grid>

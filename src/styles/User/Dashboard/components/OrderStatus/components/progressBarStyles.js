@@ -17,7 +17,7 @@ const progressBarStyles = (theme) => ({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 15,
-    [theme.breakpoints.up(649)]: {
+    [theme.breakpoints.up(650)]: {
       display: "none",
     },
   },

@@ -280,22 +280,20 @@ class Login extends Component {
                   />
                 </Grid>
                 <Grid item>
-                  <Paper elevation={0} style={{ paddingBottom: 10 }}>
-                    <Typography
-                      variant="h1"
-                      style={{
-                        color: "#01c9e1",
-                        textAlign: "center",
-                        padding: 10,
-                        fontSize: 45,
-                        textDecorationLine: "underline",
-                        textUnderlineOffset: 10,
-                        textDecorationColor: "#FFB600",
-                      }}
-                    >
-                      Login
-                    </Typography>
-                  </Paper>
+                  <Typography
+                    variant="h1"
+                    style={{
+                      color: "#01c9e1",
+                      textAlign: "center",
+                      padding: 10,
+                      fontSize: 45,
+                      // textDecorationLine: "underline",
+                      // textUnderlineOffset: 10,
+                      // textDecorationColor: "#FFB600",
+                    }}
+                  >
+                    Login
+                  </Typography>
                 </Grid>
                 <Grid item>
                   <form>

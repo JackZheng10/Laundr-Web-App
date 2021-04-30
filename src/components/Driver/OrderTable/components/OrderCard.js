@@ -15,7 +15,7 @@ import TooltipButton from "./TooltipButton";
 import orderCardStyles from "../../../../styles/Driver/components/OrderTable/components/orderCardStyles";
 
 const OrderCard = (props) => {
-  const { classes, order, actionText, action, stage } = props;
+  const { classes, order, actionText, action, stage, showNotification } = props;
 
   return (
     <div className={classes.layout}>
@@ -119,7 +119,16 @@ const OrderCard = (props) => {
                   <Typography variant="body1" style={{ fontWeight: 600 }}>
                     User:&nbsp;
                   </Typography>
-                  <Typography style={{ textAlign: "center" }}>
+                  <Typography
+                    style={{ textAlign: "center" }}
+                    onClick={() => {
+                      navigator.clipboard.writeText(order.orderInfo.address);
+                      showNotification(
+                        "Successfully copied to clipboard.",
+                        true
+                      );
+                    }}
+                  >
                     {order.orderInfo.address}
                   </Typography>
                 </Grid>
@@ -127,7 +136,16 @@ const OrderCard = (props) => {
                   <Typography variant="body1" style={{ fontWeight: 600 }}>
                     Washer:&nbsp;
                   </Typography>
-                  <Typography style={{ textAlign: "center" }}>
+                  <Typography
+                    style={{ textAlign: "center" }}
+                    onClick={() => {
+                      navigator.clipboard.writeText(order.washerInfo.address);
+                      showNotification(
+                        "Successfully copied to clipboard.",
+                        true
+                      );
+                    }}
+                  >
                     {order.washerInfo.address}
                   </Typography>
                 </Grid>
@@ -154,7 +172,16 @@ const OrderCard = (props) => {
                   <Typography variant="body1" style={{ fontWeight: 600 }}>
                     User:&nbsp;
                   </Typography>
-                  <Typography style={{ textAlign: "center" }}>
+                  <Typography
+                    style={{ textAlign: "center" }}
+                    onClick={() => {
+                      navigator.clipboard.writeText(order.userInfo.phone);
+                      showNotification(
+                        "Successfully copied to clipboard.",
+                        true
+                      );
+                    }}
+                  >
                     {order.userInfo.phone}
                   </Typography>
                 </Grid>
@@ -162,7 +189,16 @@ const OrderCard = (props) => {
                   <Typography variant="body1" style={{ fontWeight: 600 }}>
                     Washer:&nbsp;
                   </Typography>
-                  <Typography style={{ textAlign: "center" }}>
+                  <Typography
+                    style={{ textAlign: "center" }}
+                    onClick={() => {
+                      navigator.clipboard.writeText(order.washerInfo.phone);
+                      showNotification(
+                        "Successfully copied to clipboard.",
+                        true
+                      );
+                    }}
+                  >
                     {order.washerInfo.phone}
                   </Typography>
                 </Grid>

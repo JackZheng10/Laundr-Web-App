@@ -17,9 +17,9 @@ import preferenceCardStyles from "../../../../../../../styles/User/Dashboard/com
 
 const BlueCheckbox = withStyles({
   root: {
-    color: "#01c9e1",
+    color: "#ffffff",
     "&$checked": {
-      color: "#01c9e1",
+      color: "#ffffff",
     },
   },
 })((props) => <Checkbox color="default" {...props} />);
@@ -29,7 +29,6 @@ class PreferenceCard extends Component {
     super(props);
 
     this.state = {
-      openExpand: false,
       selected: false,
       currentImage: this.props.unselectedImage,
     };
@@ -59,18 +58,21 @@ class PreferenceCard extends Component {
     const { classes, title, info } = this.props;
 
     return (
-      <Card className={classes.root}>
+      <Card
+        className={classes.root}
+        style={{ backgroundColor: this.state.selected ? "#01c9e1" : "#676767" }}
+      >
         <CardHeader
           action={<BlueCheckbox onClick={this.handleSelect} />}
           title={
-            <Typography gutterBottom variant="h6" component="h2">
+            <Typography gutterBottom variant="h5" style={{ color: "#ffffff" }}>
               {title}
             </Typography>
           }
         />
         <CardMedia className={classes.media} image={this.state.currentImage} />
         <CardActions disableSpacing style={{ justifyContent: "center" }}>
-          <TooltipButton icon={true} text={info} />
+          <TooltipButton icon={true} text={info} color="#ffffff" />
         </CardActions>
       </Card>
     );

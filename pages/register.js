@@ -363,7 +363,7 @@ class Register extends Component {
         break;
 
       case "phone":
-        if (validator.isNumeric(value)) {
+        if (validator.isNumeric(value) || value === "") {
           value = limitLength(value, 10);
           this.setState({ [property]: value });
         }
@@ -531,22 +531,20 @@ class Register extends Component {
                 {/* <Card>
                   <CardContent> */}
                 <Grid item>
-                  <Paper elevation={0} style={{ paddingBottom: 10 }}>
-                    <Typography
-                      variant="h1"
-                      style={{
-                        color: "#01c9e1",
-                        textAlign: "center",
-                        padding: 10,
-                        fontSize: 45,
-                        textDecorationLine: "underline",
-                        textUnderlineOffset: 10,
-                        textDecorationColor: "#FFB600",
-                      }}
-                    >
-                      Register
-                    </Typography>
-                  </Paper>
+                  <Typography
+                    variant="h1"
+                    style={{
+                      color: "#01c9e1",
+                      textAlign: "center",
+                      padding: 10,
+                      fontSize: 45,
+                      // textDecorationLine: "underline",
+                      // textUnderlineOffset: 10,
+                      // textDecorationColor: "#FFB600",
+                    }}
+                  >
+                    Register
+                  </Typography>
                 </Grid>
                 <Grid item>
                   <form>

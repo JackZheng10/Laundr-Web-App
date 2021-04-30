@@ -242,7 +242,7 @@ class Review extends Component {
           container
           spacing={1}
           direction="row"
-          alignItems="center"
+          alignItems="flex-start"
           justify="space-evenly"
         >
           <Grid item>
@@ -332,16 +332,6 @@ class Review extends Component {
                   </CardContent>
                 </Card>
               </Grid>
-            </Grid>
-          </Grid>
-          <Grid item>
-            <Grid
-              container
-              spacing={1}
-              direction="column"
-              justify="space-evenly"
-              alignItems="stretch"
-            >
               <Grid item>
                 <Card className={classes.root} elevation={5}>
                   <CardHeader

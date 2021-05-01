@@ -285,9 +285,9 @@ const PreferencesCell = (order) => {
 
 const renderWasherPrefs = (order) => {
   const scented = order.washerInfo.scented;
-  const delicates = order.washerInfo.delicates;
+  const lowTemp = order.washerInfo.lowTemp;
   const separate = order.washerInfo.separate;
-  const towelsSheets = order.washerInfo.towelsSheets;
+  const comforter = order.washerInfo.comforter;
 
   let prefs = "";
 
@@ -295,20 +295,19 @@ const renderWasherPrefs = (order) => {
     prefs += "Scented, ";
   }
 
-  if (delicates) {
-    prefs += "Delicates, ";
+  if (lowTemp) {
+    prefs += "Low Temperature, ";
   }
 
   if (separate) {
     prefs += "Separate, ";
   }
 
-  if (towelsSheets) {
-    prefs += "Towels and Sheets,";
+  if (comforter) {
+    prefs += "Comforter,";
   }
 
-  //todo: test this, forget what it does lol
-  if (towelsSheets) {
+  if (comforter) {
     prefs = prefs.slice(0, prefs.length - 1);
   } else {
     prefs = prefs.slice(0, prefs.length - 2);

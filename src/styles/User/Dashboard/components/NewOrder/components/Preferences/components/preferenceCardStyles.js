@@ -8,7 +8,7 @@ const preferenceCardStyles = (theme) => ({
       width: "35vw",
     },
     [theme.breakpoints.down(380)]: {
-      width: 270,
+      width: "35vw",
     },
   },
   media: {

@@ -74,7 +74,7 @@ class Review extends Component {
   };
 
   renderPriceComponent = () => {
-    const { currentUser, classes, loads } = this.props;
+    const { currentUser, classes, loads, separate, comforter } = this.props;
 
     const priceMultiplier =
       currentUser.subscription.status === "active" &&
@@ -84,11 +84,18 @@ class Review extends Component {
     const balance = parseFloat(this.props.balance.slice(1));
     const subtotal = loads * 18 * priceMultiplier;
 
+    const getPrefsPrice = () => {
+      return (separate ? 2 : 0) + (comforter ? 5 : 0);
+    };
+
     if (
       currentUser.subscription.status != "active" &&
       currentUser.subscription.lbsLeft <= 0
     ) {
-      const balanceDiscount = subtotal >= balance ? balance : subtotal;
+      const balanceDiscount =
+        subtotal + getPrefsPrice() >= balance
+          ? balance
+          : subtotal + getPrefsPrice();
 
       return (
         <React.Fragment>
@@ -105,6 +112,26 @@ class Review extends Component {
                 />
                 <Typography variant="body1">${subtotal.toFixed(2)}</Typography>
               </ListItem>
+              {separate && (
+                <ListItem>
+                  <ListItemText
+                    primary={"Separate"}
+                    secondary={`Preference`}
+                    primaryTypographyProps={{ variant: "h6" }}
+                  />
+                  <Typography variant="body1">$2.00</Typography>
+                </ListItem>
+              )}
+              {comforter && (
+                <ListItem>
+                  <ListItemText
+                    primary={"Comforter"}
+                    secondary={`Preference`}
+                    primaryTypographyProps={{ variant: "h6" }}
+                  />
+                  <Typography variant="body1">$5.00</Typography>
+                </ListItem>
+              )}
               {balance > 0 && balanceDiscount > 0 && (
                 <ListItem>
                   <ListItemText
@@ -133,7 +160,7 @@ class Review extends Component {
                     Total:&nbsp;
                   </Typography>
                   <Typography variant="h4" style={{ textAlign: "center" }}>
-                    ${(subtotal - balanceDiscount).toFixed(2)}
+                    ${(subtotal - balanceDiscount + getPrefsPrice()).toFixed(2)}
                   </Typography>
                 </Grid>
               </Grid>
@@ -146,9 +173,9 @@ class Review extends Component {
       const subLbsUsed = lbsData[1].value;
       const subLbsDiscount = subLbsUsed * priceMultiplier;
       const balanceDiscount =
-        subtotal - subLbsDiscount >= balance
+        subtotal - subLbsDiscount + getPrefsPrice() >= balance
           ? balance
-          : subtotal - subLbsDiscount;
+          : subtotal - subLbsDiscount + getPrefsPrice();
 
       return (
         <React.Fragment>
@@ -165,6 +192,26 @@ class Review extends Component {
                 />
                 <Typography variant="body1">${subtotal.toFixed(2)}</Typography>
               </ListItem>
+              {separate && (
+                <ListItem>
+                  <ListItemText
+                    primary={"Separate"}
+                    secondary={`Preference`}
+                    primaryTypographyProps={{ variant: "h6" }}
+                  />
+                  <Typography variant="body1">$2.00</Typography>
+                </ListItem>
+              )}
+              {comforter && (
+                <ListItem>
+                  <ListItemText
+                    primary={"Comforter"}
+                    secondary={`Preference`}
+                    primaryTypographyProps={{ variant: "h6" }}
+                  />
+                  <Typography variant="body1">$5.00</Typography>
+                </ListItem>
+              )}
               {subLbsUsed > 0 && (
                 <ListItem>
                   <ListItemText
@@ -206,7 +253,13 @@ class Review extends Component {
                     Total:&nbsp;
                   </Typography>
                   <Typography variant="h4" style={{ textAlign: "center" }}>
-                    ${(subtotal - subLbsDiscount - balanceDiscount).toFixed(2)}
+                    $
+                    {(
+                      subtotal -
+                      subLbsDiscount -
+                      balanceDiscount +
+                      getPrefsPrice()
+                    ).toFixed(2)}
                   </Typography>
                 </Grid>
               </Grid>
@@ -226,9 +279,9 @@ class Review extends Component {
       pickupTime,
       washerPreferences,
       scented,
-      delicates,
+      lowTemp,
       separate,
-      towelsSheets,
+      comforter,
       loads,
       currentUser,
     } = this.props;
@@ -388,23 +441,23 @@ class Review extends Component {
                         <ListItemAvatar>
                           <Avatar
                             src={
-                              delicates
-                                ? "/images/NewOrder/DelicatesSelectedCircle.png"
-                                : "/images/NewOrder/DelicatesUnselectedCircle.png"
+                              lowTemp
+                                ? "/images/NewOrder/LowTempSelectedCircle.png"
+                                : "/images/NewOrder/LowTempUnselectedCircle.png"
                             }
                           />
                         </ListItemAvatar>
                         <ListItemText
-                          primary="Delicates"
+                          primary="Low Temp. Dry"
                           primaryTypographyProps={{
                             style: {
-                              color: delicates ? "black" : "grey",
+                              color: lowTemp ? "black" : "grey",
                             },
                             variant: "body1",
                           }}
                         />
                         <ListItemSecondaryAction>
-                          {delicates ? (
+                          {lowTemp ? (
                             <CheckCircleOutlineIcon
                               style={{ fill: "green" }}
                               edge="end"
@@ -450,23 +503,23 @@ class Review extends Component {
                         <ListItemAvatar>
                           <Avatar
                             src={
-                              towelsSheets
+                              comforter
                                 ? "/images/NewOrder/TowelsSelectedCircle.png"
                                 : "/images/NewOrder/TowelsUnselectedCircle.png"
                             }
                           />
                         </ListItemAvatar>
                         <ListItemText
-                          primary="Towels and Sheets"
+                          primary="Comforter"
                           primaryTypographyProps={{
                             style: {
-                              color: towelsSheets ? "black" : "grey",
+                              color: comforter ? "black" : "grey",
                             },
                             variant: "body1",
                           }}
                         />
                         <ListItemSecondaryAction>
-                          {towelsSheets ? (
+                          {comforter ? (
                             <CheckCircleOutlineIcon
                               style={{ fill: "green" }}
                               edge="end"

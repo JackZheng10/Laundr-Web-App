@@ -85,7 +85,7 @@ class Review extends Component {
     const subtotal = loads * 18 * priceMultiplier;
 
     const getPrefsPrice = () => {
-      return (separate ? 2 : 0) + (comforter ? 5 : 0);
+      return (separate ? 5 : 0) + (comforter ? 10 : 0);
     };
 
     if (
@@ -119,7 +119,7 @@ class Review extends Component {
                     secondary={`Preference`}
                     primaryTypographyProps={{ variant: "h6" }}
                   />
-                  <Typography variant="body1">$2.00</Typography>
+                  <Typography variant="body1">$5.00</Typography>
                 </ListItem>
               )}
               {comforter && (
@@ -129,7 +129,7 @@ class Review extends Component {
                     secondary={`Preference`}
                     primaryTypographyProps={{ variant: "h6" }}
                   />
-                  <Typography variant="body1">$5.00</Typography>
+                  <Typography variant="body1">$10.00</Typography>
                 </ListItem>
               )}
               {balance > 0 && balanceDiscount > 0 && (
@@ -199,7 +199,7 @@ class Review extends Component {
                     secondary={`Preference`}
                     primaryTypographyProps={{ variant: "h6" }}
                   />
-                  <Typography variant="body1">$2.00</Typography>
+                  <Typography variant="body1">$5.00</Typography>
                 </ListItem>
               )}
               {comforter && (
@@ -209,7 +209,7 @@ class Review extends Component {
                     secondary={`Preference`}
                     primaryTypographyProps={{ variant: "h6" }}
                   />
-                  <Typography variant="body1">$5.00</Typography>
+                  <Typography variant="body1">$10.00</Typography>
                 </ListItem>
               )}
               {subLbsUsed > 0 && (

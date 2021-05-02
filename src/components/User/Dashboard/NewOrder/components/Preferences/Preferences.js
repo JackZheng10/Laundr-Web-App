@@ -61,7 +61,7 @@ class Preferences extends Component {
           </Grid>
           <Grid item>
             <PreferenceCard
-              title="Separate (+$2)"
+              title="Separate (+$5)"
               info="Separated clothing is divided into whites and colors. Whites will be bleached."
               unselectedImage="/images/NewOrder/SeparateUnselected.png"
               selectedImage="/images/NewOrder/SeparateSelected.png"
@@ -72,7 +72,7 @@ class Preferences extends Component {
           </Grid>
           <Grid item>
             <PreferenceCard
-              title="Comforter (+$5)"
+              title="Comforter (+$10)"
               info="Large comforters require extra care and a longer dry cycle. Items containing real or synthetic down should not be sent."
               unselectedImage="/images/NewOrder/TowelsUnselected.png"
               selectedImage="/images/NewOrder/TowelsSelected.png"

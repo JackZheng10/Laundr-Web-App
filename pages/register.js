@@ -28,7 +28,7 @@ import {
 } from "@material-ui/core";
 import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
-import { GetServerSideProps } from "next";
+import { LoadingButton } from "../src/components/other";
 import { limitLength } from "../src/helpers/inputs";
 import { GET_SWR } from "../src/helpers/swr";
 import useSWR from "swr";
@@ -38,7 +38,6 @@ import validator from "validator";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import MainAppContext from "../src/contexts/MainAppContext";
-import LoadingButton from "../src/components/other/LoadingButton";
 import registerStyles from "../src/styles/registerStyles";
 import axios from "../src/helpers/axios";
 

@@ -13,7 +13,7 @@ import {
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import compose from "recompose/compose";
-import TooltipButton from "../../../../../../Driver/OrderTable/components/TooltipButton";
+import TooltipButton from "../../../../../../other/TooltipButton";
 import preferenceCardStyles from "../../../../../../../styles/User/Dashboard/components/NewOrder/components/Preferences/components/preferenceCardStyles";
 
 const BlueCheckbox = withStyles({

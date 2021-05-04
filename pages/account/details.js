@@ -27,7 +27,7 @@ import axios from "../../src/helpers/axios";
 import validator from "validator";
 import LoadingButton from "../../src/components/other/LoadingButton";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
-import TooltipButton from "../../src/components/Driver/OrderTable/components/TooltipButton";
+import TooltipButton from "../../src/components/other/TooltipButton";
 import PropTypes from "prop-types";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import AccountInfo from "../../src/components/Account/Details/AccountInfo";

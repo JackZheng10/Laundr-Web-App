@@ -20,7 +20,7 @@ import {
   Fade,
 } from "@material-ui/core";
 import validator from "validator";
-import TooltipButton from "../../../../Driver/OrderTable/components/TooltipButton";
+import TooltipButton from "../../../../other/TooltipButton";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
 import CreateIcon from "@material-ui/icons/Create";
 import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
@@ -163,6 +163,11 @@ class Review extends Component {
                     ${(subtotal - balanceDiscount + getPrefsPrice()).toFixed(2)}
                   </Typography>
                 </Grid>
+              </Grid>
+              <Grid item>
+                <Typography variant="caption" align="left">
+                  *Actual price determined on pickup
+                </Typography>
               </Grid>
             </Grid>
           </CardContent>

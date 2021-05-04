@@ -567,10 +567,6 @@ class NewOrder extends Component {
                           handleInputChange={this.handleInputChange}
                           getTimeAvailability={this.getTimeAvailability}
                         />
-                        {/* <Preferences
-                          washerPreferences={this.state.washerPreferences}
-                          handleInputChange={this.handleInputChange}
-                        /> */}
                       </div>
                     </Fade>
                     <Fade

@@ -25,7 +25,11 @@ const ErrorPage = (props) => {
     >
       <Grid item>
         <div style={{ maxWidth: 700 }}>
-          <Typography variant="h2" gutterBottom style={{ textAlign: "center" }}>
+          <Typography
+            variant="h2"
+            gutterBottom
+            style={{ textAlign: "center", color: "#01c9e1", marginBottom: 10 }}
+          >
             {text}
           </Typography>
         </div>

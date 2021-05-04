@@ -28,7 +28,11 @@ import {
 } from "@material-ui/core";
 import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
-import { LoadingButton } from "../src/components/other";
+import {
+  LoadingButton,
+  ProgressPage,
+  ErrorPage,
+} from "../src/components/other";
 import { limitLength } from "../src/helpers/inputs";
 import { GET_SWR } from "../src/helpers/swr";
 import useSWR from "swr";
@@ -764,8 +768,8 @@ Register.propTypes = {
 const RegisterCSR = (props) => {
   const { data: response, error } = useSWR("/api/user/getCurrentUser", GET_SWR);
 
-  if (error) return <h1>{error.message}</h1>;
-  if (!response) return <h1>loading... (placeholder)</h1>;
+  if (error) return <ErrorPage text={error.message} />;
+  if (!response) return <ProgressPage />;
 
   //render or use data
   //if there's a logged in user

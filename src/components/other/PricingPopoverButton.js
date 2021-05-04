@@ -35,7 +35,17 @@ const pricingStyles = (theme) => ({
 });
 
 const PricingPopoverButton = (props) => {
-  const { order, currentUser, showPriceLabel, labelStyles, classes } = props;
+  const {
+    order,
+    currentUser,
+    showPriceLabel,
+    labelStyles,
+    priceStyles,
+    containerStyles,
+    labelVariant,
+    priceVariant,
+    classes,
+  } = props;
 
   const subtotal = order.pricingInfo.subtotal;
   const subLbsDiscount = order.pricingInfo.subLbsDiscount;
@@ -44,15 +54,29 @@ const PricingPopoverButton = (props) => {
     currentUser.subscription.status === "active" ? 1.2 : 1.5;
 
   return (
-    <Grid container direction="row" justify="center" alignItems="center">
+    <Grid
+      container
+      direction="row"
+      justify="center"
+      alignItems="center"
+      style={containerStyles}
+    >
       <Grid item>
         <Grid container justify="center">
           {showPriceLabel && (
-            <Typography variant="body1" style={labelStyles} gutterBottom>
+            <Typography
+              variant={labelVariant || "body1"}
+              style={labelStyles}
+              gutterBottom
+            >
               Price:&nbsp;
             </Typography>
           )}
-          <Typography variant="body1" gutterBottom>
+          <Typography
+            variant={priceVariant || "body1"}
+            style={priceStyles}
+            gutterBottom
+          >
             {order.orderInfo.cost === "-1" ? "N/A" : order.orderInfo.cost}
           </Typography>
         </Grid>
@@ -101,9 +125,9 @@ const PricingPopoverButton = (props) => {
                       <ListItem>
                         <ListItemText
                           primary={"Subscription Lbs"}
-                          secondary={`${
+                          secondary={`${(
                             subLbsDiscount.slice(1) / priceMultiplier
-                          } lbs`}
+                          ).toFixed(2)} lbs`}
                           primaryTypographyProps={{ variant: "h6" }}
                         />
                         <Typography variant="body1">

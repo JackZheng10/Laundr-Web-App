@@ -221,7 +221,7 @@ class Review extends Component {
                 <ListItem>
                   <ListItemText
                     primary={"Subscription Lbs"}
-                    secondary={`${subLbsUsed} lbs`}
+                    secondary={`${subLbsUsed.toFixed(2)} lbs`}
                     primaryTypographyProps={{ variant: "h6" }}
                   />
 

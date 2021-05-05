@@ -480,33 +480,24 @@ class OrderTable extends Component {
   };
 
   handleOnTheWayClick = async (order, type) => {
-    try {
-      const response = await axios.post(
-        "/api/twilio/sendOnMyWayMsg",
-        {
-          to: order.userInfo.phone,
-          fName: order.userInfo.fname,
-          type: type
-        },
-        { withCredentials: true }
-      );
+    const response_one = await this.props.handleSendOnTheWayMsg(order, type);
 
-      this.context.showAlert(response.data.message);
-      
-      //Not deleting this code in case we want to add new behavior
-      // if (response.data.success) {
-      //   this.context.showAlert(response.data.message);
-      // } else {
-      //   this.context.showAlert(response.data.message);
-      // }
-      
-    } catch (error) {
-      showConsoleError("sending On The Way text", error);
-      this.context.showAlert(
-        caughtError("sending On The Way text", error, 99)
+    if (!response_one.data.success) {
+      if (response_one.data.redirect) {
+        this.props.router.push(response_one.data.message);
+      } else {
+        this.showNotification(
+          response_one.data.message,
+          response_one.data.success
+        );
+      }
+    } else {
+      this.showNotification(
+        response_one.data.message,
+        response_one.data.success
       );
     }
-  }
+  };
 
   render() {
     const { classes, orders } = this.props;

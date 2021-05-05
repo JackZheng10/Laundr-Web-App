@@ -15,8 +15,7 @@ import {
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import PricingPopoverButton from "../../../../other/PricingPopoverButton";
-import TooltipButton from "../../../../other/TooltipButton";
-import PopoverButton from "../../../../other/PopoverButton";
+import { TooltipButton, PopoverButton } from "../../../../other";
 import orderCellStyles from "../../../../../styles/Driver/components/OrderTable/components/orderCellStyles";
 
 const DateTimeCell = (order) => {

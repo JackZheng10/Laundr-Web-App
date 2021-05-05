@@ -45,18 +45,23 @@ class LoadingButton extends Component {
   };
 
   render() {
-    const { classes, children, ...rest } = this.props;
+    const { classes, children, style, ...rest } = this.props;
 
     return (
       <Button
         {...rest}
         disabled={this.state.loading}
         onClick={this.handleButtonClick}
-        style={{
-          backgroundColor:
-            this.state.loading && this.state.secondsLeft <= 0 ? "#D3D3D3" : "",
-          position: "relative",
-        }}
+        style={Object.assign(
+          {
+            backgroundColor:
+              this.state.loading && this.state.secondsLeft <= 0
+                ? "#D3D3D3"
+                : "",
+            position: "relative",
+          },
+          style
+        )}
       >
         {children}
         {this.state.loading && this.state.secondsLeft <= 0 && (

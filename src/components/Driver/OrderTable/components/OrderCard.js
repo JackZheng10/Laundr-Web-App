@@ -11,11 +11,19 @@ import {
   Grid,
 } from "@material-ui/core";
 import PropTypes from "prop-types";
-import TooltipButton from "../../../other/TooltipButton";
+import { TooltipButton, LoadingButton } from "../../../other";
 import orderCardStyles from "../../../../styles/Driver/components/OrderTable/components/orderCardStyles";
 
 const OrderCard = (props) => {
-  const { classes, order, actionText, action, stage, showNotification } = props;
+  const {
+    classes,
+    order,
+    actionText,
+    action,
+    stage,
+    showNotification,
+    handleOnTheWayClick,
+  } = props;
 
   return (
     <div className={classes.layout}>
@@ -214,17 +222,33 @@ const OrderCard = (props) => {
           </Grid>
         </CardContent>
         <CardActions className={classes.cardActions}>
-          <Grid container justify="center">
+          <Grid container justify="center" spacing={2}>
             <Grid item>
               <Button
                 variant="contained"
-                size="large"
+                size="medium"
                 className={classes.mainButton}
                 onClick={action}
               >
                 {actionText}
               </Button>
             </Grid>
+            {(stage === "Weighing" || stage === "Dropoff") && (
+              <LoadingButton
+                variant="contained"
+                size="medium"
+                style={{ margin: 8 }}
+                className={classes.mainButton}
+                onClick={() =>
+                  handleOnTheWayClick(
+                    order,
+                    stage === "Weighing" ? "pickup" : "dropoff"
+                  )
+                }
+              >
+                On the way!
+              </LoadingButton>
+            )}
           </Grid>
         </CardActions>
       </Card>

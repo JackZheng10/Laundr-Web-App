@@ -16,10 +16,12 @@ import {
   ListItem,
   Divider,
 } from "@material-ui/core";
+import {
+  TooltipButton,
+  PopoverButton,
+  PricingPopoverButton,
+} from "../../../../other";
 import PropTypes from "prop-types";
-import PricingPopoverButton from "../../../../other/PricingPopoverButton";
-import TooltipButton from "../../../../other/TooltipButton";
-import PopoverButton from "../../../../other/PopoverButton";
 import orderCardStyles from "../../../../../styles/Driver/components/OrderTable/components/orderCardStyles";
 
 const NameCard = (order) => {

@@ -265,6 +265,29 @@ class AcceptedDashboard extends Component {
     }
   };
 
+  handleSendOnTheWayMsg = async (order, type) => {
+    try {
+      const response = await axios.post(
+        "/api/twilio/sendOnMyWayMsg",
+        {
+          order: order,
+          type: type,
+        },
+        { withCredentials: true }
+      );
+
+      return response;
+    } catch (error) {
+      showConsoleError("sending on the way text", error);
+      return {
+        data: {
+          success: false,
+          message: caughtError("sending on the way text", error, 99),
+        },
+      };
+    }
+  };
+
   render() {
     const { classes, currentUser } = this.props;
     const { totalCount, limit, page } = this.state;
@@ -318,6 +341,7 @@ class AcceptedDashboard extends Component {
               handleClearWeightError={this.handleClearWeightError}
               handleWasherReceived={this.handleWasherReceived}
               handleUserReceived={this.handleUserReceived}
+              handleSendOnTheWayMsg={this.handleSendOnTheWayMsg}
               refreshPage={this.refreshPage}
               limit={this.state.limit}
               page={this.state.page}

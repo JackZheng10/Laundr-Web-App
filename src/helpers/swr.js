@@ -25,7 +25,6 @@ export const GET_SWR = async (url, params) => {
 //filter used to fetch orders
 export const getFilterConfig = (currentUser, window) => {
   const path = window.location.pathname;
-  console.log(path);
 
   switch (path) {
     case "/account/history":

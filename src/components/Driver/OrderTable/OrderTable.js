@@ -491,11 +491,15 @@ class OrderTable extends Component {
         { withCredentials: true }
       );
 
-      if (response.data.success) {
-        this.context.showAlert(response.data.message);
-      } else {
-        this.context.showAlert(response.data.message);
-      }
+      this.context.showAlert(response.data.message);
+      
+      //Not deleting this code in case we want to add new behavior
+      // if (response.data.success) {
+      //   this.context.showAlert(response.data.message);
+      // } else {
+      //   this.context.showAlert(response.data.message);
+      // }
+      
     } catch (error) {
       showConsoleError("sending On The Way text", error);
       this.context.showAlert(

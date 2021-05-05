@@ -20,7 +20,7 @@ import {
   TooltipButton,
   PopoverButton,
   PricingPopoverButton,
-} from "../../../other";
+} from "../../../../other";
 import PropTypes from "prop-types";
 import orderCardStyles from "../../../../../styles/Driver/components/OrderTable/components/orderCardStyles";
 

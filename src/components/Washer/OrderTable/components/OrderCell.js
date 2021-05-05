@@ -16,7 +16,7 @@ import {
   TableRow,
 } from "@material-ui/core";
 import PropTypes from "prop-types";
-import { TooltipButton } from "../../../other/TooltipButton";
+import { TooltipButton } from "../../../other";
 import orderCellStyles from "../../../../styles/Driver/components/OrderTable/components/orderCellStyles";
 
 const OrderCell = (props) => {

@@ -15,7 +15,7 @@ import {
   TopBorderBlue,
   BottomBorderBlue,
 } from "../../src/utility/borders";
-import { getCurrentUser, updateToken } from "../../src/helpers/session";
+import { ErrorPage, ProgressPage } from "../../src/components/other";
 import { caughtError, showConsoleError } from "../../src/helpers/errors";
 import { Layout } from "../../src/layouts";
 import { GetServerSideProps } from "next";
@@ -303,21 +303,23 @@ const AssignedCSR = (props) => {
   );
 
   if (error_one || error_two)
-    return <h1>{error_one ? error_one.message : error_two.message}</h1>;
+    return (
+      <ErrorPage text={error_one ? error_one.message : error_two.message} />
+    );
 
   if (!response_one || (!response_two && assignedEligibility(response_one)))
-    return <h1>loading... (placeholder)</h1>;
+    return <ProgressPage />;
 
   const currentUser = response_one.data.message;
 
   if (!response_one.data.success) {
     props.router.push(response_one.data.message);
-    return <h1>redirecting... (placeholder)</h1>;
+    return <ProgressPage />;
   }
 
   if (!hasPageAccess(currentUser, window)) {
     props.router.push("/accessDenied");
-    return <h1>redirecting... (placeholder)</h1>;
+    return <ProgressPage />;
   }
 
   return (

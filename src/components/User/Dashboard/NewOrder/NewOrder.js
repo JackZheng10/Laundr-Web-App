@@ -54,9 +54,9 @@ class NewOrder extends Component {
       lowerBound: null,
       upperBound: null,
       scented: false, //preferences
-      delicates: false,
+      lowTemp: false,
       separate: false,
-      towelsSheets: false,
+      comforter: false,
       washerPreferences: "",
       center: {
         //address
@@ -172,9 +172,9 @@ class NewOrder extends Component {
         {
           coupon: "placeholder",
           scented: this.state.scented,
-          delicates: this.state.delicates,
+          lowTemp: this.state.lowTemp,
           separate: this.state.separate,
-          towelsSheets: this.state.towelsSheets,
+          comforter: this.state.comforter,
           washerPrefs: validator.isEmpty(this.state.washerPreferences, {
             ignore_whitespace: true,
           })
@@ -385,7 +385,7 @@ class NewOrder extends Component {
         this.setState({ [property]: value });
         break;
 
-      case "delicates":
+      case "lowTemp":
         this.setState({ [property]: value });
         break;
 
@@ -393,7 +393,7 @@ class NewOrder extends Component {
         this.setState({ [property]: value });
         break;
 
-      case "towelsSheets":
+      case "comforter":
         this.setState({ [property]: value });
         break;
 
@@ -567,14 +567,6 @@ class NewOrder extends Component {
                           handleInputChange={this.handleInputChange}
                           getTimeAvailability={this.getTimeAvailability}
                         />
-                        {/* <Preferences
-                          scented={this.state.scented}
-                          delicates={this.state.delicates}
-                          separate={this.state.separate}
-                          towelsSheets={this.state.towelsSheets}
-                          washerPreferences={this.state.washerPreferences}
-                          handleInputChange={this.handleInputChange}
-                        /> */}
                       </div>
                     </Fade>
                     <Fade
@@ -589,10 +581,6 @@ class NewOrder extends Component {
                     >
                       <div>
                         <Preferences
-                          scented={this.state.scented}
-                          delicates={this.state.delicates}
-                          separate={this.state.separate}
-                          towelsSheets={this.state.towelsSheets}
                           washerPreferences={this.state.washerPreferences}
                           handleInputChange={this.handleInputChange}
                         />
@@ -657,9 +645,9 @@ class NewOrder extends Component {
                           address={this.state.address}
                           addressPreferences={this.state.addressPreferences}
                           scented={this.state.scented}
-                          delicates={this.state.delicates}
+                          lowTemp={this.state.lowTemp}
                           separate={this.state.separate}
-                          towelsSheets={this.state.towelsSheets}
+                          comforter={this.state.comforter}
                           washerPreferences={this.state.washerPreferences}
                           pickupDate={this.state.date}
                           pickupTime={this.state.formattedTime}

@@ -20,7 +20,7 @@ import {
 } from "../../src/utility/borders";
 import { withRouter } from "next/router";
 import { GetServerSideProps } from "next";
-import { getCurrentUser } from "../../src/helpers/session";
+import { ErrorPage, ProgressPage } from "../../src/components/other";
 import { caughtError, showConsoleError } from "../../src/helpers/errors";
 import { GET_SWR, getFilterConfig, hasPageAccess } from "../../src/helpers/swr";
 import useSWR from "swr";
@@ -221,21 +221,23 @@ const DashboardCSR = (props) => {
   );
 
   if (error_one || error_two)
-    return <h1>{error_one ? error_one.message : error_two.message}</h1>;
+    return (
+      <ErrorPage text={error_one ? error_one.message : error_two.message} />
+    );
 
   if (!response_one || (!response_two && dashboardEligibility(response_one)))
-    return <h1>loading... (placeholder)</h1>;
+    return <ProgressPage />;
 
   const currentUser = response_one.data.message;
 
   if (!response_one.data.success) {
     props.router.push(response_one.data.message);
-    return <h1>redirecting... (placeholder)</h1>;
+    return <ProgressPage />;
   }
 
   if (!hasPageAccess(currentUser, window)) {
     props.router.push("/accessDenied");
-    return <h1>redirecting... (placeholder)</h1>;
+    return <ProgressPage />;
   }
 
   let componentName;

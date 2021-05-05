@@ -13,11 +13,15 @@ import {
 } from "@material-ui/core";
 import { limitLength } from "../../src/helpers/inputs";
 import { GET_SWR, getFilterConfig, hasPageAccess } from "../../src/helpers/swr";
+import {
+  LoadingButton,
+  ErrorPage,
+  ProgressPage,
+} from "../../src/components/other";
 import useSWR from "swr";
 import validator from "validator";
 import compose from "recompose/compose";
 import axios from "../../src/helpers/axios";
-import LoadingButton from "../../src/components/other/LoadingButton";
 import loginStyles from "../../src/styles/loginStyles";
 import MainAppContext from "../../src/contexts/MainAppContext";
 
@@ -266,8 +270,8 @@ const PasswordResetCSR = (props) => {
     GET_SWR
   );
 
-  if (error) return <h1>{error.message}</h1>;
-  if (!response) return <h1>loading... (placeholder)</h1>;
+  if (error) return <ErrorPage text={error.message} />;
+  if (!response) return <ProgressPage />;
 
   //render or use data
   const session = response.data.message;
@@ -275,21 +279,21 @@ const PasswordResetCSR = (props) => {
   //check to see if the session exists
   if (!session) {
     props.router.push("/");
-    return <h1>redirecting... (placeholder)</h1>;
+    return <ProgressPage />;
   }
 
   //check to see if it was used or expired
   if (session.used) {
     return (
-      <h1>
-        error: This link has already been used. If this is a mistake, please
-        contact us.
-      </h1>
+      <ErrorPage
+        text="Error: This link has already been used. If this is a mistake, please
+      contact us."
+      />
     );
   } else if (
     moment(session.expires).isBefore(moment()) //todo: test with deployed
   ) {
-    return <h1>error: this link has expired</h1>;
+    return <ErrorPage text="Error: This link has expired." />;
   }
 
   return <PasswordReset id={getWindowEligibility()} {...props} />;

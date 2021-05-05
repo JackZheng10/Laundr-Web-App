@@ -21,13 +21,17 @@ import { GetServerSideProps } from "next";
 import { withRouter } from "next/router";
 import { limitLength } from "../../src/helpers/inputs";
 import { GET_SWR } from "../../src/helpers/swr";
+import {
+  LoadingButton,
+  TooltipButton,
+  ProgressPage,
+  ErrorPage,
+} from "../../src/components/other";
 import useSWR from "swr";
 import compose from "recompose/compose";
 import axios from "../../src/helpers/axios";
 import validator from "validator";
-import LoadingButton from "../../src/components/other/LoadingButton";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
-import TooltipButton from "../../src/components/Driver/OrderTable/components/TooltipButton";
 import PropTypes from "prop-types";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import AccountInfo from "../../src/components/Account/Details/AccountInfo";
@@ -335,18 +339,20 @@ const DetailsCSR = (props) => {
   );
 
   if (error_one || error_two)
-    return <h1>{error_one ? error_one.message : error_two.message}</h1>;
+    return (
+      <ErrorPage text={error_one ? error_one.message : error_two.message} />
+    );
 
   //second conditional takes into account if second req. should have even ran
   if (!response_one || (!response_two && cardDetailsEligibility(response_one)))
-    return <h1>loading... (placeholder)</h1>;
+    return <ProgressPage />;
 
   //all necessary data fetched, now use it
 
   //check for redirect needed due to invalid session, could only be the case if user not logged in (other false successes throw an error in useSWR)
   if (!response_one.data.success) {
     props.router.push(response_one.data.message);
-    return <h1>redirecting... (placeholder)</h1>;
+    return <ProgressPage />;
   }
 
   const currentUser = response_one.data.message;

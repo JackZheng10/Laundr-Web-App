@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { withStyles, Grid, Typography } from "@material-ui/core";
 import { Layout } from "../../src/layouts";
-import { getCurrentUser } from "../../src/helpers/session";
+import { ErrorPage, ProgressPage } from "../../src/components/other";
 import {
   TopBorderDarkPurple,
   BottomBorderDarkPurple,
@@ -109,19 +109,19 @@ Subscription.propTypes = {
 const SubscriptionCSR = (props) => {
   const { data: response, error } = useSWR("/api/user/getCurrentUser", GET_SWR);
 
-  if (error) return <h1>{error.message}</h1>;
-  if (!response) return <h1>loading... (placeholder)</h1>;
+  if (error) return <ErrorPage text={error.message} />;
+  if (!response) return <ProgressPage />;
 
   const currentUser = response.data.message;
 
   if (!response.data.success) {
     props.router.push(response.data.message);
-    return <h1>redirecting... (placeholder)</h1>;
+    return <ProgressPage />;
   }
 
   if (!hasPageAccess(currentUser, window)) {
     props.router.push("/accessDenied");
-    return <h1>redirecting... (placeholder)</h1>;
+    return <ProgressPage />;
   }
 
   return <Subscription currentUser={currentUser} {...props} />;

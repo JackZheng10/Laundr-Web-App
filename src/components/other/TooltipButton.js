@@ -24,6 +24,7 @@ const LightTooltip = withStyles((theme) => ({
   },
 }))(Tooltip);
 
+//text only
 class TooltipButton extends Component {
   state = { open: false };
 

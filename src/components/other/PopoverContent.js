@@ -24,17 +24,8 @@ const LightTooltip = withStyles((theme) => ({
   },
 }))(Tooltip);
 
+//open/close logic handled by you
 class PopoverContent extends Component {
-  //   state = { open: false, anchor: null };
-
-  //   openPopover = (event) => {
-  //     this.setState({ open: true, anchor: event.currentTarget });
-  //   };
-
-  //   closePopover = () => {
-  //     this.setState({ open: false, anchor: null });
-  //   };
-
   renderTrigger = (icon, className, size, buttonText, onClick) => {
     if (icon) {
       return (

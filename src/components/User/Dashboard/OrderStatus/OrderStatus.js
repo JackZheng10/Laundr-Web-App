@@ -29,6 +29,7 @@ import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import DateFnsUtils from "@date-io/date-fns";
 import axios from "../../../../helpers/axios";
 import LoadingButton from "../../../other/LoadingButton";
+import PricingPopoverButton from "../../../other/PricingPopoverButton";
 import MainAppContext from "../../../../contexts/MainAppContext";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
 import QueryBuilderIcon from "@material-ui/icons/QueryBuilder";
@@ -463,7 +464,7 @@ class OrderStatus extends Component {
     }
   };
 
-  renderCardContent = (order, classes) => {
+  renderCardContent = (order, classes, currentUser) => {
     //if order is done, show it
     if (order.orderInfo.status === 6) {
       return (
@@ -502,18 +503,27 @@ class OrderStatus extends Component {
               ? "TBD"
               : `${order.orderInfo.weight} lbs`}
           </Typography>
-          <Typography variant="h5" style={{ marginBottom: -10 }}>
+          {/* <Typography variant="h5" style={{ marginBottom: -10 }}>
             {order.orderInfo.cost === "-1"
               ? "Price: TBD"
               : `Price: ${order.orderInfo.cost}`}
-          </Typography>
+          </Typography> */}
+          <PricingPopoverButton
+            showPriceLabel={true}
+            order={order}
+            currentUser={currentUser}
+            containerStyles={{ marginBottom: -10 }}
+            labelStyles={{ fontWeight: 600 }}
+            priceVariant="h4"
+            labelVariant="h4"
+          />
         </React.Fragment>
       );
     }
   };
 
   render() {
-    const { classes, order } = this.props;
+    const { classes, order, currentUser } = this.props;
 
     const timeAvailability = this.getTimeAvailability(order);
     const todayNotAvailable = timeAvailability.todayNotAvailable;
@@ -715,7 +725,7 @@ class OrderStatus extends Component {
                     />
                     {/* <Divider /> */}
                     <CardContent>
-                      {this.renderCardContent(order, classes)}
+                      {this.renderCardContent(order, classes, currentUser)}
                     </CardContent>
                     {/* <Divider /> */}
                     <CardActions className={classes.cardFooter}>

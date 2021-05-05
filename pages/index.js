@@ -15,7 +15,11 @@ import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
 import { GetServerSideProps } from "next";
 import { limitLength } from "../src/helpers/inputs";
-import { Sidebar, Topbar, Footer } from "../src/layouts/Main/components";
+import {
+  LoadingButton,
+  ProgressPage,
+  ErrorPage,
+} from "../src/components/other";
 import { GET_SWR } from "../src/helpers/swr";
 import Link from "next/link";
 import useSWR from "swr";
@@ -23,7 +27,6 @@ import Head from "next/head";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import validator from "validator";
-import LoadingButton from "../src/components/other/LoadingButton";
 import MainAppContext from "../src/contexts/MainAppContext";
 import loginStyles from "../src/styles/loginStyles";
 import axios from "../src/helpers/axios";
@@ -406,8 +409,8 @@ to-do:
 const LoginCSR = (props) => {
   const { data: response, error } = useSWR("/api/user/getCurrentUser", GET_SWR);
 
-  if (error) return <h1>{error.message}</h1>;
-  if (!response) return <h1>loading... (placeholder)</h1>;
+  if (error) return <ErrorPage text={error.message} />;
+  if (!response) return <ProgressPage />;
 
   //render or use data
   //if there's a logged in user

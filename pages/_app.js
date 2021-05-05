@@ -14,11 +14,11 @@ import {
 } from "@material-ui/core";
 import { ThemeProvider } from "@material-ui/core/styles";
 import { makeStyles } from "@material-ui/core/styles";
+import { LoadingButton } from "../src/components/other";
 import PropTypes from "prop-types";
 import Head from "next/head";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import MainAppContext from "../src/contexts/MainAppContext";
-import LoadingButton from "../src/components/other/LoadingButton";
 import theme from "../src/theme";
 import "../src/styles/borders.css";
 // import "./login.css";

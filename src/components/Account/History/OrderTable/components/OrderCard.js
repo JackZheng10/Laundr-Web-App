@@ -17,8 +17,9 @@ import {
   Divider,
 } from "@material-ui/core";
 import PropTypes from "prop-types";
-import TooltipButton from "../../../../Driver/OrderTable/components/TooltipButton";
-import PopoverButton from "./PopoverButton";
+import PricingPopoverButton from "../../../../other/PricingPopoverButton";
+import TooltipButton from "../../../../other/TooltipButton";
+import PopoverButton from "../../../../other/PopoverButton";
 import orderCardStyles from "../../../../../styles/Driver/components/OrderTable/components/orderCardStyles";
 
 const NameCard = (order) => {
@@ -157,114 +158,6 @@ const WeightCard = (order) => {
   );
 };
 
-//price
-const PriceCard = (order, classes, currentUser) => {
-  const subtotal = order.pricingInfo.subtotal;
-  const subLbsDiscount = order.pricingInfo.subLbsDiscount;
-  const balanceDiscount = order.pricingInfo.balanceDiscount;
-  const priceMultiplier =
-    currentUser.subscription.status === "active" ? 1.2 : 1.5;
-
-  return (
-    <Grid item>
-      <Grid container direction="row" justify="center" alignItems="center">
-        <Grid item>
-          <Grid container justify="center">
-            <Typography
-              variant="body1"
-              style={{ fontWeight: 600, color: "#01C9E1" }}
-              gutterBottom
-            >
-              Price:&nbsp;
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {order.orderInfo.cost === "-1" ? "N/A" : order.orderInfo.cost}
-            </Typography>
-          </Grid>
-        </Grid>
-        {order.orderInfo.cost != "-1" && (
-          <Grid item style={{ marginTop: -10 }}>
-            <PopoverButton
-              className={classes.secondaryButton}
-              icon={true}
-              content={
-                <Card className={classes.priceCard} elevation={5}>
-                  <CardContent
-                    className={classes.removePadding}
-                    style={{ marginTop: -15, marginBottom: -15 }}
-                  >
-                    <List disablePadding>
-                      <ListItem>
-                        <ListItemText
-                          primary={"Subtotal"}
-                          secondary={`${order.orderInfo.weight} lbs`}
-                          primaryTypographyProps={{ variant: "h6" }}
-                        />
-                        <Typography variant="body1">{subtotal}</Typography>
-                      </ListItem>
-                      {parseFloat(subLbsDiscount.slice(1)) > 0 && (
-                        <ListItem>
-                          <ListItemText
-                            primary={"Subscription Lbs"}
-                            secondary={`${
-                              subLbsDiscount.slice(1) / priceMultiplier
-                            } lbs`}
-                            primaryTypographyProps={{ variant: "h6" }}
-                          />
-                          <Typography variant="body1">
-                            -{subLbsDiscount}
-                          </Typography>
-                        </ListItem>
-                      )}
-                      {parseFloat(balanceDiscount.slice(1)) > 0 && (
-                        <ListItem>
-                          <ListItemText
-                            primary={"Credit"}
-                            primaryTypographyProps={{ variant: "h6" }}
-                          />
-                          <Typography variant="body1">
-                            -{balanceDiscount}
-                          </Typography>
-                        </ListItem>
-                      )}
-                    </List>
-                  </CardContent>
-                  <Divider />
-                  <CardContent
-                    className={classes.removePadding}
-                    style={{ marginTop: -5, marginBottom: -5 }}
-                  >
-                    <Grid
-                      container
-                      direction="column"
-                      justify="center"
-                      alignItems="center"
-                    >
-                      <Grid item>
-                        <Grid container justify="center">
-                          <Typography variant="h4" style={{ fontWeight: 600 }}>
-                            Total:&nbsp;
-                          </Typography>
-                          <Typography
-                            variant="h4"
-                            style={{ textAlign: "center" }}
-                          >
-                            {order.pricingInfo.total}
-                          </Typography>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                </Card>
-              }
-            />
-          </Grid>
-        )}
-      </Grid>
-    </Grid>
-  );
-};
-
 //status driver
 const StatusCardDriver = (order) => {
   return (
@@ -357,9 +250,9 @@ const getDriverStages = (order, currentUser) => {
 
 const renderWasherPrefs = (order) => {
   const scented = order.washerInfo.scented;
-  const delicates = order.washerInfo.delicates;
+  const lowTemp = order.washerInfo.lowTemp;
   const separate = order.washerInfo.separate;
-  const towelsSheets = order.washerInfo.towelsSheets;
+  const comforter = order.washerInfo.comforter;
 
   let prefs = "";
 
@@ -367,20 +260,20 @@ const renderWasherPrefs = (order) => {
     prefs += "Scented, ";
   }
 
-  if (delicates) {
-    prefs += "Delicates, ";
+  if (lowTemp) {
+    prefs += "Low Temperature, ";
   }
 
   if (separate) {
     prefs += "Separate, ";
   }
 
-  if (towelsSheets) {
-    prefs += "Towels and Sheets,";
+  if (comforter) {
+    prefs += "Comforter,";
   }
 
   //todo: test this, forget what it does lol
-  if (towelsSheets) {
+  if (comforter) {
     prefs = prefs.slice(0, prefs.length - 1);
   } else {
     prefs = prefs.slice(0, prefs.length - 2);
@@ -486,7 +379,14 @@ const OrderCard = (props) => {
                 justify="center"
                 alignItems="center"
               >
-                {PriceCard(order, classes, currentUser)}
+                <Grid item>
+                  <PricingPopoverButton
+                    showPriceLabel={true}
+                    order={order}
+                    currentUser={currentUser}
+                    labelStyles={{ fontWeight: 600, color: "#01C9E1" }}
+                  />
+                </Grid>
                 {WeightCard(order)}
                 {StatusCardDriver(order)}
                 {DateTimeCard(order)}

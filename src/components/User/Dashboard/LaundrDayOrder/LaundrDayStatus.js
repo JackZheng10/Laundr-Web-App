@@ -92,8 +92,8 @@ class LaundrDayStatus extends Component {
     };
   }
 
+  //THIS IS NOT RECEIVING A RESPONSE? BUT THE LAUNDR DAY IS BEING CANCELLED. IM CONFUSED
   handleLaundrDayCancel = async (laundrDay) => {
-    console.log("entered")
     try {
       const response = await axios.delete("/api/order/cancelLaundrDay", {
         params: {

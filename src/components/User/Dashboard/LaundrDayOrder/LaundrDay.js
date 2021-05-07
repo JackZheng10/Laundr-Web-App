@@ -45,7 +45,9 @@ class LaundrDay extends Component {
 
     this.state = {
       activeStep: 0,
-      date: "N/A", //scheduling
+      laundrDayOfWeek: 0, //index for day of the week, 0 is Sunday, 1 is Monday ...
+      recurringPeriod: "Every 1 week",
+      date: this.nextDayOfWeek(0), //scheduling
       todaySelected: false,
       tomorrowSelected: false,
       formattedTime: "N/A",
@@ -69,8 +71,6 @@ class LaundrDay extends Component {
       addressPreferences: "",
       loads: 1, //pricing
       orderID: -1, //done screen
-      laundrDayOfWeek: 0, //index for day of the week, 0 is Sunday, 1 is Monday ...
-      recurringPeriod: "Every 1 week"
     };
   }
 

@@ -92,56 +92,28 @@ class LaundrDayStatus extends Component {
     };
   }
 
-  handleOrderCancel = async (order) => {
+  handleLaundrDayCancel = async (laundrDay) => {
+    console.log("entered")
     try {
-      const response = await axios.delete("/api/order/cancelOrder", {
+      const response = await axios.delete("/api/order/cancelLaundrDay", {
         params: {
-          orderID: order.orderInfo.orderID,
+          id: laundrDay._id
         },
         withCredentials: true,
       });
+
+      console.log(response)
 
       if (!response.data.success && response.data.redirect) {
         this.props.router.push(response.data.message);
       } else {
         this.context.showAlert(
-          response.data.message,
-          this.props.fetchOrderInfo
+          response.data.message
         );
       }
     } catch (error) {
       showConsoleError("cancelling order", error);
       this.context.showAlert(caughtError("cancelling order", error, 99));
-    }
-  };
-
-  handleSetDropoffTime = async (order) => {
-    if (this.handleTimeCheck()) {
-      try {
-        const response = await axios.put(
-          "/api/order/setDropoff",
-          {
-            orderID: order.orderInfo.orderID,
-            date: this.state.date,
-            time: this.state.formattedTime,
-          },
-          { withCredentials: true }
-        );
-
-        this.setState({ showDropoffDialog: false }, () => {
-          if (!response.data.success && response.data.redirect) {
-            this.props.router.push(response.data.message);
-          } else {
-            this.context.showAlert(
-              response.data.message,
-              this.props.fetchOrderInfo
-            );
-          }
-        });
-      } catch (error) {
-        showConsoleError("setting dropoff", error);
-        this.context.showAlert(caughtError("setting dropoff", error, 99));
-      }
     }
   };
 
@@ -362,7 +334,7 @@ class LaundrDayStatus extends Component {
                          this.context.showAlert_C(
                             "Are you sure you want to cancel your order?",
                             () => {
-                                this.handleOrderCancel(order);
+                                this.handleLaundrDayCancel(laundrDay);
                             }
                         );
                         }}

@@ -56,7 +56,7 @@ class LaundrDay extends Component {
       delicates: false,
       separate: false,
       comforter: false,
-      tumbleDry: false,
+      lowTemp : false,
       washerPreferences: "",
       center: {
         //address
@@ -126,13 +126,10 @@ class LaundrDay extends Component {
         break;
 
       case 3:
-        //check time again in case they waited and then came back to continue their order
-        // canNext = this.handleTimeCheck();
-
         let response;
 
         if (canNext) {
-          response = await this.handlePlaceOrder();
+          response = await this.handlePlaceLaundrDay();
         } else {
           return;
         }
@@ -165,7 +162,7 @@ class LaundrDay extends Component {
     });
   };
 
-  handlePlaceOrder = async () => {
+  handlePlaceLaundrDay = async () => {
     try {
       const response = await axios.post(
         "/api/order/setLaundrDay",
@@ -175,7 +172,7 @@ class LaundrDay extends Component {
           delicates: this.state.delicates,
           separate: this.state.separate,
           comforter: this.state.comforter,
-          tumbleDry: this.state.tumbleDry,
+          lowTemp: this.state.lowTemp,
           washerPrefs: validator.isEmpty(this.state.washerPreferences, {
             ignore_whitespace: true,
           })
@@ -346,7 +343,7 @@ class LaundrDay extends Component {
         this.setState({ [property]: value });
         break;
       
-      case "tumbleDry":
+      case "lowTemp":
         this.setState({ [property]: value });
         break;
   
@@ -552,10 +549,6 @@ class LaundrDay extends Component {
                     >
                       <div>
                         <Preferences
-                          scented={this.state.scented}
-                          delicates={this.state.delicates}
-                          separate={this.state.separate}
-                          towelsSheets={this.state.towelsSheets}
                           washerPreferences={this.state.washerPreferences}
                           handleInputChange={this.handleInputChange}
                         />
@@ -600,9 +593,9 @@ class LaundrDay extends Component {
                           address={this.state.address}
                           addressPreferences={this.state.addressPreferences}
                           scented={this.state.scented}
-                          delicates={this.state.delicates}
+                          lowTemp={this.state.lowTemp}
                           separate={this.state.separate}
-                          towelsSheets={this.state.towelsSheets}
+                          comforter={this.state.comforter}
                           washerPreferences={this.state.washerPreferences}
                           pickupDate={this.state.date}
                           pickupTime={this.state.formattedTime}

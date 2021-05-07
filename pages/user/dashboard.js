@@ -60,12 +60,8 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 class Dashboard extends Component {
   static contextType = MainAppContext;
 
-  //STATE IS REMOVED IN PWA, FIGURE OUT HOW TO DETERMINE TAB STATE
   state = {
-    orderComponent: null,
-    orderComponentName: "",
-    userFname: "",
-    orderTabState: "Order"
+    tabState: "Order" //tabState dictates if order info vs. laundr day info is displayed
   };
 
   //to refresh order info, just reload the page
@@ -74,99 +70,82 @@ class Dashboard extends Component {
   };
 
   renderOrderComponent = (classes) => {
-    const { componentName, order, balance, currentUser } = this.props;
+    const { componentName, laundrDayComponentName, order, laundrDay, balance, currentUser } = this.props;
 
-    switch (componentName) {
-      case "set_payment":
-        return (
-          <Card className={classes.infoCard} elevation={10}>
-            <CardHeader
-              title="Missing Payment Method"
-              titleTypographyProps={{
-                variant: "h4",
-                style: {
-                  color: "white",
-                },
-              }}
-              className={classes.cardHeader}
-            />
-            <CardContent>
-              <Typography variant="body1">
-                Please add a payment method to continue.
-              </Typography>
-            </CardContent>
-            <CardActions className={classes.cardFooter}>
-              <Button
-                size="medium"
-                variant="contained"
-                onClick={() => {
-                  this.props.router.push("/account/details");
+    if (this.state.tabState === "Order") {
+      switch (componentName) {
+        case "set_payment":
+          return (
+            <Card className={classes.infoCard} elevation={10}>
+              <CardHeader
+                title="Missing Payment Method"
+                titleTypographyProps={{
+                  variant: "h4",
+                  style: {
+                    color: "white",
+                  },
                 }}
-                className={classes.mainButton}
-              >
-                Add
-              </Button>
-            </CardActions>
-          </Card>
+                className={classes.cardHeader}
+              />
+              <CardContent>
+                <Typography variant="body1">
+                  Please add a payment method to continue.
+                </Typography>
+              </CardContent>
+              <CardActions className={classes.cardFooter}>
+                <Button
+                  size="medium"
+                  variant="contained"
+                  onClick={() => {
+                    this.props.router.push("/account/details");
+                  }}
+                  className={classes.mainButton}
+                >
+                  Add
+                </Button>
+              </CardActions>
+            </Card>
+          );
+  
+        case "new_order":
+          return (
+            <NewOrder
+              fetchOrderInfo={this.fetchOrderInfo}
+              currentUser={currentUser}
+              balance={balance}
+            />
+          );
+  
+        case "order_status":
+          return (
+            <OrderStatus
+              order={order}
+              currentUser={currentUser}
+              fetchOrderInfo={this.fetchOrderInfo}
+            />
         );
-
-      case "new_order":
-        return (
-          <NewOrder
-            fetchOrderInfo={this.fetchOrderInfo}
-            currentUser={currentUser}
-            balance={balance}
-          />
-        );
-
-      case "order_status":
-        return (
-          <OrderStatus
-            order={order}
-            currentUser={currentUser}
-            fetchOrderInfo={this.fetchOrderInfo}
-          />
-      );
+      }
     }
-    // else if (this.state.orderTabState == "Laundr Day")  {
-    //   switch (fetch_SSR.laundrDayInfo.componentName) {
-    //     case "new_laundr_day":
-    //       return (
-    //         <LaundrDay
-    //           fetchOrderInfo={this.fetchOrderInfo}
-    //           currentUser={fetch_SSR.userInfo}
-    //           balance={fetch_SSR.balance}
-    //         />
-    //       );  
-
-    //     case "laundr_day_status":
-    //       return (
-    //         <NewOrder
-    //           fetchOrderInfo={this.fetchOrderInfo}
-    //           currentUser={fetch_SSR.userInfo}
-    //           balance={fetch_SSR.balance}
-    //         />
-    //       );  
-    //   }
-    // }
-
-    // else if (this.state.orderTabState == "Laundr Day")  {
-    //   switch (fetch_SSR.laundrDayInfo.componentName) {
-    //     case "new_laundr_day":
-    //       return (
-    //         <LaundrDay
-    //           fetchOrderInfo={this.fetchOrderInfo}
-    //           currentUser={fetch_SSR.userInfo}
-    //           balance={fetch_SSR.balance}
-    //         />
-    //       );  
-
-    //     case "laundr_day_status":
-    //       return (
-    //         <LaundrDayStatus
-    //           fetchOrderInfo={this.fetchOrderInfo}
-    //           currentUser={fetch_SSR.userInfo}
-    //           laundrDay={fetch_SSR.laundrDayInfo.message}
+    else if (this.state.tabState == "Laundr Day")  {
+      switch (laundrDayComponentName) {
+        case "new_laundr_day":
+          return (
+            <LaundrDay
+              fetchOrderInfo={this.fetchOrderInfo}
+              currentUser={currentUser}
+              balance={balance}
+            />
+          );  
+        case "laundr_day_status":
+          return (
+            <LaundrDayStatus
+              fetchOrderInfo={this.fetchOrderInfo}
+              currentUser={currentUser}
+              laundrDay={laundrDay}
+            />
+          );
+      }
+    }
   };
 
   renderOrderComponentName = (componentName) => {
@@ -192,11 +171,11 @@ class Dashboard extends Component {
   };
 
   handleTabChange = (event, value) => {
-    this.setState({ orderTabState: value });
+    this.setState({ tabState: value });
   };
 
   render() {
-    const { classes, currentUser, componentName, order } = this.props;
+    const { classes, currentUser, componentName, laundrDayComponentName, order } = this.props;
 
     return (
       <Layout currentUser={currentUser}>
@@ -225,7 +204,9 @@ class Dashboard extends Component {
               className={classes.orderComponentName}
               gutterBottom
             >
-              {this.renderOrderComponentName(componentName)}
+              { this.state.tabState === "Order" ? 
+                this.renderOrderComponentName(componentName) : this.renderOrderComponentName(laundrDayComponentName)
+              }
             </Typography>
           </Grid>
         </Grid>
@@ -241,10 +222,10 @@ class Dashboard extends Component {
           alignItems="center"
         >
             <Tabs
-              value={this.state.orderTabState}
+              value={this.state.tabState}
               onChange={this.handleTabChange}
             >
-              <Tab value={"Order"} label={fetch_SSR.orderInfo.componentName === "new_order" ? "New Order" : "Order Status"} />
+              <Tab value={"Order"} label={componentName === "new_order" ? "New Order" : "Order Status"} />
               <Tab value={"Laundr Day"} label="Laundr Day" />
             </Tabs>
           <Grid item>{this.renderOrderComponent(classes)}</Grid>
@@ -288,6 +269,12 @@ const DashboardCSR = (props) => {
     GET_SWR
   );
 
+  const { data: response_three, error: error_three } = useSWR(
+    "/api/order/getExistingLaundrDay",
+    GET_SWR
+  )
+
+  //Need to incorporate error_three somehow; would depend on tab state though?
   if (error_one || error_two)
     return (
       <ErrorPage text={error_one ? error_one.message : error_two.message} />
@@ -322,55 +309,26 @@ const DashboardCSR = (props) => {
     order = response_two.data.message;
   }
 
+  let laundrDayComponentName;
+  let laundrDay = null;
+  if (response_three.data.message === "N/A") {
+    laundrDayComponentName = "new_laundr_day";
+  } else {
+    laundrDayComponentName = "laundr_day_status";
+    laundrDay = response_three.data.message;
+  }
+
   return (
     <Dashboard
       currentUser={currentUser}
       componentName={componentName}
+      laundrDayComponentName={laundrDayComponentName}
       order={order}
+      laundrDay={laundrDay}
       balance={response_one.data.balance}
       {...props}
     />
   );
 };
-//   //fetch current Laundr Day info via userID
-//   const response_three = await getExistingLaundrDay_SSR(context, currentUser);
-//   if (!response_three.data.success) {
-//     if (response_three.data.redirect) {
-//       return {
-//         redirect: {
-//           destination: response_three.data.message,
-//           permanent: false,
-//         },
-//       };
-//     } else {
-//       return {
-//         props: {
-//           fetch_SSR: {
-//             success: false,
-//             message: response_three.data.message,
-//           },
-//         },
-//       };
-//     }
-//   }
-
-//   // const newCookie = response_one.headers["set-cookie"];
-
-//   // console.log("COOKIE: ", newCookie);
-//   // context.res.setHeader("Set-Cookie", newCookie);
-
-//   //finally, return info for fetched user + order info + laundrDayInfo, available via props
-//   return {
-//     props: {
-//       fetch_SSR: {
-//         success: true,
-//         orderInfo: response_two.data,
-//         userInfo: currentUser,
-//         balance: response_one.data.balance,
-//         laundrDayInfo: response_three.data
-//       },
-//     },
-//   };
-// }
 
 export default compose(withRouter, withStyles(dashboardStyles))(DashboardCSR);

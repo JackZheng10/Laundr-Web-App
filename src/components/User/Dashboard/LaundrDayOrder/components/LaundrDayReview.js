@@ -21,7 +21,7 @@ import {
   Fade,
 } from "@material-ui/core";
 import validator from "validator";
-import TooltipButton from "../../../../Driver/OrderTable/components/TooltipButton";
+import TooltipButton from "../../../../other/TooltipButton";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
 import CreateIcon from "@material-ui/icons/Create";
 import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
@@ -75,7 +75,7 @@ class Review extends Component {
   };
 
   renderPriceComponent = () => {
-    const { currentUser, classes, loads, scented, tumbleDry, delicates, separate, comforter } = this.props;
+    const { currentUser, classes, loads, scented, lowTemp, delicates, separate, comforter } = this.props;
 
     const priceMultiplier =
       currentUser.subscription.status === "active" &&
@@ -131,14 +131,14 @@ class Review extends Component {
                   </Typography>
                 </ListItem>
               )}
-              {(scented || tumbleDry || separate || comforter) && (
+              {(scented || lowTemp || separate || comforter) && (
               <ListItem>
                 <ListItemText
                   primary={"Preferences"}
                   secondary={
                     <div>
                         {scented ? <div>Scented (Free)</div> : null}
-                        {tumbleDry ? <div>Low Temp. Tumble Dry (Free)</div> : null}
+                        {lowTemp ? <div>Low Temp. Tumble Dry (Free)</div> : null}
                         {separate ? <div>Separate (+$5)</div> : null}
                         {comforter ? <div>Added Comforter (+$5)</div> : null}
                     </div>
@@ -225,14 +225,14 @@ class Review extends Component {
                   </Typography>
                 </ListItem>
               )}
-               {(scented || tumbleDry || separate || comforter) && (
+               {(scented || lowTemp || separate || comforter) && (
               <ListItem>
                 <ListItemText
                   primary={"Preferences"}
                   secondary={
                     <div>
                         {scented ? <div>Scented (Free)</div> : null}
-                        {tumbleDry ? <div>Low Temp. Tumble Dry (Free)</div> : null}
+                        {lowTemp ? <div>Low Temp. Tumble Dry (Free)</div> : null}
                         {separate ? <div>Separate (+$5)</div> : null}
                         {comforter ? <div>Added Comforter (+$5)</div> : null}
                     </div>
@@ -285,7 +285,7 @@ class Review extends Component {
       delicates,
       separate,
       comforter,
-      tumbleDry,
+      lowTemp,
       laundrDayOfWeek,
       recurringPeriod,
       loads,
@@ -459,23 +459,23 @@ class Review extends Component {
                         <ListItemAvatar>
                             <Avatar
                             src={
-                                tumbleDry
+                                lowTemp
                                 ? "/images/NewOrder/SeparateSelectedCircle.png"
                                 : "/images/NewOrder/SeparateUnselectedCircle.png"
                             }
                             />
                         </ListItemAvatar>
                         <ListItemText
-                            primary="Low Temp. Tumble Dry (Free)"
+                            primary="Low Temp. Dry (Free)"
                             primaryTypographyProps={{
                             style: {
-                                color: tumbleDry ? "black" : "grey",
+                                color: lowTemp ? "black" : "grey",
                             },
                             variant: "body1",
                             }}
                         />
                         <ListItemSecondaryAction>
-                            {tumbleDry ? (
+                            {lowTemp ? (
                             <CheckCircleOutlineIcon
                                 style={{ fill: "green" }}
                                 edge="end"

@@ -120,7 +120,7 @@ class LaundrDayStatus extends Component {
   renderCardContent = (laundrDay, classes) => {
     const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const scented = laundrDay.data.order.scented;
-    const tumbleDry = laundrDay.data.order.tumbleDry;
+    const lowTemp = laundrDay.data.order.lowTemp;
     const separate = laundrDay.data.order.separate;
     const comforter = laundrDay.data.order.comforter;
       return (
@@ -195,23 +195,23 @@ class LaundrDayStatus extends Component {
                         <ListItemAvatar>
                             <Avatar
                             src={
-                                tumbleDry
+                                lowTemp
                                 ? "/images/NewOrder/SeparateSelectedCircle.png"
                                 : "/images/NewOrder/SeparateUnselectedCircle.png"
                             }
                             />
                         </ListItemAvatar>
                         <ListItemText
-                            primary="Low Temp. Tumble Dry (Free)"
+                            primary="Low Temp. Dry (Free)"
                             primaryTypographyProps={{
                             style: {
-                                color: tumbleDry ? "black" : "grey",
+                                color: lowTemp ? "black" : "grey",
                             },
                             variant: "body1",
                             }}
                         />
                         <ListItemSecondaryAction>
-                            {tumbleDry ? (
+                            {lowTemp ? (
                             <CheckCircleOutlineIcon
                                 style={{ fill: "green" }}
                                 edge="end"

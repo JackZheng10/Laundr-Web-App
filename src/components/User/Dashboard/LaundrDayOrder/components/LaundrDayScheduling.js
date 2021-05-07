@@ -14,7 +14,7 @@ import {
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import PropTypes from "prop-types";
-import TooltipButton from "../../../../Driver/OrderTable/components/TooltipButton";
+import TooltipButton from "../../../../other/TooltipButton";
 import schedulingStyles from "../../../../../styles/User/Dashboard/components/NewOrder/components/schedulingStyles";
 
 //REMEMBER: moment objects are mutable. creating one and then reusing it will change the original object (ex: if you do obj.add)

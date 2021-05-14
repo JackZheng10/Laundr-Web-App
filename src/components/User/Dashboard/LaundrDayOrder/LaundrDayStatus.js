@@ -294,7 +294,7 @@ class LaundrDayStatus extends Component {
                         }
                         onClick={() => {
                          this.context.showAlert_C(
-                            "Are you sure you want to cancel your order?",
+                            "Are you sure you want to cancel your Laundr Day?",
                             () => {
                                 this.handleLaundrDayCancel(laundrDay);
                             }

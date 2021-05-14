@@ -155,7 +155,7 @@ class LaundrDay extends Component {
       //if no date selected
       this.context.showAlert("Please select a day of the week for your Laundr Day pickup.");
       canNext = false;
-    } else if (!this.state.formattedTime) {
+    } else if (this.state.formattedTime === "N/A") {
       //if no time selected
       this.context.showAlert("Please select a pickup time.");
       canNext = false;

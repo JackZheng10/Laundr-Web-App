@@ -6,7 +6,6 @@ import {
   Fade,
   CardContent,
 } from "@material-ui/core";
-import { getCurrentUser } from "../../../../helpers/session";
 import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../../../../helpers/errors";
 import { limitLength } from "../../../../helpers/inputs";
@@ -48,14 +47,9 @@ class LaundrDay extends Component {
       laundrDayOfWeek: 0, //index for day of the week, 0 is Sunday, 1 is Monday ...
       recurringPeriod: "Every 1 week",
       date: this.nextDayOfWeek(0), //scheduling
-      todaySelected: false,
-      tomorrowSelected: false,
       formattedTime: "N/A",
       selectValue: "",
-      lowerBound: null,
-      upperBound: null,
       scented: false, //preferences
-      delicates: false,
       separate: false,
       comforter: false,
       lowTemp : false,
@@ -69,7 +63,6 @@ class LaundrDay extends Component {
       address: "",
       renderMarker: false,
       addressPreferences: "",
-      loads: 1, //pricing
       orderID: -1, //done screen
     };
   }
@@ -79,8 +72,7 @@ class LaundrDay extends Component {
 
     switch (this.state.activeStep) {
       case 0:
-        // canNext = this.handleTimeCheck();
-        //CHECK THAT THEY PICKED A DAY AND TIME
+        canNext = this.handleTimeCheck();
         break;
 
       case 1:
@@ -156,6 +148,25 @@ class LaundrDay extends Component {
     }
   };
 
+  handleTimeCheck = () => {
+    let canNext = true;
+
+    if (!this.state.date) {
+      //if no date selected
+      this.context.showAlert("Please select a day of the week for your Laundr Day pickup.");
+      canNext = false;
+    } else if (!this.state.formattedTime) {
+      //if no time selected
+      this.context.showAlert("Please select a pickup time.");
+      canNext = false;
+    } else if (!this.state.recurringPeriod) {
+      this.context.showAlert("Please select a recurring period");
+      canNext = false;
+    } 
+
+    return canNext;
+  };
+
   handleBack = () => {
     this.setState({ activeStep: this.state.activeStep - 1 }, () => {
       window.scrollTo(0, 0);
@@ -169,7 +180,6 @@ class LaundrDay extends Component {
         {
           coupon: "placeholder",
           scented: this.state.scented,
-          delicates: this.state.delicates,
           separate: this.state.separate,
           comforter: this.state.comforter,
           lowTemp: this.state.lowTemp,
@@ -268,10 +278,7 @@ class LaundrDay extends Component {
       },
     ];
 
-    const lowerBound = moment("10:00:00", "HH:mm:ss");
-    const upperBound = moment("19:00:00", "HH:mm:ss");
-    const now = moment();
-
+    //For Laundr Days, all times are available to choose.
     let availableTimes = possibleTimes;
 
     return {
@@ -299,25 +306,6 @@ class LaundrDay extends Component {
 
   handleInputChange = (property, value) => {
     switch (property) {
-      case "today":
-        this.setState({
-          todaySelected: true,
-          tomorrowSelected: false,
-          date: this.today,
-          selectValue: "",
-        });
-
-        break;
-
-      case "tomorrow":
-        this.setState({
-          todaySelected: false,
-          tomorrowSelected: true,
-          date: this.tomorrow,
-          selectValue: "",
-        });
-        break;
-
       case "time":
         this.setState({
           lowerBound: value.lowerBound,
@@ -328,10 +316,6 @@ class LaundrDay extends Component {
         break;
 
       case "scented":
-        this.setState({ [property]: value });
-        break;
-
-      case "delicates":
         this.setState({ [property]: value });
         break;
 
@@ -365,12 +349,6 @@ class LaundrDay extends Component {
         this.setState({
           center: value.center,
           zoom: value.zoom,
-        });
-        break;
-
-      case "loads":
-        this.setState({
-          loads: value,
         });
         break;
 
@@ -429,57 +407,8 @@ class LaundrDay extends Component {
     }
   };
 
-  getLbsData = () => {
-    const { currentUser } = this.props;
-    const loads = this.state.loads;
-    const maxLbs = this.getMaxLbs(currentUser.subscription);
-    const lbsLeft = currentUser.subscription.lbsLeft;
-    const estLbsCost = loads * 18;
-
-    return [
-      {
-        value: lbsLeft - estLbsCost >= 0 ? lbsLeft - estLbsCost : 0, //remaining sub lbs
-        color: "#01c9e1",
-        opacity: 1,
-      },
-      {
-        value: estLbsCost <= lbsLeft ? estLbsCost : lbsLeft, //sub lbs used
-        color: "red",
-        opacity: 0.7,
-      },
-      {
-        value: maxLbs - lbsLeft, //previously used sub lbs
-        color: "#828282",
-        opacity: 0.2,
-      },
-      {
-        overage: lbsLeft - estLbsCost >= 0 ? false : true,
-        overageLbs: estLbsCost - lbsLeft,
-      },
-    ];
-  };
-
-  getMaxLbs = (subscription) => {
-    switch (subscription.plan) {
-      case "Student":
-        return 40;
-
-      case "Standard":
-        return 48;
-
-      case "Plus":
-        return 66;
-
-      case "Family":
-        return 84;
-
-      default:
-        return 0;
-    }
-  };
-
   render() {
-    const { classes, currentUser, balance } = this.props;
+    const { classes } = this.props;
 
     return (
       <React.Fragment>
@@ -491,12 +420,10 @@ class LaundrDay extends Component {
                 {this.state.activeStep === steps.length ? (
                   <React.Fragment>
                     <Typography variant="h5" gutterBottom>
-                      Thank you for your order!
+                      Thank you for setting your Laundr Day!
                     </Typography>
                     <Typography variant="subtitle1">
-                      Your order number is #{this.state.orderID} and can be
-                      tracked through your dashboard. Thanks for choosing
-                      Laundr!
+                      You can view your Laundr Day information in the 'Laundr Day' tab on the dashboard.
                     </Typography>
                     <div className={classes.buttons}>
                       {this.state.activeStep === steps.length && (
@@ -524,10 +451,6 @@ class LaundrDay extends Component {
                     >
                       <div>
                         <LaundrDayScheduling
-                          today={this.today}
-                          tomorrow={this.tomorrow}
-                          todaySelected={this.state.todaySelected}
-                          tomorrowSelected={this.state.tomorrowSelected}
                           selectValue={this.state.selectValue}
                           handleInputChange={this.handleInputChange}
                           getTimeAvailability={this.getTimeAvailability}
@@ -599,11 +522,6 @@ class LaundrDay extends Component {
                           washerPreferences={this.state.washerPreferences}
                           pickupDate={this.state.date}
                           pickupTime={this.state.formattedTime}
-                          loads={this.state.loads}
-                          currentUser={currentUser}
-                          getLbsData={this.getLbsData}
-                          getMaxLbs={this.getMaxLbs}
-                          balance={balance}
                           laundrDayOfWeek={this.state.laundrDayOfWeek}
                           recurringPeriod={this.state.recurringPeriod}
                         />
@@ -625,7 +543,7 @@ class LaundrDay extends Component {
                         className={classes.mainButton}
                       >
                         {this.state.activeStep === steps.length - 1
-                          ? "Place order"
+                          ? "Set Laundr Day"
                           : "Next"}
                       </LoadingButton>
                     </div>

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import {
   withStyles,
-  TextField,
   Typography,
   List,
   ListItem,
@@ -11,25 +10,16 @@ import {
   Card,
   CardContent,
   CardHeader,
-  CardActions,
-  Button,
   Tooltip,
   ListItemSecondaryAction,
   ListItemAvatar,
-  Avatar,
-  Container,
-  Fade,
+  Avatar
 } from "@material-ui/core";
-import validator from "validator";
-import TooltipButton from "../../../../other/TooltipButton";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
-import CreateIcon from "@material-ui/icons/Create";
-import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
 import SettingsIcon from "@material-ui/icons/Settings";
 import NotInterestedIcon from "@material-ui/icons/NotInterested";
 import QueryBuilderIcon from "@material-ui/icons/QueryBuilder";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
-import DateRangeIcon from "@material-ui/icons/DateRange";
 import PropTypes from "prop-types";
 import reviewStyles from "../../../../../styles/User/Dashboard/components/NewOrder/components/reviewStyles";
 
@@ -74,205 +64,6 @@ class Review extends Component {
     });
   };
 
-  renderPriceComponent = () => {
-    const { currentUser, classes, loads, scented, lowTemp, delicates, separate, comforter } = this.props;
-
-    const priceMultiplier =
-      currentUser.subscription.status === "active" &&
-      currentUser.subscription.plan === "Family"
-        ? 1.2
-        : 1.5;
-    const balance = parseFloat(this.props.balance.slice(1));
-    const subtotal = loads * 18 * priceMultiplier;
-
-      let preferencesCost = 0;
-      if (separate == true) {
-        preferencesCost += 5;
-      }
-      if (comforter == true) {
-        preferencesCost += 5;
-      }
-
-      let addOnCost = 0;
-      if (delicates == true) {
-        addOnCost += 2;
-      }
-
-    if (
-      currentUser.subscription.status != "active" &&
-      currentUser.subscription.lbsLeft <= 0
-    ) {
-      const balanceDiscount = subtotal >= balance ? balance : subtotal;
-
-      return (
-        <React.Fragment>
-          <CardContent
-            className={classes.removePadding}
-            style={{ marginTop: -15, marginBottom: -15 }}
-          >
-            <List disablePadding>
-              <ListItem>
-                <ListItemText
-                  primary={"Subtotal"}
-                  secondary={`${loads * 18} lbs`}
-                  primaryTypographyProps={{ variant: "h6" }}
-                />
-                <Typography variant="body1">${subtotal.toFixed(2)}</Typography>
-              </ListItem>
-              {balance > 0 && balanceDiscount > 0 && (
-                <ListItem>
-                  <ListItemText
-                    primary={"Credit"}
-                    primaryTypographyProps={{ variant: "h6" }}
-                  />
-
-                  <Typography variant="body1">
-                    - ${balanceDiscount.toFixed(2)}
-                  </Typography>
-                </ListItem>
-              )}
-              {(scented || lowTemp || separate || comforter) && (
-              <ListItem>
-                <ListItemText
-                  primary={"Preferences"}
-                  secondary={
-                    <div>
-                        {scented ? <div>Scented (Free)</div> : null}
-                        {lowTemp ? <div>Low Temp. Tumble Dry (Free)</div> : null}
-                        {separate ? <div>Separate (+$5)</div> : null}
-                        {comforter ? <div>Added Comforter (+$5)</div> : null}
-                    </div>
-                  }
-                  primaryTypographyProps={{ variant: "h6" }}
-                />
-
-                <Typography variant="body1">
-                   ${preferencesCost.toFixed(2)}
-                </Typography>
-              </ListItem>
-            )}
-            
-            </List>
-          </CardContent>
-          <Divider />
-          <CardContent className={classes.removePadding}>
-            <Grid
-              container
-              direction="column"
-              justify="center"
-              alignItems="center"
-            >
-              <Grid item>
-                <Grid container justify="center">
-                  <Typography variant="h4" style={{ fontWeight: 600 }}>
-                    Total:&nbsp;
-                  </Typography>
-                  <Typography variant="h4" style={{ textAlign: "center" }}>
-                    ${(subtotal - balanceDiscount + preferencesCost + addOnCost).toFixed(2)}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Grid>
-          </CardContent>
-        </React.Fragment>
-      );
-    } else {
-      const lbsData = this.props.getLbsData();
-      const subLbsUsed = lbsData[1].value;
-      const subLbsDiscount = subLbsUsed * priceMultiplier;
-      const balanceDiscount =
-        subtotal - subLbsDiscount >= balance
-          ? balance
-          : subtotal - subLbsDiscount;
-
-      return (
-        <React.Fragment>
-          <CardContent
-            className={classes.removePadding}
-            style={{ marginTop: -15, marginBottom: -15 }}
-          >
-            <List disablePadding>
-              <ListItem>
-                <ListItemText
-                  primary={"Subtotal"}
-                  secondary={`${loads * 18} lbs`}
-                  primaryTypographyProps={{ variant: "h6" }}
-                />
-                <Typography variant="body1">${subtotal.toFixed(2)}</Typography>
-              </ListItem>
-              {subLbsUsed > 0 && (
-                <ListItem>
-                  <ListItemText
-                    primary={"Subscription Lbs"}
-                    secondary={`${subLbsUsed} lbs`}
-                    primaryTypographyProps={{ variant: "h6" }}
-                  />
-
-                  <Typography variant="body1">
-                    - ${subLbsDiscount.toFixed(2)}
-                  </Typography>
-                </ListItem>
-              )}
-              {balance > 0 && balanceDiscount > 0 && (
-                <ListItem>
-                  <ListItemText
-                    primary={"Credit"}
-                    primaryTypographyProps={{ variant: "h6" }}
-                  />
-
-                  <Typography variant="body1">
-                    - ${balanceDiscount.toFixed(2)}
-                  </Typography>
-                </ListItem>
-              )}
-               {(scented || lowTemp || separate || comforter) && (
-              <ListItem>
-                <ListItemText
-                  primary={"Preferences"}
-                  secondary={
-                    <div>
-                        {scented ? <div>Scented (Free)</div> : null}
-                        {lowTemp ? <div>Low Temp. Tumble Dry (Free)</div> : null}
-                        {separate ? <div>Separate (+$5)</div> : null}
-                        {comforter ? <div>Added Comforter (+$5)</div> : null}
-                    </div>
-                  }
-                  primaryTypographyProps={{ variant: "h6" }}
-                />
-
-                <Typography variant="body1">
-                   ${preferencesCost.toFixed(2)}
-                </Typography>
-              </ListItem>
-            )}
-            
-            </List>
-          </CardContent>
-          <Divider />
-          <CardContent className={classes.removePadding}>
-            <Grid
-              container
-              direction="column"
-              justify="center"
-              alignItems="center"
-            >
-              <Grid item>
-                <Grid container justify="center">
-                  <Typography variant="h4" style={{ fontWeight: 600 }}>
-                    Total:&nbsp;
-                  </Typography>
-                  <Typography variant="h4" style={{ textAlign: "center" }}>
-                    ${(subtotal - subLbsDiscount - balanceDiscount + preferencesCost + addOnCost).toFixed(2)}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Grid>
-          </CardContent>
-        </React.Fragment>
-      );
-    }
-  };
-
   render() {
     const {
       classes,
@@ -282,14 +73,11 @@ class Review extends Component {
       pickupTime,
       washerPreferences,
       scented,
-      delicates,
       separate,
       comforter,
       lowTemp,
       laundrDayOfWeek,
       recurringPeriod,
-      loads,
-      currentUser,
     } = this.props;
 
     const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -319,20 +107,6 @@ class Review extends Component {
                 {address}
             </Typography>
             </CardContent>
-            {/* <CardActions className={classes.cardFooter}>
-            <TooltipButton
-                text={
-                validator.isEmpty(addressPreferences, {
-                    ignore_whitespace: true,
-                })
-                    ? "N/A"
-                    : addressPreferences
-                }
-                className={classes.secondaryButton}
-                buttonText={"View Instructions"}
-                size="small"
-            />
-            </CardActions> */}
             <CardHeader
             avatar={
                 <QueryBuilderIcon
@@ -551,22 +325,7 @@ class Review extends Component {
                     </List>
                 </Grid>
             </Grid>
-            </CardContent>
-            {/* <CardActions className={classes.cardFooter}>
-            <TooltipButton
-                text={
-                validator.isEmpty(washerPreferences, {
-                    ignore_whitespace: true,
-                })
-                    ? "N/A"
-                    : washerPreferences
-                }
-                className={classes.secondaryButton}
-                buttonText={"View Instructions"}
-                size="small"
-            />
-            </CardActions> */}
-            
+            </CardContent>         
         </Card>
       </React.Fragment>
     );

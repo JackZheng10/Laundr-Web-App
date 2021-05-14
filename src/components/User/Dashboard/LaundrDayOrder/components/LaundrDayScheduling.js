@@ -7,12 +7,10 @@ import {
   Select,
   MenuItem,
   FormControl,
-  Tooltip,
   FormHelperText,
   ButtonGroup
 } from "@material-ui/core";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
-import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import PropTypes from "prop-types";
 import TooltipButton from "../../../../other/TooltipButton";
 import schedulingStyles from "../../../../../styles/User/Dashboard/components/NewOrder/components/schedulingStyles";
@@ -35,15 +33,9 @@ const timeTheme = createMuiTheme({
 });
 
 class Scheduling extends Component {
-  state = { openTime: false };
-
   render() {
     const {
       classes,
-      todaySelected,
-      today,
-      tomorrowSelected,
-      tomorrow,
       handleInputChange,
       getTimeAvailability,
       selectValue,
@@ -187,11 +179,6 @@ class Scheduling extends Component {
         </Grid>
         <Typography variant="h5" className={classes.title}>
           What's your preferred pickup time?
-          {/* <TooltipButton
-            icon={true}
-            style={{ marginTop: -8, marginBottom: -5 }}
-            text="Operating times are 10 AM to 8 PM, Monday to Friday. You will be able to schedule a delivery time after your clothes are weighed by the driver."
-          /> */}
         </Typography>
         <Grid
           container
@@ -265,13 +252,6 @@ class Scheduling extends Component {
             </ThemeProvider>
             </div>
           </Grid>
-          {/* <Grid item style={{ marginLeft: 5 }}>
-            <TooltipButton
-              icon={true}
-              style={{ marginTop: -8, marginBottom: -5 }}
-              text="Operating times are 10 AM to 8 PM, Monday to Friday. You'll be able to schedule a delivery time after your clothes are weighed by the driver."
-            />
-          </Grid> */}
         </Grid>
       </React.Fragment>
     );

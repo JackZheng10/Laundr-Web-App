@@ -8,16 +8,7 @@ import {
   Grid,
   Typography,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   CardActions,
-  FormControl,
-  Select,
-  MenuItem,
-  FormHelperText,
-  Tooltip,
   List,
   ListItem,
   ListItemAvatar,
@@ -27,22 +18,16 @@ import {
   Divider
 } from "@material-ui/core";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
-import { getCurrentUser } from "../../../../helpers/session";
 import { caughtError, showConsoleError } from "../../../../helpers/errors";
-import { MuiPickersUtilsProvider, TimePicker } from "@material-ui/pickers";
 import { withRouter } from "next/router";
 import compose from "recompose/compose";
-import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
-import DateFnsUtils from "@date-io/date-fns";
 import axios from "axios";
-import LoadingButton from "../../../other/LoadingButton";
 import MainAppContext from "../../../../contexts/MainAppContext";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
 import QueryBuilderIcon from "@material-ui/icons/QueryBuilder";
 import NotInterestedIcon from "@material-ui/icons/NotInterested";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import LocalMallIcon from "@material-ui/icons/LocalMall";
-import ProgressBar from "./components/ProgressBar";
 import orderStatusStyles from "../../../../styles/User/Dashboard/components/OrderStatus/orderStatusStyles";
 
 //0: order just placed
@@ -71,28 +56,6 @@ const timeTheme = createMuiTheme({
 class LaundrDayStatus extends Component {
   static contextType = MainAppContext;
 
-  constructor() {
-    super();
-
-    //moment(stuff) to construct objects used for comparison, before, etc.
-    //.format called on moment obj for raw strings to display or pass in for parsing to construct moment obj
-
-    this.today = moment().format("MM/DD/YYYY");
-    this.tomorrow = moment().add(1, "days").format("MM/DD/YYYY");
-
-    this.state = {
-      showDropoffDialog: false,
-      date: "N/A",
-      todaySelected: false,
-      tomorrowSelected: false,
-      formattedTime: "N/A",
-      selectValue: "",
-      lowerBound: null,
-      upperBound: null,
-    };
-  }
-
-  //THIS IS NOT RECEIVING A RESPONSE? BUT THE LAUNDR DAY IS BEING CANCELLED. IM CONFUSED
   handleLaundrDayCancel = async (laundrDay) => {
     try {
       const response = await axios.delete("/api/order/cancelLaundrDay", {
@@ -102,13 +65,12 @@ class LaundrDayStatus extends Component {
         withCredentials: true,
       });
 
-      console.log(response)
-
       if (!response.data.success && response.data.redirect) {
         this.props.router.push(response.data.message);
       } else {
         this.context.showAlert(
-          response.data.message
+          response.data.message,
+          this.props.fetchOrderInfo
         );
       }
     } catch (error) {

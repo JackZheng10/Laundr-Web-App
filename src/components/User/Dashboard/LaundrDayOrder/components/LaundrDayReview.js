@@ -81,6 +81,9 @@ class Review extends Component {
     } = this.props;
 
     const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const specialInstructionsText = 
+      <span><p><b>Washer Preferences: </b>{washerPreferences === "" ? "N/A" : washerPreferences}</p>
+      <p><b>Pickup/Dropoff: </b>{addressPreferences === "" ? "N/A" : addressPreferences}</p></span>
 
     return (
       <React.Fragment>
@@ -325,7 +328,22 @@ class Review extends Component {
                     </List>
                 </Grid>
             </Grid>
-            </CardContent>         
+            </CardContent> 
+            <CardHeader
+            title="Special Instructions"
+            titleTypographyProps={{
+                variant: "h5",
+                style: {
+                color: "white",
+                },
+            }}
+            className={classes.cardHeader}
+            />
+            <CardContent>
+            <Typography style={{ textAlign: "center", color: "black" }}>
+                {specialInstructionsText}
+            </Typography>
+            </CardContent>        
         </Card>
       </React.Fragment>
     );

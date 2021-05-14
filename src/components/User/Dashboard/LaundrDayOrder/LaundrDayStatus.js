@@ -29,6 +29,7 @@ import NotInterestedIcon from "@material-ui/icons/NotInterested";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import LocalMallIcon from "@material-ui/icons/LocalMall";
 import orderStatusStyles from "../../../../styles/User/Dashboard/components/OrderStatus/orderStatusStyles";
+import TooltipButton from "../../../other/TooltipButton";
 
 //0: order just placed
 //1: order accepted by driver to be picked up from user
@@ -85,7 +86,9 @@ class LaundrDayStatus extends Component {
     const lowTemp = laundrDay.data.order.lowTemp;
     const separate = laundrDay.data.order.separate;
     const comforter = laundrDay.data.order.comforter;
-      return (
+    const specialInstructionsText = <span><p><b>Washer Preferences: </b>{laundrDay.data.order.washerPrefs}</p><p><b>Pickup/Dropoff: </b>{laundrDay.data.order.addressPrefs}</p></span>
+      
+    return (
         <React.Fragment>
           <Typography variant="body1" style={{ fontWeight: 500 }}>
             <QueryBuilderIcon fontSize="small" style={{ marginBottom: -4 }} />{" "}
@@ -249,6 +252,14 @@ class LaundrDayStatus extends Component {
                     </List>
                 </Grid>
             </Grid>
+            <Typography variant="body1" style={{ fontWeight: 500 }}>
+              Special Instructions
+            </Typography>
+            <TooltipButton          
+                text={specialInstructionsText}
+                className={classes.secondaryButton}
+                buttonText={"View"}
+            />
         </React.Fragment>
       );
   };

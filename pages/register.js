@@ -253,8 +253,8 @@ class Register extends Component {
         case "password":
           if (value.length < 6 || !/[A-Z]+/.test(value)) {
             this.setState({
-              [input.name +
-              "ErrorMsg"]: "*Passwords must be at least 6 characters long and contain one capital letter.",
+              [input.name + "ErrorMsg"]:
+                "*Passwords must be at least 6 characters long and contain one capital letter.",
               [input.name + "Error"]: true,
             });
             valid = false;
@@ -269,8 +269,8 @@ class Register extends Component {
         case "phone":
           if (value.length < 10) {
             this.setState({
-              [input.name +
-              "ErrorMsg"]: "*Please enter a 10-digit phone number.",
+              [input.name + "ErrorMsg"]:
+                "*Please enter a 10-digit phone number.",
               [input.name + "Error"]: true,
             });
             valid = false;
@@ -790,7 +790,7 @@ const RegisterCSR = (props) => {
     props.router.push(redirectDestination);
 
     //since it takes a second before url is pushed
-    return <h1>redirecting... (placeholder)</h1>;
+    return <ProgressPage />;
   }
 
   return <Register {...props} />;

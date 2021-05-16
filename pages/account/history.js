@@ -26,21 +26,6 @@ import MainAppContext from "../../src/contexts/MainAppContext";
 import OrderTable from "../../src/components/Account/History/OrderTable/OrderTable";
 import historyStyles from "../../src/styles/User/Account/historyStyles";
 
-//0: order just placed
-//1: order accepted by driver to be picked up from user
-//2: weight entered
-//3: order dropped off to washer
-//4: order done by washer
-//5: order accept by driver to be delivered back to user
-//6: order delivered to user
-//7: canceled
-
-//configure for user, driver, washer
-//driver first
-//since this depends on current user, in ordercell and order card, render null until config passed in isnt "none"
-//todo: configure loading...make sure it makes sense
-//todo: test thoroughly
-
 class History extends Component {
   static contextType = MainAppContext;
 

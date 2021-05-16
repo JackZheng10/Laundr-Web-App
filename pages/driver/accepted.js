@@ -30,17 +30,6 @@ import MainAppContext from "../../src/contexts/MainAppContext";
 import OrderTable from "../../src/components/Driver/OrderTable/OrderTable";
 import acceptedStyles from "../../src/styles/Driver/Accepted/acceptedStyles";
 
-//todo: refresh list after completing an action, and THEN show the snackbar?
-
-//0: order just placed
-//1: order accepted by driver to be picked up from user
-//2: weight entered
-//3: order dropped off to washer
-//4: order done by washer
-//5: order accept by driver to be delivered back to user
-//6: order delivered to user
-//7: canceled
-
 //only display status 1 (need to enter weight), 2: (mark dropped to washer), 5: (mark delivered to user)
 
 class AcceptedDashboard extends Component {
@@ -186,13 +175,13 @@ class AcceptedDashboard extends Component {
     this.setState({ weightErrorMsg: "" });
   };
 
-  handleChargeCustomer = async (order) => {
+  handleWeighOrder = async (order) => {
     try {
       const userID = order.userInfo.userID;
       const orderID = order.orderInfo.orderID;
 
-      const response = await axios.post(
-        "/api/stripe/chargeCustomer",
+      const response = await axios.put(
+        "/api/stripe/weighOrder",
         {
           weight: this.state.weight,
           userID: userID,
@@ -244,11 +233,13 @@ class AcceptedDashboard extends Component {
   handleUserReceived = async (order) => {
     try {
       const orderID = order.orderInfo.orderID;
+      const userID = order.userInfo.userID;
 
       const response = await axios.put(
         "/api/driver/setUserDelivered",
         {
           orderID,
+          userID,
         },
         { withCredentials: true }
       );
@@ -337,7 +328,7 @@ class AcceptedDashboard extends Component {
               weightErrorMsg={this.state.weightErrorMsg}
               handleWeightChange={this.handleWeightChange}
               validateWeightMinimum={this.validateWeightMinimum}
-              handleChargeCustomer={this.handleChargeCustomer}
+              handleWeighOrder={this.handleWeighOrder}
               handleClearWeightError={this.handleClearWeightError}
               handleWasherReceived={this.handleWasherReceived}
               handleUserReceived={this.handleUserReceived}

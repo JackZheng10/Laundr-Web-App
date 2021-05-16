@@ -46,6 +46,7 @@ import orderStatusStyles from "../../../../styles/User/Dashboard/components/Orde
 //6: order delivered to user
 //7: canceled
 //8: fulfilled (user confirmed theyve seen the status on it)
+//9: admin: order could not be charged
 
 //todo: gold button focus for dropoff and cancel
 
@@ -369,11 +370,11 @@ class OrderStatus extends Component {
 
     if (!this.state.todaySelected && !this.state.tomorrowSelected) {
       //if no date selected
-      this.context.showAlert("Please select a pickup date.");
+      this.context.showAlert("Please select a dropoff date.");
       canNext = false;
     } else if (!this.state.lowerBound || !this.state.upperBound) {
       //if no time selected
-      this.context.showAlert("Please select a pickup time.");
+      this.context.showAlert("Please select a dropoff time.");
       canNext = false;
     } else if (this.state.todaySelected && now.isSameOrAfter(upperBound)) {
       this.context.showAlert(
@@ -385,7 +386,7 @@ class OrderStatus extends Component {
       now.diff(scheduledLowerBound, "minutes") >= -29
     ) {
       this.context.showAlert(
-        "Sorry! Pickup time must be at least 30 minutes in advance."
+        "Sorry! Dropoff time must be at least 30 minutes in advance."
       );
       canNext = false;
     }
@@ -572,7 +573,7 @@ class OrderStatus extends Component {
                 <Typography variant="h5" gutterBottom>
                   What day would you like your order to be dropped off?
                 </Typography>
-                <Grid container spacing={2} style={{ marginBottom: 5 }}>
+                <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
                     {todayNotAvailable && (
                       <Tooltip
@@ -645,6 +646,11 @@ class OrderStatus extends Component {
                     </Button>
                   </Grid>
                 </Grid>
+                {this.state.todaySelected && (
+                  <Typography variant="caption" gutterBottom>
+                    *Same-day delivery costs $0.25/lb
+                  </Typography>
+                )}
                 <Typography variant="h5" className={classes.title}>
                   What's your preferred dropoff time?
                 </Typography>
@@ -732,12 +738,7 @@ class OrderStatus extends Component {
                       <Button
                         size="medium"
                         variant="contained"
-                        className={
-                          order.dropoffInfo.time === "N/A" &&
-                          order.orderInfo.status > 2
-                            ? classes.secondaryButton
-                            : classes.mainButton
-                        }
+                        className={classes.mainButton}
                         onClick={() => {
                           order.orderInfo.status === 6
                             ? this.handleConfirmReceived(order)

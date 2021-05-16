@@ -431,7 +431,7 @@ const LoginCSR = (props) => {
     props.router.push(redirectDestination);
 
     //since it takes a second before url is pushed
-    return <h1>redirecting... (placeholder)</h1>;
+    return <ProgressPage />;
   }
 
   return <Login {...props} />;

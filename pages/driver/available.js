@@ -29,18 +29,6 @@ import MainAppContext from "../../src/contexts/MainAppContext";
 import OrderTable from "../../src/components/Driver/OrderTable/OrderTable";
 import availableStyles from "../../src/styles/Driver/Available/availableStyles";
 
-//todo: https://www.npmjs.com/package/react-infinite-scroll-component for orders and stuff
-//also put inside of a scrollview type thing, or pad so table doesnt stretch all the way
-
-//0: order just placed
-//1: order accepted by driver to be picked up from user
-//2: weight entered
-//3: order dropped off to washer
-//4: order done by washer
-//5: order accept by driver to be delivered back to user
-//6: order delivered to user
-//7: canceled
-
 //only display status 0 and 4, ones able to be "accepted"
 
 class AvailableDashboard extends Component {

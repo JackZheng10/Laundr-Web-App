@@ -403,12 +403,11 @@ class OrderTable extends Component {
 
   handleWeightEntered = async () => {
     if (this.props.validateWeightMinimum()) {
-      //passed weight check, so attempt to charge
-      const response_one = await this.props.handleChargeCustomer(
+      //passed weight check, so attempt to weigh order
+      const response_one = await this.props.handleWeighOrder(
         this.state.currentOrder
       );
 
-      //if charge unsuccessful
       if (!response_one.data.success) {
         if (response_one.data.redirect) {
           this.props.router.push(response_one.data.message);

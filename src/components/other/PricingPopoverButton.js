@@ -77,7 +77,7 @@ const PricingPopoverButton = (props) => {
             style={priceStyles}
             gutterBottom
           >
-            {order.orderInfo.cost === "-1" ? "N/A" : order.orderInfo.cost}
+            {order.orderInfo.cost === "-1" ? "TBD" : order.orderInfo.cost}
           </Typography>
         </Grid>
       </Grid>
@@ -119,6 +119,23 @@ const PricingPopoverButton = (props) => {
                           primaryTypographyProps={{ variant: "h6" }}
                         />
                         <Typography variant="body1">$10.00</Typography>
+                      </ListItem>
+                    )}
+                    {order.dropoffInfo.date === order.pickupInfo.date && (
+                      <ListItem>
+                        <ListItemText
+                          primary={"Delivery"}
+                          secondary={"Same-day"}
+                          primaryTypographyProps={{ variant: "h6" }}
+                        />
+                        <Typography variant="body1">
+                          {(
+                            (order.orderInfo.weight * 25).toFixed(0) / 100
+                          ).toLocaleString("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                          })}
+                        </Typography>
                       </ListItem>
                     )}
                     {parseFloat(subLbsDiscount.slice(1)) > 0 && (

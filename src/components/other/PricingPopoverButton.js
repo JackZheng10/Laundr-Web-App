@@ -77,11 +77,13 @@ const PricingPopoverButton = (props) => {
             style={priceStyles}
             gutterBottom
           >
-            {order.orderInfo.cost === "-1" ? "TBD" : order.orderInfo.cost}
+            {order.pricingInfo.total === "N/A"
+              ? "TBD"
+              : order.pricingInfo.total}
           </Typography>
         </Grid>
       </Grid>
-      {order.orderInfo.cost != "-1" && (
+      {order.pricingInfo.total != "-1" && (
         <Grid item style={{ marginTop: -10 }}>
           <PopoverButton
             className={classes.secondaryButton}

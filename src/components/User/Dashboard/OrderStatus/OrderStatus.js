@@ -469,7 +469,7 @@ class OrderStatus extends Component {
     //if order is done, show it
     if (order.orderInfo.status === 6) {
       return (
-        <Typography variant="body1" style={{ fontWeight: 500, fontSize: 20 }}>
+        <Typography variant="h6" style={{ fontWeight: 500, fontSize: 20 }}>
           Your order was delivered!
         </Typography>
       );
@@ -504,11 +504,6 @@ class OrderStatus extends Component {
               ? "TBD"
               : `${order.orderInfo.weight} lbs`}
           </Typography>
-          {/* <Typography variant="h5" style={{ marginBottom: -10 }}>
-            {order.orderInfo.cost === "-1"
-              ? "Price: TBD"
-              : `Price: ${order.orderInfo.cost}`}
-          </Typography> */}
           <PricingPopoverButton
             showPriceLabel={true}
             order={order}

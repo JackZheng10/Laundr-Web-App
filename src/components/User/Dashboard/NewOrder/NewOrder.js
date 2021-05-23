@@ -170,7 +170,6 @@ class NewOrder extends Component {
       const response = await axios.post(
         "/api/order/placeOrder",
         {
-          coupon: "placeholder",
           scented: this.state.scented,
           lowTemp: this.state.lowTemp,
           separate: this.state.separate,

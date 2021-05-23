@@ -20,7 +20,12 @@ import {
 } from "../../src/utility/borders";
 import { withRouter } from "next/router";
 import { GetServerSideProps } from "next";
-import { ErrorPage, ProgressPage } from "../../src/components/other";
+import {
+  ErrorPage,
+  ProgressPage,
+  LoadingButton,
+  PricingPopoverButton,
+} from "../../src/components/other";
 import { caughtError, showConsoleError } from "../../src/helpers/errors";
 import { GET_SWR, getFilterConfig, hasPageAccess } from "../../src/helpers/swr";
 import useSWR from "swr";
@@ -61,13 +66,45 @@ class Dashboard extends Component {
     window.location.reload();
   };
 
+  retryPayment = async (orderID, invoiceID) => {
+    try {
+      const response = await axios.put(
+        "/api/stripe/retryPayment",
+        {
+          invoiceID,
+          orderID,
+        },
+        { withCredentials: true }
+      );
+
+      if (!response.data.success) {
+        if (response.data.redirect) {
+          this.props.router.push(response.data.message);
+        } else {
+          this.context.showAlert(response.data.message);
+        }
+      } else {
+        this.context.showAlert(response.data.message, () => {
+          window.location.reload();
+        });
+      }
+    } catch (error) {
+      showConsoleError("retrying payment", error);
+      this.context.showAlert(caughtError("retrying payment", error, 99));
+    }
+  };
+
   renderOrderComponent = (classes) => {
     const { componentName, order, balance, currentUser } = this.props;
 
     switch (componentName) {
       case "set_payment":
         return (
-          <Card className={classes.infoCard} elevation={10}>
+          <Card
+            className={classes.infoCard}
+            style={{ marginTop: 25 }}
+            elevation={10}
+          >
             <CardHeader
               title="Missing Payment Method"
               titleTypographyProps={{
@@ -79,7 +116,7 @@ class Dashboard extends Component {
               className={classes.cardHeader}
             />
             <CardContent>
-              <Typography variant="body1">
+              <Typography variant="h6">
                 Please add a payment method to continue.
               </Typography>
             </CardContent>
@@ -108,13 +145,66 @@ class Dashboard extends Component {
         );
 
       case "order_status":
-        return (
-          <OrderStatus
-            order={order}
-            currentUser={currentUser}
-            fetchOrderInfo={this.fetchOrderInfo}
-          />
-        );
+        if (order.orderInfo.status === 9) {
+          return (
+            <Card
+              className={classes.infoCard}
+              elevation={10}
+              style={{ marginTop: 25 }}
+            >
+              <CardHeader
+                title={`Order ID: #${order.orderInfo.orderID}`}
+                titleTypographyProps={{
+                  variant: "h4",
+                  style: {
+                    color: "white",
+                  },
+                }}
+                className={classes.cardHeader}
+              />
+              <CardContent>
+                <PricingPopoverButton
+                  showPriceLabel={true}
+                  order={order}
+                  currentUser={currentUser}
+                  containerStyles={{ marginBottom: 5 }}
+                  labelStyles={{ fontWeight: 600 }}
+                  priceVariant="h4"
+                  labelVariant="h4"
+                />
+                <Typography variant="h6">
+                  Your payment failed for this order. Please add a different
+                  card if needed and retry using the button below to continue
+                  using Laundr. If you need assistance, don't hesitate to
+                  contact us.
+                </Typography>
+              </CardContent>
+              <CardActions className={classes.cardFooter}>
+                <LoadingButton
+                  size="medium"
+                  variant="contained"
+                  onClick={() =>
+                    this.retryPayment(
+                      order.orderInfo.orderID,
+                      order.orderInfo.invoiceID
+                    )
+                  }
+                  className={classes.mainButton}
+                >
+                  Retry
+                </LoadingButton>
+              </CardActions>
+            </Card>
+          );
+        } else {
+          return (
+            <OrderStatus
+              order={order}
+              currentUser={currentUser}
+              fetchOrderInfo={this.fetchOrderInfo}
+            />
+          );
+        }
     }
   };
 

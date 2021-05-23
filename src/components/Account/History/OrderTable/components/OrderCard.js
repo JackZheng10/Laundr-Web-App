@@ -160,6 +160,39 @@ const WeightCard = (order) => {
   );
 };
 
+//status user
+const StatusCardUser = (order) => {
+  return (
+    <Grid item>
+      <Grid container justify="center">
+        <Typography
+          variant="body1"
+          style={{ fontWeight: 600, color: "#01C9E1" }}
+          gutterBottom
+        >
+          Status:&nbsp;
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          {renderStatusUser(order.orderInfo.status)}
+        </Typography>
+      </Grid>
+    </Grid>
+  );
+};
+
+const renderStatusUser = (status) => {
+  switch (status) {
+    case 6:
+      return "Delivered";
+    case 7:
+      return "Cancelled";
+    case 8:
+      return "Completed";
+    case 9:
+      return "Failed Payment";
+  }
+};
+
 //status driver
 const StatusCardDriver = (order) => {
   return (
@@ -187,6 +220,8 @@ const renderStatusDriver = (status) => {
     case 7:
       return "Cancelled";
     case 8:
+      return "Completed";
+    case 9:
       return "Completed";
   }
 };
@@ -390,7 +425,7 @@ const OrderCard = (props) => {
                   />
                 </Grid>
                 {WeightCard(order)}
-                {StatusCardDriver(order)}
+                {StatusCardUser(order)}
                 {DateTimeCard(order)}
                 <Grid item style={{ marginBottom: 10 }}>
                   <TooltipButton

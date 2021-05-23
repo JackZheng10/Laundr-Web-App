@@ -197,6 +197,29 @@ const renderWasherPrefs = (order) => {
   return prefs;
 };
 
+const StatusCellUser = (order) => {
+  return (
+    <TableCell>
+      <Typography variant="body1">
+        {renderStatusUser(order.orderInfo.status)}
+      </Typography>
+    </TableCell>
+  );
+};
+
+const renderStatusUser = (status) => {
+  switch (status) {
+    case 6:
+      return "Delivered";
+    case 7:
+      return "Cancelled";
+    case 8:
+      return "Completed";
+    case 9:
+      return "Failed Payment";
+  }
+};
+
 const StatusCellDriver = (order) => {
   return (
     <TableCell>
@@ -214,6 +237,8 @@ const renderStatusDriver = (status) => {
     case 7:
       return "Cancelled";
     case 8:
+      return "Completed";
+    case 9:
       return "Completed";
   }
 };
@@ -323,7 +348,7 @@ const OrderCell = (props) => {
                 </Grid>
               </Grid>
             </TableCell>
-            {StatusCellDriver(order)}
+            {StatusCellUser(order)}
           </React.Fragment>
         );
     }

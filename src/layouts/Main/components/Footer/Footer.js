@@ -16,6 +16,8 @@ import FacebookIcon from "@material-ui/icons/Facebook";
 import InstagramIcon from "@material-ui/icons/Instagram";
 import TwitterIcon from "@material-ui/icons/Twitter";
 
+const web = process.env.WEB || require("../../../../config").web;
+
 class Footer extends Component {
   render() {
     const classes = this.props.classes;
@@ -101,43 +103,45 @@ class Footer extends Component {
                   </MUILink>
                 </Grid>
               </Grid>
-              <Grid item className={classes.item}>
-                <Grid
-                  container
-                  container
-                  direction="row"
-                  justify="center"
-                  alignItems="center"
-                  spacing={2}
-                >
-                  <Grid item>
-                    <MUILink
-                      href="https://play.google.com/store/apps/details?id=app.laundr2.main&hl=en_US&gl=US"
-                      target="_blank"
-                      rel="noopener"
-                    >
-                      <img
-                        src="/images/google-play.svg"
-                        height={40}
-                        width={135}
-                      />
-                    </MUILink>
-                  </Grid>
-                  <Grid item>
-                    <MUILink
-                      href="https://apps.apple.com/us/app/laundr-on-demand/id1289150426"
-                      target="_blank"
-                      rel="noopener"
-                    >
-                      <img
-                        src="/images/app-store-white.svg"
-                        height={40}
-                        width={121}
-                      />
-                    </MUILink>
+              {web === "true" && (
+                <Grid item className={classes.item}>
+                  <Grid
+                    container
+                    container
+                    direction="row"
+                    justify="center"
+                    alignItems="center"
+                    spacing={2}
+                  >
+                    <Grid item>
+                      <MUILink
+                        href="https://play.google.com/store/apps/details?id=app.laundr2.main&hl=en_US&gl=US"
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        <img
+                          src="/images/google-play.svg"
+                          height={40}
+                          width={135}
+                        />
+                      </MUILink>
+                    </Grid>
+                    <Grid item>
+                      <MUILink
+                        href="https://apps.apple.com/us/app/laundr-on-demand/id1289150426"
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        <img
+                          src="/images/app-store-white.svg"
+                          height={40}
+                          width={121}
+                        />
+                      </MUILink>
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
+              )}
             </Grid>
             <Hidden only={["xs"]}>
               <Grid container justify="center">

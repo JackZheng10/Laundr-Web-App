@@ -45,7 +45,7 @@ const MyApp = (props) => {
         </Head>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <h1>Currently under maintenance (placeholder)</h1>
+          <h1>Currently under maintenance</h1>
         </ThemeProvider>
       </React.Fragment>
     );

@@ -10,4 +10,5 @@ module.exports = {
     publishableKEY: "", //place your stripe publishable key here
   },
   baseURL: "", //place baseURL used for network requests, if not using environment variable
+  web: "", //if current build is for web or not
 };

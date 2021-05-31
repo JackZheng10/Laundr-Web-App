@@ -11,4 +11,5 @@ module.exports = {
   },
   baseURL: "", //place baseURL used for network requests, if not using environment variable
   web: "", //if current build is for web or not
+  version: "", //current version of app
 };

@@ -4,6 +4,9 @@ import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 import { Typography, Button, colors, Link } from "@material-ui/core";
 
+const version =
+  process.env.VERSION || require("./../../../../../../config").version;
+
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: colors.grey[50],
@@ -61,7 +64,7 @@ const Signature = (props) => {
         align="center"
         style={{ fontWeight: 500, color: "#01c9e1" }}
       >
-        App Version: 1.0
+        App Version: {version}
       </Typography>
       {/* <Typography variant="body2" align="center">
         <Link

@@ -4,9 +4,6 @@ import PropTypes from "prop-types";
 import preferencesStyles from "../../../../../../styles/User/Dashboard/components/NewOrder/components/Preferences/preferencesStyles";
 import PreferenceCard from "./components/PreferenceCard";
 
-//todo: make the damn cards center. redo the layouts of everything based on how i would do it (ie personal site)
-//todo: make the tooltip clicking, not hover
-
 class Preferences extends Component {
   state = {
     charCount: 0,
@@ -33,10 +30,16 @@ class Preferences extends Component {
         <Typography variant="h5" gutterBottom>
           Would you like any of these options?
         </Typography>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
+        <Grid
+          container
+          spacing={3}
+          direction="row"
+          justify="center"
+          alignItems="center"
+        >
+          <Grid item>
             <PreferenceCard
-              title="Scented"
+              title="Scented (Free)"
               info="Unscented detergent is hypoallergenic."
               unselectedImage="/images/NewOrder/ScentedUnselected.png"
               selectedImage="/images/NewOrder/ScentedSelected.png"
@@ -45,21 +48,21 @@ class Preferences extends Component {
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item>
             <PreferenceCard
-              title="Delicates"
-              info="Delicate clothing is washed in a mesh bag and dried on low heat."
-              unselectedImage="/images/NewOrder/DelicatesUnselected.png"
-              selectedImage="/images/NewOrder/DelicatesSelected.png"
+              title="Low Temp. Dry (Free)"
+              info="A gentle alternative to hang drying. May cause thick fabrics to be slightly damp when returned."
+              unselectedImage="/images/NewOrder/LowTempUnselected.png"
+              selectedImage="/images/NewOrder/LowTempSelected.png"
               handleInputChange={(selected) => {
-                handleInputChange("delicates", selected);
+                handleInputChange("lowTemp", selected);
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item>
             <PreferenceCard
-              title="Separate"
-              info="Separated clothing is divided into whites and colors."
+              title="Separate (+$5)"
+              info="Separated clothing is divided into whites and colors. Whites will be bleached."
               unselectedImage="/images/NewOrder/SeparateUnselected.png"
               selectedImage="/images/NewOrder/SeparateSelected.png"
               handleInputChange={(selected) => {
@@ -67,14 +70,14 @@ class Preferences extends Component {
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item>
             <PreferenceCard
-              title="Towels and Sheets"
-              info="Towels and sheets are washed separately and dried on high heat."
+              title="Comforter (+$10)"
+              info="Large comforters require extra care and a longer dry cycle. Items containing real or synthetic down should not be sent."
               unselectedImage="/images/NewOrder/TowelsUnselected.png"
               selectedImage="/images/NewOrder/TowelsSelected.png"
               handleInputChange={(selected) => {
-                handleInputChange("towelsSheets", selected);
+                handleInputChange("comforter", selected);
               }}
             />
           </Grid>

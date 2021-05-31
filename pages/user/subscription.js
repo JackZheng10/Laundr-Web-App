@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { withStyles, Grid, Typography } from "@material-ui/core";
 import { Layout } from "../../src/layouts";
-import { getCurrentUser } from "../../src/helpers/session";
+import { ErrorPage, ProgressPage } from "../../src/components/other";
 import {
   TopBorderDarkPurple,
   BottomBorderDarkPurple,
@@ -11,14 +11,12 @@ import {
 } from "../../src/utility/borders";
 import { GetServerSideProps } from "next";
 import { withRouter } from "next/router";
-import {
-  getExistingOrder_SSR,
-  getCurrentUser_SSR,
-} from "../../src/helpers/ssr";
+import { GET_SWR, getFilterConfig, hasPageAccess } from "../../src/helpers/swr";
+import useSWR from "swr";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import jwtDecode from "jwt-decode";
-import axios from "axios";
+import axios from "../../src/helpers/axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import SubscriptionBoxes from "../../src/components/User/Subscription/SubscriptionBoxes/SubscriptionBoxes";
 import SubscriptionStatus from "../../src/components/User/Subscription/SubscriptionStatus/SubscriptionStatus";
@@ -29,21 +27,8 @@ import subscriptionStyles from "../../src/styles/User/Subscription/subscriptionS
 class Subscription extends Component {
   static contextType = MainAppContext;
 
-  componentDidMount = () => {
-    const { fetch_SSR } = this.props;
-
-    if (!fetch_SSR.success) {
-      this.context.showAlert(fetch_SSR.message);
-    }
-  };
-
   renderSubscriptionComponent = () => {
-    const { fetch_SSR } = this.props;
-    const currentUser = fetch_SSR.userInfo;
-
-    if (!fetch_SSR.success) {
-      return <div></div>;
-    }
+    const { currentUser } = this.props;
 
     if (currentUser.subscription.status === "active") {
       return (
@@ -75,10 +60,10 @@ class Subscription extends Component {
   };
 
   render() {
-    const { classes, fetch_SSR } = this.props;
+    const { classes, currentUser } = this.props;
 
     return (
-      <Layout currentUser={fetch_SSR.success ? fetch_SSR.userInfo : null}>
+      <Layout currentUser={currentUser}>
         <Grid
           container
           spacing={0}
@@ -121,95 +106,28 @@ Subscription.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export async function getServerSideProps(context) {
-  //fetch current user
-  const response_one = await getCurrentUser_SSR(context);
+const SubscriptionCSR = (props) => {
+  const { data: response, error } = useSWR("/api/user/getCurrentUser", GET_SWR);
 
-  //check for redirect needed due to invalid session or error in fetching
-  if (!response_one.data.success) {
-    if (response_one.data.redirect) {
-      return {
-        redirect: {
-          destination: response_one.data.message,
-          permanent: false,
-        },
-      };
-    } else {
-      return {
-        props: {
-          fetch_SSR: {
-            success: false,
-            message: response_one.data.message,
-          },
-        },
-      };
-    }
+  if (error) return <ErrorPage text={error.message} />;
+  if (!response) return <ProgressPage />;
+
+  const currentUser = response.data.message;
+
+  if (!response.data.success) {
+    props.router.push(response.data.message);
+    return <ProgressPage />;
   }
 
-  //check for permissions to access page if no error from fetching user
-  const currentUser = response_one.data.message;
-  const urlSections = context.resolvedUrl.split("/");
-
-  switch (urlSections[1]) {
-    case "user":
-      if (currentUser.isDriver || currentUser.isWasher || currentUser.isAdmin) {
-        return {
-          redirect: {
-            destination: "/accessDenied",
-            permanent: false,
-          },
-        };
-      }
-      break;
-
-    case "washer":
-      if (!currentUser.isWasher) {
-        return {
-          redirect: {
-            destination: "/accessDenied",
-            permanent: false,
-          },
-        };
-      }
-      break;
-
-    case "driver":
-      if (!currentUser.isDriver) {
-        return {
-          redirect: {
-            destination: "/accessDenied",
-            permanent: false,
-          },
-        };
-      }
-      break;
-
-    case "admin":
-      if (!currentUser.isAdmin) {
-        return {
-          redirect: {
-            destination: "/accessDenied",
-            permanent: false,
-          },
-        };
-      }
-      break;
+  if (!hasPageAccess(currentUser, window)) {
+    props.router.push("/accessDenied");
+    return <ProgressPage />;
   }
 
-  //everything ok, so current user is fetched (currentUser is valid)
-
-  //return info for fetched user, available via props
-  return {
-    props: {
-      fetch_SSR: {
-        success: true,
-        userInfo: currentUser,
-      },
-    },
-  };
-}
+  return <Subscription currentUser={currentUser} {...props} />;
+};
 
 export default compose(
   withRouter,
   withStyles(subscriptionStyles)
-)(Subscription);
+)(SubscriptionCSR);

@@ -24,7 +24,8 @@ const LightTooltip = withStyles((theme) => ({
   },
 }))(Tooltip);
 
-class PopoverButton extends Component {
+//text only
+class TooltipButton extends Component {
   state = { open: false };
 
   togglePopover = () => {
@@ -106,4 +107,4 @@ class PopoverButton extends Component {
   }
 }
 
-export default PopoverButton;
+export default TooltipButton;

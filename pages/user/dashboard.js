@@ -20,15 +20,18 @@ import {
 } from "../../src/utility/borders";
 import { withRouter } from "next/router";
 import { GetServerSideProps } from "next";
-import { getCurrentUser } from "../../src/helpers/session";
-import { caughtError, showConsoleError } from "../../src/helpers/errors";
 import {
-  getExistingOrder_SSR,
-  getCurrentUser_SSR,
-} from "../../src/helpers/ssr";
+  ErrorPage,
+  ProgressPage,
+  LoadingButton,
+  PricingPopoverButton,
+} from "../../src/components/other";
+import { caughtError, showConsoleError } from "../../src/helpers/errors";
+import { GET_SWR, getFilterConfig, hasPageAccess } from "../../src/helpers/swr";
+import useSWR from "swr";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
-import axios from "axios";
+import axios from "../../src/helpers/axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import NewOrder from "../../src/components/User/Dashboard/NewOrder/NewOrder";
 import OrderStatus from "../../src/components/User/Dashboard/OrderStatus/OrderStatus";
@@ -55,43 +58,53 @@ import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 //redo register, login, forgot pwd, acc details, order notes validation (anywhere else that needs input like entering weight)
 //make sure all routes with authentication also have authorization
 
-const baseURL =
-  process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
-
 class Dashboard extends Component {
   static contextType = MainAppContext;
-
-  state = {
-    orderComponent: null,
-    orderComponentName: "",
-    userFname: "",
-  };
-
-  componentDidMount = async () => {
-    const { fetch_SSR } = this.props;
-
-    //check for error on fetching initial info via SSR. if this has appeared, nothing will render for the order component so its ok
-    if (!fetch_SSR.success) {
-      this.context.showAlert(fetch_SSR.message);
-    }
-  };
 
   //to refresh order info, just reload the page
   fetchOrderInfo = () => {
     window.location.reload();
   };
 
-  renderOrderComponent = (classes) => {
-    const { fetch_SSR } = this.props;
+  retryPayment = async (orderID, invoiceID) => {
+    try {
+      const response = await axios.put(
+        "/api/stripe/retryPayment",
+        {
+          invoiceID,
+          orderID,
+        },
+        { withCredentials: true }
+      );
 
-    if (!fetch_SSR.success) {
-      return <div></div>;
+      if (!response.data.success) {
+        if (response.data.redirect) {
+          this.props.router.push(response.data.message);
+        } else {
+          this.context.showAlert(response.data.message);
+        }
+      } else {
+        this.context.showAlert(response.data.message, () => {
+          window.location.reload();
+        });
+      }
+    } catch (error) {
+      showConsoleError("retrying payment", error);
+      this.context.showAlert(caughtError("retrying payment", error, 99));
     }
+  };
 
-    switch (fetch_SSR.orderInfo.componentName) {
+  renderOrderComponent = (classes) => {
+    const { componentName, order, balance, currentUser } = this.props;
+
+    switch (componentName) {
       case "set_payment":
         return (
-          <Card className={classes.infoCard} elevation={10}>
+          <Card
+            className={classes.infoCard}
+            style={{ marginTop: 25 }}
+            elevation={10}
+          >
             <CardHeader
               title="Missing Payment Method"
               titleTypographyProps={{
@@ -103,7 +116,7 @@ class Dashboard extends Component {
               className={classes.cardHeader}
             />
             <CardContent>
-              <Typography variant="body1">
+              <Typography variant="h6">
                 Please add a payment method to continue.
               </Typography>
             </CardContent>
@@ -126,19 +139,72 @@ class Dashboard extends Component {
         return (
           <NewOrder
             fetchOrderInfo={this.fetchOrderInfo}
-            currentUser={fetch_SSR.userInfo}
-            balance={fetch_SSR.balance}
+            currentUser={currentUser}
+            balance={balance}
           />
         );
 
       case "order_status":
-        return (
-          <OrderStatus
-            order={fetch_SSR.orderInfo.message}
-            currentUser={fetch_SSR.userInfo}
-            fetchOrderInfo={this.fetchOrderInfo}
-          />
-        );
+        if (order.orderInfo.status === 9) {
+          return (
+            <Card
+              className={classes.infoCard}
+              elevation={10}
+              style={{ marginTop: 25 }}
+            >
+              <CardHeader
+                title={`Order ID: #${order.orderInfo.orderID}`}
+                titleTypographyProps={{
+                  variant: "h4",
+                  style: {
+                    color: "white",
+                  },
+                }}
+                className={classes.cardHeader}
+              />
+              <CardContent>
+                <PricingPopoverButton
+                  showPriceLabel={true}
+                  order={order}
+                  currentUser={currentUser}
+                  containerStyles={{ marginBottom: 5 }}
+                  labelStyles={{ fontWeight: 600 }}
+                  priceVariant="h4"
+                  labelVariant="h4"
+                />
+                <Typography variant="h6">
+                  Your payment failed for this order. Please add a different
+                  card if needed and retry using the button below to continue
+                  using Laundr. If you need assistance, don't hesitate to
+                  contact us.
+                </Typography>
+              </CardContent>
+              <CardActions className={classes.cardFooter}>
+                <LoadingButton
+                  size="medium"
+                  variant="contained"
+                  onClick={() =>
+                    this.retryPayment(
+                      order.orderInfo.orderID,
+                      order.orderInfo.invoiceID
+                    )
+                  }
+                  className={classes.mainButton}
+                >
+                  Retry
+                </LoadingButton>
+              </CardActions>
+            </Card>
+          );
+        } else {
+          return (
+            <OrderStatus
+              order={order}
+              currentUser={currentUser}
+              fetchOrderInfo={this.fetchOrderInfo}
+            />
+          );
+        }
     }
   };
 
@@ -159,10 +225,10 @@ class Dashboard extends Component {
   };
 
   render() {
-    const { classes, fetch_SSR } = this.props;
+    const { classes, currentUser, componentName, order } = this.props;
 
     return (
-      <Layout currentUser={fetch_SSR.success ? fetch_SSR.userInfo : null}>
+      <Layout currentUser={currentUser}>
         <Grid
           container
           spacing={0}
@@ -178,9 +244,7 @@ class Dashboard extends Component {
                 className={classes.welcomeText}
                 gutterBottom
               >
-                {`Welcome, ${
-                  fetch_SSR.success ? fetch_SSR.userInfo.fname : ""
-                }`}
+                {`Welcome, ${currentUser.fname}`}
               </Typography>
             </Paper>
           </Grid>
@@ -190,9 +254,7 @@ class Dashboard extends Component {
               className={classes.orderComponentName}
               gutterBottom
             >
-              {this.renderOrderComponentName(
-                fetch_SSR.success ? fetch_SSR.orderInfo.componentName : ""
-              )}
+              {this.renderOrderComponentName(componentName)}
             </Typography>
           </Grid>
         </Grid>
@@ -206,101 +268,9 @@ class Dashboard extends Component {
           direction="column"
           justify="center"
           alignItems="center"
-          // style={{ backgroundImage: `url("/images/space.png")` }}
         >
           <Grid item>{this.renderOrderComponent(classes)}</Grid>
         </Grid>
-        {/* <div style={{ position: "relative", marginTop: 50 }}>
-          <TopBorderBlue />
-        </div> */}
-        {/* </Grid> */}
-        {/* <Grid
-          container
-          spacing={0}
-          direction="column"
-          justify="center"
-          alignItems="center" 
-          style={{ backgroundColor: "#01C9E1" }}
-        >
-          <Grid item>
-            <Typography variant="h1" className={classes.carouselTitle}>
-              Check these out!
-            </Typography>
-          </Grid>
-          <Grid item>
-            <div className={classes.layout}>
-              <div id="carouselContainer">
-                <AutoRotatingCarousel
-                  open={true}
-                  autoplay={true}
-                  mobile={false}
-                  interval={6000}
-                  style={{ position: "absolute" }}
-                >
-                  <Slide
-                    media={
-                      <img
-                        src="/images/UserDashboard/LaundrBombs_New.png"
-                        alt="Laundr Bombs"
-                      />
-                    }
-                    mediaBackgroundStyle={{ backgroundColor: "#DC3825" }}
-                    style={{ backgroundColor: "#A2261D" }}
-                    title="Try our new Laundr Bombs"
-                    subtitle="Freshen up your laundry with specialized scents!"
-                    buttonText="Learn more"
-                    buttonLink="https://www.laundr.io/laundr-bombs/"
-                  />
-                  <Slide
-                    media={
-                      <img
-                        src="/images/UserDashboard/StudentPlanLogo.png"
-                        alt="Student Subscriptions"
-                      />
-                    }
-                    mediaBackgroundStyle={{ backgroundColor: "#2F92EA" }}
-                    style={{ backgroundColor: "#0E62AE" }}
-                    title="Student Subscriptions now available"
-                    subtitle="If you're a student, you can get a discount on a Laundr subscription!"
-                    buttonText="Learn more"
-                    buttonLink="https://www.laundr.io/"
-                  />
-                  <Slide
-                    media={
-                      <img
-                        src="/images/UserDashboard/InstagramLogo.png"
-                        alt="Instagram"
-                      />
-                    }
-                    mediaBackgroundStyle={{ backgroundColor: "#C560D2" }}
-                    style={{ backgroundColor: "#8D2B9A" }}
-                    title="Check us out on Instagram"
-                    subtitle="Visit our Instagram for the latest updates and chances for free stuff!"
-                    buttonText="Go"
-                    buttonLink="https://www.instagram.com/laundrofficial/"
-                  />
-                  <Slide
-                    media={
-                      <img
-                        src="/images/UserDashboard/SupportLogo.png"
-                        alt="Customer Support"
-                      />
-                    }
-                    mediaBackgroundStyle={{ backgroundColor: "#817A7A" }}
-                    style={{ backgroundColor: "#695F5F" }}
-                    title="Need help?"
-                    subtitle="Feel free to call us at 352-363-5211 or click below to chat with a representative!"
-                    buttonText="Go"
-                    buttonLink="https://www.messenger.com/t/laundrofficial"
-                  />
-                </AutoRotatingCarousel>
-              </div>
-            </div>
-          </Grid>
-        </Grid> */}
-        {/* <div style={{ position: "relative", marginBottom: 50 }}>
-          <BottomBorderBlue />
-        </div> */}
       </Layout>
     );
   }
@@ -310,123 +280,79 @@ Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export async function getServerSideProps(context) {
-  //fetch current user
-  const response_one = await getCurrentUser_SSR(context, { balance: true });
+const DashboardCSR = (props) => {
+  const dashboardEligibility = (response_one) => {
+    if (response_one) {
+      if (response_one.data.message.email) {
+        const currentUser = response_one.data.message;
 
-  //check for redirect needed due to invalid session or error in fetching
-  if (!response_one.data.success) {
-    if (response_one.data.redirect) {
-      return {
-        redirect: {
-          destination: response_one.data.message,
-          permanent: false,
-        },
-      };
+        if (!hasPageAccess(currentUser, window)) return null;
+
+        return "/api/order/getExistingOrder";
+      } else {
+        return null;
+      }
     } else {
-      return {
-        props: {
-          fetch_SSR: {
-            success: false,
-            message: response_one.data.message,
-          },
-        },
-      };
+      return null;
     }
-  }
-
-  //check for permissions to access page if no error from fetching user
-  const currentUser = response_one.data.message;
-  const urlSections = context.resolvedUrl.split("/");
-
-  switch (urlSections[1]) {
-    case "user":
-      if (currentUser.isDriver || currentUser.isWasher || currentUser.isAdmin) {
-        return {
-          redirect: {
-            destination: "/accessDenied",
-            permanent: false,
-          },
-        };
-      }
-      break;
-
-    case "washer":
-      if (!currentUser.isWasher) {
-        return {
-          redirect: {
-            destination: "/accessDenied",
-            permanent: false,
-          },
-        };
-      }
-      break;
-
-    case "driver":
-      if (!currentUser.isDriver) {
-        return {
-          redirect: {
-            destination: "/accessDenied",
-            permanent: false,
-          },
-        };
-      }
-      break;
-
-    case "admin":
-      if (!currentUser.isAdmin) {
-        return {
-          redirect: {
-            destination: "/accessDenied",
-            permanent: false,
-          },
-        };
-      }
-      break;
-  }
-
-  //everything ok, so current user is fetched (currentUser is valid)
-
-  //fetch their current order via their userID
-  const response_two = await getExistingOrder_SSR(context, currentUser);
-
-  //check for error in fetching current order info (or info for no order) or need for redirect due to invalid session
-  if (!response_two.data.success) {
-    if (response_two.data.redirect) {
-      return {
-        redirect: {
-          destination: response_two.data.message,
-          permanent: false,
-        },
-      };
-    } else {
-      return {
-        props: {
-          fetch_SSR: {
-            success: false,
-            message: response_two.data.message,
-          },
-        },
-      };
-    }
-  }
-
-  // const newCookie = response_one.headers["set-cookie"];
-
-  // console.log("COOKIE: ", newCookie);
-  // context.res.setHeader("Set-Cookie", newCookie);
-
-  //finally, return info for fetched user + order info, available via props
-  return {
-    props: {
-      fetch_SSR: {
-        success: true,
-        orderInfo: response_two.data,
-        userInfo: currentUser,
-        balance: response_one.data.balance,
-      },
-    },
   };
-}
 
-export default compose(withRouter, withStyles(dashboardStyles))(Dashboard);
+  const params_one = `{ "balance": true }`;
+  const { data: response_one, error: error_one } = useSWR(
+    ["/api/user/getCurrentUser", params_one],
+    GET_SWR
+  );
+
+  const { data: response_two, error: error_two } = useSWR(
+    dashboardEligibility(response_one)
+      ? dashboardEligibility(response_one)
+      : null,
+    GET_SWR
+  );
+
+  if (error_one || error_two)
+    return (
+      <ErrorPage text={error_one ? error_one.message : error_two.message} />
+    );
+
+  if (!response_one || (!response_two && dashboardEligibility(response_one)))
+    return <ProgressPage />;
+
+  const currentUser = response_one.data.message;
+
+  if (!response_one.data.success) {
+    props.router.push(response_one.data.message);
+    return <ProgressPage />;
+  }
+
+  if (!hasPageAccess(currentUser, window)) {
+    props.router.push("/accessDenied");
+    return <ProgressPage />;
+  }
+
+  let componentName;
+  let order = null;
+
+  if (response_two.data.message === "N/A") {
+    if (currentUser.stripe.regPaymentID === "N/A") {
+      componentName = "set_payment";
+    } else {
+      componentName = "new_order";
+    }
+  } else {
+    componentName = "order_status";
+    order = response_two.data.message;
+  }
+
+  return (
+    <Dashboard
+      currentUser={currentUser}
+      componentName={componentName}
+      order={order}
+      balance={response_one.data.balance}
+      {...props}
+    />
+  );
+};
+
+export default compose(withRouter, withStyles(dashboardStyles))(DashboardCSR);

@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import {
   Button,
   TextField,
-  Link,
   Grid,
   Dialog,
   Typography,
@@ -15,23 +14,22 @@ import {
 import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
 import { GetServerSideProps } from "next";
-import { getExistingOrder_SSR, getCurrentUser_SSR } from "../src/helpers/ssr";
 import { limitLength } from "../src/helpers/inputs";
-import { Sidebar, Topbar, Footer } from "../src/layouts/Main/components";
+import {
+  LoadingButton,
+  ProgressPage,
+  ErrorPage,
+} from "../src/components/other";
+import { GET_SWR } from "../src/helpers/swr";
+import Link from "next/link";
+import useSWR from "swr";
 import Head from "next/head";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import validator from "validator";
-import LoadingButton from "../src/components/other/LoadingButton";
 import MainAppContext from "../src/contexts/MainAppContext";
 import loginStyles from "../src/styles/loginStyles";
-import axios from "axios";
-
-const baseURL =
-  process.env.NEXT_PUBLIC_BASE_URL || require("../src/config").baseURL;
-
-//todo: make login not case sensitive (typing W1@gmail.com) doesnt work (done, just test)
-//limit input length for login + registration
+import axios from "../src/helpers/axios";
 
 class Login extends Component {
   static contextType = MainAppContext;
@@ -285,22 +283,20 @@ class Login extends Component {
                   />
                 </Grid>
                 <Grid item>
-                  <Paper elevation={0} style={{ paddingBottom: 10 }}>
-                    <Typography
-                      variant="h1"
-                      style={{
-                        color: "#01c9e1",
-                        textAlign: "center",
-                        padding: 10,
-                        fontSize: 45,
-                        textDecorationLine: "underline",
-                        textUnderlineOffset: 10,
-                        textDecorationColor: "#FFB600",
-                      }}
-                    >
-                      Login
-                    </Typography>
-                  </Paper>
+                  <Typography
+                    variant="h1"
+                    style={{
+                      color: "#01c9e1",
+                      textAlign: "center",
+                      padding: 10,
+                      fontSize: 45,
+                      // textDecorationLine: "underline",
+                      // textUnderlineOffset: 10,
+                      // textDecorationColor: "#FFB600",
+                    }}
+                  >
+                    Login
+                  </Typography>
                 </Grid>
                 <Grid item>
                   <form>
@@ -344,9 +340,15 @@ class Login extends Component {
                     </LoadingButton>
                   </form>
                 </Grid>
-                <Grid container>
-                  <Grid item xs style={{ paddingBottom: 10 }}>
-                    <Link
+                <Grid
+                  container
+                  direction="row"
+                  justify="space-between"
+                  alignItems="center"
+                  style={{ paddingBottom: 50 }}
+                >
+                  <Grid item>
+                    <Typography
                       onClick={this.toggleResetDialog}
                       variant="h6"
                       style={{
@@ -356,15 +358,20 @@ class Login extends Component {
                       }}
                     >
                       Forgot password?
-                    </Link>
+                    </Typography>
                   </Grid>
-                  <Grid item style={{ paddingBottom: 50 }}>
-                    <Link
-                      href="/register"
-                      variant="h6"
-                      style={{ color: "#01c9e1", textAlign: "center" }}
-                    >
-                      Don't have an account?
+                  <Grid item>
+                    <Link href="/register" passHref={true}>
+                      <Typography
+                        variant="h6"
+                        style={{
+                          color: "#01c9e1",
+                          textAlign: "center",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Don't have an account?
+                      </Typography>
                     </Link>
                   </Grid>
                 </Grid>
@@ -382,15 +389,33 @@ Login.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export async function getServerSideProps(context) {
-  //fetch current user if there exists one
-  const response_one = await getCurrentUser_SSR(context);
+/*
+https://swr.vercel.app/
+https://swr.vercel.app/docs/data-fetching#axios
+https://swr.vercel.app/getting-started
+https://nextjs.org/docs/basic-features/data-fetching
+https://nextjs.org/docs/authentication
+to-do:
+-configure properly (retrying, cache, etc...)
+-make reusable where possible
+-loading screen
+-clean up class code that hides elements if error fetching
+-handle errors and redirects
+-clean out ssr file
+-combine what you need?
+-clean up stuff
+*/
 
-  //console.log(context);
+const LoginCSR = (props) => {
+  const { data: response, error } = useSWR("/api/user/getCurrentUser", GET_SWR);
 
-  //check for redirect needed due to a currently logged in user
-  if (response_one.data.success) {
-    const currentUser = response_one.data.message;
+  if (error) return <ErrorPage text={error.message} />;
+  if (!response) return <ProgressPage />;
+
+  //render or use data
+  //if there's a logged in user
+  if (response.data.success) {
+    const currentUser = response.data.message;
     let redirectDestination;
 
     if (currentUser.isDriver) {
@@ -403,17 +428,13 @@ export async function getServerSideProps(context) {
       redirectDestination = "/user/dashboard";
     }
 
-    return {
-      redirect: {
-        destination: redirectDestination,
-        permanent: false,
-      },
-    };
+    props.router.push(redirectDestination);
+
+    //since it takes a second before url is pushed
+    return <ProgressPage />;
   }
 
-  return {
-    props: {},
-  };
-}
+  return <Login {...props} />;
+};
 
-export default compose(withRouter, withStyles(loginStyles))(Login);
+export default compose(withRouter, withStyles(loginStyles))(LoginCSR);

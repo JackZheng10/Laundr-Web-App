@@ -29,6 +29,8 @@ import OrderCell from "./components/OrderCell";
 import Close from "@material-ui/icons/Close";
 import orderTableStyles from "../../../styles/Driver/components/OrderTable/orderTableStyles";
 import MainAppContext from "../../../contexts/MainAppContext";
+import { caughtError, showConsoleError } from "../../../../src/helpers/errors";
+import axios from "../../../../src/helpers/axios";
 
 //todo: change snackbars to https://github.com/iamhosseindhv/notistack to make it prettier
 //todo: textalign center on snackbar text in case its scrunched
@@ -401,12 +403,11 @@ class OrderTable extends Component {
 
   handleWeightEntered = async () => {
     if (this.props.validateWeightMinimum()) {
-      //passed weight check, so attempt to charge
-      const response_one = await this.props.handleChargeCustomer(
+      //passed weight check, so attempt to weigh order
+      const response_one = await this.props.handleWeighOrder(
         this.state.currentOrder
       );
 
-      //if charge unsuccessful
       if (!response_one.data.success) {
         if (response_one.data.redirect) {
           this.props.router.push(response_one.data.message);
@@ -451,6 +452,7 @@ class OrderTable extends Component {
           }}
           stage={this.renderStage(order.orderInfo.status)}
           key={index}
+          handleOnTheWayClick={this.handleOnTheWayClick}
         />
       );
     });
@@ -468,10 +470,32 @@ class OrderTable extends Component {
             }}
             stage={this.renderStage(order.orderInfo.status)}
             key={index}
+            showNotification={this.showNotification}
+            handleOnTheWayClick={this.handleOnTheWayClick}
           />
         </Grid>
       );
     });
+  };
+
+  handleOnTheWayClick = async (order, type) => {
+    const response_one = await this.props.handleSendOnTheWayMsg(order, type);
+
+    if (!response_one.data.success) {
+      if (response_one.data.redirect) {
+        this.props.router.push(response_one.data.message);
+      } else {
+        this.showNotification(
+          response_one.data.message,
+          response_one.data.success
+        );
+      }
+    } else {
+      this.showNotification(
+        response_one.data.message,
+        response_one.data.success
+      );
+    }
   };
 
   render() {

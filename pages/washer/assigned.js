@@ -15,36 +15,21 @@ import {
   TopBorderBlue,
   BottomBorderBlue,
 } from "../../src/utility/borders";
-import { getCurrentUser, updateToken } from "../../src/helpers/session";
+import { ErrorPage, ProgressPage } from "../../src/components/other";
 import { caughtError, showConsoleError } from "../../src/helpers/errors";
 import { Layout } from "../../src/layouts";
 import { GetServerSideProps } from "next";
 import { withRouter } from "next/router";
-import {
-  getExistingOrder_SSR,
-  getCurrentUser_SSR,
-  fetchOrders_WA_SSR,
-} from "../../src/helpers/ssr";
+import { GET_SWR, getFilterConfig, hasPageAccess } from "../../src/helpers/swr";
+import useSWR from "swr";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
-import axios from "axios";
+import axios from "../../src/helpers/axios";
 import MainAppContext from "../../src/contexts/MainAppContext";
 import OrderTable from "../../src/components/Washer/OrderTable/OrderTable";
 import assignedStyles from "../../src/styles/Washer/Assigned/assignedStyles";
 
-//0: order just placed
-//1: order accepted by driver to be picked up from user
-//2: weight entered
-//3: order dropped off to washer
-//4: order done by washer
-//5: order accept by driver to be delivered back to user
-//6: order delivered to user
-//7: canceled
-
 //only display status 0 and 4, ones able to be "accepted"
-
-const baseURL =
-  process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
 
 class AssignedDashboard extends Component {
   static contextType = MainAppContext;
@@ -53,42 +38,28 @@ class AssignedDashboard extends Component {
     super(props);
 
     //handle pagination
-    const { fetch_SSR } = this.props;
-    const paginationInfo = fetch_SSR.paginationInfo;
+    const { paginationInfo } = this.props;
     const initialLimit = 10;
     const initialPage = 0; //MUI uses 0-indexed
 
     this.state = {
-      orders: fetch_SSR.success ? fetch_SSR.orders : [],
+      orders: this.props.orders,
       limit: initialLimit,
       page: initialPage,
       totalCount: paginationInfo.totalCount,
-      weight: "",
-      weightErrorMsg: "",
     };
   }
 
-  componentDidMount = async () => {
-    const { fetch_SSR } = this.props;
-
-    if (!fetch_SSR.success) {
-      this.context.showAlert(fetch_SSR.message);
-    }
-  };
-
   fetchPage = async (page, limit) => {
     try {
-      const response = await axios.post(
-        `/api/order/fetchOrders`,
-        {
+      const response = await axios.get(`/api/order/fetchOrders`, {
+        params: {
           filter: "washerAssigned",
           limit: limit,
           page: page,
         },
-        {
-          withCredentials: true,
-        }
-      );
+        withCredentials: true,
+      });
 
       return response;
     } catch (error) {
@@ -104,17 +75,14 @@ class AssignedDashboard extends Component {
 
   refreshPage = async (page, limit) => {
     try {
-      const response = await axios.post(
-        `/api/order/fetchOrders`,
-        {
+      const response = await axios.get(`/api/order/fetchOrders`, {
+        params: {
           filter: "washerAssigned",
           limit: limit,
           page: page,
         },
-        {
-          withCredentials: true,
-        }
-      );
+        withCredentials: true,
+      });
 
       if (!response.data.success) {
         if (response.data.redirect) {
@@ -200,11 +168,11 @@ class AssignedDashboard extends Component {
   };
 
   render() {
-    const { classes, fetch_SSR } = this.props;
+    const { classes, currentUser } = this.props;
     const { totalCount, limit, page } = this.state;
 
     return (
-      <Layout currentUser={fetch_SSR.success ? fetch_SSR.userInfo : null}>
+      <Layout currentUser={currentUser}>
         <Grid
           container
           spacing={0}
@@ -223,9 +191,7 @@ class AssignedDashboard extends Component {
                 className={classes.welcomeText}
                 gutterBottom
               >
-                {`Welcome, ${
-                  fetch_SSR.success ? fetch_SSR.userInfo.fname : ""
-                }`}
+                {`Welcome, ${currentUser.fname}`}
               </Typography>
             </Paper>
           </Grid>
@@ -260,7 +226,7 @@ class AssignedDashboard extends Component {
               limit={this.state.limit}
               page={this.state.page}
             />
-            {fetch_SSR.success && totalCount > 0 && (
+            {totalCount > 0 && (
               <TablePagination
                 rowsPerPageOptions={[10, 25, 50]}
                 component="div"
@@ -294,117 +260,67 @@ AssignedDashboard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export async function getServerSideProps(context) {
-  //fetch current user
-  const response_one = await getCurrentUser_SSR(context);
+const AssignedCSR = (props) => {
+  const assignedEligibility = (response_one) => {
+    if (response_one) {
+      if (response_one.data.message.email) {
+        const currentUser = response_one.data.message;
 
-  //check for redirect needed due to invalid session or error in fetching
-  if (!response_one.data.success) {
-    if (response_one.data.redirect) {
-      return {
-        redirect: {
-          destination: response_one.data.message,
-          permanent: false,
-        },
-      };
+        if (!hasPageAccess(currentUser, window)) return null;
+
+        return (
+          "/api/order/fetchOrders?filter=" +
+          getFilterConfig(currentUser, window)
+        );
+      } else {
+        return null;
+      }
     } else {
-      return {
-        props: {
-          fetch_SSR: {
-            success: false,
-            message: response_one.data.message,
-          },
-        },
-      };
+      return null;
     }
-  }
-
-  //check for permissions to access page if no error from fetching user
-  const currentUser = response_one.data.message;
-  const urlSections = context.resolvedUrl.split("/");
-  switch (urlSections[1]) {
-    case "user":
-      if (currentUser.isDriver || currentUser.isWasher || currentUser.isAdmin) {
-        return {
-          redirect: {
-            destination: "/accessDenied",
-            permanent: false,
-          },
-        };
-      }
-      break;
-    case "washer":
-      if (!currentUser.isWasher) {
-        return {
-          redirect: {
-            destination: "/accessDenied",
-            permanent: false,
-          },
-        };
-      }
-      break;
-    case "driver":
-      if (!currentUser.isDriver) {
-        return {
-          redirect: {
-            destination: "/accessDenied",
-            permanent: false,
-          },
-        };
-      }
-      break;
-    case "admin":
-      if (!currentUser.isAdmin) {
-        return {
-          redirect: {
-            destination: "/accessDenied",
-            permanent: false,
-          },
-        };
-      }
-      break;
-  }
-
-  //everything ok, so current user is fetched (currentUser is valid)
-
-  //fetch their assigned orders via user id
-  const response_two = await fetchOrders_WA_SSR(context, currentUser);
-
-  //check for error
-  if (!response_two.data.success) {
-    if (response_two.data.redirect) {
-      return {
-        redirect: {
-          destination: response_two.data.message,
-          permanent: false,
-        },
-      };
-    } else {
-      return {
-        props: {
-          fetch_SSR: {
-            success: false,
-            message: response_two.data.message,
-          },
-        },
-      };
-    }
-  }
-
-  //return info for fetched user, available via props
-  return {
-    props: {
-      fetch_SSR: {
-        success: true,
-        userInfo: currentUser,
-        orders: response_two.data.message.orders,
-        paginationInfo: response_two.data.message,
-      },
-    },
   };
-}
 
-export default compose(
-  withRouter,
-  withStyles(assignedStyles)
-)(AssignedDashboard);
+  const { data: response_one, error: error_one } = useSWR(
+    "/api/user/getCurrentUser",
+    GET_SWR
+  );
+
+  const params_two = `{ "limit": 10, "page": 0 }`;
+  const { data: response_two, error: error_two } = useSWR(
+    assignedEligibility(response_one)
+      ? [assignedEligibility(response_one), params_two]
+      : null,
+    GET_SWR
+  );
+
+  if (error_one || error_two)
+    return (
+      <ErrorPage text={error_one ? error_one.message : error_two.message} />
+    );
+
+  if (!response_one || (!response_two && assignedEligibility(response_one)))
+    return <ProgressPage />;
+
+  const currentUser = response_one.data.message;
+
+  if (!response_one.data.success) {
+    props.router.push(response_one.data.message);
+    return <ProgressPage />;
+  }
+
+  if (!hasPageAccess(currentUser, window)) {
+    props.router.push("/accessDenied");
+    return <ProgressPage />;
+  }
+
+  return (
+    <AssignedDashboard
+      currentUser={currentUser}
+      orders={response_two.data.message.orders}
+      paginationInfo={response_two.data.message}
+      {...props}
+    />
+  );
+};
+
+export default compose(withRouter, withStyles(assignedStyles))(AssignedCSR);

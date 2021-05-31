@@ -5,16 +5,18 @@ import {
   Typography,
   Paper,
   Hidden,
-  Link,
+  Link as MUILink,
   IconButton,
   Divider,
 } from "@material-ui/core";
-//import { ReactComponent as AppleStore } from "../../../../../public/images/app-store-white.svg";
+import Link from "next/link";
 import PropTypes from "prop-types";
 import footerStyles from "../../../../../src/styles/layouts/Main/components/FooterStyles";
 import FacebookIcon from "@material-ui/icons/Facebook";
 import InstagramIcon from "@material-ui/icons/Instagram";
 import TwitterIcon from "@material-ui/icons/Twitter";
+
+const web = process.env.NEXT_PUBLIC_WEB || require("../../../../config").web;
 
 class Footer extends Component {
   render() {
@@ -34,112 +36,142 @@ class Footer extends Component {
               <Grid item className={classes.item}>
                 <Grid container direction="column" alignItems="center">
                   <Typography variant="h5">Customer Care</Typography>
-                  <Typography variant="h6" align="center">
-                    <Link
-                      target="_blank"
-                      rel="noopener"
-                      href="/user/help"
-                      color="secondary"
+                  <Link href="/user/help" passHref={true}>
+                    <Typography
+                      variant="h6"
+                      style={{
+                        color: "#01c9e1",
+                        textAlign: "center",
+                        cursor: "pointer",
+                      }}
                     >
                       FAQ
-                    </Link>
-                  </Typography>
-                  <Typography variant="h6" align="center">
-                    <Link
-                      target="_blank"
-                      rel="noopener"
-                      href="https://www.laundr.io/contact"
-                      color="secondary"
-                    >
-                      Contact
-                    </Link>
-                  </Typography>
-                  <Typography variant="h6" align="center">
-                    <Link
-                      target="_blank"
-                      rel="noopener"
-                      href="https://www.laundr.io/about"
-                      color="secondary"
-                    >
-                      About
-                    </Link>
-                  </Typography>
+                    </Typography>
+                  </Link>
+                  <MUILink
+                    variant="h6"
+                    target="_blank"
+                    rel="noopener"
+                    href="https://www.laundr.io/contact"
+                    style={{
+                      color: "#01c9e1",
+                      textAlign: "center",
+                    }}
+                  >
+                    Contact
+                  </MUILink>
+                  <MUILink
+                    variant="h6"
+                    target="_blank"
+                    rel="noopener"
+                    href="https://www.laundr.io/about"
+                    style={{
+                      color: "#01c9e1",
+                      textAlign: "center",
+                    }}
+                  >
+                    About
+                  </MUILink>
                 </Grid>
               </Grid>
               <Grid item className={classes.item}>
                 <Grid container direction="column" alignItems="center">
-                  <Typography variant="h5">Laundr Careers</Typography>
-                  <Typography variant="h6" align="center">
-                    <Link
-                      target="_blank"
-                      rel="noopener"
-                      href="https://linktr.ee/laundrofficial"
-                      color="secondary"
-                    >
-                      Join the Operations Team
-                    </Link>
-                  </Typography>
+                  <Typography variant="h5">Laundr Bombs</Typography>
+                  <MUILink
+                    variant="h6"
+                    target="_blank"
+                    rel="noopener"
+                    href="https://laundr.io/shop"
+                    style={{
+                      color: "#01c9e1",
+                      textAlign: "center",
+                    }}
+                  >
+                    Shop
+                  </MUILink>
+                  <MUILink
+                    variant="h6"
+                    target="_blank"
+                    rel="noopener"
+                    href="https://laundr.io"
+                    style={{
+                      color: "#01c9e1",
+                      textAlign: "center",
+                    }}
+                  >
+                    Learn More
+                  </MUILink>
                 </Grid>
               </Grid>
-              <Grid item className={classes.item}>
-                <Grid
-                  container
-                  container
-                  direction="row"
-                  justify="center"
-                  alignItems="center"
-                  spacing={2}
-                >
-                  <Grid item>
-                    <Link
-                      href="https://play.google.com/store/apps/details?id=app.laundr2.main&hl=en_US&gl=US"
-                      target="_blank"
-                      rel="noopener"
-                    >
-                      <img
-                        src="/images/google-play.svg"
-                        height={40}
-                        width={135}
-                      />
-                    </Link>
-                  </Grid>
-                  <Grid item>
-                    <Link
-                      href="https://apps.apple.com/us/app/laundr-on-demand/id1289150426"
-                      target="_blank"
-                      rel="noopener"
-                    >
-                      <img
-                        src="/images/app-store-white.svg"
-                        height={40}
-                        width={121}
-                      />
-                    </Link>
+              {web === "true" && (
+                <Grid item className={classes.item}>
+                  <Grid
+                    container
+                    container
+                    direction="row"
+                    justify="center"
+                    alignItems="center"
+                    spacing={2}
+                  >
+                    <Grid item>
+                      <MUILink
+                        href="https://play.google.com/store/apps/details?id=app.laundr2.main&hl=en_US&gl=US"
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        <img
+                          src="/images/google-play.svg"
+                          height={40}
+                          width={135}
+                        />
+                      </MUILink>
+                    </Grid>
+                    <Grid item>
+                      <MUILink
+                        href="https://apps.apple.com/us/app/laundr-on-demand/id1289150426"
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        <img
+                          src="/images/app-store-white.svg"
+                          height={40}
+                          width={121}
+                        />
+                      </MUILink>
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
+              )}
             </Grid>
             <Hidden only={["xs"]}>
               <Grid container justify="center">
                 <Grid item>
-                  <Link
+                  <MUILink
+                    variant="h6"
                     target="_blank"
                     rel="noopener"
                     href="https://www.laundr.io/termsofservice"
-                    color="secondary"
-                    style={{ padding: 20 }}
+                    style={{
+                      color: "#01c9e1",
+                      textAlign: "center",
+                      margin: 20,
+                    }}
                   >
                     Terms of Service
-                  </Link>
-                  <Link
+                  </MUILink>
+                  <MUILink
+                    variant="h6"
                     target="_blank"
                     rel="noopener"
                     href="https://www.laundr.io/privacy-policy"
-                    color="secondary"
-                    style={{ padding: 20 }}
+                    style={{
+                      color: "#01c9e1",
+                      textAlign: "center",
+                      margin: 20,
+                    }}
                   >
                     Privacy Policy
-                  </Link>
+                  </MUILink>
                   <Typography variant="body3" style={{ padding: 20 }}>
                     Copyright Laundr LLC, {new Date().getFullYear()}
                   </Typography>
@@ -173,24 +205,32 @@ class Footer extends Component {
             <Hidden only={["lg", "xl", "md", "sm"]}>
               <Grid container justify="center">
                 <Grid item>
-                  <Link
+                  <MUILink
+                    variant="h6"
                     target="_blank"
                     rel="noopener"
                     href="https://www.laundr.io/termsofservice"
-                    color="secondary"
-                    style={{ padding: 20 }}
+                    style={{
+                      color: "#01c9e1",
+                      textAlign: "center",
+                      margin: 20,
+                    }}
                   >
                     Terms of Service
-                  </Link>
-                  <Link
+                  </MUILink>
+                  <MUILink
+                    variant="h6"
                     target="_blank"
                     rel="noopener"
                     href="https://www.laundr.io/privacy-policy"
-                    color="secondary"
-                    style={{ padding: 20 }}
+                    style={{
+                      color: "#01c9e1",
+                      textAlign: "center",
+                      margin: 20,
+                    }}
                   >
                     Privacy Policy
-                  </Link>
+                  </MUILink>
                 </Grid>
               </Grid>
               <Grid container justify="center">

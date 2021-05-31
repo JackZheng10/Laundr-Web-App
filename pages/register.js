@@ -7,7 +7,6 @@ import {
   FormControlLabel,
   Checkbox,
   withStyles,
-  Link,
   Grid,
   Box,
   Typography,
@@ -25,20 +24,26 @@ import {
   Paper,
   Card,
   CardContent,
+  Link as MUILink,
 } from "@material-ui/core";
 import { withRouter } from "next/router";
 import { caughtError, showConsoleError } from "../src/helpers/errors";
-import { GetServerSideProps } from "next";
-import { getExistingOrder_SSR, getCurrentUser_SSR } from "../src/helpers/ssr";
+import {
+  LoadingButton,
+  ProgressPage,
+  ErrorPage,
+} from "../src/components/other";
 import { limitLength } from "../src/helpers/inputs";
+import { GET_SWR } from "../src/helpers/swr";
+import useSWR from "swr";
 import Head from "next/head";
+import Link from "next/link";
 import validator from "validator";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import MainAppContext from "../src/contexts/MainAppContext";
-import LoadingButton from "../src/components/other/LoadingButton";
 import registerStyles from "../src/styles/registerStyles";
-import axios from "axios";
+import axios from "../src/helpers/axios";
 
 class Register extends Component {
   static contextType = MainAppContext;
@@ -248,8 +253,8 @@ class Register extends Component {
         case "password":
           if (value.length < 6 || !/[A-Z]+/.test(value)) {
             this.setState({
-              [input.name +
-              "ErrorMsg"]: "*Passwords must be at least 6 characters long and contain one capital letter.",
+              [input.name + "ErrorMsg"]:
+                "*Passwords must be at least 6 characters long and contain one capital letter.",
               [input.name + "Error"]: true,
             });
             valid = false;
@@ -264,8 +269,8 @@ class Register extends Component {
         case "phone":
           if (value.length < 10) {
             this.setState({
-              [input.name +
-              "ErrorMsg"]: "*Please enter a 10-digit phone number.",
+              [input.name + "ErrorMsg"]:
+                "*Please enter a 10-digit phone number.",
               [input.name + "Error"]: true,
             });
             valid = false;
@@ -361,7 +366,7 @@ class Register extends Component {
         break;
 
       case "phone":
-        if (validator.isNumeric(value)) {
+        if (validator.isNumeric(value) || value === "") {
           value = limitLength(value, 10);
           this.setState({ [property]: value });
         }
@@ -529,22 +534,20 @@ class Register extends Component {
                 {/* <Card>
                   <CardContent> */}
                 <Grid item>
-                  <Paper elevation={0} style={{ paddingBottom: 10 }}>
-                    <Typography
-                      variant="h1"
-                      style={{
-                        color: "#01c9e1",
-                        textAlign: "center",
-                        padding: 10,
-                        fontSize: 45,
-                        textDecorationLine: "underline",
-                        textUnderlineOffset: 10,
-                        textDecorationColor: "#FFB600",
-                      }}
-                    >
-                      Register
-                    </Typography>
-                  </Paper>
+                  <Typography
+                    variant="h1"
+                    style={{
+                      color: "#01c9e1",
+                      textAlign: "center",
+                      padding: 10,
+                      fontSize: 45,
+                      // textDecorationLine: "underline",
+                      // textUnderlineOffset: 10,
+                      // textDecorationColor: "#FFB600",
+                    }}
+                  >
+                    Register
+                  </Typography>
                 </Grid>
                 <Grid item>
                   <form>
@@ -698,7 +701,7 @@ class Register extends Component {
                             label="I have read and agree to the Terms of Service."
                           />
                           <Grid item>
-                            <Link
+                            <MUILink
                               variant="h6"
                               target="_blank"
                               rel="noopener"
@@ -709,7 +712,7 @@ class Register extends Component {
                               }}
                             >
                               Terms of Service
-                            </Link>
+                            </MUILink>
                             <Typography
                               variant="body2"
                               className={classes.error}
@@ -731,12 +734,17 @@ class Register extends Component {
                         </LoadingButton>
                       </Grid>
                       <Grid item style={{ paddingBottom: 50 }}>
-                        <Link
-                          href="/"
-                          variant="h6"
-                          style={{ color: "#01c9e1", textAlign: "center" }}
-                        >
-                          Already have an account?
+                        <Link href="/" passHref={true}>
+                          <Typography
+                            variant="h6"
+                            style={{
+                              color: "#01c9e1",
+                              textAlign: "center",
+                              cursor: "pointer",
+                            }}
+                          >
+                            Already have an account?
+                          </Typography>
                         </Link>
                       </Grid>
                     </Grid>
@@ -757,13 +765,16 @@ Register.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export async function getServerSideProps(context) {
-  //fetch current user if there exists one
-  const response_one = await getCurrentUser_SSR(context);
+const RegisterCSR = (props) => {
+  const { data: response, error } = useSWR("/api/user/getCurrentUser", GET_SWR);
 
-  //check for redirect needed due to a currently logged in user
-  if (response_one.data.success) {
-    const currentUser = response_one.data.message;
+  if (error) return <ErrorPage text={error.message} />;
+  if (!response) return <ProgressPage />;
+
+  //render or use data
+  //if there's a logged in user
+  if (response.data.success) {
+    const currentUser = response.data.message;
     let redirectDestination;
 
     if (currentUser.isDriver) {
@@ -776,17 +787,13 @@ export async function getServerSideProps(context) {
       redirectDestination = "/user/dashboard";
     }
 
-    return {
-      redirect: {
-        destination: redirectDestination,
-        permanent: false,
-      },
-    };
+    props.router.push(redirectDestination);
+
+    //since it takes a second before url is pushed
+    return <ProgressPage />;
   }
 
-  return {
-    props: {},
-  };
-}
+  return <Register {...props} />;
+};
 
-export default compose(withRouter, withStyles(registerStyles))(Register);
+export default compose(withRouter, withStyles(registerStyles))(RegisterCSR);

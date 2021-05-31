@@ -158,7 +158,7 @@ class Pricing extends Component {
                     Estimated pounds: {loads * 18} lbs
                   </Typography>
                   <Typography variant="h5">
-                    Estimated cost: ${(loads * 18 * priceMultiplier).toFixed(2)}
+                    Estimated cost: ${(loads * 18 * 1.5).toFixed(2)}
                   </Typography>
                 </Grid>
                 <Grid item>
@@ -184,9 +184,7 @@ class Pricing extends Component {
                         </Typography>
                       </Grid>
                       <Grid item>
-                        <Typography variant="overline">
-                          (est. ~$1.25/lb)
-                        </Typography>
+                        <Typography variant="overline">(~$1.25/lb)</Typography>
                       </Grid>
                     </Grid>
                   </Button>

@@ -11,7 +11,7 @@ import {
   Grid,
 } from "@material-ui/core";
 import PropTypes from "prop-types";
-import TooltipButton from "../../../Driver/OrderTable/components/TooltipButton";
+import { TooltipButton, PopoverButton } from "../../../other";
 import orderCardStyles from "../../../../styles/Driver/components/OrderTable/components/orderCardStyles";
 
 const OrderCard = (props) => {

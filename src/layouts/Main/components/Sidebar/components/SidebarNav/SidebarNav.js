@@ -48,7 +48,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-//todo: active works on refresh now, maybe do something for the loading? should be fast enough tho
 const SidebarNav = (props) => {
   const context = useContext(MainAppContext);
 
@@ -90,10 +89,11 @@ const SidebarNav = (props) => {
     <List {...rest} className={clsx(classes.root, className)}>
       {pages.map((page, index) => (
         <ListItem className={classes.item} disableGutters key={index}>
-          <Link href={page.href}>
+          <Link href={page.href} passHref={true}>
             <Button
               className={classes.button}
               style={{ color: evaluateActive(page.href) }}
+              //onClick={() => router.push(page.href)}
             >
               <div
                 className={classes.icon}

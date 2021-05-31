@@ -1,8 +1,9 @@
 import React, { Component } from "react";
+import { ErrorPage } from "../src/components/other";
 
 class MissingPage extends Component {
   render() {
-    return <h1>Page not found (placeholder)</h1>;
+    return <ErrorPage text="Error: Page not found." />;
   }
 }
 

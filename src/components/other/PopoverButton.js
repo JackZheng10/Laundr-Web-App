@@ -24,6 +24,7 @@ const LightTooltip = withStyles((theme) => ({
   },
 }))(Tooltip);
 
+//handles own open/close logic
 class PopoverButton extends Component {
   state = { open: false, anchor: null };
 

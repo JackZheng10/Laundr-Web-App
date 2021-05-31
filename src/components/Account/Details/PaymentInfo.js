@@ -21,7 +21,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { getCurrentUser, updateToken } from "../../../helpers/session";
 import { caughtError, showConsoleError } from "../../../helpers/errors";
 import PropTypes from "prop-types";
-import axios from "axios";
+import axios from "../../../helpers/axios";
 import MainAppContext from "../../../contexts/MainAppContext";
 import LoadingButton from "../../../components/other/LoadingButton";
 import paymentInfoStyles from "../../../styles/User/Account/components/paymentInfoStyles";

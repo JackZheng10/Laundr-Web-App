@@ -13,9 +13,8 @@ import {
   Divider,
   Card,
 } from "@material-ui/core";
+import { TooltipButton, PricingPopoverButton } from "../../../../other";
 import PropTypes from "prop-types";
-import TooltipButton from "../../../../Driver/OrderTable/components/TooltipButton";
-import PopoverButton from "./PopoverButton";
 import orderCellStyles from "../../../../../styles/Driver/components/OrderTable/components/orderCellStyles";
 
 const DateTimeCell = (order) => {
@@ -157,124 +156,6 @@ const WeightCell = (order) => {
   );
 };
 
-const PriceCell = (order, classes, currentUser) => {
-  const subtotal = order.pricingInfo.subtotal;
-  const subLbsDiscount = order.pricingInfo.subLbsDiscount;
-  const balanceDiscount = order.pricingInfo.balanceDiscount;
-  const priceMultiplier =
-    currentUser.subscription.status === "active" ? 1.2 : 1.5;
-
-  return (
-    <TableCell>
-      <Grid
-        container
-        direction="row"
-        justify="flex-start"
-        alignItems="center"
-        spacing={1}
-      >
-        <Grid item>
-          <Typography variant="body1">
-            {order.orderInfo.cost === "-1" ? "N/A" : order.orderInfo.cost}
-          </Typography>
-        </Grid>
-        {order.orderInfo.cost != "-1" && (
-          <Grid item>
-            <PopoverButton
-              className={classes.secondaryButton}
-              icon={true}
-              content={
-                <Card className={classes.root} elevation={5}>
-                  <CardContent
-                    className={classes.removePadding}
-                    style={{ marginTop: -15, marginBottom: -15 }}
-                  >
-                    <List disablePadding>
-                      <ListItem>
-                        <ListItemText
-                          primary={"Subtotal"}
-                          secondary={`${order.orderInfo.weight} lbs`}
-                          primaryTypographyProps={{ variant: "h6" }}
-                        />
-                        <Typography variant="body1">{subtotal}</Typography>
-                      </ListItem>
-                      {parseFloat(subLbsDiscount.slice(1)) > 0 && (
-                        <ListItem>
-                          <ListItemText
-                            primary={"Subscription Lbs"}
-                            secondary={`${
-                              subLbsDiscount.slice(1) / priceMultiplier
-                            } lbs`}
-                            primaryTypographyProps={{ variant: "h6" }}
-                          />
-                          <Typography variant="body1">
-                            -{subLbsDiscount}
-                          </Typography>
-                        </ListItem>
-                      )}
-                      {parseFloat(balanceDiscount.slice(1)) > 0 && (
-                        <ListItem>
-                          <ListItemText
-                            primary={"Credit"}
-                            primaryTypographyProps={{ variant: "h6" }}
-                          />
-                          <Typography variant="body1">
-                            -{balanceDiscount}
-                          </Typography>
-                        </ListItem>
-                      )}
-                    </List>
-                  </CardContent>
-                  <Divider />
-                  {/* <CardContent
-              className={classes.removePadding}
-              style={{ marginTop: -15, marginBottom: -15 }}
-            >
-              <ListItem>
-                <ListItemText
-                  primary={"Total"}
-                  primaryTypographyProps={{ variant: "h6", fontWeight: 700 }}
-                />
-                <Typography variant="body1">
-                  {order.pricingInfo.total}
-                </Typography>
-              </ListItem>
-            </CardContent> */}
-                  <CardContent
-                    className={classes.removePadding}
-                    style={{ marginTop: -5, marginBottom: -5 }}
-                  >
-                    <Grid
-                      container
-                      direction="column"
-                      justify="center"
-                      alignItems="center"
-                    >
-                      <Grid item>
-                        <Grid container justify="center">
-                          <Typography variant="h4" style={{ fontWeight: 600 }}>
-                            Total:&nbsp;
-                          </Typography>
-                          <Typography
-                            variant="h4"
-                            style={{ textAlign: "center" }}
-                          >
-                            {order.pricingInfo.total}
-                          </Typography>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                </Card>
-              }
-            />
-          </Grid>
-        )}
-      </Grid>
-    </TableCell>
-  );
-};
-
 const PreferencesCell = (order) => {
   return (
     <TableCell>
@@ -285,9 +166,9 @@ const PreferencesCell = (order) => {
 
 const renderWasherPrefs = (order) => {
   const scented = order.washerInfo.scented;
-  const delicates = order.washerInfo.delicates;
+  const lowTemp = order.washerInfo.lowTemp;
   const separate = order.washerInfo.separate;
-  const towelsSheets = order.washerInfo.towelsSheets;
+  const comforter = order.washerInfo.comforter;
 
   let prefs = "";
 
@@ -295,26 +176,48 @@ const renderWasherPrefs = (order) => {
     prefs += "Scented, ";
   }
 
-  if (delicates) {
-    prefs += "Delicates, ";
+  if (lowTemp) {
+    prefs += "Low Temperature, ";
   }
 
   if (separate) {
     prefs += "Separate, ";
   }
 
-  if (towelsSheets) {
-    prefs += "Towels and Sheets,";
+  if (comforter) {
+    prefs += "Comforter,";
   }
 
-  //todo: test this, forget what it does lol
-  if (towelsSheets) {
+  if (comforter) {
     prefs = prefs.slice(0, prefs.length - 1);
   } else {
     prefs = prefs.slice(0, prefs.length - 2);
   }
 
   return prefs;
+};
+
+const StatusCellUser = (order) => {
+  return (
+    <TableCell>
+      <Typography variant="body1">
+        {renderStatusUser(order.orderInfo.status)}
+      </Typography>
+    </TableCell>
+  );
+};
+
+const renderStatusUser = (status) => {
+  switch (status) {
+    case 6:
+      return "Delivered";
+    case 7:
+      return "Cancelled";
+    case 8:
+      return "Completed";
+    case 9:
+      return "Failed Payment";
+  }
 };
 
 const StatusCellDriver = (order) => {
@@ -334,6 +237,8 @@ const renderStatusDriver = (status) => {
     case 7:
       return "Cancelled";
     case 8:
+      return "Completed";
+    case 9:
       return "Completed";
   }
 };
@@ -426,8 +331,24 @@ const OrderCell = (props) => {
               />
             </TableCell>
             {WeightCell(order)}
-            {PriceCell(order, classes, currentUser)}
-            {StatusCellDriver(order)}
+            <TableCell>
+              <Grid
+                container
+                direction="row"
+                justify="flex-start"
+                alignItems="center"
+                spacing={1}
+              >
+                <Grid item>
+                  <PricingPopoverButton
+                    showPriceLabel={false}
+                    order={order}
+                    currentUser={currentUser}
+                  />
+                </Grid>
+              </Grid>
+            </TableCell>
+            {StatusCellUser(order)}
           </React.Fragment>
         );
     }

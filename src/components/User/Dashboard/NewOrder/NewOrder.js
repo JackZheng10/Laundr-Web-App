@@ -14,7 +14,7 @@ import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import Geocode from "react-geocode";
 import validator from "validator";
-import axios from "axios";
+import axios from "../../../../helpers/axios";
 import MainAppContext from "../../../../contexts/MainAppContext";
 import LoadingButton from "../../../../components/other/LoadingButton";
 import Scheduling from "./components/Scheduling";
@@ -54,9 +54,9 @@ class NewOrder extends Component {
       lowerBound: null,
       upperBound: null,
       scented: false, //preferences
-      delicates: false,
+      lowTemp: false,
       separate: false,
-      towelsSheets: false,
+      comforter: false,
       washerPreferences: "",
       center: {
         //address
@@ -170,11 +170,10 @@ class NewOrder extends Component {
       const response = await axios.post(
         "/api/order/placeOrder",
         {
-          coupon: "placeholder",
           scented: this.state.scented,
-          delicates: this.state.delicates,
+          lowTemp: this.state.lowTemp,
           separate: this.state.separate,
-          towelsSheets: this.state.towelsSheets,
+          comforter: this.state.comforter,
           washerPrefs: validator.isEmpty(this.state.washerPreferences, {
             ignore_whitespace: true,
           })
@@ -385,7 +384,7 @@ class NewOrder extends Component {
         this.setState({ [property]: value });
         break;
 
-      case "delicates":
+      case "lowTemp":
         this.setState({ [property]: value });
         break;
 
@@ -393,7 +392,7 @@ class NewOrder extends Component {
         this.setState({ [property]: value });
         break;
 
-      case "towelsSheets":
+      case "comforter":
         this.setState({ [property]: value });
         break;
 
@@ -581,10 +580,6 @@ class NewOrder extends Component {
                     >
                       <div>
                         <Preferences
-                          scented={this.state.scented}
-                          delicates={this.state.delicates}
-                          separate={this.state.separate}
-                          towelsSheets={this.state.towelsSheets}
                           washerPreferences={this.state.washerPreferences}
                           handleInputChange={this.handleInputChange}
                         />
@@ -625,13 +620,13 @@ class NewOrder extends Component {
                       }}
                     >
                       <div>
-                        {/* <Pricing
+                        <Pricing
                           loads={this.state.loads}
                           handleInputChange={this.handleInputChange}
                           currentUser={currentUser}
                           getLbsData={this.getLbsData}
                           getMaxLbs={this.getMaxLbs}
-                        /> */}
+                        />
                       </div>
                     </Fade>
                     <Fade
@@ -649,9 +644,9 @@ class NewOrder extends Component {
                           address={this.state.address}
                           addressPreferences={this.state.addressPreferences}
                           scented={this.state.scented}
-                          delicates={this.state.delicates}
+                          lowTemp={this.state.lowTemp}
                           separate={this.state.separate}
-                          towelsSheets={this.state.towelsSheets}
+                          comforter={this.state.comforter}
                           washerPreferences={this.state.washerPreferences}
                           pickupDate={this.state.date}
                           pickupTime={this.state.formattedTime}

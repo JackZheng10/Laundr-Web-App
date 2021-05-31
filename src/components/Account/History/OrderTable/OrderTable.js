@@ -19,18 +19,6 @@ import OrderCell from "./components/OrderCell";
 import OrderCard from "./components/OrderCard";
 import orderTableStyles from "../../../../styles/Driver/components/OrderTable/orderTableStyles";
 
-//0: order just placed
-//1: order accepted by driver to be picked up from user
-//2: weight entered
-//3: order dropped off to washer
-//4: order done by washer
-//5: order accept by driver to be delivered back to user
-//6: order delivered to user
-//7: canceled
-
-//configure for user, driver, washer
-//driver first
-
 class OrderTable extends Component {
   renderOrderCells = (orders, config, currentUser) => {
     if (!currentUser) {

@@ -17,7 +17,7 @@ import { withRouter } from "next/router";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import LoadingButton from "../../../../other/LoadingButton";
-import axios from "axios";
+import axios from "../../../../../helpers/axios";
 import MainAppContext from "../../../../../contexts/MainAppContext";
 import subscriptionCardStyles from "../../../../../styles/User/Subscription/components/SubscriptionBoxes/components/subscriptionCardStyles";
 

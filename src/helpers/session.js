@@ -1,8 +1,5 @@
 import { caughtError, showConsoleError } from "./errors";
-import axios from "axios";
-
-const baseURL =
-  process.env.NEXT_PUBLIC_BASE_URL || require("../../src/config").baseURL;
+import axios from "../helpers/axios";
 
 //to be used for fetching current user outside of SSR and initial page+children component mounting (in the case that the data may have changed after page load, for ex while user is afk or in another tab)
 //should rarely be used

@@ -5,7 +5,8 @@ import { makeStyles } from "@material-ui/styles";
 import { Typography, Button, colors, Link } from "@material-ui/core";
 
 const version =
-  process.env.VERSION || require("./../../../../../../config").version;
+  process.env.NEXT_PUBLIC_VERSION ||
+  require("./../../../../../../config").version;
 
 const useStyles = makeStyles((theme) => ({
   root: {

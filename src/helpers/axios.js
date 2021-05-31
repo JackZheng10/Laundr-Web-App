@@ -2,7 +2,7 @@ import axios from "axios";
 
 const baseURL =
   process.env.NEXT_PUBLIC_BASE_URL || require("../config").baseURL;
-const version = process.env.VERSION || require("../config").version;
+const version = process.env.NEXT_PUBLIC_VERSION || require("../config").version;
 
 const axiosClient = axios.create({
   baseURL: baseURL,

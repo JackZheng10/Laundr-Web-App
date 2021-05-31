@@ -16,7 +16,7 @@ import FacebookIcon from "@material-ui/icons/Facebook";
 import InstagramIcon from "@material-ui/icons/Instagram";
 import TwitterIcon from "@material-ui/icons/Twitter";
 
-const web = process.env.WEB || require("../../../../config").web;
+const web = process.env.NEXT_PUBLIC_WEB || require("../../../../config").web;
 
 class Footer extends Component {
   render() {

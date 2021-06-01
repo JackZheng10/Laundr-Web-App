@@ -107,14 +107,24 @@ class OrderStatus extends Component {
   getTimeAvailability = (order) => {
     const possibleTimes = [
       {
+        lowerBound: moment("9:00 AM", "h:mm A"),
+        upperBound: moment("9:30 AM", "h:mm A"),
+        string: "9:00 AM - 9:30 AM",
+      },
+      {
+        lowerBound: moment("9:30 AM", "h:mm A"),
+        upperBound: moment("10:00 AM", "h:mm A"),
+        string: "9:30 AM - 10:00 AM",
+      },
+      {
         lowerBound: moment("10:00 AM", "h:mm A"),
         upperBound: moment("10:30 AM", "h:mm A"),
         string: "10:00 AM - 10:30 AM",
       },
       {
         lowerBound: moment("10:30 AM", "h:mm A"),
-        upperBound: moment("11:00 AM", "h:mm A"),
-        string: "10:30 AM - 11:00 AM",
+        upperBound: moment("11:00 PM", "h:mm A"),
+        string: "10:30 AM - 11:00 PM",
       },
       {
         lowerBound: moment("11:00 AM", "h:mm A"),
@@ -128,23 +138,13 @@ class OrderStatus extends Component {
       },
       {
         lowerBound: moment("12:00 PM", "h:mm A"),
-        upperBound: moment("12:30 PM", "h:mm A"),
+        upperBound: moment("12:30 AM", "h:mm A"),
         string: "12:00 PM - 12:30 PM",
       },
       {
         lowerBound: moment("12:30 PM", "h:mm A"),
         upperBound: moment("1:00 PM", "h:mm A"),
         string: "12:30 PM - 1:00 PM",
-      },
-      {
-        lowerBound: moment("1:00 PM", "h:mm A"),
-        upperBound: moment("1:30 AM", "h:mm A"),
-        string: "1:00 PM - 1:30 PM",
-      },
-      {
-        lowerBound: moment("1:30 PM", "h:mm A"),
-        upperBound: moment("2:00 PM", "h:mm A"),
-        string: "1:30 PM - 2:00 PM",
       },
       {
         lowerBound: moment("6:00 PM", "h:mm A"),
@@ -177,8 +177,8 @@ class OrderStatus extends Component {
       `${pickupDate} ${formattedPickupTime}`,
       "MM/DD/YYYY h:mm A"
     );
-    const tenAM = moment(`${pickupDate} 10:00:00`, "MM/DD/YYYY HH:mm:ss");
-    const twoPM = moment(`${pickupDate} 14:00:00`, "MM/DD/YYYY HH:mm:ss");
+    const nineAM = moment(`${pickupDate} 9:00:00`, "MM/DD/YYYY HH:mm:ss");
+    const onePM = moment(`${pickupDate} 13:00:00`, "MM/DD/YYYY HH:mm:ss");
     const sixPM = moment(`${pickupDate} 18:00:00`, "MM/DD/YYYY HH:mm:ss");
     const eightPM = moment(`${pickupDate} 20:00:00`, "MM/DD/YYYY HH:mm:ss");
     const now = moment();

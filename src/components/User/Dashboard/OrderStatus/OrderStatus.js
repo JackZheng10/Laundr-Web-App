@@ -48,8 +48,6 @@ import orderStatusStyles from "../../../../styles/User/Dashboard/components/Orde
 //8: fulfilled (user confirmed theyve seen the status on it)
 //9: admin: order could not be charged
 
-//todo: gold button focus for dropoff and cancel
-
 const moment = require("moment-timezone");
 moment.tz.setDefault("America/New_York");
 

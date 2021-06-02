@@ -26,12 +26,6 @@ import MainAppContext from "../../../contexts/MainAppContext";
 import LoadingButton from "../../../components/other/LoadingButton";
 import paymentInfoStyles from "../../../styles/User/Account/components/paymentInfoStyles";
 
-//todo: maybe use the red/green for other confirms/cancels
-//todo: rerender after stored card (updating child state does not rerender parent)
-//todo: in .catch errors in server, specify also what went wrong!
-
-//todo: use callback with alert for order fetching so you CAN refresh the page? but prob not since its a snackbar...
-
 const stripeKEY =
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ||
   require("../../../config").stripe.publishableKEY;

@@ -39,24 +39,10 @@ import AutoRotatingCarousel from "../../src/components/User/Dashboard/Carousel/A
 import Slide from "../../src/components/User/Dashboard/Carousel/Slide";
 import dashboardStyles from "../../src/styles/User/Dashboard/dashboardStyles";
 
-//for order tables, left align the cells, not center
-
-//fix MUI grid spacing causing negative margin (horizontal scrollbar), explicit spacing={0} or none? see GH issues.
-//standardize space between title and waves on pages, also from top
-
-//todo: implement admin stuff...later
-//add error message to enable cookies
-
-//todo: limit input length for text boxes! frontend and backend. also validation on backend as well.
-//add "type" to textfields?
+//todo: add error message to enable cookies
 //Head component for pages w/SEO
 //overhaul styling organization
-//weirdness with the carousel
-//center alert texts
 //all requests should follow the redirect check (check newly made ones)
-//add form (enter = submit) for other stuff
-//redo register, login, forgot pwd, acc details, order notes validation (anywhere else that needs input like entering weight)
-//make sure all routes with authentication also have authorization
 
 class Dashboard extends Component {
   static contextType = MainAppContext;

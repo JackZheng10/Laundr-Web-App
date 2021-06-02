@@ -23,8 +23,6 @@ import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import MainAppContext from "../../../../contexts/MainAppContext";
 import subscriptionStatusStyles from "../../../../styles/User/Subscription/components/SubscriptionStatus/subscriptionStatusStyles";
 
-//todo: responsive
-
 const moment = require("moment-timezone");
 moment.tz.setDefault("America/New_York");
 

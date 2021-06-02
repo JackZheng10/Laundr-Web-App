@@ -34,7 +34,6 @@ import axios from "../../../../src/helpers/axios";
 
 //todo: change snackbars to https://github.com/iamhosseindhv/notistack to make it prettier
 //todo: textalign center on snackbar text in case its scrunched
-//todo: dialog in window-specific like alert is
 
 class OrderTable extends Component {
   static contextType = MainAppContext;

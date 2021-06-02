@@ -315,6 +315,12 @@ class Register extends Component {
               referralText: "*Please enter a valid code.",
             });
             valid = false;
+          } else if (response.data.reason === "no_uses") {
+            this.setState({
+              referralError: true,
+              referralText: "*Coupon has no uses left.",
+            });
+            valid = false;
           } else {
             this.context.showAlert(response.data.message);
             valid = false;

@@ -222,16 +222,8 @@ class OrderStatus extends Component {
             .add(1, "days")
             .isSame(now.clone().add(1, "days"), "day")
         ) {
-          //if picked up within the 6-8 window
-          if (
-            pickupLowerBound.isSameOrAfter(sixPM) &&
-            pickupLowerBound.isSameOrBefore(eightPM)
-          ) {
             //only 6-8 window available
             availableTimes = this.getClosestTimes(now, possibleTimes.slice(8));
-          } else {
-            availableTimes = possibleTimes;
-          }
         } else {
           //2 or more days after pickup
           availableTimes = possibleTimes;

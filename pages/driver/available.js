@@ -308,6 +308,7 @@ const AvailableCSR = (props) => {
   const { data: response_one, error: error_one } = useSWR(
     "/api/user/getCurrentUser",
     GET_SWR
+    // { revalidateOnFocus: false }
   );
 
   const params_two = `{ "limit": 10, "page": 0 }`;
@@ -316,6 +317,7 @@ const AvailableCSR = (props) => {
       ? [availableEligibility(response_one), params_two]
       : null,
     GET_SWR
+    // { revalidateOnFocus: false }
   );
 
   if (error_one || error_two)

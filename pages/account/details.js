@@ -325,10 +325,11 @@ const DetailsCSR = (props) => {
   //all hooks need to be ran on every render
 
   //swr requires a "stable object", so passing in an actual object causes infinite renders
-  const params_one = `{ "balance": true }`;
+  //const params_one = `{ "balance": true }`;
   const { data: response_one, error: error_one } = useSWR(
-    ["/api/user/getCurrentUser", params_one],
+    "/api/user/getCurrentUser",
     GET_SWR
+    // { revalidateOnFocus: false }
   );
 
   //fetch card if user has one. wait until: response_one resolves, it returns a logged in user, that user has a payment id
@@ -336,6 +337,7 @@ const DetailsCSR = (props) => {
   const { data: response_two, error: error_two } = useSWR(
     cardDetailsEligibility(response_one),
     GET_SWR
+    // { revalidateOnFocus: false }
   );
 
   if (error_one || error_two)

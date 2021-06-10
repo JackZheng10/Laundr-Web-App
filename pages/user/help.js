@@ -27,10 +27,7 @@ import FAQAccordion from "../../src/components/User/Help/FAQAccordion/FAQAccordi
 import MainAppContext from "../../src/contexts/MainAppContext";
 import historyStyles from "../../src/styles/User/Account/historyStyles";
 
-//todo: styling, @getting started, reach out for email?
 //todo: format for readability (paragraphs, etc)
-//@ my order: feature to reschedule delivery if not home? also maybe conflicts with "what happens..miss pickup.."
-//@subscription: renewal refund, manual or feature?
 
 class Help extends Component {
   static contextType = MainAppContext;
@@ -135,7 +132,11 @@ Help.propTypes = {
 };
 
 const HelpCSR = (props) => {
-  const { data: response, error } = useSWR("/api/user/getCurrentUser", GET_SWR);
+  const { data: response, error } = useSWR(
+    "/api/user/getCurrentUser",
+    GET_SWR
+    // { revalidateOnFocus: false }
+  );
 
   if (error) return <ErrorPage text={error.message} />;
   if (!response) return <ProgressPage />;

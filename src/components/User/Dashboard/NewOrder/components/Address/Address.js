@@ -18,13 +18,10 @@ const apiKEY =
 
 const libraries = ["places"];
 
-//todo: dont make address clear after exiting text field, its just visual since the value is still there if you click on it again
-
 class Address extends Component {
   state = { charCount: 0 };
 
   renderMarker = () => {
-    //todo: maybe style not needed
     const { renderMarker, center } = this.props;
 
     if (renderMarker) {

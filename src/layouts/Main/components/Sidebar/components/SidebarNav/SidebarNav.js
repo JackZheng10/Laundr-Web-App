@@ -5,6 +5,7 @@ import { List, ListItem, Button, Hidden } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useRouter } from "next/router";
 import { handleLogout } from "../../../../../../helpers/session";
+import { mutate, cache } from "swr";
 import clsx from "clsx";
 import PropTypes from "prop-types";
 import Link from "next/link";
@@ -76,12 +77,15 @@ const SidebarNav = (props) => {
 
     if (!response.data.success) {
       if (response.data.redirect) {
+        await mutate();
         router.push(response.data.message);
       } else {
         context.showAlert(response.data.message);
       }
     } else {
-      router.push("/");
+      await mutate();
+      //await router.push("/");
+      window.location.reload();
     }
   };
 
@@ -89,21 +93,21 @@ const SidebarNav = (props) => {
     <List {...rest} className={clsx(classes.root, className)}>
       {pages.map((page, index) => (
         <ListItem className={classes.item} disableGutters key={index}>
-          <Link href={page.href} passHref={true}>
-            <Button
-              className={classes.button}
+          {/* <Link href={page.href} passHref={true}> */}
+          <Button
+            className={classes.button}
+            style={{ color: evaluateActive(page.href) }}
+            onClick={() => router.push(page.href)}
+          >
+            <div
+              className={classes.icon}
               style={{ color: evaluateActive(page.href) }}
-              //onClick={() => router.push(page.href)}
             >
-              <div
-                className={classes.icon}
-                style={{ color: evaluateActive(page.href) }}
-              >
-                {page.icon}
-              </div>
-              {page.title}
-            </Button>
-          </Link>
+              {page.icon}
+            </div>
+            {page.title}
+          </Button>
+          {/* </Link> */}
         </ListItem>
       ))}
       <Hidden lgUp>

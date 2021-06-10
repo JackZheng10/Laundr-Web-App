@@ -309,7 +309,6 @@ const renderWasherPrefs = (order) => {
     prefs += "Comforter,";
   }
 
-  //todo: test this, forget what it does lol
   if (comforter) {
     prefs = prefs.slice(0, prefs.length - 1);
   } else {

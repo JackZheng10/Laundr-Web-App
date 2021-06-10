@@ -209,7 +209,6 @@ class OrderTable extends Component {
     return prefs;
   };
 
-  //todo: make this the order for every one of these snackbars!
   showNotification = (message, success) => {
     //close action dialog first
     this.setState({ showActionDialog: false }, async () => {

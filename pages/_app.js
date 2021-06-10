@@ -182,10 +182,6 @@ const MyApp = (props) => {
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        {/*todo: make zindex of this high enough to be able to click out of it if youre also in the middle of loading, also maybe center it inside the component (for sidebar stuff) */}
-        {/*also change zindex so scrollbar doesnt disappear */}
-        {/*try to center properly, ex: cancel confirmation dialog vs this*/}
-        {/*add more configsl like title, buttons, to replace order cancel dialog for example*/}
         {/*ALERT DIALOG*/}
         <Dialog
           open={showAlertDialog_NC}
@@ -261,7 +257,7 @@ const MyApp = (props) => {
             </LoadingButton>
           </DialogActions>
         </Dialog>
-        {/*LOADING DIALOG (for component pages, not fullscreen like login/register. todo: adjust for it should be ez)*/}
+        {/*LOADING DIALOG*/}
         <Dialog
           open={showLoadingDialog}
           PaperProps={{

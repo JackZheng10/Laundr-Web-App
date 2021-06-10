@@ -8,6 +8,8 @@ const axiosClient = axios.create({
   baseURL: baseURL,
 });
 
+axiosClient.defaults.withCredentials = true;
+
 axiosClient.interceptors.request.use(
   (req) => {
     req.params = { ...req.params, version: version };

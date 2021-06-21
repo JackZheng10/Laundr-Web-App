@@ -22,7 +22,7 @@ import {
 } from "../src/components/other";
 import { GET_SWR } from "../src/helpers/swr";
 import Link from "next/link";
-import useSWR from "swr";
+import useSWR, { cache, mutate } from "swr";
 import Head from "next/head";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
@@ -30,6 +30,8 @@ import validator from "validator";
 import MainAppContext from "../src/contexts/MainAppContext";
 import loginStyles from "../src/styles/loginStyles";
 import axios from "../src/helpers/axios";
+
+//todo: add back revalidate on focus
 
 class Login extends Component {
   static contextType = MainAppContext;
@@ -77,7 +79,6 @@ class Login extends Component {
 
     if (this.handleInputValidation()) {
       try {
-        //this.context.showLoading();
         const response = await axios.post(
           "/api/user/login",
           {
@@ -86,9 +87,9 @@ class Login extends Component {
           },
           { withCredentials: true }
         );
-        //this.context.hideLoading();
 
         if (response.data.success) {
+          await mutate();
           this.props.router.push(response.data.message);
         } else {
           this.context.showAlert(response.data.message);
@@ -407,7 +408,11 @@ to-do:
 */
 
 const LoginCSR = (props) => {
-  const { data: response, error } = useSWR("/api/user/getCurrentUser", GET_SWR);
+  const { data: response, error } = useSWR(
+    "/api/user/getCurrentUser",
+    GET_SWR
+    // { revalidateOnFocus: false }
+  );
 
   if (error) return <ErrorPage text={error.message} />;
   if (!response) return <ProgressPage />;

@@ -132,7 +132,11 @@ Help.propTypes = {
 };
 
 const HelpCSR = (props) => {
-  const { data: response, error } = useSWR("/api/user/getCurrentUser", GET_SWR);
+  const { data: response, error } = useSWR(
+    "/api/user/getCurrentUser",
+    GET_SWR
+    // { revalidateOnFocus: false }
+  );
 
   if (error) return <ErrorPage text={error.message} />;
   if (!response) return <ProgressPage />;

@@ -14,14 +14,13 @@ import {
 } from "@material-ui/core";
 import { withRouter } from "next/router";
 import { getCurrentUser, handleLogout } from "../../../../helpers/session";
+import { mutate, cache } from "swr";
 import MainAppContext from "../../../../contexts/MainAppContext";
 import compose from "recompose/compose";
 import MenuIcon from "@material-ui/icons/Menu";
 import NotificationsIcon from "@material-ui/icons/NotificationsOutlined";
 import InputIcon from "@material-ui/icons/Input";
 import topbarStyles from "../../../../styles/layouts/Main/components/Topbar/topbarStyles";
-
-//for logout confirmation: configure dialog in app.js more
 
 class Topbar extends Component {
   static contextType = MainAppContext;
@@ -31,12 +30,15 @@ class Topbar extends Component {
 
     if (!response.data.success) {
       if (response.data.redirect) {
+        await mutate();
         this.props.router.push(response.data.message);
       } else {
         this.context.showAlert(response.data.message);
       }
     } else {
-      this.props.router.push("/");
+      await mutate();
+      //await router.push("/");
+      window.location.reload();
     }
   };
 

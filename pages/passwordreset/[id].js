@@ -124,8 +124,8 @@ class PasswordReset extends Component {
         case "password":
           if (value.length < 6 || !/[A-Z]+/.test(value)) {
             this.setState({
-              [input.name +
-              "ErrorMsg"]: "*Passwords must be at least 6 characters long and contain one capital letter.",
+              [input.name + "ErrorMsg"]:
+                "*Passwords must be at least 6 characters long and contain one capital letter.",
               [input.name + "Error"]: true,
             });
             valid = false;
@@ -268,6 +268,7 @@ const PasswordResetCSR = (props) => {
   const { data: response, error } = useSWR(
     `/api/user/getPasswordResetSession?id=${getWindowEligibility()}`,
     GET_SWR
+    // { revalidateOnFocus: false }
   );
 
   if (error) return <ErrorPage text={error.message} />;

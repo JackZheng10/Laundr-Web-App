@@ -207,6 +207,16 @@ class NewOrder extends Component {
   getTimeAvailability = () => {
     const possibleTimes = [
       {
+        lowerBound: moment("9:00 AM", "h:mm A"),
+        upperBound: moment("9:30 AM", "h:mm A"),
+        string: "9:00 AM - 9:30 AM",
+      },
+      {
+        lowerBound: moment("9:30 AM", "h:mm A"),
+        upperBound: moment("10:00 AM", "h:mm A"),
+        string: "9:30 AM - 10:00 AM",
+      },
+      {
         lowerBound: moment("10:00 AM", "h:mm A"),
         upperBound: moment("10:30 AM", "h:mm A"),
         string: "10:00 AM - 10:30 AM",
@@ -226,50 +236,10 @@ class NewOrder extends Component {
         upperBound: moment("12:00 PM", "h:mm A"),
         string: "11:30 AM - 12:00 PM",
       },
-      {
-        lowerBound: moment("12:00 PM", "h:mm A"),
-        upperBound: moment("12:30 PM", "h:mm A"),
-        string: "12:00 PM - 12:30 PM",
-      },
-      {
-        lowerBound: moment("12:30 PM", "h:mm A"),
-        upperBound: moment("1:00 PM", "h:mm A"),
-        string: "12:30 PM - 1:00 PM",
-      },
-      {
-        lowerBound: moment("1:00 PM", "h:mm A"),
-        upperBound: moment("1:30 AM", "h:mm A"),
-        string: "1:00 PM - 1:30 PM",
-      },
-      {
-        lowerBound: moment("1:30 PM", "h:mm A"),
-        upperBound: moment("2:00 PM", "h:mm A"),
-        string: "1:30 PM - 2:00 PM",
-      },
-      {
-        lowerBound: moment("6:00 PM", "h:mm A"),
-        upperBound: moment("6:30 PM", "h:mm A"),
-        string: "6:00 PM - 6:30 PM",
-      },
-      {
-        lowerBound: moment("6:30 PM", "h:mm A"),
-        upperBound: moment("7:00 PM", "h:mm A"),
-        string: "6:30 PM - 7:00 PM",
-      },
-      {
-        lowerBound: moment("7:00 PM", "h:mm A"),
-        upperBound: moment("7:30 PM", "h:mm A"),
-        string: "7:00 PM - 7:30 PM",
-      },
-      {
-        lowerBound: moment("7:30 PM", "h:mm A"),
-        upperBound: moment("8:00 PM", "h:mm A"),
-        string: "7:30 PM - 8:00 PM",
-      },
     ];
 
-    const lowerBound = moment("10:00:00", "HH:mm:ss");
-    const upperBound = moment("19:00:00", "HH:mm:ss");
+    const lowerBound = moment("9:00:00", "HH:mm:ss");
+    const upperBound = moment("11:00:00", "HH:mm:ss");
     const now = moment();
 
     let availableTimes = [];
@@ -277,7 +247,7 @@ class NewOrder extends Component {
 
     //when here, user has already chosen a date
 
-    //if after 7:00, since pickup needs to be at least 30 mins away and last window is 7:30
+    //if after 11:00, since pickup needs to be at least 30 mins away and last window is 11:30
     if (now.isSameOrAfter(upperBound)) {
       todayNotAvailable = true;
     }
@@ -316,8 +286,8 @@ class NewOrder extends Component {
     const scheduledUpperBound = this.state.upperBound;
 
     //isBetween is non-inclusive of the bounds
-    const lowerBound = moment("10:00:00", "HH:mm:ss");
-    const upperBound = moment("19:00:00", "HH:mm:ss");
+    const lowerBound = moment("9:00:00", "HH:mm:ss");
+    const upperBound = moment("11:00:00", "HH:mm:ss");
     const now = moment();
 
     if (!this.state.todaySelected && !this.state.tomorrowSelected) {

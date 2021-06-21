@@ -187,7 +187,7 @@ class Scheduling extends Component {
             <TooltipButton
               icon={true}
               style={{ marginTop: 20, marginLeft: 5 }}
-              text="Operating times are 10 AM to 8 PM, Monday to Friday. You'll be able to schedule a delivery time after your clothes are weighed by the driver."
+              text="Operating times are 9 AM to 8 PM, Monday to Friday. You'll be able to schedule a delivery time after your clothes are weighed by the driver."
             />
           </Grid>
           {/* <Grid item style={{ marginLeft: 5 }}>

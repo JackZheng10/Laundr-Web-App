@@ -283,10 +283,11 @@ const DashboardCSR = (props) => {
     }
   };
 
-  const params_one = `{ "balance": true }`;
+  //const params_one = `{ "balance": true }`;
   const { data: response_one, error: error_one } = useSWR(
-    ["/api/user/getCurrentUser", params_one],
+    "/api/user/getCurrentUser",
     GET_SWR
+    // { revalidateOnFocus: false }
   );
 
   const { data: response_two, error: error_two } = useSWR(
@@ -294,6 +295,7 @@ const DashboardCSR = (props) => {
       ? dashboardEligibility(response_one)
       : null,
     GET_SWR
+    // { revalidateOnFocus: false }
   );
 
   if (error_one || error_two)

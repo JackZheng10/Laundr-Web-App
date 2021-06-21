@@ -233,7 +233,7 @@ class NewOrder extends Component {
       },
       {
         lowerBound: moment("11:30 AM", "h:mm A"),
-        upperBound: moment("12:00 AM", "h:mm A"),
+        upperBound: moment("12:00 PM", "h:mm A"),
         string: "11:30 AM - 12:00 PM",
       },
     ];
@@ -247,7 +247,7 @@ class NewOrder extends Component {
 
     //when here, user has already chosen a date
 
-    //if after 7:00, since pickup needs to be at least 30 mins away and last window is 7:30
+    //if after 11:00, since pickup needs to be at least 30 mins away and last window is 11:30
     if (now.isSameOrAfter(upperBound)) {
       todayNotAvailable = true;
     }
@@ -287,7 +287,7 @@ class NewOrder extends Component {
 
     //isBetween is non-inclusive of the bounds
     const lowerBound = moment("9:00:00", "HH:mm:ss");
-    const upperBound = moment("19:00:00", "HH:mm:ss");
+    const upperBound = moment("11:00:00", "HH:mm:ss");
     const now = moment();
 
     if (!this.state.todaySelected && !this.state.tomorrowSelected) {

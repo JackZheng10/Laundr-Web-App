@@ -105,46 +105,6 @@ class OrderStatus extends Component {
   getTimeAvailability = (order) => {
     const possibleTimes = [
       {
-        lowerBound: moment("9:00 AM", "h:mm A"),
-        upperBound: moment("9:30 AM", "h:mm A"),
-        string: "9:00 AM - 9:30 AM",
-      },
-      {
-        lowerBound: moment("9:30 AM", "h:mm A"),
-        upperBound: moment("10:00 AM", "h:mm A"),
-        string: "9:30 AM - 10:00 AM",
-      },
-      {
-        lowerBound: moment("10:00 AM", "h:mm A"),
-        upperBound: moment("10:30 AM", "h:mm A"),
-        string: "10:00 AM - 10:30 AM",
-      },
-      {
-        lowerBound: moment("10:30 AM", "h:mm A"),
-        upperBound: moment("11:00 PM", "h:mm A"),
-        string: "10:30 AM - 11:00 PM",
-      },
-      {
-        lowerBound: moment("11:00 AM", "h:mm A"),
-        upperBound: moment("11:30 AM", "h:mm A"),
-        string: "11:00 AM - 11:30 AM",
-      },
-      {
-        lowerBound: moment("11:30 AM", "h:mm A"),
-        upperBound: moment("12:00 PM", "h:mm A"),
-        string: "11:30 AM - 12:00 PM",
-      },
-      {
-        lowerBound: moment("12:00 PM", "h:mm A"),
-        upperBound: moment("12:30 AM", "h:mm A"),
-        string: "12:00 PM - 12:30 PM",
-      },
-      {
-        lowerBound: moment("12:30 PM", "h:mm A"),
-        upperBound: moment("1:00 PM", "h:mm A"),
-        string: "12:30 PM - 1:00 PM",
-      },
-      {
         lowerBound: moment("6:00 PM", "h:mm A"),
         upperBound: moment("6:30 PM", "h:mm A"),
         string: "6:00 PM - 6:30 PM",
@@ -175,8 +135,6 @@ class OrderStatus extends Component {
       `${pickupDate} ${formattedPickupTime}`,
       "MM/DD/YYYY h:mm A"
     );
-    const nineAM = moment(`${pickupDate} 9:00:00`, "MM/DD/YYYY HH:mm:ss");
-    const onePM = moment(`${pickupDate} 13:00:00`, "MM/DD/YYYY HH:mm:ss");
     const sixPM = moment(`${pickupDate} 18:00:00`, "MM/DD/YYYY HH:mm:ss");
     const eightPM = moment(`${pickupDate} 20:00:00`, "MM/DD/YYYY HH:mm:ss");
     const now = moment();
@@ -191,72 +149,16 @@ class OrderStatus extends Component {
       availableTimes = possibleTimes;
       unavailableMessage =
         "Sorry! Our last delivery window today has passed. Please choose a time for tomorrow.";
-    } else if (pickupLowerBound.isSame(now, "day")) {
-      //today is the same day as pickup
-      if (
-        pickupLowerBound.isSameOrAfter(sixPM) &&
-        pickupLowerBound.isSameOrBefore(eightPM)
-      ) {
-        //picked up in night window
-        todayNotAvailable = true;
-        availableTimes = possibleTimes;
-        unavailableMessage =
-          "Same-day delivery is not available for your order due to the pickup time.";
-      } else if (weight > 29) {
-        todayNotAvailable = true;
-        availableTimes = possibleTimes;
-        unavailableMessage =
-          "Same-day delivery is not available for your order due to weight.";
-      }
     }
 
     //if date chosen
     if (this.state.tomorrowSelected || this.state.todaySelected) {
       if (this.state.tomorrowSelected) {
-        //if tomorrow is the day after pickup
-        if (
-          pickupLowerBound
-            .clone()
-            .add(1, "days")
-            .isSame(now.clone().add(1, "days"), "day")
-        ) {
-            //only 6-8 window available
-            availableTimes = this.getClosestTimes(now, possibleTimes.slice(8));
-        } else {
-          //2 or more days after pickup
-          availableTimes = possibleTimes;
-        }
+        //if tomorrow selected
+        availableTimes = possibleTimes;
       } else {
-        //if today is the day after pickup
-        if (pickupLowerBound.clone().add(1, "days").isSame(now, "day")) {
-          //if picked up within the 6-8 window
-          if (
-            pickupLowerBound.isSameOrAfter(sixPM) &&
-            pickupLowerBound.isSameOrBefore(eightPM)
-          ) {
-            console.log("3");
-            //only 6-8 window available
-            availableTimes = this.getClosestTimes(now, possibleTimes.slice(8));
-          } else {
-            console.log("4");
-            availableTimes = this.getClosestTimes(now, possibleTimes);
-          }
-        } else if (pickupLowerBound.isSame(now, "day")) {
-          console.log("1");
-          //if today is pickup, only 6-8 window available
-          availableTimes = this.getClosestTimes(now, possibleTimes.slice(8));
-        } else {
-          console.log("2");
-          console.log(pickupLowerBound.format("MM-DD-YYYY h:mm A"));
-          console.log(now.format("MM-DD-YYYY h:mm A"));
-          console.log(
-            moment(
-              `${pickupDate} ${formattedPickupTime}`,
-              "MM/DD/YYYY h:mm A"
-            ).format("MM-DD-YYYY h:mm A")
-          );
-          availableTimes = this.getClosestTimes(now, possibleTimes);
-        }
+        //if today selected
+        availableTimes = this.getClosestTimes(now, possibleTimes);
       }
     }
 
@@ -265,6 +167,39 @@ class OrderStatus extends Component {
       todayNotAvailable,
       unavailableMessage,
     };
+  };
+
+  handleTimeCheck = () => {
+    let canNext = true;
+
+    const scheduledLowerBound = this.state.lowerBound;
+    const upperBound = moment("19:00:00", "HH:mm:ss");
+    const now = moment();
+
+    if (!this.state.todaySelected && !this.state.tomorrowSelected) {
+      //if no date selected
+      this.context.showAlert("Please select a dropoff date.");
+      canNext = false;
+    } else if (!this.state.lowerBound || !this.state.upperBound) {
+      //if no time selected
+      this.context.showAlert("Please select a dropoff time.");
+      canNext = false;
+    } else if (this.state.todaySelected && now.isSameOrAfter(upperBound)) {
+      this.context.showAlert(
+        "Sorry! Our last dropoff window today has passed. Please choose a time for tomorrow."
+      );
+      canNext = false;
+    } else if (
+      this.state.todaySelected &&
+      now.diff(scheduledLowerBound, "minutes") >= -29
+    ) {
+      this.context.showAlert(
+        "Sorry! Dropoff time must be at least 30 minutes in advance."
+      );
+      canNext = false;
+    }
+
+    return canNext;
   };
 
   handleInputChange = (property, value) => {
@@ -349,39 +284,6 @@ class OrderStatus extends Component {
         this.context.showAlert(caughtError("setting dropoff", error, 99));
       }
     }
-  };
-
-  handleTimeCheck = () => {
-    let canNext = true;
-
-    const scheduledLowerBound = this.state.lowerBound;
-    const upperBound = moment("19:00:00", "HH:mm:ss");
-    const now = moment();
-
-    if (!this.state.todaySelected && !this.state.tomorrowSelected) {
-      //if no date selected
-      this.context.showAlert("Please select a dropoff date.");
-      canNext = false;
-    } else if (!this.state.lowerBound || !this.state.upperBound) {
-      //if no time selected
-      this.context.showAlert("Please select a dropoff time.");
-      canNext = false;
-    } else if (this.state.todaySelected && now.isSameOrAfter(upperBound)) {
-      this.context.showAlert(
-        "Sorry! Our last dropoff window today has passed. Please choose a time for tomorrow."
-      );
-      canNext = false;
-    } else if (
-      this.state.todaySelected &&
-      now.diff(scheduledLowerBound, "minutes") >= -29
-    ) {
-      this.context.showAlert(
-        "Sorry! Dropoff time must be at least 30 minutes in advance."
-      );
-      canNext = false;
-    }
-
-    return canNext;
   };
 
   handleConfirmReceived = async (order) => {
@@ -515,6 +417,7 @@ class OrderStatus extends Component {
     const todayNotAvailable = timeAvailability.todayNotAvailable;
     const availableTimes = timeAvailability.availableTimes;
     const unavailableMessage = timeAvailability.unavailableMessage;
+    const pickupDate = order.pickupInfo.date;
 
     const handleTimeSelect = (event) => {
       const index = event.target.value;
@@ -631,7 +534,7 @@ class OrderStatus extends Component {
                     </Button>
                   </Grid>
                 </Grid>
-                {this.state.todaySelected && (
+                {this.state.todaySelected && pickupDate === this.today && (
                   <Typography variant="caption" gutterBottom>
                     *Same-day delivery costs $0.25/lb
                   </Typography>

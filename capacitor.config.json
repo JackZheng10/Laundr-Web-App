@@ -1,0 +1,6 @@
+{
+  "appId": "com.Laundr.app",
+  "appName": "Laundr",
+  "webDir": "out",
+  "bundledWebRuntime": false
+}
